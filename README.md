@@ -3,8 +3,7 @@
 ## Various open source physical objects by Heikki Suonsivu
 
 These are licensed, unless otherwise stated in program files or included license text,
-under Creative Commons CC-BY-NC-SA, see
-https://creativecommons.org/licenses/by-nc-sa/4.0/
+under [Creative Commons CC-BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 
 I mostly use OpenSCAD for modeling, it will export STL. As I use
 hull() a lot, these might be difficult to import to other cad
@@ -14,19 +13,19 @@ programs. Some of the models are really slow in OpenSCAD, so use F6
 Please return improvements to me to be included in the
 main distribution.
 
-###canon-tripod-1-top.scad
+### canon-tripod-1-top.scad
 
 I had old Canon tripod-1, and its rubbery top part disintegrated with
 age. This is a replacement. Print with TPU.
 
-###coasterholder3.scad
+### coasterholder3.scad
 
 If you have a dead 5.25inch hard drive, you can recycle the disk
 platters inside to make nice coasters for you bar. This is a holder
 for coasters from a 8 platter Micropolis disk. Other hard disks might
 need some adapting. See also "suklaarasiankansi.scad". 
 
-###disk525to35.scad
+### disk525to35.scad
 
 This is an adapter to put 3.5 inch disk drive to a 5.25 drive slot. It
 is designed to not to need screws, however, with certain cases that
@@ -54,17 +53,19 @@ Full height 3.5 inch drives will not fit as they are same height as
 5.25 slot. Those are very rare anyway. Maybe this could be adapted by
 removing top and bottom from disk position.
 
-Options in the source:
+See options in the file.
 
-// 0: Make a complex version with locking mechanism
-// 1: Make a simple version, with no locking mechanism
-simple=0;
+### hammasharjateline.scad
 
-// Full version, includes all material saving holes (very slow in openscad - render before rotating view)
-full=1;
+Organizer for various things in the bathroom. Very specific, so not
+very usable unless you use exactly same electric toothbrush and shaver
+as me.
 
-// Enable pushers and holder separately (pushers only print with non-simple version)
-springpushers=1;
-holder=1;
+### license.scad
 
+The default license file.
+
+### lundiacarrier.scad
+
+Carrying multiple lundia shelf plates is difficult as they tend to slide over each other. So I made a handle. You need to add two locking bands ([such as](https://www.tokmanni.fi/kiinnityshihna-pikalukko-25-mm-2-5-m-2-kpl-6419860608952).
 
