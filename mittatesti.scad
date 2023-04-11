@@ -1,9 +1,13 @@
+// Copyright 2023 Heikki Suonsivu
+// Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
+// For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
+
 // This can only adjust all dimensions
 maxcubes=20;
 // Make holes to speed up printing and save material
 cutaways=1;
 // How deep text is cut
-textdepth=0.3;
+textdepth=0.5;
 // Add vertical support every vdistance cubes
 vdistance=8;
 
@@ -15,6 +19,9 @@ xmax=xcubes*10;
 ymax=ycubes*10;
 zmax=zcubes*10;
 allmax=maxcubes*10;
+textbox=8;
+textboxnarrow=5;
+textboxw=8;
 
 module prism(l, w, h){
       polyhedron(//pt 0        1        2        3        4        5
@@ -26,32 +33,23 @@ module prism(l, w, h){
 module cutouts() {
   union() {
     if (cutaways) {
-      if (maxcubes>10) {
-	// Vertical support every vdistance cubes
-	for (i=[0:vdistance:maxcubes-(vdistance-3)]) {
-	  echo("i ", i);
-	  cubes=min(vdistance-1,maxcubes-i-vdistance+4);//  min(1,(maxcubes-i-vdistance-2));
+      // Vertical support every vdistance cubes
+      for (i=[0:vdistance:maxcubes-(vdistance-3)]) {
+	cubes=min(vdistance-1,maxcubes-i-vdistance+4);//  min(1,(maxcubes-i-vdistance-2));
 
-	  xposition=0;
-	  yposition=max(10,i*10+10);
-	  zposition=max(maxcubes-i-vdistance-2,1)*10;
-	    //zposition=(maxcubes-i-vdistance-2)*10; //maxcubes*10-i*10-(vdistance*10+20);
+	xposition=0;
+	yposition=max(10,i*10+10);
+	zposition=max(maxcubes-i-vdistance-2,1)*10;
+	//zposition=(maxcubes-i-vdistance-2)*10; //maxcubes*10-i*10-(vdistance*10+20);
 	  
-	  ys=cubes*10;
-	  xs=10;
-	  zs=cubes*10;
+	ys=cubes*10;
+	xs=10;
+	zs=cubes*10;
 	  
-	  // Triangle cut to upper part
-	  echo("zcubes ",zcubes," x ", xposition, " y ", yposition, " z ", zposition);
-	  echo("xs ", xs, " ys ", ys, " zs ",zs);
-#translate([xposition-0.01,yposition,zposition]) translate([0,cubes*10,0]) mirror([0,1,0]) prism(xs+10.02,ys,zs);
-	  //#translate([xposition-0.01,yposition,zposition]) cube([xs+0.02,ys,zs]);
-	  // Cube cut to lower part
-	  if (zposition-10 > 0) translate([xposition-0.01,yposition,10]) cube([10.02,ys,zposition-10+0.01]);
-	}
-      } else {
-	translate([10.01,ymax-30,10]) rotate([0,0,180]) prism(10.02,ymax-40,zmax-40);
-	translate([xmax-30,-0.01,9.99]) rotate([0,0,90]) prism(10.02,xmax-40,zmax-40);
+	// Triangle cut to upper part
+	translate([xposition-0.01,yposition,zposition]) translate([0,cubes*10,0]) mirror([0,1,0]) prism(xs+0.02,ys,zs);
+	// Cube cut to lower part
+	if (zposition-10 > 0) translate([xposition-0.01,yposition,10]) cube([10.02,ys,zposition-10+0.01]);
       }
     }
   }
@@ -74,28 +72,32 @@ difference() {
     }
   }
 
-translate([textdepth-0.01,8,3]) rotate([90,0,270]) linear_extrude(height=textdepth) text("=y", size=5);
+  translate([textdepth-0.01,8,3]) rotate([90,0,270]) linear_extrude(height=textdepth) text("=y", size=5);
   for(i=[10:10:zmax-10]) {
-    translate([textdepth-0.01,9.5,i+1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([8,8,8]) text(str(i), size=5);
+    translate([textdepth-0.01,5,i+1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
   }
+  for(i=[0:10:zmax-10]) {
+    translate([5,ymax-i-textdepth+0.01,i+1]) rotate([90,0,180]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
+    translate([xmax-i-textdepth+0.01,5,i+1]) rotate([90,0,90]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
+  }
+  
 
   for(i=[10:10:ymax-10]) {
-    translate([textdepth-0.01,i+9.5,1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([8,8,8]) text(str(i), size=5);
+    translate([textdepth-0.01,i+5,1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
   }
 
   for(i=[10:10:zmax-10]) {
-    translate([1,textdepth-0.01,i+1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([8,8,8]) text(str(i), size=5);
+    translate([5,textdepth-0.01,i+1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
 
   }
 
-  translate([1,textdepth-0.01,3]) rotate([90,0,0]) linear_extrude(height=textdepth) text("x=", size=5);
+  translate([0.75,textdepth-0.01,1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([textbox,textbox,textbox]) text("x=", size=6);
   for(i=[10:10:xmax-10]) {
-    translate([i+1,textdepth-0.01,1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([8,8,8]) text(str(i), size=5);
+    translate([i+5,textdepth-0.01,1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
 
   }
- translate([2,4,zmax-textdepth+0.01]) rotate([0,0,270+45]) linear_extrude(height=textdepth) text("z", size=5);
+ translate([0.5,4.5,zmax-textdepth+0.01]) rotate([0,0,270+45]) linear_extrude(height=textdepth) text("z", size=9);
 
- echo("allmax ",allmax, " vdistance ",vdistance);
   for(i=[10:10:allmax-10]) {
     if (cutaways) {
       translate([-0.01,1,i-0.25]) cube([0.5,8,0.5]);

@@ -1,3 +1,7 @@
+// Copyright 2023 Heikki Suonsivu
+// Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
+// For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
+
 $fn=60;
 
 chargerthickness=9;
@@ -28,7 +32,7 @@ microphoneholewidth=45;
 microphoneholedepth=40;
 microphoneholeangle=45;
 microphoneholeposition=0; // Offset from center
-smallcornerdiameter=2;
+smallcornerdiameter=5;
 largecornerdiameter=10;
 
 angle=45;
