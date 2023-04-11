@@ -46,11 +46,10 @@ To save filament printing time, default is to make the thing with
 various cutouts.
 
 Locking mechanism uses locking sticks, when pushed in, they push
-knobs/keys into drive/case screw holes. Only side screw holes are
-supported.
+knobs/keys into drive/case screw holes. 
 
 If you enable simple version, there is no locking
-mechanism, and the adapter only locks with springs, and this does not
+mechanism, and the adapter only locks with springs. This does not
 keep things in place very well.
 
 Full height 3.5 inch drives will not fit as they are same height as
@@ -71,7 +70,7 @@ The default license file.
 
 ### lidllaturiteline.scad
 
-Lidl sells wireless phone charger for two phones. Is is not very
+Lidl sells wireless phone charger for two phones. It is not very
 practical as the mobile phones need to be placed accurately to the
 correct position. This holder allows simply dropping the two phones to
 the slots, and they will start charging.
@@ -95,7 +94,7 @@ is likely useful to carry other stuff as well.
 Calibration tool to measure x,y and z axis. Some printers such as my
 Tronxy need x/y axis movements to be calibrated. You can tune Number
 of cubes and whether filament- and time-saving holes are printed.
-tunable. For filaments which tend to deform, this does not work very
+For filaments which tend to deform, this does not work very
 well. Use PLA.
 
 ### paperiteline.scad
@@ -112,8 +111,9 @@ support. This is very specific to size of planter and plant.
 
 ### presshandle.scad
 
-I build a press for large engineering drawings to iron them out out of
-two tables. This is a handle for it. Might be useful for some other
+I built a press for large engineering drawings to iron them
+out. Basically it is a table with another table plate on top with
+hinges. This is a handle for it. Might be useful for some other
 application as well.
 
 ### sinisentuolinjalka.scad
@@ -137,6 +137,6 @@ else.
 ### vasara.scad
 
 (Project stalled) Thought I needed electric hammer, so started
-designing one but found a commercially available product this project
-stalled. Maybe some day...
+designing one but found a commercially available product so this project
+stalled early. Maybe some day...
 
