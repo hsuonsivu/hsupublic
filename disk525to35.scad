@@ -282,7 +282,7 @@ if (!simple && springpushers) {
 	  translate([springpusherthickness-0.01,springpusherhandlethickness-0.01,0.5]) cube([springpusherwall+0.01,0.5+0.01,springpusherheight-1]);
 	  translate([springpusherthickness+springpusherwall,springpusherhandlethickness+0.5,0.5]) rotate([0,0,90]) triangle(springpusherheight-1,springpusherwall+0.01,springpusherheight-1,(i==0 || i==2)?1:2);
 	}
-	translate([springpusherthickness-textdepth+0.01,springpusherhandlethickness+springpusherheight+2,1]) rotate([90,0,90]) linear_extrude(height=textdepth) text(versiontext,size=springpusherheight-2,halign="left");
+	translate([springpusherthickness-textdepth+0.01,springpusherhandlethickness+springpusherheight+2,2]) rotate([90,0,90]) linear_extrude(height=textdepth) text(versiontext,size=springpusherheight-4,halign="left");
 	if (i < 2) {
 	  for (x=[outscrew1position,outscrew2position]) {
 	    translate([-0.01,x+outscrewdiameter*2,springpusherheight/2-outscrewspringheight/2-springpushergap]) cube([springpusherthickness+0.02,outscrewspringlength+outscrewdiameter*2,outscrewspringheight+springpushergap*2]);
