@@ -9,9 +9,14 @@
 // depth=y
 // width=z
 
+print=3; // 1=left, 2=right
+versiontext="V2.1";
+font = "Liberation Sans";
+textdepth = 0.5;
+
 rollwidth=226;
 rolldiameteroutside=200;
-rolldiameterinside=43;
+rolldiameterinside=35; //3;
 rollextra=5; // Distance from backplate to roll
 rollborediameter=26;
 screwdistance=166.5;
@@ -47,13 +52,11 @@ fingernotchwidth=3;
 
 tolerance=0.20;
 tolerancedepth=0.30;
-diametertolerance=0.97;
+diametertolerance=0.96; // 97;
   
 holeedge=63;
 roundholediameter=40;
 holezadjust=6;
-
-print=1; // 1=left, 2=right
 
 module holder() {
   difference() {
@@ -76,9 +79,7 @@ module holder() {
       translate([rollaxisheight,rollaxisdepth,holdersupportwidth])
 	cylinder(h=rollwidth+1,d=rolldiameterinside);
       
-      text = "V2";
-      font = "Liberation Sans";
-      translate([10,10,holdersupportwidth+10]) rotate([-90,270,0]) linear_extrude(height = 0.5) text(text = str(text), font = font, size = 10, valign=110);
+      translate([10,10,holdersupportwidth+10]) rotate([-90,270,0]) linear_extrude(height = textdepth) text(text = str(versiontext), font = font, size = 10, valign="baseline");
     }
 
     translate([rollaxisheight,rollaxisdepth,-0.01])
@@ -124,7 +125,7 @@ module holder() {
 
 }
 
-if (print==1 || print==0) {
+module left() {
   difference() {
     holder();
     translate([-0.01,-0.01,holdersupportwidth+rollwidth-0.01]) cube([backplateheight+0.1,rollaxisdepth+rolldiameterinside+0.01,holdersupportwidth+1],center=false);
@@ -137,10 +138,11 @@ if (print==1 || print==0) {
   }
  }
 
-if (print==2 || print==0) {
+module right() {
   difference() {
     holder();
     translate([-0.01,-0.01,-0.01]) cube([backplateheight+0.1,rollaxisdepth+rolldiameterinside+0.01,holdersupportwidth+rollwidth+0.01],center=false);
+    #translate([fingerlower,backplatedepth+1,backplatewidth-holdersupportwidth+textdepth-0.01]) rotate([0,180,0]) linear_extrude(height = textdepth) text(text = str(versiontext), font = font, size = 8, valign="baseline", halign="right");
   }
   translate([fingerupper,fingerdepthposition,holdersupportwidth+rollwidth-fingerwidth]) cube([fingerheight-tolerance,fingerdepth-tolerancedepth,fingerwidth-tolerance],center=false);
   translate([fingerupper,fingerdepthposition+fingerdepth,holdersupportwidth+rollwidth-fingerwidth+fingernotchwidth/2]) rotate([0,90,0]) cylinder(h=fingerheight-tolerancedepth,d=2*fingernotchmalediameter,$fn=30);
@@ -148,4 +150,20 @@ if (print==2 || print==0) {
   translate([fingerlower,fingerdepthposition+fingerdepth,holdersupportwidth+rollwidth-fingerwidth+fingernotchwidth/2]) rotate([0,90,0]) cylinder(h=fingerheight-tolerancedepth,d=2*fingernotchmalediameter,$fn=30);
   translate([rollaxisheight,rollaxisdepth,rollwidth+holdersupportwidth*2-rollborewidth]) cylinder(h=rollborewidth,d=rollborediameter*diametertolerance);
   translate([rollaxisheight,rollaxisdepth,rollwidth+holdersupportwidth*2-holdersupportwidth]) cylinder(h=holdersupportwidth,d=rollborediameter);
+ }
+
+
+ if (print == 1 || print == 0) {
+   left();
+ }
+
+
+ if (print == 2 || print == 0) {
+   right();
+ }
+
+if (print == 3) {
+  left();
+  
+  translate([rollaxisheight*2+rolldiameterinside/2,backplatedepth + 1,backplatewidth]) rotate([180,0,131]) right();
  }
