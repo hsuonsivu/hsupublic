@@ -72,28 +72,28 @@ difference() {
     }
   }
 
-  translate([textdepth-0.01,8,3]) rotate([90,0,270]) linear_extrude(height=textdepth) text("=y", size=5);
+  translate([textdepth-0.01,9,1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([textbox,0,0]) text("=Y", size=7);
   for(i=[10:10:zmax-10]) {
-    translate([textdepth-0.01,5,i+1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
+    translate([textdepth-0.01,5,i+1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([i<90?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
   }
   for(i=[0:10:zmax-10]) {
-    translate([5,ymax-i-textdepth+0.01,i+1]) rotate([90,0,180]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
-    translate([xmax-i-textdepth+0.01,5,i+1]) rotate([90,0,90]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
+    translate([5,ymax-i-textdepth+0.01,i+1]) rotate([90,0,180]) linear_extrude(height=textdepth) resize([i<90?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
+    translate([xmax-i-textdepth+0.01,5,i+1]) rotate([90,0,90]) linear_extrude(height=textdepth) resize([i<90?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
   }
   
 
   for(i=[10:10:ymax-10]) {
-    translate([textdepth-0.01,i+5,1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
+    translate([textdepth-0.01,i+5,1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([i<90?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
   }
 
   for(i=[10:10:zmax-10]) {
-    translate([5,textdepth-0.01,i+1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
+    translate([5,textdepth-0.01,i+1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([i<90?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
 
   }
 
-  translate([0.75,textdepth-0.01,1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([textbox,textbox,textbox]) text("x=", size=6);
+  translate([0.75,textdepth-0.01,1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([textbox,0,0]) text("X=", size=7);
   for(i=[10:10:xmax-10]) {
-    translate([i+5,textdepth-0.01,1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([i<100?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
+    translate([i+5,textdepth-0.01,1]) rotate([90,0,0]) linear_extrude(height=textdepth) resize([i<90?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
 
   }
  translate([0.5,4.5,zmax-textdepth+0.01]) rotate([0,0,270+45]) linear_extrude(height=textdepth) text("z", size=9);
