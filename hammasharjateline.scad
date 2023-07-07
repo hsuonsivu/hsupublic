@@ -47,11 +47,11 @@ screwholeyposition=1.6*screwholediameter;
 anglesupportdepth=40;
 cutheight=backplaneheight;
 combwidth=45;
-combdepth=5;
+combdepth=6;
 comb2width=55;
-comb2depth=6;
+comb2depth=7;
 combbetween = 5;
-versiontext="V2.1";
+versiontext="V2.2";
 versionwidth=20;
 font="Liberation Sans";
 
