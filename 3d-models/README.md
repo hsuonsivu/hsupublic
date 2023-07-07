@@ -28,6 +28,7 @@ for coasters from a 8 platter Maxtor hard disk. Other hard disks might
 need some adapting. See also "suklaarasiankansi.scad".
 
 ![Image of the costerholder](coasterholder.jpg)
+![Second image of the costerholder](coasterholder2.jpg)
 
 ### disk525to35.scad
 
@@ -58,6 +59,8 @@ removing top and bottom from disk position.
 
 See options in the file.
 
+![Image of the 3.5 inch drive adapter for 5.25 inch slot](disk525to35.jpg)
+
 ### hammasharjateline.scad
 
 Organizer for various things in the bathroom. Very specific, so not
@@ -80,6 +83,9 @@ seem to have the induction loop at different position. For example,
 some phones need to be upside down. It is relatively easy to tune for
 various phones, the settings are in top of the files, hopefully
 self-explanatory.
+
+![Image of charger base for Lidl dual wireless phone charger](lidllaturiteline.jpg)
+![Second image of charger base for Lidl dual wireless phone charger](lidllaturiteline2.jpg)
 
 ### kasvikyltit.scad
 
@@ -107,9 +113,11 @@ to make text more visible.
 
 Carrying multiple lundia shelf plates is difficult as they tend to
 slide over each other. So I made a handle. You need to add two locking
-bands ([such
+straps ([such
 as](https://www.tokmanni.fi/kiinnityshihna-pikalukko-25-mm-2-5-m-2-kpl-6419860608952)). This
 is likely useful to carry other stuff as well.
+
+![Image of the lundia shelf carrier handle with straps](lundiacarrier.jpg)
 
 ### mittatesti.scad
 
@@ -118,6 +126,8 @@ Tronxy need x/y axis movements to be calibrated. You can tune Number
 of cubes and whether filament- and time-saving holes are printed.
 For filaments which tend to warp and deform, this does not work very
 well. Use PLA.
+
+![Image of the the clibration tool for 3d printers](mittatesti.jpg)
 
 ### paperiteline.scad
 
@@ -130,6 +140,8 @@ improvement.
 
 One of our office plants was about to collapse and needed
 support. This is very specific to size of planter and plant.
+
+![Image of the support for a plant](plantsupport.jpg)
 
 ### presshandle.scad
 
