@@ -20,6 +20,8 @@ print without supports,if the object is rotated correctly in the slicer.
 I had old Canon tripod-1, and its rubbery top part disintegrated with
 age. This is a replacement. Print with TPU.
 
+![Image of the tripod 1 with new top](canon-tripod-1-top.jpg)
+
 ### coasterholder3.scad
 
 If you have a dead 5.25inch hard drive, you can recycle the disk
@@ -106,10 +108,12 @@ Bunch of name labels labels. These we designed to be put on top of
 rack for towels. You can modify the names at the start of the
 file. Need to change number of labels if adding or removing. You can
 have several labels printed in one go. You also need to configure the
-size of your printer print area, as it arrange labels automatically.
+size of your printer print area, as it will arrange labels automatically.
 
 I have printed these with black at the bottom and lighter color on top
 to make text more visible.
+
+![Image of the name label](nimikyltit.jpg)
 
 ### lundiacarrier.scad
 
@@ -170,7 +174,13 @@ any label in it so I do not know what brand or type it is.
 You can turn your dead 5.25 inch hard disk to a stylish chocolate
 box. This is for Maxtor 8 platter drive. Unfortunately, this model
 does not work with any other disk model, so you need to find a dead
-Maxtor IT-1140 drive.
+Maxtor IT-1140 drive. The screws are positioned so that the existing
+holes can be used. The screws I used were random picks from my junk
+box. There may be some size problems with this one as the printer I
+used had calibration problems with x and y axis. Do a test print and
+adjust.
+
+![Image of the chocolate box](suklaarasiankansi.jpg)
 
 ### termostaatin-piuhapidike.scad
 
