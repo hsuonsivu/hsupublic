@@ -45,7 +45,7 @@ hours, and uses about 200g of filament. No supports are needed, rotate
 so that locking sticks are on the bed, and on moving bed printers bed
 moves in direction of locking sticks to avoid falling over.
 
-To save filament printing time, default is to make the thing with
+To save filament and printing time, default is to make the thing with
 various cutouts.
 
 Locking mechanism uses locking sticks, when pushed in, they push
@@ -97,10 +97,13 @@ Bunch of veggie labels for your garden. You can modify the names at
 the start of the file. Need to change number of labels if adding or
 removing. You can have several labels printed in one go, but you must
 put names in order of longest text to shortest text, I was too lazy to
-fix the related bug.
+fix the related bug. It will do 2 labels for each name so you can put
+a label at both ends of the row.
 
 I have printed these with light colour at bottom and top, and black in
 the middle layers to make text more visible.
+
+![Veggie Labels in openscad](kasvikyltit-openscad.png)
 
 ### nimikyltit.scad
 
@@ -114,6 +117,7 @@ I have printed these with black at the bottom and lighter color on top
 to make text more visible.
 
 ![Image of the name label](nimikyltit.jpg)
+![Name labels in openscad](nimikyltit-openscad.png)
 
 ### lundiacarrier.scad
 
@@ -213,6 +217,9 @@ printers, you can print the parts in vertical configuration, but they
 are more difficult to attach to each other. For heavy items, you might
 want to up infill % from defaults. You can do a small test print to
 test attachments.
+
+![Model in openscad, normal](kynnyskulma-normal-openscad.png)
+![Model in openscad, vertical](kynnyskulma-vertical-openscad.png)
 
 ### masklock.scad
 
