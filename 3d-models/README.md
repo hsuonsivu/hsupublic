@@ -221,7 +221,7 @@ with other seeds fine.
 ### kynnyskulma.scad
 
 If you need to roll heavy wheeled items over a doorstep, this will
-help a bit. It will split the part to multiple parets which attach to
+help a bit. The model will split the part to multiple parts which attach to
 each other, so you need to configure your printer width. For small
 printers, you can print the parts in vertical configuration, but they
 are more difficult to attach to each other. For heavy items, you might
