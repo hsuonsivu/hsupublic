@@ -47,7 +47,9 @@ To save filament printing time, default is to make the thing with
 various cutouts.
 
 Locking mechanism uses locking sticks, when pushed in, they push
-knobs/keys into drive/case screw holes. 
+knobs/keys into drive/case screw holes. For outer screw holes, you can
+put the stick in upper or lower position, as computer cases might
+differ for screw position.
 
 If you enable simple version, there is no locking
 mechanism, and the adapter only locks with springs. This does not
@@ -134,7 +136,10 @@ well. Use PLA.
 Holder for paper towel rolls. Left and right parts can be printed at
 the same time if your printer is large enough. Left and right parts
 lock into each other, but currently the mechanism leaves room for
-improvement.
+improvement. Slight push releases the "fingers" holding the right
+side.
+
+![Image of the paper roll holder installed](paperiteline.jpg)
 
 ### plantsupport.scad
 
@@ -150,10 +155,15 @@ out. Basically it is a table with another table plate on top with
 hinges. This is a handle for it. Might be useful for some other
 application as well.
 
+![Image of the handle as installed](presshandle.jpg)
+
 ### sinisentuolinjalka.scad
 
 One of the chairs in our office was missing a plug in one of its
-feet. This is a replacement. Print with TPU.
+feet. This is a replacement. Print with TPU. The chair does not have
+any label in it so I do not know what brand or type it is.
+
+![Image of the chair fitted with printed foot](sinisentuolinjalka.jpg)
 
 ### suklaarasiankansi.scad
 
