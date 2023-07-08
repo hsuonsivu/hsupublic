@@ -69,7 +69,9 @@ See options in the file.
 
 Organizer for various things in the bathroom. Very specific, so not
 very usable unless you use exactly same electric toothbrush and shaver
-as me.
+as me. This can be screwed into a wall.
+
+![Model in openscad](hammasharjateline.png)
 
 ### license.scad
 
@@ -196,7 +198,9 @@ else.
 
 (Project stalled) Thought I needed electric hammer, so started
 designing one but found a commercially available product so this project
-stalled early. Maybe some day...
+stalled very early. Maybe some day...
+
+![Model in openscad, normal](vasara.png)
 
 ### sipulinistutin.scad
 
@@ -206,7 +210,13 @@ tube. When planting stuff, drop seeds from top of the tube while
 pulling the sharp edge to open a narrow dig so that the seeds drop to
 bottom of it. You need to maintain constant speed and drop seeds at
 steady intervals. Or just keep pouring them while pulling
-quickly. After planting a row, turn 90 degrees and cover the dig.
+quickly. After planting a row, turn the tool 90 degrees and cover the
+dig. Some of the onions turned out to be too large for 25mm tobe, so a
+large version would be needed for larger tubes. However, it worked
+with other seeds fine.
+
+![Model in openscad, normal](sipulinistutin.png)
+![Plant seeder installed to a 25mm tube](sipulinistutin.jpg)
 
 ### kynnyskulma.scad
 
@@ -226,3 +236,4 @@ test attachments.
 A CPAP mask lock replacement. Needs supports, works best with tree
 supports.
 
+![Model in openscad](masklock.png)
