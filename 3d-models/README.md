@@ -237,3 +237,11 @@ A CPAP mask lock replacement. Needs supports, works best with tree
 supports.
 
 ![Model in openscad](masklock.png)
+
+### batterybarcover.scad
+
+Covers li-ion battery pack terminal covers connected with bars. Small openings can be snapped off to provide holes for BMS cables. 
+
+![3 battery bar covers in openscad](batterybarcover.png)
+![Photo of battery bar covers installed in a battery pack](batterybarcoverphoto.jpg)
+
