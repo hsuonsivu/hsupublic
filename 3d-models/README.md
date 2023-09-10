@@ -243,14 +243,14 @@ supports.
 Covers li-ion battery pack terminal covers connected with bars. Small openings can be snapped off to provide holes for BMS cables. 
 
 ![3 battery bar covers in openscad](batterybarcover.png)
-![Photo of battery bar covers installed in a battery pack](batterybarcover.jpg)
+![Photo of battery bar covers installed in a battery pack](batterybarcoverphoto.jpg)
 
 ### batteryterminalcover.scad
 
 Covers li-ion battery pack terminals. Small openings can be snapped off to provide holes for BMS cables. 
 
 ![battery terminal cover in openscad](batteryterminalcover.png)
-![Photo of battery terminal cover installed in a battery pack](batteryterminalcoverphoto.jpg)
+![Photo of battery terminal cover installed in a battery pack](batteryterminalcover.jpg)
 
 ### bedcontrollerpart.scad
 
