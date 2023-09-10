@@ -1,3 +1,7 @@
+// Copyright 2023 Heikki Suonsivu
+// Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
+// For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
+
 wall=2.5;
 
 versiontext="V1.4";
@@ -19,11 +23,6 @@ cableposition=1;
 snapwidth=wall/5;
 
 platethickness=2;
-
-//bmscablecut1=(holestart+holeend)/2;
-//bmscablecut2=bmscablecut1+10;
-//bmscablediameter=5;
-//bmscableposition=1;
 
 lockcut=length/2;
 locklength=15;
