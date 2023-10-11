@@ -21,6 +21,7 @@ I had old Canon tripod-1, and its rubbery top part disintegrated with
 age. This is a replacement. Print with TPU.
 
 ![Image of the tripod 1 with new top](canon-tripod-1-top.jpg)
+![Model in openscad showing underside](canon-tripod-1-top.png)
 
 ### coasterholder3.scad
 
@@ -51,7 +52,7 @@ various cutouts.
 Locking mechanism uses locking sticks, when pushed in, they push
 knobs/keys into drive/case screw holes. For outer screw holes, you can
 put the stick in upper or lower position, as computer cases might
-differ for screw position.
+have different screw positions.
 
 If you enable simple version, there is no locking
 mechanism, and the adapter only locks with springs. This does not
@@ -61,9 +62,14 @@ Full height 3.5 inch drives will not fit as they are same height as
 5.25 slot. Those are very rare anyway. Maybe this could be adapted by
 removing top and bottom from disk position.
 
+This makes openscad very slow, so render (F6) first before rotating or
+zooming.
+
 See options in the file.
 
 ![Image of the 3.5 inch drive adapter for 5.25 inch slot](disk525to35.jpg)
+![Image of the 3.5 inch drive adapter for 5.25 inch slot with a disk installed](disk525to35-2.jpg)
+![Model in openscad, rotate to this position for printing](disk525to35.png)
 
 ### hammasharjateline.scad
 
@@ -140,6 +146,7 @@ For filaments which tend to warp and deform, this does not work very
 well. Use PLA.
 
 ![Image of the the clibration tool for 3d printers](mittatesti.jpg)
+![20cm model in openscad](mittatesti-20cm.png)
 
 ### paperiteline.scad
 
@@ -170,10 +177,12 @@ application as well.
 ### sinisentuolinjalka.scad
 
 One of the chairs in our office was missing a plug in one of its
-feet. This is a replacement. Print with TPU. The chair does not have
-any label in it so I do not know what brand or type it is.
+feet. This is a replacement. Print with TPU with 100% fill. The chair
+does not have any label in it so I do not know what brand or type it
+is.
 
-![Image of the chair fitted with printed foot](sinisentuolinjalka.jpg)
+![Chair foot plug in openscad](sinisentuolinjalka.png)
+![Photo of the chair fitted with printed foot](sinisentuolinjalka.jpg)
 
 ### suklaarasiankansi.scad
 
@@ -212,7 +221,7 @@ bottom of it. You need to maintain constant speed and drop seeds at
 steady intervals. Or just keep pouring them while pulling
 quickly. After planting a row, turn the tool 90 degrees and cover the
 dig. Some of the onions turned out to be too large for 25mm tobe, so a
-large version would be needed for larger tubes. However, it worked
+larger version would be needed for larger tubes. However, it worked
 with other seeds fine.
 
 ![Model in openscad, normal](sipulinistutin.png)
@@ -220,16 +229,17 @@ with other seeds fine.
 
 ### kynnyskulma.scad
 
-If you need to roll heavy wheeled items over a doorstep, this will
-help a bit. The model will split the part to multiple parts which attach to
-each other, so you need to configure your printer width. For small
-printers, you can print the parts in vertical configuration, but they
-are more difficult to attach to each other. For heavy items, you might
-want to up infill % from defaults. You can do a small test print to
-test attachments.
+If you need to roll heavy wheeled items over a doorstep, this
+threshold ramp will help a bit. The model will split the part to
+multiple parts which attach to each other, so you need to configure
+your printer width. For small printers, you can print the parts in
+vertical configuration, but they are more difficult to attach to each
+other. For heavy items, you might want to up infill % from
+defaults. You can do a small test print to test attachments.
 
 ![Model in openscad, normal](kynnyskulma-normal-openscad.png)
 ![Model in openscad, vertical](kynnyskulma-vertical-openscad.png)
+![Threshold ramp in use to help getting a heavy barbeque over the door threshold](kynnyskulma.jpg)
 
 ### masklock.scad
 
@@ -247,13 +257,13 @@ Covers li-ion battery pack terminal covers connected with bars. Small openings c
 
 ### batteryterminalcover.scad
 
-Covers li-ion battery pack terminals. Small openings can be snapped off to provide holes for BMS cables. 
+Covers li-ion battery pack terminals. Small openings can be snapped off to provide holes for BMS cables. Use a small cable binder to lock.
 
 ![battery terminal cover in openscad](batteryterminalcover.png)
 ![Photo of battery terminal cover installed in a battery pack](batteryterminalcover.jpg)
 
 ### bedcontrollerpart.scad
 
-A plastic part of my bed broke, here is a new one. Unfortunately I do not know the bed brand.
+A plastic part of my bed controller broke, here is a new one. Unfortunately I do not know the bed brand, but it seems to be from Germany.
 
 ![Bed spare part openscad](bedcontrollerpart.png)
