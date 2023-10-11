@@ -261,6 +261,7 @@ Covers li-ion battery pack terminals. Small openings can be snapped off to provi
 
 ![battery terminal cover in openscad](batteryterminalcover.png)
 ![Photo of battery terminal cover installed in a battery pack](batteryterminalcover.jpg)
+![Another picture of the terminal cover installed in a battery pack](batteryterminalcover-2.jpg)
 
 ### bedcontrollerpart.scad
 
