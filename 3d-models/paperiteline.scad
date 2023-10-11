@@ -11,7 +11,7 @@
 
 print=3; // 1=left, 2=right, 3=both
 $fn=90;
-versiontext="V3.1";
+versiontext="V3.2";
 font = "Liberation Sans";
 textdepth = 0.5;
 
@@ -49,7 +49,7 @@ fingerheight=20;
 fingerupper=backplateheight - 45 - fingerheight; // rollaxisheight*2+backplatedepth/2-10-fingerheight;
 fingerlower=10;
 fingernotchdepth=1; //backplatedepth;
-fingernotchmalediameter=1;
+fingernotchmalediameter=1.5;
 fingernotchwidth=3;
 fingerholediameter=4;
 
@@ -156,9 +156,9 @@ module right() {
     translate([fingerlower-2,backplatedepth+5,backplatewidth-holdersupportwidth+textdepth-0.01]) rotate([0,180,0]) linear_extrude(height = textdepth) text(text = str(versiontext), font = font, size = 8, valign="baseline", halign="right");
   }
   translate([fingerupper+tolerance/2,fingerdepthposition,holdersupportwidth+rollwidth-fingerwidth]) cube([fingerheight-tolerance,fingerdepth-tolerancedepth,fingerwidth-tolerance+1],center=false);
-  translate([fingerupper+tolerance/2,fingerdepthposition+fingerdepth,holdersupportwidth+rollwidth-fingerwidth+fingernotchwidth/2]) rotate([0,90,0]) cylinder(h=fingerheight-tolerance,d=2*fingernotchmalediameter,$fn=30);
+  translate([fingerupper+tolerance/2,fingerdepthposition+fingerdepth-fingernotchmalediameter/2,holdersupportwidth+rollwidth-fingerwidth+fingernotchwidth/2]) rotate([0,90,0]) cylinder(h=fingerheight-tolerance,d=2*fingernotchmalediameter,$fn=30);
   translate([fingerlower+tolerance/2,fingerdepthposition,holdersupportwidth+rollwidth-fingerwidth]) cube([fingerheight-tolerance,fingerdepth-tolerancedepth,fingerwidth-tolerance+1],center=false);
-  translate([fingerlower+tolerance/2,fingerdepthposition+fingerdepth,holdersupportwidth+rollwidth-fingerwidth+fingernotchwidth/2]) rotate([0,90,0]) cylinder(h=fingerheight-tolerance,d=2*fingernotchmalediameter,$fn=30);
+  translate([fingerlower+tolerance/2,fingerdepthposition+fingerdepth-fingernotchmalediameter/2,holdersupportwidth+rollwidth-fingerwidth+fingernotchwidth/2]) rotate([0,90,0]) cylinder(h=fingerheight-tolerance,d=2*fingernotchmalediameter,$fn=30);
   translate([rollaxisheight,rollaxisdepth,rollwidth+holdersupportwidth*2-rollborewidth]) cylinder(h=rollborewidth,d=rollborediameter*diametertolerance);
   translate([rollaxisheight,rollaxisdepth,rollwidth+holdersupportwidth*2-holdersupportwidth]) cylinder(h=holdersupportwidth,d=rollborediameter);
  }
