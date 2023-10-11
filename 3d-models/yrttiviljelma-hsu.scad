@@ -44,6 +44,8 @@ CIDY=0.4;
 CIDX=0.4;
 TPIL=0.4;      // Support pillar thickness
 
+module T(x=0,y=0,z=0,rx=0,ry=0,rz=0) { translate([x,y,z]) rotate([rx,ry,rz]) children(0); }
+
 module pyorea_kori() {
   difference() {
     union() {  
