@@ -142,10 +142,10 @@ module batterycover() {
 }
 
 batterycover();
+#if (0) {
 translate([0,yspread,0]) batterycover();
 translate([0,yspread*2,0]) batterycover();
-if (0) {
-translate([0,yspread*3,0]) batterycover();
+  translate([0,yspread*3,0]) batterycover();
 translate([0,yspread*4,0]) batterycover();
 translate([0,yspread*5,0]) batterycover();
 translate([0,yspread*6,0]) batterycover();
