@@ -102,7 +102,7 @@ self-explanatory.
 ### kasvikyltit.scad
 
 Bunch of veggie labels for your garden. You can modify the names at
-the start of the file. Need to change number of labels if adding or
+the start of the file. You need to change number of labels if adding or
 removing. You can have several labels printed in one go, but you must
 put names in order of longest text to shortest text, I was too lazy to
 fix the related bug. It will do 2 labels for each name so you can put
@@ -110,6 +110,9 @@ a label at both ends of the row.
 
 I have printed these with light colour at bottom and top, and black in
 the middle layers to make text more visible.
+
+This uses recursion as I could not easily figure out how to do loops
+which change variables.
 
 ![Veggie Labels in openscad](kasvikyltit-openscad.png)
 
@@ -123,6 +126,9 @@ size of your printer print area, as it will arrange labels automatically.
 
 I have printed these with black at the bottom and lighter color on top
 to make text more visible.
+
+This uses recursion as I could not easily figure out how to do loops
+which change variables.
 
 ![Image of the name label](nimikyltit.jpg)
 ![Name labels in openscad](nimikyltit-openscad.png)
@@ -250,7 +256,9 @@ supports.
 
 ### batterybarcover.scad
 
-Covers li-ion battery pack terminal covers connected with bars. Small openings can be snapped off to provide holes for BMS cables. 
+Covers li-ion between battery connector bars. Small openings can be
+snapped off to provide holes for BMS cables. Supports two types of
+battery bars.
 
 ![3 battery bar covers in openscad](batterybarcover.png)
 ![Photo of battery bar covers installed in a battery pack](batterybarcoverphoto.jpg)
@@ -268,3 +276,18 @@ Covers li-ion battery pack terminals. Small openings can be snapped off to provi
 A plastic part of my bed controller broke, here is a new one. Unfortunately I do not know the bed brand, but it seems to be from Germany.
 
 ![Bed spare part openscad](bedcontrollerpart.png)
+
+### doublebedholder.scad
+
+Keeps two normal beds together for double occupancy.
+
+![Double bed holder in openscad](doublebedholder.png)
+
+### rakki-kiinnike.scad
+
+Spare part for rack-mount power strip. Modded original from Tero Kivinen.
+
+![rakki-kiinnike in openscad](rakki-kiinnike.png)
+![This is the part this will replace. Original in picture.](rakki-kiinnike.jpg)
+
+
