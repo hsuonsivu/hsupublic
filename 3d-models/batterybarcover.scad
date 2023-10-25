@@ -2,33 +2,39 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
+// version 1, 90.5 long, 20.2 wide
+// version 2, 95.5 long, 21.2 wide, 2mm higher mid part
+barversion=2;
+howmany=4;
+
 wall=2.5;
 
-versiontext="V1.4";
+versiontext=(barversion==1) ? "V1.7 S" : "V1.7 L";
+	     
 font="Liberation Sans:style=Bold";
 textdepth=wall/4;
 textheight=10;
   
-length=90.5;
-width=20.2;
+length=(barversion == 1) ? 90.5 : 95.5;
+width=(barversion == 1) ? 20.2 : 21.7;
 height=21;
 holediameter=6;
 holestart=5+holediameter/2;
 holeend=15-holediameter/2;
 
-cablecut=4;
-cablecutwidth=5;
+cablecut=5;
+cablecutwidth=6;
 cablecutgap=1;
 cableposition=1;
 snapwidth=wall/5;
 
-platethickness=2;
+platethickness=2.5;
 
 lockcut=length/2;
 locklength=15;
 lockcutsize=1;
 locknotchdiameter=wall+0.75;
-locknotchheight=13;
+locknotchheight=(barversion == 1) ? 13 : 11;
 
 xspread=length+wall+wall+1;
 yspread=width+wall+wall+1;
@@ -101,25 +107,25 @@ module batterycover() {
 	}
 
 	hull() {
-	  translate([wall+holestart,wall+width/2,0.5]) cylinder(h=wall+1,d=holediameter);
-	  translate([wall+holeend,wall+width/2,0.5]) cylinder(h=wall+1,d=holediameter);
+	  translate([wall+holestart,wall+width/2,wall/2]) cylinder(h=wall+1,d=holediameter);
+	  translate([wall+holeend,wall+width/2,wall/2]) cylinder(h=wall+1,d=holediameter);
 	}
 	hull() {
-	  translate([wall+length-holestart,wall+width/2,0.5]) cylinder(h=wall+1,d=holediameter);
-	  translate([wall+length-holeend,wall+width/2,0.5]) cylinder(h=wall+1,d=holediameter);
+	  translate([wall+length-holestart,wall+width/2,wall/2]) cylinder(h=wall+1,d=holediameter);
+	  translate([wall+length-holeend,wall+width/2,wall/2]) cylinder(h=wall+1,d=holediameter);
 	}
 
 	cablecutsnap(cablecut);
 	cablecutsnap(cablecut+cablecutwidth+cablecutgap);
 	cablecutsnap(cablecut+2*(cablecutwidth+cablecutgap));
 	cablecutsnap(cablecut+3*(cablecutwidth+cablecutgap));
-	cablecutsnap(cablecut+4*(cablecutwidth+cablecutgap));
+	//	cablecutsnap(cablecut+4*(cablecutwidth+cablecutgap));
     
 	cablecutsnap(length-cablecut-cablecutwidth);
 	cablecutsnap(length-cablecut-cablecutwidth-cablecutwidth-cablecutgap);
 	cablecutsnap(length-cablecut-cablecutwidth-2*(cablecutwidth+cablecutgap));
 	cablecutsnap(length-cablecut-cablecutwidth-3*(cablecutwidth+cablecutgap));
-	cablecutsnap(length-cablecut-cablecutwidth-4*(cablecutwidth+cablecutgap));
+	//	cablecutsnap(length-cablecut-cablecutwidth-4*(cablecutwidth+cablecutgap));
     
 	translate([wall+lockcut-locklength/2-lockcutsize,-1,wall]) cube([lockcutsize,wall+width+wall+1,height+1]);
 	translate([wall+lockcut+locklength/2,-1,wall]) cube([lockcutsize,wall+width+wall+1,height+1]);
@@ -142,24 +148,20 @@ module batterycover() {
 }
 
 batterycover();
-#if (0) {
-translate([0,yspread,0]) batterycover();
-translate([0,yspread*2,0]) batterycover();
-  translate([0,yspread*3,0]) batterycover();
-translate([0,yspread*4,0]) batterycover();
-translate([0,yspread*5,0]) batterycover();
-translate([0,yspread*6,0]) batterycover();
-translate([0,yspread*7,0]) batterycover();
- }
+if (howmany > 1) translate([0,yspread,0]) batterycover();
+if (howmany > 2) translate([0,yspread*2,0]) batterycover();
+if (howmany > 3) translate([0,yspread*3,0]) batterycover();
+if (howmany > 4) translate([0,yspread*4,0]) batterycover();
+if (howmany > 5) translate([0,yspread*5,0]) batterycover();
+if (howmany > 6) translate([0,yspread*6,0]) batterycover();
+if (howmany > 7) translate([0,yspread*7,0]) batterycover();
+if (howmany > 8) translate([xspread,0,0]) batterycover();
+if (howmany > 9) translate([xspread,yspread,0]) batterycover();
+if (howmany > 10) translate([xspread,yspread*2,0]) batterycover();
+if (howmany > 11) translate([xspread,yspread*3,0]) batterycover();
+if (howmany > 12) translate([xspread,yspread*4,0]) batterycover();
+if (howmany > 13) translate([xspread,yspread*5,0]) batterycover();
+if (howmany > 14) translate([xspread,yspread*6,0]) batterycover();
+if (howmany > 15) translate([xspread,yspread*7,0]) batterycover();
 
-if (0) {
-  translate([xspread,0,0]) batterycover();
-  translate([xspread,yspread,0]) batterycover();
-  translate([xspread,yspread*2,0]) batterycover();
-  translate([xspread,yspread*3,0]) batterycover();
-  translate([xspread,yspread*4,0]) batterycover();
-  translate([xspread,yspread*5,0]) batterycover();
-  translate([xspread,yspread*6,0]) batterycover();
-  translate([xspread,yspread*7,0]) batterycover();
- }
 
