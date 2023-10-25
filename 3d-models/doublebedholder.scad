@@ -1,6 +1,12 @@
+// Copyright 2023 Heikki Suonsivu
+// Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
+// For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
+// Only rectangular or circular bed feet supported. Configure foot
+// diameter and distance between feet.
 
-// Only rectangular bed feed supported.
+bedlegcorner=55;
+distancebetween=180-55;
 
 versiontext="1.0";
 textfont="DejaVu Sans:style=Bold";
@@ -8,8 +14,6 @@ textdepth=0.7;
 textheight=6;
 textvspacing=textheight*1.5;
 
-bedlegcorner=55;
-distancebetween=180-55;
 wall=15;
 straight=10;
 narrowing=40;
