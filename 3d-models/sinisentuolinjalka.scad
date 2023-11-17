@@ -30,20 +30,25 @@ angle=90-83.7;
 // "ball"
 equatorheight=4.23;
 
-difference() {
-  union()
-  {
-    cylinder(h=10+0.01,d=insidediameter);
-    translate([0,0,plugheight]) cylinder(h=equatorheight,d=outsidediameter);
-    translate([0,0,plugheight+equatorheight]) difference() {
-      sphere(d=outsidediameter);
-      translate([0,0,-outsidediameter-0.01]) cylinder(h=outsidediameter,d=outsidediameter);
+module jalka()
+{difference() {
+    union()
+    {
+      cylinder(h=10+0.01,d=insidediameter);
+      translate([0,0,plugheight]) cylinder(h=equatorheight,d=outsidediameter);
+      translate([0,0,plugheight+equatorheight]) difference() {
+	sphere(d=outsidediameter);
+	translate([0,0,-outsidediameter-0.01]) cylinder(h=outsidediameter,d=outsidediameter);
+      }
+      translate([0,0,plugheight+equatorheight]) rotate(a=[angle,0,0]) {
+	cylinder(h=bottomheight+0.001,d1=bottomnarrowestdiameter,d2=bottomwidestdiameter);
+	translate([0,0,bottomheight]) cylinder(h=bottomcylinderheight,d=bottomwidestdiameter);
+	translate([0,0,bottomheight+bottomcylinderheight-0.001]) cylinder(h=bottomnarrowheight+0.001,d1=bottomwidestdiameter,d2=bottomnarrowdiameter);
+      }
     }
-    translate([0,0,plugheight+equatorheight]) rotate(a=[angle,0,0]) {
-      cylinder(h=bottomheight+0.001,d1=bottomnarrowestdiameter,d2=bottomwidestdiameter);
-      translate([0,0,bottomheight]) cylinder(h=bottomcylinderheight,d=bottomwidestdiameter);
-      translate([0,0,bottomheight+bottomcylinderheight-0.001]) cylinder(h=bottomnarrowheight+0.001,d1=bottomwidestdiameter,d2=bottomnarrowdiameter);
-    }
+    translate([0,0,-0.001]) cylinder(h=totalheight*2,d=throughholediameter);
   }
-  translate([0,0,-0.001]) cylinder(h=totalheight*2,d=throughholediameter);
 }
+
+rotate([180-angle,0,0]) jalka();
+
