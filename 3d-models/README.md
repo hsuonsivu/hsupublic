@@ -102,11 +102,11 @@ self-explanatory.
 ### kasvikyltit.scad
 
 Bunch of veggie labels for your garden. You can modify the names at
-the start of the file. You need to change number of labels if adding or
-removing. You can have several labels printed in one go, but you must
-put names in order of longest text to shortest text, I was too lazy to
-fix the related bug. It will do 2 labels for each name so you can put
-a label at both ends of the row.
+the start of the file. End the list of labels with "". You can have
+several labels printed in one go, but you must put names in order of
+longest text to shortest text, I was too lazy to fix the related
+bug. It will do 2 labels for each name so you can put a label at both
+ends of the row.
 
 I have printed these with light colour at bottom and top, and black in
 the middle layers to make text more visible.
@@ -114,13 +114,18 @@ the middle layers to make text more visible.
 This uses recursion as I could not easily figure out how to do loops
 which change variables.
 
+We had problems with birds picking up yellow labels and throwing them
+around. I have no idea what they were thinking, but yellow might not
+be the right color choice. Next summer we will try red and make labels
+larger.
+
 ![Veggie Labels in openscad](kasvikyltit-openscad.png)
 
 ### nimikyltit.scad
 
-Bunch of name labels labels. These we designed to be put on top of
+Bunch of name labels. These we designed to be put on top of
 rack for towels. You can modify the names at the start of the
-file. Need to change number of labels if adding or removing. You can
+file. End the list of names with "". You can
 have several labels printed in one go. You also need to configure the
 size of your printer print area, as it will arrange labels automatically.
 
@@ -289,5 +294,19 @@ Spare part for rack-mount power strip. Modded original from Tero Kivinen.
 
 ![rakki-kiinnike in openscad](rakki-kiinnike.png)
 ![This is the part this will replace. Original in picture.](rakki-kiinnike.jpg)
+
+
+### tunturi460wheel.scad
+
+Spare part for Tunturi E460 excercise bike. The original back wheels
+intended for easier moving the bike around disintegrate with
+time. This is a replacement. I printed these with TPU and 100%
+fill. Maybe overkill, less fill might work. When printing with TPU,
+you likely need supports option, otherwise TPU may not stick to the
+bed. PLA prints without this option, and the part looks more like
+original, but that is not really visible as long as you install them
+with support side towards the center.
+
+![Part installed and the disintegrated original.](tunturi460wheel.jpg)
 
 
