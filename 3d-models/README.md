@@ -325,3 +325,17 @@ glasses, improved flexibility.
 
 ![Party mask in scad.](mask.png)
 
+### roboteeth.scad
+### Makefile.roboteeth
+
+Beware of aggressive robots! This is a set of teeth and face for UR
+UR5e cobot with Robotiq Adaptive Gripper. Needs screws to attach
+head. The teeth clip into gribber. Tune down the gripping force to
+avoid to painfil bites.
+
+Use Makefile.roboteeth to generate all needed parts with openscad.
+
+![Robot with bite](roboteeth.png)
+
+
+

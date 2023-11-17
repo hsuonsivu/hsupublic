@@ -1,0 +1,17 @@
+all: robocovers.stl roboteeth.stl robohead.stl uppercover.stl lowercover.stl
+
+robocovers.stl: roboteeth.scad
+	openscad -D print=3 -o robocovers.stl roboteeth.scad
+
+uppercover.stl: roboteeth.scad
+	openscad -D print=4 -o uppercover.stl roboteeth.scad
+
+lowercover.stl: roboteeth.scad
+	openscad -D print=5 -o lowercover.stl roboteeth.scad
+
+roboteeth.stl: roboteeth.scad
+	openscad -D print=1 -o roboteeth.stl roboteeth.scad
+
+robohead.stl: roboteeth.scad
+	openscad -D print=2 -o robohead.stl roboteeth.scad
+
