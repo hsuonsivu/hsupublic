@@ -2,9 +2,8 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
-tekstit=["Talviporkkana", "Vahapapu", "Herne"];
+tekstit=["Talviporkkana", "Vahapapu", "Herne", ""];
 // "Parsakaali","Rosmariini","Pinaatti","Retiisi"
-labels=3;
 
 fontsize=10;
 fontwidthmultiplier=0.72;
@@ -98,7 +97,7 @@ module r(tekstit,x,i) {
   
   translate([x-offsetleft+basewidth+between,baselength+fontsize+labelheightextra+basewidth+fontsize+labelheightextra+thickness/2+between-i*(fontsize+labelheightextra+between),thickness]) rotate([180,0,0]) kasvimerkki(tekstit[i],width);
 
-  if (i < labels - 1) {
+  if (tekstit[i+1] != "") {
     xoffset = (width > width/2-basewidth/2+basewidth) ? width : width/2-basewidth/2+basewidth;
     r(tekstit,x-offsetleft+xoffset+1,i+1);
   }
