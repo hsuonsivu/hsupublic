@@ -316,3 +316,12 @@ but close enough. For easier printing, is has support option,
 otherwise it will need supports enabled in the slicer.
 
 ![Button installed to the overcoat.](isonappi.jpg)
+
+### mask.scad
+
+Party mask. Not  very flexible and fragile.  Copied idea
+from someone else,  but implemented this myself.  Todo: attachments to
+glasses, improved flexibility.
+
+![Party mask in scad.](mask.png)
+
