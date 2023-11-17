@@ -11,7 +11,7 @@ wall=2.5;
 
 versiontext=(barversion==1) ? "V1.7 S" : "V1.7 L";
 	     
-font="Liberation Sans:style=Bold";
+textfont="Liberation Sans:style=Bold";
 textdepth=wall/4;
 textheight=10;
   
@@ -143,7 +143,7 @@ module batterycover() {
 	translate([length/2-locklength/2-cablecutwidth,wall*2.5,wall]) roundedbox(locklength+2*cablecutwidth+2*wall,width-3*wall,wall+locknotchheight-platethickness);
       }
     }
-    translate([wall+length/2,wall+width/2,textdepth-0.01]) rotate([0,180,0]) linear_extrude(height=textdepth) text(text = str(versiontext), font = font, size=textheight, valign="center");
+    translate([wall+length/2,wall+width/2,textdepth-0.01]) rotate([0,180,0]) linear_extrude(height=textdepth) text(text = str(versiontext), font = textfont, size=textheight, valign="center");
   }
 }
 
