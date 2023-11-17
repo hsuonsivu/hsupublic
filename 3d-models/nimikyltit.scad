@@ -29,9 +29,8 @@ tekstit=["Juha",
 	 "Minna",
 	 "Marja",
 	 "Tiina",
-	 "Riitta"];
-// 
-labels=32;
+	 "Riitta",
+	 ""]; // End of list, do not remove it!
 
 bedsize=220;
 bedx=bedsize;
@@ -135,7 +134,7 @@ module r(tekstit,x,y,i) {
   echo("x ", newx, " y ", newy);
   translate([newx,newy,0]) nimikyltti(tekstit[i],width);
 
-  if (i < labels - 1) {
+  if (tekstit[i+1] != "") {
     xoffset = width;
     r(tekstit,newx+xoffset+1,newy,i+1);
   }
