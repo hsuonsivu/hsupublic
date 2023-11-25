@@ -132,6 +132,9 @@ size of your printer print area, as it will arrange labels automatically.
 I have printed these with black at the bottom and lighter color on top
 to make text more visible.
 
+The design expects a small gap between wall and rack. We installed
+washers behind the rack to add a bit of gap.
+
 This uses recursion as I could not easily figure out how to do loops
 which change variables.
 
@@ -210,8 +213,8 @@ adjust.
 
 ### termostaatin-piuhapidike.scad
 
-I needed a holder for smart zigbee thermostat for programming in
-batch, so a small holder was needed. Not really useful for anything
+I needed a holder for smart zigbee thermostat cables for programming
+in batch, so a small holder was needed. Not really useful for anything
 else.
 
 ### vasara.scad
@@ -284,7 +287,8 @@ A plastic part of my bed controller broke, here is a new one. Unfortunately I do
 
 ### doublebedholder.scad
 
-Keeps two normal beds together for double occupancy.
+Keeps two normal beds together for double occupancy. Limited
+tunability for different beds, distance between feet and feet diameter/square edge.
 
 ![Double bed holder in openscad](doublebedholder.png)
 
@@ -319,19 +323,19 @@ otherwise it will need supports enabled in the slicer.
 
 ### mask.scad
 
-Party mask. Not  very flexible and fragile.  Copied idea
-from someone else,  but implemented this myself.  Todo: attachments to
-glasses, improved flexibility.
+Party mask. Fragile and not very flexible.  Copied idea from someone
+else, but implemented this myself.  Todo: attachments to glasses,
+improved flexibility.
 
 ![Party mask in scad.](mask.png)
 
 ### roboteeth.scad
 ### Makefile.roboteeth
 
-Beware of aggressive robots! This is a set of teeth and face for UR
-UR5e cobot with Robotiq Adaptive Gripper. Needs screws to attach
-head. The teeth clip into gribber. Tune down the gripping force to
-avoid to painfil bites.
+During halloween you must beware of aggressive robots! This is a set
+of teeth and face for UR UR5e cobot with Robotiq Adaptive
+Gripper. Needs screws to attach head. The teeth clip into
+gribber. Tune down the gripping force to avoid too painful bites.
 
 Use Makefile.roboteeth to generate all needed parts with openscad.
 
