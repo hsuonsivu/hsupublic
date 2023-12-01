@@ -342,5 +342,13 @@ Use Makefile.roboteeth to generate all needed parts with openscad.
 
 ![Robot with bite](roboteeth.png)
 
+### powerknob.scad
+
+Our office was missing a knob in electrical cabinet. This is a
+spare. More modern style though, but works.
+
+![Power knob in scad.](powerknob.png)
+![Power knob installed.](powerknob.jpg)
+
 
 
