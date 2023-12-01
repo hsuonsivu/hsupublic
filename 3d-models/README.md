@@ -283,7 +283,8 @@ Covers li-ion battery pack terminals. Small openings can be snapped off to provi
 
 A plastic part of my bed controller broke, here is a new one. Unfortunately I do not know the bed brand, but it seems to be from Germany.
 
-![Bed spare part openscad](bedcontrollerpart.png)
+![Bed controller spare part openscad](bedcontrollerpart.png)
+![Bed controller spare part in use](bedcontrollerpart.jpg)
 
 ### doublebedholder.scad
 
