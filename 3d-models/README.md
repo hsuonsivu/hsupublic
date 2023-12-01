@@ -281,7 +281,8 @@ Covers li-ion battery pack terminals. Small openings can be snapped off to provi
 
 ### bedcontrollerpart.scad
 
-A plastic part of my bed controller broke, here is a new one. Unfortunately I do not know the bed brand, but it seems to be from Germany.
+A plastic part of my bed controller broke, here is a new
+one. The bed brand is Tempur, but it seems that the mattress is the only thing made by Tempur, the motor bed seems to be from Germany.
 
 ![Bed controller spare part openscad](bedcontrollerpart.png)
 ![Bed controller spare part in use](bedcontrollerpart.jpg)
@@ -292,6 +293,7 @@ Keeps two normal beds together for double occupancy. Limited
 tunability for different beds, distance between feet and feet diameter/square edge.
 
 ![Double bed holder in openscad](doublebedholder.png)
+![Double bed holder in use](doublebedholder.jpg)
 
 ### rakki-kiinnike.scad
 
