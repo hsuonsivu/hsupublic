@@ -236,7 +236,7 @@ steady intervals. Or just keep pouring them while pulling
 quickly. After planting a row, turn the tool 90 degrees and cover the
 dig. Some of the onions turned out to be too large for 25mm tobe, so a
 larger version would be needed for larger tubes. However, it worked
-with other seeds fine.
+with other seeds fine. No supports are needed to print.
 
 ![Model in openscad, normal](sipulinistutin.png)
 ![Plant seeder installed to a 25mm tube](sipulinistutin.jpg)
@@ -249,7 +249,7 @@ multiple parts which attach to each other, so you need to configure
 your printer width. For small printers, you can print the parts in
 vertical configuration, but they are more difficult to attach to each
 other. For heavy items, you might want to up infill % from
-defaults. You can do a small test print to test attachments.
+defaults. You can do a small test print to test attachments. No supports are needed to print.
 
 ![Model in openscad, normal](kynnyskulma-normal-openscad.png)
 ![Model in openscad, vertical](kynnyskulma-vertical-openscad.png)
@@ -266,14 +266,16 @@ supports.
 
 Covers li-ion between battery connector bars. Small openings can be
 snapped off to provide holes for BMS cables. Supports two types of
-battery bars.
+battery bars. No supports are needed to print.
 
 ![3 battery bar covers in openscad](batterybarcover.png)
 ![Photo of battery bar covers installed in a battery pack](batterybarcoverphoto.jpg)
 
 ### batteryterminalcover.scad
 
-Covers li-ion battery pack terminals. Small openings can be snapped off to provide holes for BMS cables. Use a small cable binder to lock.
+Covers li-ion battery pack terminals. Small openings can be snapped
+off to provide holes for BMS cables. Use a small cable binder to
+lock. No supports are needed to print.
 
 ![battery terminal cover in openscad](batteryterminalcover.png)
 ![Photo of battery terminal cover installed in a battery pack](batteryterminalcover.jpg)
@@ -281,8 +283,10 @@ Covers li-ion battery pack terminals. Small openings can be snapped off to provi
 
 ### bedcontrollerpart.scad
 
-A plastic part of my bed controller broke, here is a new
-one. The bed brand is Tempur, but it seems that the mattress is the only thing made by Tempur, the motor bed seems to be from Germany.
+A plastic part of my bed controller broke, here is a new one. The bed
+brand is Tempur, but it seems that the mattress is the only thing made
+by Tempur, the motor bed seems to be from Germany. No supports are
+needed to print.
 
 ![Bed controller spare part openscad](bedcontrollerpart.png)
 ![Bed controller spare part in use](bedcontrollerpart.jpg)
@@ -290,14 +294,15 @@ one. The bed brand is Tempur, but it seems that the mattress is the only thing m
 ### doublebedholder.scad
 
 Keeps two normal beds together for double occupancy. Limited
-tunability for different beds, distance between feet and feet diameter/square edge.
+tunability for different beds, distance between feet and feet
+diameter/square edge. No supports needed to print.
 
 ![Double bed holder in openscad](doublebedholder.png)
 ![Double bed holder in use](doublebedholder.jpg)
 
 ### rakki-kiinnike.scad
 
-Spare part for rack-mount power strip. Modded original from Tero Kivinen.
+Spare part for rack-mount power strip. Modded original from Tero Kivinen. Can be printed with no supports, but likely needs a brim.
 
 ![rakki-kiinnike in openscad](rakki-kiinnike.png)
 ![This is the part this will replace. Original in picture.](rakki-kiinnike.jpg)
@@ -340,17 +345,32 @@ of teeth and face for UR UR5e cobot with Robotiq Adaptive
 Gripper. Needs screws to attach head. The teeth clip into
 gripper. Tune down the gripping force to avoid too painful bites.
 
-Use Makefile.roboteeth to generate all needed parts with openscad.
+Use Makefile.roboteeth to generate all needed parts with openscad. No
+supports needed.
 
 ![Robot with bite](roboteeth.png)
 
 ### powerknob.scad
 
 Our office was missing a knob in electrical cabinet. This is a
-spare. More modern style though, but works.
+spare. More modern style though, but works. No supports needed.
 
 ![Power knob in scad.](powerknob.png)
 ![Power knob installed.](powerknob.jpg)
 
+### blanketcontrollerholder.scad
 
+I have an electric heated blanket for cold winter nights. This is a
+holder for the controller. Heated blanket is [Nedis from
+Tokmanni](https://www.tokmanni.fi/lampopeitto-nedis-180-x-200-cm-5412810334773). Only
+works if the bed is next to a wall. Likely fits with other brands of
+blankets as well. The model is in 4 parts to allow printing in a small
+printer such as ankermake 5C. For some printers with low accuracy, you
+might need to increase tolerance to make attachments work. For me,
+Ankermake worked, but Anycubic print needed filing. No supports needed.
+
+![blanketcontrollerholder in scad.](blanketcontrollerholderwhole.png)
+![blanketcontrollerholder in scad (print=2).](blanketcontrollerholder2.png)
+![blanketcontrollerholder in scad (print=3).](blanketcontrollerholder3.png)
+![blanketcontrollerholder in use.](blanketcontrollerholder.jpg)
 
