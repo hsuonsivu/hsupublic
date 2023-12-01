@@ -111,7 +111,11 @@ module piece() {
   translate([20-2, 32.1-10+5, 4]) cone();
 }
 
-ramp();
-piece();
-translate([-43.5/2,0,-supportplatez]) cube([43.5,supportplatey,supportplatez+0.01]);
-translate([-43.5/2,supportplatey-0.01,-supportplatez]) triangle(43.5,supportplatey,supportplatez+0.01,10);
+module rakkikiinnike() {
+  ramp();
+  piece();
+  translate([-43.5/2,0,-supportplatez]) cube([43.5,supportplatey,supportplatez+0.01]);
+  translate([-43.5/2,supportplatey-0.01,-supportplatez]) triangle(43.5,supportplatey,supportplatez+0.01,10);
+}
+
+rotate([90,0,0]) rakkikiinnike();
