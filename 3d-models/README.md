@@ -302,7 +302,7 @@ diameter/square edge. No supports needed to print.
 
 ### rakki-kiinnike.scad
 
-Spare part for rack-mount power strip. Modded original from Tero Kivinen. Can be printed with no supports, but likely needs a brim.
+Spare part for rack-mount power strip. Modded original from Tero Kivinen. Can be printed with no supports, but likely needs a brim. 
 
 ![rakki-kiinnike in openscad](rakki-kiinnike.png)
 ![This is the part this will replace. Original in picture.](rakki-kiinnike.jpg)
@@ -310,7 +310,7 @@ Spare part for rack-mount power strip. Modded original from Tero Kivinen. Can be
 
 ### tunturi460wheel.scad
 
-Spare part for Tunturi E460 excercise bike. The original back wheels
+Spare part for Tunturi E460 exercise bike. The original back wheels
 intended for easier moving the bike around disintegrate with
 time. This is a replacement. I printed these with TPU and 100%
 fill. Maybe overkill, less fill might work. When printing with TPU,
@@ -373,4 +373,35 @@ Ankermake worked, but Anycubic print needed filing. No supports needed.
 ![blanketcontrollerholder in scad (print=2).](blanketcontrollerholder2.png)
 ![blanketcontrollerholder in scad (print=3).](blanketcontrollerholder3.png)
 ![blanketcontrollerholder in use.](blanketcontrollerholder.jpg)
+
+### tunturie460holder.scad
+
+### Makefile.tunturie460holder
+
+Tablet stand for Tunturi E460 exercise bike to allow browsing the
+Internet while exercising. Tablet dimensions taken from an old
+iPad. Needs 5 20mm 3.5mm screws (countersink). Use
+Makefile.tunturie460holder to generate all needed parts with
+openscad. One of the parts is for testing screw if you want to change
+screw type, no other use. Top clip should be printed with flexible
+material, such as TPU.
+
+If "strong" option is enabled, the model will trick slicer to generate
+100% fill around the screwholes, making them stronger. This is useful
+if you slice with lightning fill. What is does is generate very thin
+concentric voids around the screw holes. Notice that "strong" option
+will make the model very slow to process in openscad, and you need to
+check that your print settings have "Hole Horizontal Expasion" set to
+0.0, otherwise the slicer will expand the voids and reverse the effect
+by making the print weaker.
+
+No supports are needed.
+
+
+![tunturie460holder in scad.](tunturie460holder.png)
+![tunturie460holder installed for use.](tunturie460holder1.jpg)
+![tunturie460holder installed for use from back.](tunturie460holder2.jpg)
+![tunturie460holder screw sample.](tunturie460holder-screw.jpg)
+
+
 
