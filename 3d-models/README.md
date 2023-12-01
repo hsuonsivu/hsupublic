@@ -200,7 +200,7 @@ is.
 
 ### suklaarasiankansi.scad
 
-You can turn your dead 5.25 inch hard disk to a stylish chocolate
+You can turn your dead 5.25 inch hard disk into a stylish chocolate
 box. This is for Maxtor 8 platter drive. Unfortunately, this model
 does not work with any other disk model, so you need to find a dead
 Maxtor IT-1140 drive. The screws are positioned so that the existing
@@ -335,7 +335,7 @@ improved flexibility.
 During halloween you must beware of aggressive robots! This is a set
 of teeth and face for UR UR5e cobot with Robotiq Adaptive
 Gripper. Needs screws to attach head. The teeth clip into
-gribber. Tune down the gripping force to avoid too painful bites.
+gripper. Tune down the gripping force to avoid too painful bites.
 
 Use Makefile.roboteeth to generate all needed parts with openscad.
 
