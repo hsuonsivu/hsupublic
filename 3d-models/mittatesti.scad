@@ -2,12 +2,14 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
+versiontext="V 1.1";
+
 // This can only adjust all dimensions
-maxcubes=20;
+maxcubes=10;
 // Make holes to speed up printing and save material
 cutaways=1;
 // How deep text is cut
-textdepth=0.5;
+textdepth=0.8;
 // Add vertical support every vdistance cubes
 vdistance=8;
 
@@ -72,6 +74,8 @@ difference() {
     }
   }
 
+#  translate([10.01-textdepth,11,1.5]) rotate([90,0,90]) linear_extrude(height=textdepth) text(versiontext, size=7);
+  
   translate([textdepth-0.01,9,1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([textbox,0,0]) text("=Y", size=7);
   for(i=[10:10:zmax-10]) {
     translate([textdepth-0.01,5,i+1]) rotate([90,0,270]) linear_extrude(height=textdepth) resize([i<90?textboxnarrow:textbox,textbox,textbox]) text(str(i/10+1), size=textbox,halign="center");
