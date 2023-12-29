@@ -2,8 +2,8 @@ print=0;
 light=1;
 strong=1; // strenghten screwholes. Slow.
 
-versiontext="v1.0";
-textsize=7;
+versiontext="v1.2";
+textsize=8;
 textdepth=2;
 
 topwidth=215;
@@ -26,6 +26,7 @@ toplidthickness=5;
 toplidnotch=5;
 cornerd=2;
 
+displayangle=9;
 displaywidth=245;
 displayheight=187.5;
 displaythickness=10;
@@ -57,7 +58,7 @@ clipfronth=10;
 clipbackh=(displaybottom+displaybase+displayheight) - (lowerholeh+upperholeh)-6;
 clipwidth=40;
 clipwall=5;
-clipdepth=displaythickness+displayholderthickness-0.5;
+clipdepth=displaythickness+displayholderthickness-1.5;
 clipplugd=10;
 cliptolerance=0.3;
 
@@ -78,10 +79,20 @@ module deeptext(teksti, height, depth, ha) {
   }
 }
 
+countersinkheightmultiplier=0.63;
+countersinkdiametermultiplier=2.4;
+
+// If display is angled, move screwholes inward accordingly.
+y1=cos(displayangle) * topscrewfronty;
+z1=sin(displayangle) * topscrewfronty;
+y2=y1-z1/2;
+zd=(y2-(topscrewholed*countersinkdiametermultiplier/2))*sin(displayangle);
+
+screwyshift=y2 - topscrewfronty;
+screwzshift=zd;      
+
 module ruuvireika(height,diameter,countersink) {
   $fn=90;
-  countersinkheightmultiplier=0.63;
-  countersinkdiametermultiplier=2.4;
   cylinder(h=height,d=diameter-0.1); // Slightly smaller hole
 
   if (strong) {
@@ -166,8 +177,8 @@ module tunturiholder() {
 
     // Screwtowers
     for (x=[-basewidth*0.8/2,0,basewidth*0.8/2]) {
-      translate([x,topscrewfronty,displaybottom+displaybase-topscrewlength]) cylinder(h=topscrewlength,d=topscrewholed*2.5,$fn=30);
-      translate([x,topscrewfronty,displaybottom+displaybase-topscrewlength-2]) cylinder(h=2+0.01,d1=topscrewholed*1,d2=topscrewholed*2.5,$fn=30);
+      translate([x,topscrewfronty+screwyshift,displaybottom+displaybase-topscrewlength+screwzshift]) cylinder(h=topscrewlength,d=topscrewholed*2.5,$fn=30);
+      translate([x,topscrewfronty+screwyshift,displaybottom+displaybase-topscrewlength+screwzshift-2]) cylinder(h=2+0.01,d1=topscrewholed*1,d2=topscrewholed*2.5,$fn=30);
     }
 
     for (x=[-displaywidth/2+3,displaywidth/2-3]) {
@@ -190,19 +201,36 @@ module tunturiholder() {
       translate([-basewidth/2-edgewall,-depth+edgewall,-basebelow]) roundedbox(edgewall,depth+edgedepth,displaybottom+basebelow+cornerd,cornerd);
       translate([-basewidth/2-edgewall+cornerd/2-topscrewholed*3.5,-depth+edgewall+cornerd/2,displaybottom-sidescrewsupport]) triangle(topscrewholed*3.5,depth+edgedepth-cornerd,sidescrewsupport+0.01,3);
       // left side
-      translate([basewidth/2,-depth+edgewall,-basebelow]) roundedbox(edgewall,depth+edgedepth,displaybottom+basebelow+cornerd,1);
+      translate([basewidth/2,-depth+edgewall,-basebelow]) roundedbox(edgewall,depth+edgedepth,displaybottom+basebelow+cornerd,cornerd);
       translate([basewidth/2+edgewall-cornerd/2,-depth+edgewall+cornerd/2,displaybottom-sidescrewsupport]) triangle(topscrewholed*3.5,depth+edgedepth-cornerd,sidescrewsupport+0.01,1);
       // top
-      translate([-displaywidth/2,0,displaybottom]) roundedbox(displaywidth,displaythickness,displaybase+displayheight,cornerd);
       translate([-displaywidth/2-edgewall,0,displaybottom]) roundedbox(displaywidth+2*edgewall,displaythickness+displayholderthickness+edgewall,displaybase,cornerd);
-     translate([-displaywidth/2-edgewall,-depth+edgewall,displaybottom]) roundedbox(4*edgewall,displaythickness+displayholderthickness+depth,displaybase,cornerd);
-     translate([displaywidth/2-edgewall-2*edgewall,-depth+edgewall,displaybottom]) roundedbox(4*edgewall,displaythickness+displayholderthickness+depth,displaybase,cornerd);
-     translate([-displaywidth/2+2*edgewall,-depth+edgewall+cornerd/2+0.01,displaybottom+edgewall-0.01]) triangle(edgewall,depth,displayheight/2,11);
-     translate([displaywidth/2-edgewall-2*edgewall,-depth+edgewall+cornerd/2+0.01,displaybottom+edgewall-0.01]) triangle(edgewall,depth,displayheight/2,11);
+      
+      translate([-displaywidth/2,0,displaybottom]) rotate([displayangle,0,0]) {
+	roundedbox(displaywidth,displaythickness,displaybase+displayheight,cornerd);
+
+	translate([-edgewall,0,0]) roundedbox(displaywidth+2*edgewall,displaythickness+displayholderthickness+edgewall,displaybase,cornerd);
+      
+	translate([-edgewall,displaythickness+displayholderthickness,0]) roundedbox(displaywidth+2*edgewall,edgewall+1,displaybase+displayholderh,cornerd);
+      translate([-edgewall,0,0]) roundedbox(edgewall,displaythickness+displayholderthickness+edgewall,displaybase+displayholderh,cornerd);      
+      translate([displaywidth,0,0]) roundedbox(edgewall,displaythickness+displayholderthickness+edgewall,displaybase+displayholderh,cornerd);
+      translate([-edgewall,0,0]) roundedbox(displaywidth+2*edgewall,displaythickness,displaybase+displayholderh,cornerd);
+      }
+
+      hull() {
+	translate([-displaywidth/2+2*edgewall,-depth+edgewall+cornerd/2+0.01,displaybottom+edgewall-0.01]) roundedbox(edgewall,1,1,cornerd);
+	translate([-displaywidth/2+2*edgewall,edgewall+cornerd/2+0.01,displaybottom+edgewall-0.01]) roundedbox(edgewall,1,1,cornerd);
+	translate([-displaywidth/2+2*edgewall,edgewall+cornerd/2+0.01,displaybottom+edgewall-0.01]) rotate([displayangle,0,0]) translate([0,0,displayheight/2]) roundedbox(edgewall,1,1,cornerd);
+      }
+      hull() {
+	translate([displaywidth/2-3*edgewall,-depth+edgewall+cornerd/2+0.01,displaybottom+edgewall-0.01]) roundedbox(edgewall,1,1,cornerd);
+	translate([displaywidth/2-3*edgewall,edgewall+cornerd/2+0.01,displaybottom+edgewall-0.01]) roundedbox(edgewall,1,1,cornerd);
+	translate([displaywidth/2-3*edgewall,edgewall+cornerd/2+0.01,displaybottom+edgewall-0.01]) rotate([displayangle,0,0]) translate([0,0,displayheight/2]) roundedbox(edgewall,1,1,cornerd);
+      }
+      
+      translate([-displaywidth/2-edgewall,-depth+edgewall,displaybottom]) roundedbox(4*edgewall,displaythickness+displayholderthickness+depth,displaybase,cornerd);
+      translate([displaywidth/2-edgewall-2*edgewall,-depth+edgewall,displaybottom]) roundedbox(4*edgewall,displaythickness+displayholderthickness+depth,displaybase,cornerd);
       translate([-basewidth/2-cornerd,displaythickness,displaybottom-displaysupportbelowt]) triangle(basewidth+2*cornerd,displaythickness+3,displaysupportbelowt,9);
-      translate([-displaywidth/2-edgewall,displaythickness+displayholderthickness,displaybottom]) roundedbox(displaywidth+2*edgewall,edgewall+1,displaybase+displayholderh,cornerd);
-      translate([-displaywidth/2-edgewall,0,displaybottom]) roundedbox(edgewall,displaythickness+displayholderthickness+edgewall,displaybase+displayholderh,cornerd);      
-      translate([displaywidth/2,0,displaybottom]) roundedbox(edgewall,displaythickness+displayholderthickness+edgewall,displaybase+displayholderh,cornerd);         translate([-displaywidth/2-edgewall,0,displaybottom]) roundedbox(displaywidth+2*edgewall,displaythickness,displaybase+displayholderh,cornerd);
 
       // pulse sensor hanger
       translate([displaywidth/2,0,displaybottom]) roundedbox(edgewall+pulsesensorhangerlength+edgewall,edgewall,edgewall,cornerd);
@@ -225,8 +253,8 @@ module tunturiholder() {
 
     // Screwholes
     for (x=[-basewidth*0.8/2,0,basewidth*0.8/2]) {
-      translate([x,topscrewfronty,displaybottom+displaybase-topscrewlength+0.01]) ruuvireika(topscrewlength,topscrewholed,1);
-      translate([x,topscrewfronty,displaybottom+displaybase]) cylinder(h=topscrewlength,d=topscrewholed*2,$fn=30);
+      translate([x,topscrewfronty+screwyshift,displaybottom+displaybase-topscrewlength+screwzshift+0.01]) ruuvireika(topscrewlength,topscrewholed,1);
+      translate([x,topscrewfronty+screwyshift,displaybottom+displaybase+screwzshift]) cylinder(h=topscrewlength,d=topscrewholed*countersinkdiametermultiplier,$fn=30);
     }
 
     for (x=[-displaywidth/2+3,displaywidth/2-3]) {
@@ -234,21 +262,27 @@ module tunturiholder() {
     }
 
    translate([-basewidth/2+textsize/2,textdepth-0.01,-basebelow+textsize/2]) rotate([90,0,0]) deeptext(versiontext,textsize,textdepth,"left");
-   translate([-basewidth/2+textsize/2,textdepth-0.01,displaybottom+displaybase]) rotate([90,0,0]) deeptext(versiontext,textsize,textdepth,"left");
+   translate([-basewidth/2+textsize/2,textdepth-0.01,displaybottom]) rotate([displayangle,0,0]) translate([0,0,displaybase]) rotate([90,0,0]) deeptext(versiontext,textsize,textdepth,"left");
 
-   translate([0,displaythickness/2+0.01,displaybottom+displaybase+displayheight-clipbackh-clipplugd]) rotate([90,0,0]) cylinder(h=displaythickness/2+0.02,d1=1-cliptolerance,d2=clipplugd-cliptolerance,$fn=90);
+   translate([0,displaythickness/2+0.01,displaybottom]) rotate([displayangle,0,0]) translate([0,0,displaybase+displayheight-clipbackh-clipplugd]) rotate([90,0,0]) cylinder(h=displaythickness/2+0.02,d1=1-cliptolerance,d2=clipplugd-cliptolerance,$fn=90);
 
   }
 }
 
 module clip() {
-  translate([-clipwidth/2,-clipwall,displaybottom+displaybase+displayheight]) roundedbox(clipwidth,clipwall+clipdepth+clipwall,clipwall,cornerd);
-  translate([-clipwidth/2,clipdepth,displaybottom+displaybase+displayheight-clipfronth]) roundedbox(clipwidth,clipwall,clipwall+clipfronth,cornerd);
-  hull() {
-    translate([-clipwidth/2,-clipwall,displaybottom+displaybase+displayheight-clipbackh]) roundedbox(clipwidth,clipwall,clipwall+clipbackh,cornerd);
-    translate([0,-clipwall+clipwall,displaybottom+displaybase+displayheight-clipbackh-clipplugd]) rotate([90,0,0]) cylinder(h=clipwall,d=clipplugd);
+  difference() {
+    union() {
+      translate([-clipwidth/2,-clipwall,displaybottom+displaybase+displayheight]) roundedbox(clipwidth,clipwall+clipdepth+clipwall,clipwall,cornerd);
+      translate([-clipwidth/2,clipdepth,displaybottom+displaybase+displayheight-clipfronth]) roundedbox(clipwidth,clipwall,clipwall+clipfronth,cornerd);
+      hull() {
+	translate([-clipwidth/2,-clipwall,displaybottom+displaybase+displayheight-clipbackh]) roundedbox(clipwidth,clipwall,clipwall+clipbackh,cornerd);
+	translate([0,-clipwall+clipwall,displaybottom+displaybase+displayheight-clipbackh-clipplugd]) rotate([90,0,0]) cylinder(h=clipwall,d=clipplugd);
+      }
+      translate([0,-clipwall+clipwall+clipwall,displaybottom+displaybase+displayheight-clipbackh-clipplugd]) rotate([90,0,0]) cylinder(h=displaythickness/2,d1=1,d2=clipplugd-cliptolerance,$fn=90);
+    }
+
+    translate([0,0,displaybottom+displaybase+displayheight+clipwall-textdepth+0.01]) deeptext(versiontext,textsize,textdepth,"center");
   }
-  translate([0,-clipwall+clipwall+clipwall,displaybottom+displaybase+displayheight-clipbackh-clipplugd]) rotate([90,0,0]) cylinder(h=displaythickness/2,d1=1,d2=clipplugd-cliptolerance,$fn=90);
 }
 
 if (print==0) {
