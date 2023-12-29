@@ -388,7 +388,7 @@ material, such as TPU.
 
 If "strong" option is enabled, the model will trick slicer to generate
 100% fill around the screwholes, making them stronger. This is useful
-if you slice with lightning fill. What is does is generate very thin
+if you slice with lightning fill. What it does is generate very thin
 concentric voids around the screw holes. Notice that "strong" option
 will make the model very slow to process in openscad, and you need to
 check that your print settings have "Hole Horizontal Expasion" set to
@@ -397,11 +397,34 @@ by making the print weaker.
 
 No supports are needed.
 
-
 ![tunturie460holder in scad.](tunturie460holder.png)
 ![tunturie460holder installed for use.](tunturie460holder1.jpg)
 ![tunturie460holder installed for use from back.](tunturie460holder2.jpg)
 ![tunturie460holder screw sample.](tunturie460holder-screw.jpg)
 
+### measurementcardcover.scad
+
+A case for Clausal Computing Oy's data acquisition board designed to be
+installed in Famatel electrical box. Has openings for most
+connectors. Needs one 3.5mm 20mm screw for closing, other edge is closed with clips.
+
+Use print=1 for print model. No supports are needed.
+
+![The case in scad.](measurementcardcover.png)
+
+### kaapelipidikkeet.scad
+
+Holder and base for electrical bus bars for Famatel electrical
+box. Supports two bus bars, each for 12 cables. The bus bars clip to
+the holder and stay in place, but you can secure them with 4mm
+countersink 30mm screws for added strength. Allows all electrical box
+opening cuts to be used. The bus bars used are intended for DIN rail
+installation, but this holder does not use DIN format, instead it fits
+the screw base. This may not be of any sort of standard, but neither
+is the T supports in the electrical box for which this is designed for.
+
+Use print=1 for print model. No supports are needed.
+
+![Cable holder in scad.](kaapelipidikkeet.png)
 
 
