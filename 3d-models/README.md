@@ -427,4 +427,34 @@ Use print=1 for print model. No supports are needed.
 
 ![Cable holder in scad.](kaapelipidikkeet.png)
 
+### lampcork.scad
 
+I have a old design table lamp which had its top loose from the
+base. The base is made of glass and upper part made of copper got
+loose, and the the upper is screwed through a cork stopper within top
+of the glass. The cork self-destructed when we tried to extract it for
+fix, so I designed a replacement for the cork part. It needs to be
+printed with TPU to get a snug fit for the glass part. The design may
+need some improvement, as it is a bit too loose, but that is mostly
+the shape and diameter fix. I printed with 50% fill, however, slightly
+less dense fill and small increase in diameter might make it better
+fit. Transparent TPU95 worked.
+
+The table lamp was designed by Lisa Johansson-Pape, and was
+manufactured by Orno, when it was owned by Stockmann. The lampshade
+was restored by Varjostinnurkka in Helsinki.
+
+The original screw fits into the slot in the part, so this replaces
+the cork, otherwise it is as original.
+
+The model also includes top screw for the lampshade, as I managed to
+loose the original in the process. You need a suitable short
+countersink screw to insert in the printed top part, use soldering
+iron to make it fit snugly, then use suitable glue to fix the cover in
+place.
+
+print=1 prints the cork replacement, and print=4 prints the lampshade
+screw parts. No supports are needed for printing.
+
+![Cork replacement in scad.](lampcork.png)
+![The lamp after fixing the base and new shader.](lampcork.jpg).
