@@ -3,3 +3,7 @@
 ### 3d-models
 
 Various 3d models for printing.
+
+### energymeter-reader
+
+Software to read data from a noname chinese 3-phase energy meter.
