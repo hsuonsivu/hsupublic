@@ -13,11 +13,14 @@ Bugs:
 found was a python script which was available through Internet
 Archive. Thus it was mostly testing and guessing to get it working.
 
-- I could not figure out what the crc algorithm is, or for which part of the message it is calculated for. As a workaround, I included various sanity checks on the data received, but it will still sometimes receive obviously bogus messages.
+- I could not figure out what the crc algorithm is, or for which part
+of the message it is calculated for. As a workaround, I included
+various sanity checks on the data received, but it will still
+sometimes receives obviously bogus messages.
 
 - We also suspect that it really measures only one channel, as the
 metering data does not really look right, or we need some magic
-multiplier. However, we do not have a reference yet.
+multiplier. However, we do not have a reference yet to compare with.
 
 - No command line options, you need to modify LOGVERSION and debugging
 data is printed if debug is set appropriately (two lowest bits do
