@@ -1,0 +1,25 @@
+This reads data from cheap no-name chinese energy meter. The device
+has a wireless transmitter which is supposed to read three phases, for
+which 3 clamps are provided. It then sends the data wirelessly to usb
+host device, which shows up as a serial power. Apparently it can read
+16 channels, but I only had one transmitter. 
+
+rc.conf-additions and powerwatcher-etc-rc are for FreeBSD. Could work
+with some other unixes.
+
+Bugs:
+
+- I had no documentation on the protocol, and the only reference I
+found was a python script which was available through Internet
+Archive. Thus it was mostly testing and guessing to get it working.
+
+- I could not figure out what the crc algorithm is, or for which part of the message it is calculated for. As a workaround, I included various sanity checks on the data received, but it will still sometimes receive obviously bogus messages.
+
+- We also suspect that it really measures only one channel, as the
+metering data does not really look right, or we need some magic
+multiplier. However, we do not have a reference yet.
+
+- No command line options, you need to modify LOGVERSION and debugging
+data is printed if debug is set appropriately (two lowest bits do
+something, use 3).
+

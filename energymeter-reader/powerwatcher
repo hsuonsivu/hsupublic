@@ -1,0 +1,7 @@
+#!/bin/sh
+while true
+do
+	/usr/local/bin/elmeter >>$1 2>/dev/null
+	sleep 7
+done
+	

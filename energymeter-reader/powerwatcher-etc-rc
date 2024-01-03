@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# PROVIDE: powerwatcher
+#
+
+. /etc/rc.subr
+
+name=powerwatcher
+rcvar=powerwatcher_enable
+
+load_rc_config powerwatcher
+
+: ${powerwatcher_enable="NO"}
+: ${powerwatcher_flags="/var/log/powerwatcher.log"}
+pidfile=${powerwatcher_pidfile:="/var/run/powerwatcher.pid"}
+
+if [ x$powerwatcher_enable == xYES ]
+then   
+    if [ x"$1" == xstart -o x"$1" == xfaststart ]
+    then
+	echo "Starting ${name}"
+	/usr/local/bin/${name} $powerwatcher_flags &
+	pid=$!
+	echo $pid > $pidfile
+    fi
+
+    if [ x"$1" == xstop ]
+    then
+	if [ -s $pidfile ]
+	then
+	    echo Stopping ${name}
+	    if kill `/bin/cat $pidfile`
+	    then
+		echo Stopped ${name}
+	    else
+		sleep 2
+		echo Trying to forcibly kill ${name}
+		sleep 1
+		kill -9 `/bin/cat $pidfile`
+	    fi
+	fi
+    fi
+fi
+
+    

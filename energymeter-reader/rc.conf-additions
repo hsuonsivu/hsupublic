@@ -1,0 +1,2 @@
+powerwatcher_enable="YES"
+powerwatcher_flags="/usr/users/hsu/power/power.log"
