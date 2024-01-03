@@ -460,3 +460,5 @@ screw parts. No supports are needed for printing.
 
 ![Cork replacement in scad.](lampcork.png)
 ![The lamp after fixing the base and new shader.](lampcork.jpg).
+![Top screw replacement in scad.](lamptopscrew.png)
+![Top screw in place.](lamptopscrew.jpg).
