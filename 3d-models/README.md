@@ -411,6 +411,7 @@ connectors. Needs one 3.5mm 20mm screw for closing, other edge is closed with cl
 Use print=1 for print model. No supports are needed.
 
 ![The case in scad.](measurementcardcover.png)
+![The case installed in electrical box.](measurementcardcover.jpg)
 
 ### kaapelipidikkeet.scad
 
@@ -426,6 +427,7 @@ is the T supports in the electrical box for which this is designed for.
 Use print=1 for print model. No supports are needed.
 
 ![Cable holder in scad.](kaapelipidikkeet.png)
+![Cable holder installed.](kaapelipidikkeet.jpg)
 
 ### lampcork.scad
 
