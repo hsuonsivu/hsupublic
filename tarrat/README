@@ -9,6 +9,9 @@ continuous label. For my settings, QL-800 cuts the label to correct
 length. It will try to make font as large as it can fit to the label
 length.
 
+Note that the labels are always uppercased. This does not work very
+well for umlauts or other national characters.
+
 Usage:
 
 First run this to set up unlimited paper length. Label width is the
