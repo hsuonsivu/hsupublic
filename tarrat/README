@@ -1,0 +1,56 @@
+
+This is script to print very simple labels to Brother QL-800 label
+printer. The printer would support much fancier labels, but I
+specifically wanted just text labels and nothing else, without fancy
+gui label designers or whatever.
+
+This will just do single line labels, and this only works with
+continuous label. For my settings, QL-800 cuts the label to correct
+length. It will try to make font as large as it can fit to the label
+length.
+
+Usage:
+
+First run this to set up unlimited paper length. Label width is the
+parameter, 12,29,62 are known possibilities.
+
+printlabel-init 12
+
+Then you can either do
+
+printlabel 'Any text'
+
+or use
+
+tarrat
+
+which keeps reading label texts from input and printing them.
+
+This only works in Linux, as QL-800 is not recognized in FreeBSD as a
+printer.
+
+This is very inefficent as it first generates label image as picture,
+then turns that into postscript, and then cups will turn that
+postscript Brother-compatible bitmap again. It would be better to
+simply generate postscript directly.
+
+The script needs at least the following packages to be installed, if
+not included in your distro. I used debian and had to install plenty
+of packages to get things working. The list may not be complete as I
+could not easily list manually installed packages.
+
+needed by source install of graphicsmagick/imagemagick:
+       fontconfig, libfreetype6 (or later), libfreetype6-dev (or later),
+       libconfconfig1-dev, jpeg-dev, libpng-dev, libtiff-dev
+
+cups
+gawk (workaround for broken tr)
+graphicsmagic
+imagemagick
+netpbm
+Brother drivers from brother website (contains brpapertoollpr_ql800)
+
+graphicsmagic/imagemagick was not installing right on 32-bit computer,
+so I needed to do source install. It might be more complete when
+installed from package.
+

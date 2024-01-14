@@ -1,0 +1,13 @@
+# Create customer label type. this needs sudo...
+# Must specify label width as option
+if [ x"$1" = x ]
+then
+	echo "Specify label width as option (such as 12,29 or 62"
+	exit 1
+fi
+	
+sudo brpapertoollpr_ql800 -P QL-800 -n custom -w $labelwidth -h 999
+echo Go to CUPS web interface and change CUPS setting to custom for QL-800
+
+
+

@@ -1,0 +1,10 @@
+#!/bin/sh
+while true
+do
+	echo -n "Label to print: "
+	read teksti
+	if [ x"$teksti" != x ]
+	then
+	    ( printlabel "$teksti" > /tmp/label.log.$$ 2>&1 ; cat /tmp/label.log.$$; rm /tmp/label.log.$$ ) &
+	fi
+done

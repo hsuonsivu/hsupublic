@@ -1,0 +1,58 @@
+#!/bin/sh
+if [ x"$1" = x ]
+then
+    echo No argument given.
+fi
+
+#set -x
+
+#text=`echo "$1" | tr '[:lower:]' '[:upper:]'`
+text=`echo "$1" | gawk '{ print toupper($0)}'`
+#labelwidth=29
+labelwidth=12
+
+# Create customer label type. this needs sudo...
+
+magick -density 300 -background white -font Nimbus-Sans-Narrow-Bold -pointsize 36 label:"$text" -trim -monochrome label.png
+
+textimagelength=`pngtopnm < label.png | head -2 | tail -1 | awk '{ print $1 }'`
+textimageheight=`pngtopnm < label.png | head -2 | tail -1 | awk '{ print $2 }'`
+
+echo "Image size $textimagelength x $textimageheight pixels"
+
+if lpoptions -p QL-800 -l | fgrep PageSize/Media | fgrep ' *BrL' > /dev/null
+then
+    paperwidth=$labelwidth
+    paperheight=1
+else
+    exit 1
+    paperwidth=`lpoptions -p QL-800 -l | fgrep PageSize/Media | sed -e 's/.*[*]\([1-9][0-9]*\).*$/\1/g'`
+    paperheight=`lpoptions -p QL-800 -l | fgrep PageSize/Media | sed -e 's/.*[*][1-9][0-9]*X\([1-9][0-9]*\).*$/\1/g'`
+fi
+
+# Continuous label tape
+if [ $paperheight = 1 ]
+then
+    # Scale the print format to shape of text image
+    paperheight=`echo "$paperwidth $textimagelength * $textimageheight / p" | dc`
+fi
+
+imagewidth=`echo "$paperwidth" 4 - p | dc`
+imageheight=`echo "$paperheight" 4 - p | dc`
+
+echo "Paper width $paperwidth height $paperheight "
+echo "Image width $imagewidth height $imageheight "
+
+paperwidthinch=`units -t "${paperwidth}mm" inch`
+paperheightinch=`units -t "${paperheight}mm" inch`
+imagewidthinch=`units -t "${imagewidth}mm" inch`
+imageheightinch=`units -t "${imageheight}mm" inch`
+
+echo "Paper width in inch $paperwidthinch height $paperheightinch "
+echo "Image width in inch $imagewidthinch height $imageheightinch "
+
+pngtopnm < label.png | pnmtops -center -width $paperwidthinch -height $paperheightinch -imagewidth $imagewidthinch -imageheight $imageheightinch > label.ps
+# -turn 
+
+#evince label.ps
+lp -d QL-800 label.ps
