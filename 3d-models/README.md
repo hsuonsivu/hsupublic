@@ -466,10 +466,12 @@ screw parts. No supports are needed for printing.
 ### filmscanframe.scad
 ### Makefile.filmscanframe
 
-A frame to scan film strips in a flat bed scanner, both negatives and positives (name is
-misleading). This is designed for Epson Perfection V850 Pro, so it has
-Epson's positioning knobs. The positioning knobs are detachale, as
+A frame to scan film strips in a flat bed scanner, for both negatives
+and positives. This is designed for Epson Perfection V850 Pro, so it
+has Epson's positioning knobs. The positioning knobs are detachable, as
 with them the frame is too wide for A4 pocket.
+
+I am using vuescan to scan the film strips.
 
 The motivation for this was that Epson included a strip frame which
 can scan only 3 strips at the time, and it has glass, which can cause
@@ -488,19 +490,20 @@ consumer cameras so there are not that many pixels there anyway.
 
 The frames are cheap enough that you can permanently store the strips
 in the frame. At the current filament prices they cost approximately 2
-euro per piece. I use plastic binder pockets to store the frames.
+euro per piece as printed, using about 100g of filament. I use plastic
+binder pockets to store the frames.
 
 The clips and film hole knobs require accurate printer. When using a
 new frame, it seems to be better to install covers without film first
 to make sure that all clips are ok and there are no strings etc which
-would show in the final scan. The hole knobs are the hardest thing to
+would show in the final scan. The film hole knobs are the hardest thing to
 get right, as they are small and printers tend to make small towerlike
 knobs misshaped. It may be that clips require tuning for various
 printers as well.
 
 There are multiple options in the beginning of the file for debugging.
 
-Possible future improvements could be tuning the knobs to more
+Possible future improvements could be tuning the film hole knobs to more
 accurately keep the film positioned and straight. Older films or
 negatives are often curved. I did try to use frame separators to make
 sure that the film is as flat as possible, but frame separatos are not
@@ -532,4 +535,5 @@ To make values more visible, you can print bottom and top in different
 color, such as black/white, with multicolor printer or by manually
 switching filament during printing.
 
+![circletemplates in openscad.](circletemplate.png)
 
