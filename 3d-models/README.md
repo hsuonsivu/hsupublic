@@ -462,3 +462,74 @@ screw parts. No supports are needed for printing.
 ![The lamp after fixing the base and new shader.](lampcork.jpg).
 ![Top screw replacement in scad.](lamptopscrew.png)
 ![Top screw in place.](lamptopscrew.jpg).
+
+### filmscanframe.scad
+### Makefile.filmscanframe
+
+A frame to scan film strips in a flat bed scanner, both negatives and positives (name is
+misleading). This is designed for Epson Perfection V850 Pro, so it has
+Epson's positioning knobs. The positioning knobs are detachale, as
+with them the frame is too wide for A4 pocket.
+
+The motivation for this was that Epson included a strip frame which
+can scan only 3 strips at the time, and it has glass, which can cause
+nasty optical errors and adds another optial layer reducing scan
+quality, and it is has very smooth surfaces, causing reflections which
+show up in pictures. This one has 4 strips, max 6 images each, for
+total of 24 images to scan in one go.
+
+This has strip at approximately 2mm over glass, which apparently Epson
+is the focus point for this scanner when using film/negative
+settings. It does not have focus change tabs like the Epson's own
+frame, but when I tried to find the optimal height using Epson's
+frame, I could not really see much difference between different
+heights. The material I have been scanning is mostly taken with medium
+consumer cameras so there are not that many pixels there anyway.
+
+The frames are cheap enough that you can permanently store the strips
+in the frame. At the current filament prices they cost approximately 2
+euro per piece. I use plastic binder pockets to store the frames.
+
+The clips and film hole knobs require accurate printer. When using a
+new frame, it seems to be better to install covers without film first
+to make sure that all clips are ok and there are no strings etc which
+would show in the final scan. The hole knobs are the hardest thing to
+get right, as they are small and printers tend to make small towerlike
+knobs misshaped. It may be that clips require tuning for various
+printers as well.
+
+There are multiple options in the beginning of the file for debugging.
+
+Possible future improvements could be tuning the knobs to more
+accurately keep the film positioned and straight. Older films or
+negatives are often curved. I did try to use frame separators to make
+sure that the film is as flat as possible, but frame separatos are not
+well standardized for position, and different cameras are not doing
+frames identically in relation to film holes.
+
+Originally, I tried to use film hole knobs to snap to the covers, but
+this was too unreliable due to misshapen film hole knobs, thus I did
+side clips to keep the covers in place.
+
+No supports are needed to print. I use black PLA to print
+these. Lighter colours may cause reflections.
+
+![filmscanframe in scad.](filmscanframe.png)
+![filmscanframe with film and cover not installed](filmscanframe.jpg)
+
+### circletemplate.scad
+
+Templates to estimate radius/diameter of a curve. Handy when making a
+3d model of an existing part. This can measure both outside and inside
+curves.
+
+This needs further development, the parts should have a home which one
+can run a string through to attach all of them together. Also, it
+tries to arrange the parts to fit to a bed, but does rather miserable
+job doing that.
+
+To make values more visible, you can print bottom and top in different
+color, such as black/white, with multicolor printer or by manually
+switching filament during printing.
+
+
