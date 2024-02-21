@@ -1,0 +1,19 @@
+SOURCE=leafbatteryfan.scad
+
+all: leafbatteryfanallpartsexceptfilter.stl leafbatteryfanfilter.stl leafbatteryfanconnectorbox.stl
+
+leafbatteryfanallpartsexceptfilter.stl: $(SOURCE)
+	openscad -D print=1 -D hooksoncover=0 -D strong=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+leafbatteryfanfilter.stl: $(SOURCE)
+	openscad -D print=2 -D hooksoncover=0 -o $@ $(SOURCE)
+	echo $@ built.
+
+leafbatteryfanconnectorbox.stl: $(SOURCE)
+	openscad -D print=2 -D hooksoncover=0 -o $@ $(SOURCE)
+	echo $@ built.
+
+
+
+

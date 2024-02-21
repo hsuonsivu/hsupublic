@@ -537,3 +537,86 @@ switching filament during printing.
 
 ![circletemplates in openscad.](circletemplate.png)
 
+### ruokasuppilo.scad
+
+We had complaints that onion peels are not dropping to the compost bin
+when pushed over the edge of the kitchen table above the compost bin,
+but float in the air and get outside of the bin. So we needed a
+funnel. This very large, requiring 400x400x450 printer to print, and
+takes 2-3 days to print.
+
+### leafbatteryfan.scad
+### Makefile.leafbatteryfan
+
+Nissan Leaf has a serious problem with battery temperature management,
+which means during winter it is too cold and during summer it is too
+warm, limiting capacity and quick charging. The problem is worst
+during wintertime when the range is already reduced due to other
+effects. The problem becomes much worse if the battery is old and/or
+has bad cells. In the summer this could also help keep battery cooler,
+though the effect is likely very limited. While moving, there is not
+much to do about it, but when parked, pushing warm air from inside the
+car to above the battery will somewhat reduce cooling of the battery
+and will warm up the battery if done for long enough. This fan case
+can be installed to the service hatch between rear seats, replacing
+the metal plate normally protecting the hatch.  The set also includes
+a filter which will avoid hurting fingers in the spinning fan and
+reduce dust collecting over the battery (though dust will get through
+from below while driving).
+
+You need a strip of seal below, normal window/door seal works, a
+92mm computer fan at 12V, which is quite common size, some filter
+material to cover the filter part, and 3 29mm long 3.5mm countersink
+screws, and screws to attach the fan.
+
+I also built connector box to install wiring and jack connector for
+power, which is connected to the car 12V socket. The connector box
+snaps in the front of the base.
+
+If you need to warm up the battery for a trip:
+
+- Preferably have a car in semi-warm place or 16A 230V socket..
+
+- Turn on car heating to 29.5 degrees C
+
+- Turn on semi circulation (press circulation button, then press it
+  again keeping it down until both circulation buttons leds blink
+  twice. You need a bit of air coming in to allow the fan to push it
+  into the battery space.
+
+- Turn on the leafbatteryfan.
+
+- Lock the the doors using the door lock button while sitting inside
+doors closed, exit the car, and use mechanical key to lock the driver
+door. This may require changing settins of the door locking using
+Leafspy or similar. If the settings are default, the only way to lock
+all doors from outside while the car is on is to make sure you have
+the key with you, leave the driver window open, lock the doors usign
+lock button through window, press auto window up button, and lock the
+driver door with mechanical key.
+
+If the car is in a garage at around 15 C, it seems to be able to heat
+up the battery to 24-28 degrees within 12-24 hours. Outside, it seems
+to keep the battery approximately 10-15 C above ambient when connected
+to a 6A 230V supply.
+
+Notice that if you cannot use full power, such as domestic socket at
+minimal 6A 230V, the car will slowly drain the main battery. At 10A or 16A
+there seems to enough power to allow charging while doing this, unless
+it is very cold. Leaf limits heating to whatever is available from the
+socket when plugged in, but it seems that it cannot limit heater low
+enough that the car would still charge when connected to very low
+power feed.
+
+The connector box is for connectors and power switch. I used random
+parts of my parts bin on small proto board.
+
+No supports are needed to print. Use Makefile.leafbatteryfan to create all parts.
+
+![leafbatteryfan case in scad.](leafbatteryfan.png)
+
+
+
+
+
+
