@@ -518,6 +518,7 @@ these. Lighter colours may cause reflections.
 
 ![filmscanframe in scad.](filmscanframe.png)
 ![filmscanframe with film and cover not installed](filmscanframe.jpg)
+![filmscanframe with film and cover installed](filmscanframe2.jpg)
 
 ### circletemplate.scad
 
@@ -545,6 +546,8 @@ funnel. This very large, requiring 400x400x450 printer to print, and
 takes 2-3 days to print.
 
 Still needs some improvements.
+
+![ruokasuppilo installed.](ruokasuppilo.jpg)
 
 ### leafbatteryfan.scad
 ### Makefile.leafbatteryfan
@@ -617,6 +620,16 @@ parts of my parts bin on a small proto board.
 
 No supports are needed to print. Use Makefile.leafbatteryfan to create all parts.
 
+![leafbatteryfan case in scad.](leafbatteryfan.png)
+![leafbatteryfan all parts needed.](leafbatteryfanallparts.png)
+![leafbatteryfan screws and nuts needed.](leafbatteryfanscrews.png)
+![leafbatteryfan seal installed.](leafbatteryfan-seal.png)
+![leafbatteryfan connector board.](leafbatteryfanconnectorboard.png)
+![leafbatteryfan connector board from other angle.](leafbatteryfanconnectorboard2.png)
+![leafbatteryfan ready to install.](leafbatteryfan-ready-to-install.png)
+![leafbatteryfan installed in a leaf with no filter yet.](leafbatteryfan-installed-without-filter.png)
+![leafbatteryfan infrared image from underside of the car while fan is on.](leafbatteryfan-underside-infrared-image.png)
+![leafbatteryfan infrared video after the fan has been running for around 12 hours.](leafbatteryfan-infrared-video.mp4)
 ![leafbatteryfan case in scad.](leafbatteryfan.png)
 
 ### circletemplateiso.scad
