@@ -1,19 +1,26 @@
 SOURCE=leafbatteryfan.scad
 
-all: leafbatteryfanallpartsexceptfilter.stl leafbatteryfanfilter.stl leafbatteryfanconnectorbox.stl
+all: leafbatteryfanallpartsexceptfilter.stl leafbatteryfanfilter.stl leafbatteryfanconnectorbox.stl leafbatteryfanbody.stl leafbatteryfanall.stl 
 
 leafbatteryfanallpartsexceptfilter.stl: $(SOURCE)
-	openscad -D print=1 -D hooksoncover=0 -D strong=1 -o $@ $(SOURCE)
+	openscad -D print=1 -D strong=1 -o $@ $(SOURCE)
 	echo $@ built.
 
+# this needs  -D strong=1 if lockbarwithscrew is enabled
 leafbatteryfanfilter.stl: $(SOURCE)
-	openscad -D print=2 -D hooksoncover=0 -o $@ $(SOURCE)
+	openscad -D print=2 -o $@ $(SOURCE)
 	echo $@ built.
 
 leafbatteryfanconnectorbox.stl: $(SOURCE)
-	openscad -D print=2 -D hooksoncover=0 -o $@ $(SOURCE)
+	openscad -D print=3 -o $@ $(SOURCE)
 	echo $@ built.
 
+leafbatteryfanbody.stl: $(SOURCE)
+	openscad -D print=4 -D strong=1 -o $@ $(SOURCE)
+	echo $@ built.
 
+leafbatteryfanall.stl: $(SOURCE)
+	openscad -D print=5 -D strong=1 -o $@ $(SOURCE)
+	echo $@ built.
 
 

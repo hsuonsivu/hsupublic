@@ -11,7 +11,7 @@
 
 print=3; // 1=left, 2=right, 3=both
 $fn=90;
-versiontext="V3.2";
+versiontext="V3.3";
 font = "Liberation Sans";
 textdepth = 0.5;
 
@@ -19,7 +19,7 @@ rollwidth=226;
 rolldiameteroutside=200;
 rolldiameterinside=35; //3;
 rollextra=5; // Distance from backplate to roll
-rollborediameter=26;
+rollborediameter=25;
 screwdistance=166.5;
 
 backplateheight=200;
@@ -31,7 +31,7 @@ backplatewidth=rollwidth+holdersupportwidth*2;
 
 rollaxisdepth=rolldiameteroutside/2+backplatedepth+rollextra;
 rollaxisheight=rolldiameterinside/2; // rolldiameteroutside/2;
-rollborewidth=40; // rollwidth + 2*holdersupportwidth + 10;
+rollborewidth=45; // rollwidth + 2*holdersupportwidth + 10;
 
 screwrecessdiameter=30;
 screwrecessdepth=5;
@@ -55,7 +55,7 @@ fingerholediameter=4;
 
 tolerance=0.5;
 tolerancedepth=0.5;
-diametertolerance=0.96; // 97;
+diametertolerance=0.97; // 97;
   
 holeedge=63;
 roundholediameter=40;

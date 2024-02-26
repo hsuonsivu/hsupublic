@@ -1,3 +1,6 @@
+// Copyright 2023,2024 Heikki Suonsivu
+// Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
+// For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
 $fn=360;
 
@@ -61,7 +64,7 @@ module circle(diameters,x,y,previoush,i) {
 	
 	translate([textposition,0,thickness-textdepth+0.01]) rotate([0,0,rotate?r:0]) linear_extrude(height=textdepth+0.2) text(text=t,font="Liberation Sans:style=Bold",size=textsize,halign=rotate?"center":"left",valign=rotate?"top":"center");
 
-	#	translate([textposition+(rotate?1:0),0,textdepth-0.01]) rotate([180,0,rotate?-r:0]) linear_extrude(height=textdepth) text(text=tr,font="Liberation Sans:style=Bold",size=textsize,valign=rotate?"top":"center",halign=rotate?"center":"left");
+	translate([textposition+(rotate?1:0),0,textdepth-0.01]) rotate([180,0,rotate?-r:0]) linear_extrude(height=textdepth) text(text=tr,font="Liberation Sans:style=Bold",size=textsize,valign=rotate?"top":"center",halign=rotate?"center":"left");
 
 	translate([rotate?height*1.5:l,0,-0.1]) cylinder(d=diameter,h=thickness+0.2);
       }

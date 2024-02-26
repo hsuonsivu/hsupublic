@@ -3,7 +3,7 @@
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
 test=0; // changes dimensions for faster print
-print=1; // 0 kaikki, 1 korkki, 2 varjostimen inside 3 varjostimen
+print=0; // 0 kaikki, 1 korkki, 2 varjostimen inside 3 varjostimen
 	 // outside, 4 varjostimen ruuvi
 
 $fn=180;

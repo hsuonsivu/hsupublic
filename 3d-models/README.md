@@ -284,8 +284,7 @@ lock. No supports are needed to print.
 ### bedcontrollerpart.scad
 
 A plastic part of my bed controller broke, here is a new one. The bed
-brand is Tempur, but it seems that the mattress is the only thing made
-by Tempur, the motor bed seems to be from Germany. No supports are
+brand is Tempur and the motor bed seems to be from Germany. No supports are
 needed to print.
 
 ![Bed controller spare part openscad](bedcontrollerpart.png)
@@ -506,7 +505,7 @@ There are multiple options in the beginning of the file for debugging.
 Possible future improvements could be tuning the film hole knobs to more
 accurately keep the film positioned and straight. Older films or
 negatives are often curved. I did try to use frame separators to make
-sure that the film is as flat as possible, but frame separatos are not
+sure that the film is as flat as possible, but frame separators are not
 well standardized for position, and different cameras are not doing
 frames identically in relation to film holes.
 
@@ -553,16 +552,16 @@ which means during winter it is too cold and during summer it is too
 warm, limiting capacity and quick charging. The problem is worst
 during wintertime when the range is already reduced due to other
 effects. The problem becomes much worse if the battery is old and/or
-has bad cells. In the summer this could also help keep battery cooler,
-though the effect is likely very limited. While moving, there is not
-much to do about it, but when parked, pushing warm air from inside the
-car to above the battery will somewhat reduce cooling of the battery
-and will warm up the battery if done for long enough. This fan case
-can be installed to the service hatch between rear seats, replacing
-the metal plate normally protecting the hatch.  The set also includes
-a filter which will avoid hurting fingers in the spinning fan and
-reduce dust collecting over the battery (though dust will get through
-from below while driving).
+has bad cells. This fan case can be installed to the service hatch
+between rear seats, replacing the metal plate normally protecting the
+hatch. In the summer this could also help keep battery cooler, though
+the effect is likely very limited. While moving, there is not much to
+do about it, but when parked, pushing warm air from inside the car to
+above the battery will somewhat reduce cooling of the battery and will
+warm up the battery if done for long enough. The set also includes a
+filter which will avoid hurting fingers in the spinning fan and reduce
+dust collecting over the battery (though dust will get through from
+below while driving).
 
 You need a strip of seal below, normal window/door seal works, a
 92mm computer fan at 12V, which is quite common size, some filter
@@ -575,7 +574,7 @@ snaps in the front of the base.
 
 If you need to warm up the battery for a trip:
 
-- Preferably have a car in semi-warm place or 16A 230V socket..
+- Preferably have a car in semi-warm place or 16A 230V socket.
 
 - Turn on car heating to 29.5 degrees C
 
@@ -588,17 +587,20 @@ If you need to warm up the battery for a trip:
 
 - Lock the the doors using the door lock button while sitting inside
 doors closed, exit the car, and use mechanical key to lock the driver
-door. This may require changing settins of the door locking using
+door. This may require changing settings of the door locking using
 Leafspy or similar. If the settings are default, the only way to lock
 all doors from outside while the car is on is to make sure you have
 the key with you, leave the driver window open, lock the doors usign
 lock button through window, press auto window up button, and lock the
-driver door with mechanical key.
+driver door with mechanical key. My auto window up does not work
+reliably.
 
-If the car is in a garage at around 15 C, it seems to be able to heat
-up the battery to 24-28 degrees within 12-24 hours. Outside, it seems
-to keep the battery approximately 10-15 C above ambient when connected
-to a 6A 230V supply.
+If the car is in a garage at around 15 C, the fan seems to be able to
+heat up the battery to 24-28 degrees within 12-24 hours, if cabin
+temperature is set to 29 degrees C. This also balances the cells as
+the car is on for a long time, and the BMS can do its magic. When
+outside, it seems to keep the battery approximately 10-15 C above
+ambient when connected to a 6A 230V supply.
 
 Notice that if you cannot use full power, such as domestic socket at
 minimal 6A 230V, the car will slowly drain the main battery. At 10A or 16A
@@ -609,7 +611,7 @@ enough that the car would still charge when connected to very low
 power feed.
 
 The connector box is for connectors and power switch. I used random
-parts of my parts bin on small proto board.
+parts of my parts bin on a small proto board.
 
 No supports are needed to print. Use Makefile.leafbatteryfan to create all parts.
 
