@@ -544,6 +544,8 @@ but float in the air and get outside of the bin. So we needed a
 funnel. This very large, requiring 400x400x450 printer to print, and
 takes 2-3 days to print.
 
+Still needs some improvements.
+
 ### leafbatteryfan.scad
 ### Makefile.leafbatteryfan
 
@@ -617,8 +619,50 @@ No supports are needed to print. Use Makefile.leafbatteryfan to create all parts
 
 ![leafbatteryfan case in scad.](leafbatteryfan.png)
 
+### circletemplateiso.scad
 
+I larger version of circletemplate, which is for measuring diameters of larger objects such as trees.
+This one also has holes to tie the parts together.
 
+To make values more visible, you can print bottom and top in different
+color, such as black/white, with multicolor printer or by manually
+switching filament during printing.
 
+![circletemplatesiso in openscad.](circletemplateiso.png)
 
+### hsu.scad
+
+Collected some modules or functions into a library to use in my
+models.
+
+### lattialista.scad
+
+I needed some skirting board parts for my home, this makes ones
+compatible with the back boards.
+
+### tunturie460holder.scad
+
+### Makefile.tunturie460cupholder
+
+Cup holder for Tunturi E460 exercise bike.
+
+If "strong" option is enabled, the model will trick slicer to generate
+100% fill around the screwholes, making them stronger. This is useful
+if you slice with lightning fill. What it does is generate very thin
+concentric voids around the screw holes. Notice that "strong" option
+will make the model very slow to process in openscad, and you need to
+check that your print settings have "Hole Horizontal Expasion" set to
+0.0, otherwise the slicer will expand the voids and reverse the effect
+by making the print weaker.
+
+Screws to attach the cupholder is 3.5mm diameter, 30mm long.
+
+set print=1 to print the parts.
+
+No supports are needed.
+
+![tunturie460holder in scad.](tunturie460holder.png)
+![tunturie460holder installed for use.](tunturie460holder1.jpg)
+![tunturie460holder installed for use from back.](tunturie460holder2.jpg)
+![tunturie460holder screw sample.](tunturie460holder-screw.jpg)
 
