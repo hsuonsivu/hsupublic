@@ -661,8 +661,6 @@ set print=1 to print the parts.
 
 No supports are needed.
 
-![tunturie460holder in scad.](tunturie460holder.png)
-![tunturie460holder installed for use.](tunturie460holder1.jpg)
-![tunturie460holder installed for use from back.](tunturie460holder2.jpg)
-![tunturie460holder screw sample.](tunturie460holder-screw.jpg)
+![tunturie460cupholder in scad.](tunturie460cupholder.png)
+
 
