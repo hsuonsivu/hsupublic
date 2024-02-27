@@ -621,16 +621,15 @@ parts of my parts bin on a small proto board.
 No supports are needed to print. Use Makefile.leafbatteryfan to create all parts.
 
 ![leafbatteryfan case in scad.](leafbatteryfan.png)
-![leafbatteryfan all parts needed.](leafbatteryfanallparts.png)
-![leafbatteryfan screws and nuts needed.](leafbatteryfanscrews.png)
-![leafbatteryfan seal installed.](leafbatteryfan-seal.png)
-![leafbatteryfan connector board.](leafbatteryfanconnectorboard.png)
-![leafbatteryfan connector board from other angle.](leafbatteryfanconnectorboard2.png)
-![leafbatteryfan ready to install.](leafbatteryfan-ready-to-install.png)
-![leafbatteryfan installed in a leaf with no filter yet.](leafbatteryfan-installed-without-filter.png)
-![leafbatteryfan infrared image from underside of the car while fan is on.](leafbatteryfan-underside-infrared-image.png)
+![leafbatteryfan all parts needed.](leafbatteryfanallparts.jpg)
+![leafbatteryfan screws and nuts needed.](leafbatteryfanscrews.jpg)
+![leafbatteryfan seal installed.](leafbatteryfan-seal.jpg)
+![leafbatteryfan connector board.](leafbatteryfanconnectorboard.jpg)
+![leafbatteryfan connector board from other angle.](leafbatteryfanconnectorboard2.jpg)
+![leafbatteryfan ready to install.](leafbatteryfan-ready-to-install.jpg)
+![leafbatteryfan installed in a leaf with no filter yet.](leafbatteryfan-installed-without-filter.jpg)
+![leafbatteryfan infrared image from underside of the car while fan is on.](leafbatteryfan-underside-infrared-image.jpg)
 ![leafbatteryfan infrared video after the fan has been running for around 12 hours.](leafbatteryfan-infrared-video.mp4)
-![leafbatteryfan case in scad.](leafbatteryfan.png)
 
 ### circletemplateiso.scad
 
