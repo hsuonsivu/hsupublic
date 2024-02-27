@@ -6,7 +6,7 @@ $fn=180;
 
 printwidth=450;
 
-versiontext="V1.0";
+versiontext="V1.1";
 textdepth=1;
 textsize=10;
 
@@ -50,6 +50,24 @@ module roundedbox(x,y,z,c) {
 
 function textlength(text) = len(str(text)) * charw;
 
+module arc_text(radius, chars, fontsize, angle) {
+    PI = 3.14159;
+    chars_len = len(chars);
+    circumference = 2 * PI * radius;
+    font_size = fontsize;
+    step_angle = fontsize/(2*PI*(radius+fontsize+2))*360;
+    for(i = [0 : chars_len - 1]) {
+      rotate(90-(i-chars_len/2) * step_angle - 3 + angle) 
+            translate([0, radius + fontsize/2 - 3, 0]) 
+                text(
+                    chars[i], 
+                    font = "Courier New; Style = Bold", 
+                    size = font_size, 
+                    valign = "bottom", halign = "center"
+                );
+    }
+}
+
 module straphook() {
   difference() {
     hull() {
@@ -71,8 +89,8 @@ module circle(diameters,x,y,previoush,i) {
 
   h=diameter>height?diameter:height;
   textposition=-diameter/2 + 5;
-  t=str("d",str(d[i]));
-  tr=str("r",str(d[i]/2));
+  t=str("Ø ",str(d[i]/10),"cm");
+  tr=str("r",str(d[i]/2/10),"cm");
   l=max(textlength(t),textlength(tr))+diameter/2+textposition;
 	  
   rotate=1; //diameter>l+5?1:0;
@@ -92,19 +110,17 @@ module circle(diameters,x,y,previoush,i) {
 	boxh=diameter>l+5?height:h;
 
 	translate([arcx,0,0]) rotate([0,0,strapholeangle]) translate([-diameter/2-strapholed*strapholedx/2,0,0]) cylinder(d=strapholed*strapholedx,h=thickness);
-	//translate([arcx,0,0]) rotate([0,0,-strapholeangle]) translate([-diameter/2-strapholed*strapholedx/2,0,0]) cylinder(d=strapholed*strapholedx,h=thickness);
       }
 
-      r=90; //diameter>l+5?90:0;
-	
-      translate([textposition,0,thickness-textdepth+0.01]) rotate([0,0,rotate?r:0]) linear_extrude(height=textdepth+0.2) text(text=t,font="Liberation Sans:style=Bold",size=textsize,halign=rotate?"center":"left",valign=rotate?"top":"center");
+      r=90;
 
-      translate([textposition+(rotate?1:0),0,textdepth-0.01]) rotate([180,0,rotate?-r:0]) linear_extrude(height=textdepth) text(text=tr,font="Liberation Sans:style=Bold",size=textsize,valign=rotate?"top":"center",halign=rotate?"center":"left");
+      translate([arcx,0,thickness-textdepth+0.01]) linear_extrude(height=textdepth+0.2)  arc_text(diameter/2,t,textsize,0);
+
+      translate([arcx,0,textdepth-0.01]) rotate([180,0,0]) linear_extrude(height=textdepth+0.2)  arc_text(diameter/2,t,textsize,0);
 
       translate([arcx,0,-0.1]) cylinder(d=diameter,h=thickness+0.2);
 
       translate([arcx,0,-0.1]) rotate([0,0,strapholeangle]) translate([-diameter/2-strapholed*strapholedx/2,0,0]) cylinder(d=strapholed,h=thickness+0.2);
-      //translate([arcx,0,-0.1]) rotate([0,0,-strapholeangle]) translate([-diameter/2-strapholed*strapholedx/2,0,0]) cylinder(d=strapholed,h=thickness+0.2);
     }
   }
   
@@ -117,6 +133,6 @@ module circle(diameters,x,y,previoush,i) {
   }
 }
 
-d=[400,300,250,200,170,150,120,100,80,60,50,0];
+d=[400,300,250,200,170,150,120,100,80,60,50,0];//
 
 circle(d,0,0,height,0);
