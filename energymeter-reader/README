@@ -1,8 +1,9 @@
 This reads data from cheap no-name chinese energy meter. The device
 has a wireless transmitter which is supposed to read three phases, for
 which 3 clamps are provided. It then sends the data wirelessly to usb
-host device, which shows up as a serial port. Apparently it can read
-16 channels, but I only had one transmitter. 
+client device, which shows up as a serial port to the host
+computer. Apparently it can read 16 channels, but I only had one
+transmitter.
 
 rc.conf-additions and powerwatcher-etc-rc are for FreeBSD. Could work
 with some other unixes.
