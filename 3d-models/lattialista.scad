@@ -1,3 +1,7 @@
+use <hsu.scad>
+
+strong=0;
+
 width=55;
 insidewidth=47; // Including clip
 edge=14;
@@ -10,7 +14,7 @@ clipz=1.6;//1.65;
 clipx=1;
 cornerd=2;
 incornerd=6;
-print=0;
+print=3; // 0 shape, 1 kitchen corner 2 eteinen 3 backplate
 facethickness=3;
 clipcornerd=1;
 $fn=90;
@@ -96,20 +100,47 @@ module lista(length,angledend) {
   }
 }
 
-//lista(20,0);
-//lista(96,1);
-//translate([width+1,0,0]) lista(130,2);
+if ((print==1)) {
+  lista(20,0);
+ }
 
-if (0) translate([-width-1,0,0]) {
-  translate([0,0,0]) lista(130 + 0.01,2);
-  translate([0,130,0]) rotate([90,0,0]) lista(125+0.01,1); //96
-}
+if (print==2) {
+  vasen=170;
+  oikea=175;
+  poikki=210;
+  kulmaleikkaus=2.5; // Extra for end cut
+  translate([1,0,0]) {
+    translate([0,0,0]) lista(poikki + 0.01,3);
+    translate([0,poikki,0]) rotate([91.0,0,0]) difference() {
+      lista(oikea+kulmaleikkaus+0.01,1); //96
+      translate([width/2-0.01,oikea,-0.01]) triangle(width/2+0.01,kulmaleikkaus+0.1,totalthickness+0.02,7);
+      translate([-0.01,oikea,-0.01]) triangle(width/2+0.02,kulmaleikkaus+0.1,totalthickness+0.02,4);
+    }
+    rotate([-0.25,0,0]) translate([0,0,vasen+kulmaleikkaus]) rotate([90,180,180]) difference() {
+      lista(vasen+kulmaleikkaus+0.01,2); //96
+      translate([width/2-0.01,-0.01,-0.01]) triangle(width/2+0.02,kulmaleikkaus+0.1,totalthickness+0.02,5);
+      translate([-0.01,-0.01,-0.01]) triangle(width/2+0.02,kulmaleikkaus+0.1,totalthickness+0.02,6);
+    }
+  }
+ }
 
-vasen=170;
-oikea=175;
-poikki=210;
-translate([1,0,0]) {
-  translate([0,0,0]) lista(poikki + 0.01,3);
-  translate([0,poikki,0]) rotate([90.25,0,0]) lista(oikea+0.01,1); //96
-  rotate([-0.25,0,0]) translate([0,0,vasen]) rotate([90,180,180]) lista(vasen+0.01,2); //96
-}
+if (print==3) {
+
+  backplatel=100;
+  backplatescrewd=4.8;
+  backplatescrewl=10;
+  textdepth=0.7;
+  textheight=6;
+  
+  translate([0,0,-(totalthickness-clipz*2-clipcornerd)]) difference() {
+    translate([bottomedgethickness-clipcornerd,clipcornerd,totalthickness-clipz*2-clipcornerd]) cube([width-topedgethickness-clipcornerd/2,backplatel-clipcornerd*2,totalthickness-(totalthickness-clipz*2-clipcornerd)-clipcornerd/2]);
+    lista(backplatel,0);
+    for (y=[backplatescrewd*2+clipcornerd,backplatel/2+clipcornerd,backplatel-backplatescrewd*2-clipcornerd]) {
+      //      translate([width/2,y,0]) cylinder(h=totalthickness+1,d=backplatescrewd);
+      translate([width/2,y,totalthickness-backplatescrewl]) ruuvireika(totalthickness-backplatescrewl+1,backplatescrewd,0);
+    }
+
+    translate([textheight/2,backplatel/2-clipcornerd,totalthickness-clipcornerd/2-textdepth]) linear_extrude(height=textdepth+0.01) rotate([0,0,-90]) text("Down towards the wall",size=textheight,halign="center");
+  }
+ }
+

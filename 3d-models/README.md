@@ -526,7 +526,7 @@ Templates to estimate radius/diameter of a curve. Handy when making a
 3d model of an existing part. This can measure both outside and inside
 curves.
 
-This needs further development, the parts should have a home which one
+This needs further development, the parts should have a hole which one
 can run a string through to attach all of them together. Also, it
 tries to arrange the parts to fit to a bed, but does rather miserable
 job doing that.
@@ -634,7 +634,7 @@ No supports are needed to print. Use Makefile.leafbatteryfan to create all parts
 ### circletemplateiso.scad
 
 I larger version of circletemplate, which is for measuring diameters of larger objects such as trees.
-This one also has holes to tie the parts together.
+This one also has holes to tie the parts together with a bolt and nut, and hole for a strap.
 
 To make values more visible, you can print bottom and top in different
 color, such as black/white, with multicolor printer or by manually
