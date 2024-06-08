@@ -1,6 +1,6 @@
 SOURCE=lattialista.scad
 
-all: lattialistakeittio.stl lattialistaeteinen.stl lattialistabackplate.stl 
+all: lattialistakeittio.stl lattialistaeteinen.stl lattialistabackplate.stl lattialistakulmapala.stl
 
 lattialistakeittio.stl: $(SOURCE)
 	openscad -D print=1 -o $@ $(SOURCE)
@@ -12,5 +12,9 @@ lattialistaeteinen.stl: $(SOURCE)
 
 lattialistabackplate.stl: $(SOURCE)
 	openscad -D print=3 -D strong=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+lattialistakulmapala.stl: $(SOURCE)
+	openscad -D print=5 -o $@ $(SOURCE)
 	echo $@ built.
 
