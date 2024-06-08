@@ -649,8 +649,18 @@ models.
 
 ### lattialista.scad
 
+### Makefile.lattialista
+
 I needed some skirting board parts for my home, this makes ones
 compatible with the back boards.
+
+Makes list parts for my kitchen and hall, corner part replacing original part, and backplate which these snap on.
+
+This is roughly compatible with Nokia-made plastic skirting board
+system, which is no more manufactured, but was commonly used in 1970's
+concrete apartment buildings in Finland.
+
+![lattialista.scad in openscad.](lattialista.png)
 
 ### tunturie460holder.scad
 

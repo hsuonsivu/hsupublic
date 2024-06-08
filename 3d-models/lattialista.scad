@@ -1,3 +1,9 @@
+// Copyright 2024 Heikki Suonsivu
+// Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
+// For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
+
+
+
 use <hsu.scad>
 
 print=2; // 0 shape, 1 kitchen corner 2 eteinen 3 backplate, 4 both, 5 corner piece
