@@ -681,3 +681,12 @@ Our tower game box was missing top cover, made a new one.
 
 ![Tower game cover installed.](towerkansi.jpg)
 
+#### kaihdinpidike.scad
+
+My apartment window shutter knob holder disintegrated, made a replacement.
+
+![Original disintegrated part.](kaihdinpidike.jpg)
+![Kaihdinpidike in scad.](kaihdinpidike.png)
+
+
+
