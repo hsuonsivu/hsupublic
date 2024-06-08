@@ -679,6 +679,7 @@ No supports are needed.
 
 Our tower game box was missing top cover, made a new one.
 
+![Tower game cover in scad.](towerkansi.png)
 ![Tower game cover installed.](towerkansi.jpg)
 
 #### kaihdinpidike.scad
