@@ -2,18 +2,25 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
-tekstit=["Talviporkkana", "Vahapapu", "Herne", ""];
+tekstit=["Raitajuuri", "Kaali", ""];
 // "Parsakaali","Rosmariini","Pinaatti","Retiisi"
 
-fontsize=10;
+fontsize=12;
 fontwidthmultiplier=0.72;
 basewidth=15;
-baselength=110;
+baselength=140;
 textdepth=1.5;
 thickness=2*textdepth+0.7;
 labelwidthextra=8;
 labelheightextra=6;
 textoffset=1;
+
+spikestart=45;
+spikedistance=20;
+spikeend=baselength+5;
+spikeh=10;
+spikelength=12;
+spikewidth=2;
 
 between=0.5;
 
@@ -70,6 +77,13 @@ module kasvimerkki(t, w) {
 	translate([w/2-basewidth/2,0,0]) roundedbox(basewidth,baselength+fontsize+labelheightextra,thickness);
 	translate([w/2,baselength+fontsize+labelheightextra+basewidth,thickness/2]) sphere(d=thickness,$fn=60);
       }
+      for (level=[spikestart:spikedistance:spikeend]) {
+	for (wposition=[w/2-basewidth/2+thickness/2,w/2+basewidth/2-thickness/2-spikewidth]) {
+	  translate([wposition,level,thickness/2]) {
+#	    triangle(spikewidth,spikelength,spikeh,8);
+	  }
+	}
+      }
     }
 
     translate([w/2,fontsize+labelheightextra-labelheightextra/2-textoffset,thickness-textdepth+0.01]) rotate([0,0,180]) linear_extrude(height=textdepth) text(text=t,font="Liberation Sans:style=Bold",size=fontsize,halign="center");
@@ -95,7 +109,7 @@ module r(tekstit,x,i) {
   
   translate([x-offsetleft,-i*(fontsize+labelheightextra+between),0]) kasvimerkki(tekstit[i],width);
   
-  translate([x-offsetleft+basewidth+between,baselength+fontsize+labelheightextra+basewidth+fontsize+labelheightextra+thickness/2+between-i*(fontsize+labelheightextra+between),thickness]) rotate([180,0,0]) kasvimerkki(tekstit[i],width);
+  translate([x+offsetleft+2*basewidth+between,baselength+fontsize+labelheightextra+basewidth+fontsize+labelheightextra+thickness/2+between-i*(fontsize+labelheightextra+between),0]) rotate([0,0,180]) kasvimerkki(tekstit[i],width);
 
   if (tekstit[i+1] != "") {
     xoffset = (width > width/2-basewidth/2+basewidth) ? width : width/2-basewidth/2+basewidth;
