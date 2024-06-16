@@ -1,0 +1,12 @@
+SOURCE=akkunapa.scad
+
+all: akkunapaplus.stl akkunapamiinus.stl 
+
+akkunapaplus.stl: $(SOURCE)
+	openscad -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+akkunapamiinus.stl: $(SOURCE)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
