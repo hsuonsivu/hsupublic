@@ -8,14 +8,17 @@ debug=0;
 
 $fn=90;
 
-height=17;
-edge=90;
+height=25;//17;
+edge=89.6;
 uray=10;
 urah=5;
 wall=urah/2;
 outsider=3; //5;
 insider=urah/2;//6.5;
 insideh=height-outsider/2;
+
+textdepth=1;
+textsize=15;
 
 module insidecut(x,y,h,d) {
   hull() {
@@ -39,6 +42,8 @@ module kansi() {
       }
     }
 if (debug) translate([outsider*2,-0.01,-0.01]) cube([edge-outsider*2+1,edge+1,height+2]);
+
+translate([edge/2,edge/2,height-textdepth+0.01]) linear_extrude(height=textdepth) text("TOWER",size=textsize,halign="center",valign="center");
   }
 }
 
