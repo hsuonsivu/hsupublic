@@ -708,3 +708,7 @@ Also makes round hole protectors for the outer window.
 
 Protective covers for car battery terminals. Note that these do not seem to be very standardized, so might not work for all batteries.
 
+### eggcase.scad
+
+Case for ceramic egg by Anja Suonsivu.
+
