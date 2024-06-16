@@ -2,12 +2,12 @@ print=3;
 
 $fn=180;
 
-plustopd=18.1; //17.6;
-pluslowd=19.6; //19.4; //19.22;
+plustopd=17.8; //17.6;
+pluslowd=19.2; //19.4; //19.22;
 plush=18.55;
 
-miinustopd=16.6; //16.1;
-miinuslowd=17.81; //17.79;
+miinustopd=16.4; //16.1;
+miinuslowd=17.8; //17.79;
 miinush=plush;
 
 brim=8;
@@ -23,6 +23,10 @@ module plusnapa() {
 	cylinder(h=wall,d=pluslowd+wall+brim);
 	cylinder(h=plush,d=plush/2);
       }
+      hull() {
+	translate([0,0,plush]) cylinder(h=wall,d=plustopd+wall+brim);
+	cylinder(h=plush,d=plush/2);
+      }
     }
 
     translate([0,0,-0.01]) cylinder(h=plush,d2=plustopd,d1=pluslowd);
@@ -36,6 +40,10 @@ module miinusnapa() {
       cylinder(h=miinush+wall,d2=miinustopd+wall*2,d1=miinuslowd+wall*2);
       hull() {
 	cylinder(h=wall,d=miinuslowd+wall+brim);
+	cylinder(h=miinush,d=miinush/2);
+      }
+      hull() {
+	translate([0,0,miinush]) cylinder(h=wall,d=miinustopd+wall+brim);
 	cylinder(h=miinush,d=miinush/2);
       }
     }
