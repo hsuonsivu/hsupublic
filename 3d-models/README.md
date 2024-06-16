@@ -695,9 +695,16 @@ Our tower game box was missing top cover, made a new one.
 #### kaihdinpidike.scad
 
 My apartment window shutter knob holder disintegrated, made a replacement.
+Also makes round hole protectors for the outer window.
 
 ![Original disintegrated part.](kaihdinpidike-original.jpg)
 ![Kaihdinpidike in scad.](kaihdinpidike.png)
 
 
+
+### akkunapa.scad
+
+### Makefile.akkunapa
+
+Protective covers for car battery terminals. Note that these do not seem to be very standardized, so might not work for all batteries.
 

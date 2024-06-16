@@ -59,4 +59,24 @@ module kaihdinpidike() {
   }
 }
 
+suojaholkkimaxd=15;
+suojaholkkitoph=2;
+suojaholkkiholed=10;
+suojaholkkiind=11.6;
+//suojaholkkiinw=(suojaholkkiind-suojaholkkid)/2;
+suojaholkkiinh=6;
+
+module suojaholkki() {
+  difference() {
+    union() {
+      cylinder(d=suojaholkkimaxd,h=suojaholkkitoph);
+      translate([0,0,suojaholkkitoph-0.01]) cylinder(d=suojaholkkiind,h=suojaholkkiinh+0.01);
+    }
+
+    translate([0,0,-0.01]) cylinder(d=suojaholkkiholed,h=suojaholkkitoph+suojaholkkiinh+0.02);
+  }
+}
+
 kaihdinpidike();
+
+translate([lfromreika+1+suojaholkkimaxd/2,0,0]) suojaholkki();
