@@ -301,7 +301,7 @@ diameter/square edge. No supports needed to print.
 
 ### rakki-kiinnike.scad
 
-Spare part for rack-mount power strip. Modded original from Tero Kivinen. Can be printed with no supports, but likely needs a brim. 
+Spare part for rack-mount power strip. Modded original from Tero Kivinen. Can be printed with no supports when vertical, but likely needs a brim. 
 
 ![rakki-kiinnike in openscad](rakki-kiinnike.png)
 ![This is the part this will replace. Original in picture.](rakki-kiinnike.jpg)
@@ -467,8 +467,10 @@ screw parts. No supports are needed for printing.
 
 A frame to scan film strips in a flat bed scanner, for both negatives
 and positives. This is designed for Epson Perfection V850 Pro, so it
-has Epson's positioning knobs. The positioning knobs are detachable, as
-with them the frame is too wide for A4 pocket.
+has Epson's positioning knobs. The positioning knobs are detachable,
+as with them the frame is too wide for A4 pocket. To store the frame
+turn the epson bits upside down and towards film strips to avoid
+losing them.
 
 I am using vuescan to scan the film strips.
 
@@ -561,12 +563,12 @@ has bad cells. This fan case can be installed to the service hatch
 between rear seats, replacing the metal plate normally protecting the
 hatch. In the summer this could also help keep battery cooler, though
 the effect is likely very limited. While moving, there is not much to
-do about it, but when parked, pushing warm air from inside the car to
-above the battery will somewhat reduce cooling of the battery and will
-warm up the battery if done for long enough. The set also includes a
-filter which will avoid hurting fingers in the spinning fan and reduce
-dust collecting over the battery (though dust will get through from
-below while driving).
+do about the heat as airflow will pass around the battery pack. When
+parked, pushing warm air from inside the car to above the battery will
+somewhat reduce cooling of the battery and will warm up the battery if
+done for long enough. The set also includes a filter which will avoid
+hurting fingers in the spinning fan and reduce dust collecting over
+the battery (though dust will get through from below while driving).
 
 You need a strip of seal below, normal window/door seal works, a
 92mm computer fan at 12V, which is quite common size, some filter
@@ -711,4 +713,14 @@ Protective covers for car battery terminals. Note that these do not seem to be v
 ### eggcase.scad
 
 Case for ceramic egg by Anja Suonsivu.
+
+### tippadosetti.scad
+
+Eye doctor said I need eye drops for my dry eyes, so I made a dispenser for pipettes.
+set print=1 for printing.
+
+### raisepad.scad
+
+Simple pads to raise furniture items a bit.
+
 
