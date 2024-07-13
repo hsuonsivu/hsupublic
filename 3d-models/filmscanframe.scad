@@ -1,12 +1,16 @@
 // glassless film holder for Epson V850 pro
-print=4; // 1 = print film frame and 1 cover, 2 = print covers for all film frames, 3 = print one whole set, 4 print attachment test
+
+use <hsu.scad>;
+
+print=3; // 2 = print film frame and 1 cover, 2 = print covers for all film frames, 3 = print one whole set, 4 print attachment test
 debug=0; // 1 just one strip, 2 smallest possible
 hooksoncover=0; // Hooks are in the frame cover
 tappitypemale=1; // 0 = rounded cube, 1 = circular
-tappitypefemale=0; // 0 = rounded cube, 1 = circular
+tappitypefemale=1; // 0 = rounded cube, 1 = circular
 filmstrips=((debug==0) || (debug==3))?4:1;
 detachable_epson_bits=1;
 testcuts=0; // Cutouts to reveal clip structures.
+adhesion=1; // Adds some structures to increase bed adhesion.
 
 v="V1.23";
 versiontext=debug?str(v, "-", debug):v;
@@ -22,6 +26,7 @@ ytolerance=0.55;
 xhookholetolerance=hooksoncover?0.40:0.30;
 yhookholetolerance=hooksoncover?0.40:0.30;
 ztolerance=0.3;
+tappiztolerance=ztolerance;
 
 length=(debug==2)?90:(debug==1)?225:260;
 thickness=5; // Thickness.
@@ -41,7 +46,7 @@ holeinsidew=holeoutsidew-2*holew; //25.3;
 framel=36;
 framegap=2;
 
-frameimagew=25; //26.5;//.3; // holeinsidew+0.4;
+frameimagew=24.5; //26.5;//.3; // holeinsidew+0.4;
 frameimagey=framew/2-frameimagew/2;
   
 filmh=2; // Position of the film above the glass
@@ -51,13 +56,13 @@ filmholderx=11;
 filmthickness=0.2;
 // frame starts at hole, new frame every 8 holes.
 
-framehookx=holewidth;
+framehookx=holewidth*0.9; // 0.9 compensate 3d printer inaccuracy
 framehookh=thickness-filmh-filmthickness;
 framehooktoph=thickness;
 framehooky=2+holew;
 hookcornerd=1.5;
 
-tappih=thickness - framehookh;//framehookh - 0.5;
+tappih=min(thickness - framehookh,1.7);//framehookh - 0.5;
 
 // First frame start
 framestart=1;
@@ -153,20 +158,22 @@ module triangle(x,y,z,mode) {
 module tappi(diameterx,diametery,height,toph,cd,circulartappi,down) {
   if (circulartappi) {
     diameter=min(diameterx,diametery);
-    th=toph>0?toph:diameter/1.75;
+    th=toph>0?toph:diameter/3;
     translate([diameter/2,diameter/2,0]) {
       if (down) {
 	translate([0,0,th]) cylinder(h=height-th,d=diameter,$fn=30);
-	hull() {
-	  translate([0,0,th+0.01]) cylinder(h=0.01,d=diameter,$fn=30);
-	  translate([0,0,1/2]) sphere(d=1,$fn=30);
-	}
+	cylinder(h=th+0.01,d1=diameter/3,d2=diameter,$fn=30);
+	//hull() {
+	//  translate([0,0,th+0.01]) cylinder(h=0.01,d=diameter,$fn=30);
+	//  translate([0,0,1/2]) sphere(d=1,$fn=30);
+	//}
       } else {
 	cylinder(h=height-th,d=diameter,$fn=30);
-	hull() {
-	  translate([0,0,height-th-0.01]) cylinder(h=0.01,d=diameter,$fn=30);
-	  translate([0,0,height-1/2]) sphere(d=1,$fn=30);
-      }
+	translate([0,0,height-th-0.01]) cylinder(h=th+0.01,d1=diameter,d2=diameter/3,$fn=30);
+	  // 	hull() {
+	  //	  translate([0,0,height-th-0.01]) cylinder(h=0.01,d=diameter,$fn=30);
+	  //	  translate([0,0,height-1/2]) sphere(d=1,$fn=30);
+	  //      }
     }
     }
   } else {
@@ -193,14 +200,28 @@ module roundedbox(x,y,z,c) {
 }
 
 module scanadapter() {
+  if (adhesion) {
+    tassu(-135,10);
+    translate([length,0,0]) tassu(-45,10);
+    translate([length,width,0]) tassu(45,10);
+    translate([0,width,0]) tassu(135,10);
+  }
+  
   difference() {
     union() {
       roundedbox(length,width,thickness,cornerd);
 
+      // Adapters
       yoffset=(detachable_epson_bits && (print > 0))?-adapterattachy-1:0;
       translate([0,yoffset,0]) {
 	for (x=[adapteroffset:adapterdistance:length-adapterl]) {
 	  translate([x,-adapterw,0]) roundedbox(adapterl,adapterw+(detachable_epson_bits?-1:cornerd),adapterh,cornerd);
+	  if (adhesion) {
+	    translate([x,-adapterw,0]) tassu(-135,10);
+	    translate([x+adapterl,-adapterw,0]) tassu(-45,10);
+	    translate([x+adapterl,-1,0]) tassu(10,10);
+	    translate([x,-1,0]) tassu(170,10);
+	  }
 	  translate([x+adaptertappid/2,-adapterw+adaptertappid/2,0]) cylinder(h=adaptertappih,d=adaptertappid,$fn=90);
 	  if (detachable_epson_bits) {
 	    translate([x+(adapterl-adapterattachx)/2,0,0]) {
@@ -214,9 +235,12 @@ module scanadapter() {
       }
     }
 
+    // Adapters cut
     if (detachable_epson_bits) {
       for (x=[adapteroffset:adapterdistance:length-adapterl]) {
-	translate([x+adaptertappid/2,adapterw+adapterattachy-adaptertappid/2,adapterh+thickness-adaptertappih-0.01]) cylinder(h=adaptertappih+0.02,d=adaptertappid+1,$fn=90);
+	h1=adapterh+thickness-adaptertappih-0.01;
+	h2=adhesion?max(h1,0.2):h1;
+	translate([x+adaptertappid/2,adapterw+adapterattachy-adaptertappid/2,h2]) cylinder(h=adaptertappih+0.02,d=adaptertappid+1,$fn=90);
 
 	translate([x+(adapterl-adapterattachx)/2,0,0]) {
 	  translate([-adapterattachxtolerance+adapterattachdxoffset,adapterattachy/2+adapterattachytolerance/2,-0.01]) cylinder(h=thickness/2+0.02,d=adapterattachd+adapterattachdtolerance,$fn=90);
@@ -225,13 +249,16 @@ module scanadapter() {
 	  translate([adapterattachx+adapterattachxtolerance-adapterattachdxoffset,adapterattachy/2+adapterattachytolerance/2,-0.01]) cylinder(h=thickness/2+0.02,d=adapterattachd+adapterattachdtolerance,$fn=90);
 	  translate([adapterattachx+adapterattachxtolerance-adapterattachdxoffset,adapterattachy/2+adapterattachytolerance/2,thickness/2]) cylinder(h=thickness/2+0.01,d1=adapterattachd+adapterattachdtolerance,d2=adapterattachd+adapterattachdtolerance*2,$fn=90);
 	}
+	
 	for (x=[adapteroffset:adapterdistance:length-adapterl]) {
 	  translate([x+adapterl/2,adaptertexty,adapterh-textdepth-0.01])  linear_extrude(height=textdepth+0.02) text(versiontext, size=textsize, valign="bottom",halign="center",font="Liberation Sans:style=Bold");
 	}
       }
     }
-    
+
+    // Film openings
     for (y=[filmholdery:filmholderoffset:width-filmholdery]) {
+      // End clip cuts
       translate([-0.01,y+framew/2-clipwidth/2-clipytolerance,-0.01]) cube([clipx+clipxtolerance+0.02,clipwidth+clipytolerance*2,framehookh+0.02]);
       translate([clipx+clipxtolerance-0.01,y+framew/2-clipwidth/2-clipytolerance,-0.01]) cube([clipdepth+0.02,clipwidth+clipytolerance*2,cliph/2+0.02]);
       translate([clipx+clipxtolerance-0.01,y+framew/2-clipwidth/2-clipytolerance,cliph/2-0.01]) triangle(clipdepth+0.02,clipwidth+clipytolerance*2,cliph/2+0.02,2);
@@ -240,8 +267,9 @@ module scanadapter() {
       translate([length-clipx-clipdepth-clipxtolerance,y+framew/2-clipwidth/2-clipytolerance,-0.01]) cube([clipdepth+0.01,clipwidth+clipytolerance*2,cliph/2+0.02]);
       translate([length-clipx-clipdepth-clipxtolerance,y+framew/2-clipwidth/2-clipytolerance,cliph/2-0.01]) triangle(clipdepth+0.02,clipwidth+clipytolerance*2,cliph/2+0.02,0);
 
+      // Side clip cut
       for (clipx=[filmholderx+framestart:sideclipdistance:filmholderx+filmholderl-sideclipwidth-1]) {
-	// right clip hole
+	// right clip hole cut
 	translate([clipx-sideclipxtolerance,y-sideclipy-sideclipspace-sideclipysink-0.01,framehookh]) cube([sideclipwidth+2*sideclipxtolerance,sideclipy+sideclipspace+sideclipysink+0.02,thickness-framehookh+0.02]);
 	translate([clipx-sideclipxtolerance,y-sideclipy-sideclipspace-sideclipysink,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipy+sideclipspace+0.01,thickness+0.02]);
 	translate([clipx-sideclipxtolerance,y-sideclipysink,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02]);
@@ -253,8 +281,9 @@ module scanadapter() {
 	translate([clipx+sideclipoffset-sideclipxtolerance,y+framew+sideclipysink-sideclipdepth,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02]);
 	translate([clipx+sideclipoffset-sideclipxtolerance,y+framew+sideclipysink-sideclipdepth,sidecliph/2-0.01]) triangle(sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02,11);
       }
-      
-	translate([filmholderx,y+frameimagey,-0.01]) cube([filmholderl,frameimagew,framehookh+0.02]);
+
+    // Film opening cut
+    translate([filmholderx,y+frameimagey,-0.01]) cube([filmholderl,frameimagew,framehookh+0.02]);
 	hull() {
 	  translate([filmholderx,y+frameimagey,framehookh-0.6]) cube([filmholderl,frameimagew,0.1]);
 	  translate([filmholderx-filmh*0.7,y-filmh*0.7+frameimagey,-0.01]) cube([filmholderl+2*filmh*0.7,frameimagew+2*filmh*0.7,0.01]);	
@@ -291,9 +320,9 @@ module scanadapter() {
       // Hooks
       for (x=[filmholderx+framestart:framedistance:filmholderx+filmholderl]) {
 	for (xx=[x-holewidth:holedistance:(x+framel > filmholderx + filmholderl) ? length - 2*holedistance : x + framel]) {
-	  translate([xx+holeoffset,y+holefromoutw,framehookh-(tappitypemale==1?0.01:hookcornerd/2)]) tappi(framehookx,holew,thickness-framehookh+(tappitypemale==1?0.01:hookcornerd/2),0,hookcornerd,tappitypemale,0);
+	  translate([xx+holeoffset,y+holefromoutw,framehookh-(tappitypemale==1?0.01:hookcornerd/2)]) tappi(framehookx,holew,tappih+0.01,0,hookcornerd,tappitypemale,0);
 
-	  translate([xx+holeoffset,y+framew-holefromoutw-holew,framehookh-(tappitypemale==1?0.01:hookcornerd/2)]) tappi(framehookx,holew,thickness-framehookh+(tappitypemale==1?0.01:hookcornerd/2),0,hookcornerd,tappitypemale,0);
+	  translate([xx+holeoffset,y+framew-holefromoutw-holew,framehookh-(tappitypemale==1?0.01:hookcornerd/2)]) tappi(framehookx,holew,tappih+0.01,0,hookcornerd,tappitypemale,0);
 	}
       }
     }
@@ -301,6 +330,13 @@ module scanadapter() {
 }
 
 module scancover() {
+  if (adhesion) {
+    translate([0,filmholdery+ytolerance,thickness]) mirror([0,0,1]) tassu(-135,8);
+    translate([length,filmholdery+ytolerance,thickness]) mirror([0,0,1]) tassu(-45,8);
+    translate([length,filmholdery+ytolerance+framew-2*ytolerance,thickness]) mirror([0,0,1]) tassu(45,8);
+    translate([0,filmholdery+ytolerance+framew-2*ytolerance,thickness]) mirror([0,0,1]) tassu(135,8);
+  }
+  
   difference() {
     translate([0,filmholdery+ytolerance,framehookh+ztolerance]) roundedbox(length,framew-2*ytolerance,thickness-framehookh-ztolerance,cornerd);
 
@@ -314,9 +350,9 @@ module scancover() {
 
 	  for (x=[filmholderx+framestart:framedistance:filmholderx+filmholderl]) {
 	    for (xx=[x-holewidth:holedistance:(x+framel > filmholderx + filmholderl) ? length - 2*holedistance : x + framel]) {
-	      translate([xx+holeoffset-xhookholetolerance,y+holefromoutw-yhookholetolerance,framehookh-hookcornerd/2-0.01]) tappi(framehookx+xhookholetolerance*2,tappiw+yhookholetolerance*2,framehookh+hookcornerd+0.02,0.01,hookcornerd,tappitypefemale,1);
+	      translate([xx+holeoffset-xhookholetolerance,y+holefromoutw-yhookholetolerance,framehookh]) tappi(framehookx+xhookholetolerance*2,tappiw+yhookholetolerance*2,tappih+tappiztolerance,0,hookcornerd,tappitypefemale,0);
 
-	      translate([xx+holeoffset-xhookholetolerance,y+framew-holefromoutw-tappiw-yhookholetolerance,framehookh-hookcornerd/2-0.01]) tappi(framehookx+xhookholetolerance*2,tappiw+yhookholetolerance*2,framehookh+hookcornerd+0.02,0.01,hookcornerd,tappitypefemale,1);
+	      translate([xx+holeoffset-xhookholetolerance,y+framew-holefromoutw-tappiw-yhookholetolerance,framehookh]) tappi(framehookx+xhookholetolerance*2,tappiw+yhookholetolerance*2,tappih+tappiztolerance,0,hookcornerd,tappitypefemale,0);
 	    }
 	  }
 	} else {
@@ -402,7 +438,7 @@ if (print==3) {
   if (filmstrips > 1) {
     translate([0,width+filmholdery + 2*holdertotalw+1,thickness]) rotate([0,180,180]) scancover();
     translate([0,width+filmholdery + 3*holdertotalw+1,+thickness]) rotate([0,180,180]) scancover();
-    translate([filmholdery-sideclipysink-sideclipy-sideclipspace,length,thickness]) rotate([0,180,90]) scancover();
+    translate([filmholdery-sideclipysink-sideclipy-sideclipspace-(adhesion?3.5:0),length,thickness]) rotate([0,180,90]) scancover();
   }
  }
 
@@ -410,5 +446,12 @@ if (print==4) {
   intersection() {
     scanadapter();
     translate([adapteroffset-17+adapterdistance,-adapterw-adapterattachy-1,0]) cube([adapterl+18,adapterw+adapterattachy+1+7+25,thickness+5]);
+  }
+ }
+
+if (print==5) {
+  intersection() {
+    scanadapter();
+    translate([adapteroffset-17+adapterdistance,-adapterw-adapterattachy-1,0]) cube([adapterl+18,adapterw+adapterattachy+0.9,thickness+5]);
   }
  }
