@@ -79,7 +79,8 @@ module straphook() {
     translate([0,0,-0.1]) cylinder(d=strapholed,h=straphookthickness+0.2);
     translate([strapholed*3-strapthickness/2+1,-strapwidth/2,-strapholecornerd]) roundedbox(strapthickness,strapwidth,straphookthickness+2*strapholecornerd,strapholecornerd);
 
-    translate([strapholed+1,0,straphookthickness-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth+0.2) text(text=versiontext,font="Liberation Sans:style=Bold",size=6,halign="center",valign="top");  }
+    translate([strapholed+1,0,straphookthickness-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth+0.2) text(text=versiontext,font="Liberation Sans:style=Bold",size=6,halign="center",valign="top");
+  }
 }
 
 
