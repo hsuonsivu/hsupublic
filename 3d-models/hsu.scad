@@ -89,3 +89,14 @@ module roundedbox(x,y,z,c) {
   }
 }
 
+module tassu(direction,size) {
+  s=(size?size:7);
+  $fn=30;
+  rotate([0,0,direction]) {
+    hull() {
+      cylinder(d=3,h=0.31);
+      translate([s/2-1,0,0]) cylinder(d=1.5,h=0.35);
+      translate([s/2-1,0,0]) cylinder(d1=s,d2=s-1,h=0.35);
+    }
+  }
+}
