@@ -716,8 +716,13 @@ Case for ceramic egg by Anja Suonsivu.
 
 ### tippadosetti.scad
 
-Eye doctor said I need eye drops for my dry eyes, so I made a dispenser for pipettes.
-set print=1 for printing.
+Eye doctor said I need eye drops for my dry eyes, so I made a
+dispenser for pipettes.  set print=1 for printing. For some printers
+or materials you may need to increase axledtolerance and/or reduce
+axleendl to make hinge work.
+
+![tippadosetti in scad.](tippadosetti.png)
+![tippadosetti in use.](tippadosetti.jpg)
 
 ### raisepad.scad
 
