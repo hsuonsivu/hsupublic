@@ -15,6 +15,8 @@
 // union() is the default and often need not be mentioned (except as first item of difference()).
 
 use <libmac.scad>   // ln -s ../lib/libmac.scad
+use <hsu.scad>
+
 //use <librobo.scad>
 //use <ISOThread.scad>   // from https://www.thingiverse.com/thing:311031/comments
 //use <MCAD/metric_fastners.scad>  // see /usr/share/openscad/libraries/MCAD/
@@ -26,6 +28,9 @@ use <libmac.scad>   // ln -s ../lib/libmac.scad
 //include <MCAD/fonts.scad>
 //include <Arial.scad>
 
+PRINT=9;   // 0=normal model, 1=parts
+XRAY=0;
+
 BRIM=1;    // Include support structures for horizontal printing
 VBRIM=0;   // Include support structures for vertical printing
 LEGEND=0;  // Helpful legends and labels
@@ -35,7 +40,26 @@ D_PIPE=6;
 T_PIPE=1.5;
 
 pyoreareika=70;
+pyoreakansimaxd=pyoreareika+10+1;
 nelioreuna=70;
+neliokansimaxd=nelioreuna+10+1;;
+kansimaxd=max(pyoreakansimaxd,neliokansimaxd);
+handlewall=1.5;
+handled=30;
+handleoutd=handled+handlewall;
+handlewt=2;
+handlewl=3;
+handleflat=15;
+handlestart=5;
+handlehadjust=handleflat/2-handlestart;
+
+kansithickness=3+1.0+0.5;
+kansigap=kansithickness+handleflat/2;
+kansiwidth=kansimaxd;
+kansitelinecornerd=2;
+kansitelinel=kansithickness*10+9*kansigap+kansitelinecornerd+2;
+kansitelinew=kansiwidth+kansitelinecornerd*2+1;
+kansitelineh=1+kansiwidth/2-handleoutd/2-1;
 
 $fn=50;
 $fs=0.5;     // Make small round objects appear a bit more round
@@ -133,20 +157,55 @@ module nelio_kartio_kori() {
 }
 }
 
+module handle() {
+  difference() {
+    //    sphere(d=handleoutd);
+    hull() {
+      translate([0,0,-0.51]) cylinder(d=handleoutd+handlewall/2,h=handlestart);
+      translate([0,0,handleoutd/2-handlehadjust-0.51]) cylinder(d=handleflat+handlewall,h=1);
+    }
+    hull() {
+      translate([0,0,-0.51]) cylinder(d=handled,h=handlestart-handlewall/2);
+      translate([0,0,handled/2-handlehadjust-0.51]) cylinder(d=handleflat,h=1);
+    }
+    translate([-handleoutd/2-0.01,-handleoutd/2-0.01,-handleoutd/2-0.51]) cube([handleoutd+0.02,handleoutd+0.02,handleoutd/2+0.51]);
+  }
+
+  hull() {
+    translate([-handleoutd/2,-handlewt/2,-0.5]) cube([handleoutd,handlewl,1]);
+    translate([-handleoutd/2,-handlewt/2,handlestart-0.5]) cube([handleoutd,handlewt,0.1]);
+    translate([-handleflat/2,-handlewt/2,handled/2-handlehadjust-0.5]) cube([handleflat,handlewt,1]);
+  }
+}
+
 module pyorea_kansi() {
   difference() {
     union() {  
       cyl(pyoreareika + 10,1);
       T(0,0,1) tube(pyoreareika-4,3);
     }
+    translate([0,0,-1]) cylinder(d=handled,h=handlewall+0.1);
   }
+
+  handle();
 }
 
 module nelio_kansi() {
   difference() {
-    union() {  
-      cub(nelioreuna + 10,nelioreuna + 10,1,roundness=15);
-      T(0,0,1.5) sq_tube(nelioreuna - 4,nelioreuna - 4,3,roundness=15);
+    union() {
+      difference() {
+	union() {  
+	  cub(nelioreuna + 10,nelioreuna + 10,1,roundness=15);
+	  T(0,0,1.5) sq_tube(nelioreuna - 4,nelioreuna - 4,3,roundness=15);
+	}
+	translate([0,0,-1]) cylinder(d=handled,h=handlewall+0.1);
+      }
+
+      handle();
+    }
+
+    if (XRAY) {
+      translate([0,0,-1]) cube([nelioreuna,nelioreuna,handleoutd]);
     }
   }
 }
@@ -185,48 +244,95 @@ module ritila() {
   }
 }
 
-PRINT=4;   // 0=normal model, 1=parts
-XRAY=0;
-if (PRINT==1) {
-  ritila();
- } else if (PRINT==2) {
-  intersection() {
-    ritila();
-    //cub(85,180,20);  // keski nelio ympyra
-    //T(85,0,0) cub(85,180,20); // keski nelio nelio
-    //T(-85,0,0) cub(85,180,20);
-    T(180,0,0) cub(105,180,20);  // paaty
-  }
- } else if (PRINT==3) {
+module kansiteline() {
   difference() {
-    T(0,45,0) pyorea_kartio_kori();
-    if (XRAY) {
-      cub(100,100,300);
-    }
-  }
- } else if (PRINT==4) {
-  // T(0,45,0) pyorea_kansi();
-  T(0,-45,0) nelio_kansi();
- } else if (PRINT==5) {
-  difference() {
-    T(0,-45,0) nelio_kartio_kori();
-    if (XRAY) {
-      cub(90,90,300);
-    }
-  }
- } else if (PRINT==6) {
-  T(0,-45,0) pyorea_kansi();
-} else if (PRINT==0) {
-  difference() {
-    union() {
-      ritila();
-    }
-    if (XRAY) {
-      // Y-Z plane cut off for x-ray
-      T(101.1,0,140) cub(150,150,300);
-      //T(0,50,140) cub(100,100,300);
+    roundedbox(kansitelinel,kansitelinew,kansitelineh,kansitelinecornerd);
+    for (i=[0:1:9]) {
+      translate([kansitelinecornerd+i*(kansithickness+kansigap),kansitelinecornerd+1/2,1]) cube([kansithickness,kansiwidth,kansiwidth]);
+#      translate([kansitelinecornerd+i*(kansithickness+kansigap)+1,kansitelinew/2,1+kansiwidth/2]) rotate([0,90,0]) nelio_kansi();
+
     }
   }
 }
+
+rotate([0,0,0]) {
+  if (PRINT==1) {
+    ritila();
+  }
+
+  if (PRINT==2) {
+    intersection() {
+      ritila();
+      //cub(85,180,20);  // keski nelio ympyra
+      //T(85,0,0) cub(85,180,20); // keski nelio nelio
+      //T(-85,0,0) cub(85,180,20);
+      T(180,0,0) cub(105,180,20);  // paaty
+    }
+  }
+
+  if (PRINT==7) {
+    intersection() {
+      ritila();
+      cub(85,180,20);  // keski nelio ympyra
+      //T(85,0,0) cub(85,180,20); // keski nelio nelio
+      //T(180,0,0) cub(105,180,20);  // paaty
+    }
+  }
+
+  if (PRINT==8) {
+    intersection() {
+      ritila();
+      //cub(85,180,20);  // keski nelio ympyra
+      T(85,0,0) cub(85,180,20); // keski nelio nelio
+      //T(-85,0,0) cub(85,180,20);
+      //T(180,0,0) cub(105,180,20);  // paaty
+    }
+  }
+
+  if (PRINT==3) {
+    difference() {
+      T(0,45,0) pyorea_kartio_kori();
+      if (XRAY) {
+	cub(100,100,300);
+      }
+    }
+  }
+
+  if (PRINT==4) {
+    // T(0,45,0) pyorea_kansi();
+    T(0,-45,0) nelio_kansi();
+  }
+
+  if (PRINT==5) {
+    difference() {
+      T(0,-45,0) nelio_kartio_kori();
+      if (XRAY) {
+	cub(90,90,300);
+      }
+    }
+  }
+
+  if (PRINT==6) {
+    T(0,-45,0) pyorea_kansi();
+  }
+
+  if (PRINT==0) {
+    difference() {
+      union() {
+	ritila();
+      }
+      if (XRAY) {
+	// Y-Z plane cut off for x-ray
+	T(101.1,0,140) cub(150,150,300);
+	//T(0,50,140) cub(100,100,300);
+      }
+    }
+  }
+}
+
+if (PRINT==9) {
+  kansiteline();
+ }
+
 
 //EOF - yrttiviljelma.scad

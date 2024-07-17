@@ -1,0 +1,41 @@
+SOURCE=yrttiviljelma.scad
+DEPENDS=libmac.scad Makefile.yrttiviljelma
+ALL=end.stl roundcup.stl squarecup.stl squarecover.stl roundcover.stl mid.stl twosquare.stl kansiteline.stl
+
+all: $(ALL)
+
+clean:
+	rm $(ALL)
+
+end.stl: $(SOURCE) $(DEPENDS)
+	openscad -D PRINT=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+roundcup.stl: $(SOURCE) $(DEPENDS)
+	openscad -D PRINT=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+squarecover.stl: $(SOURCE) $(DEPENDS)
+	openscad -D PRINT=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+squarecup.stl: $(SOURCE) $(DEPENDS)
+	openscad -D PRINT=5 -o $@ $(SOURCE)
+	echo $@ built.
+
+roundcover.stl: $(SOURCE) $(DEPENDS)
+	openscad -D PRINT=6 -o $@ $(SOURCE)
+	echo $@ built.
+
+mid.stl: $(SOURCE) $(DEPENDS)
+	openscad -D PRINT=7 -o $@ $(SOURCE)
+	echo $@ built.
+
+twosquare.stl: $(SOURCE) $(DEPENDS)
+	openscad -D PRINT=8 -o $@ $(SOURCE)
+	echo $@ built.
+
+kansiteline.stl: $(SOURCE) $(DEPENDS)
+	openscad -D PRINT=9 -o $@ $(SOURCE)
+	echo $@ built.
+
