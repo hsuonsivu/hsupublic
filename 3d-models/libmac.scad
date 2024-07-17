@@ -43,6 +43,7 @@ T_PIPEFLANGE=3;    // Thickness of pipe pressure flanges
 //MATERIAL_WEIGHT=600;  // Mänty = 600 kg/m3
 //MATERIAL_WEIGHT=2700;  // Al = 2700 kg/m3
 MATERIAL_WEIGHT=7874;  // Fe = 7874 kg/m3
+VERBOSE=0; // enable some debug prints
 
 module diff() {  // *** does not work
   difference() children(0);
@@ -85,7 +86,7 @@ module cubint(x,y,z,c="",roundtype=1,roundness=0) {  // for internal use where e
 module cub(x,y,z,comment="",mod_type="cub",roundtype=1,roundness=0) {
   material_volume_m3 = x*y*z/1000000000;
   weight_kg = material_volume_m3*MATERIAL_WEIGHT;
-  echo(mod_type,x,y,z,comment,material_volume_m3,weight_kg);
+  if (VERBOSE) echo(mod_type,x,y,z,comment,material_volume_m3,weight_kg);
   cubint(x,y,z,comment,roundtype,roundness);
   if (SHOW_DIM) {
     if (z < x && z < y) {  // z smallest: use xy-face
@@ -128,7 +129,7 @@ module sheet(x,y,z,c="") {
 MAXCUB=20000;
 
 module bendx(yoff=0,xangle=90,maxcub=MAXCUB) {
-  echo("begin(bendx,",yoff,")");
+  if (VERBOSE) echo("begin(bendx,",yoff,")");
   union() {
     rx(xangle) intersection() {
       T(0,maxcub/2,0) cubint(maxcub,maxcub,maxcub);
@@ -139,11 +140,11 @@ module bendx(yoff=0,xangle=90,maxcub=MAXCUB) {
       T(0,yoff,0) children(0);
     }
   }
-  echo("end(bendx)");
+  if (VERBOSE) echo("end(bendx)");
 }
 
 module bendy(xoff=0,yangle=90,maxcub=MAXCUB) {
-  echo("begin(bendy,",xoff,")");
+  if (VERBOSE) echo("begin(bendy,",xoff,")");
   union() {
     ry(yangle) intersection() {
       T(maxcub/2,0,0) cubint(maxcub,maxcub,maxcub);
@@ -154,11 +155,11 @@ module bendy(xoff=0,yangle=90,maxcub=MAXCUB) {
       T(xoff,0,0) children(0);
     }
   }
-  echo("end(bendy)");
+  if (VERBOSE) echo("end(bendy)");
 }
 
 module bendyz(zoff=0,yangle=90,maxcub=MAXCUB) {
-  echo("begin(bendyz,",zoff,")");
+  if (VERBOSE) echo("begin(bendyz,",zoff,")");
   union() {
     ry(yangle) intersection() {
       T(0,0,maxcub/2) cubint(maxcub,maxcub,maxcub);
@@ -169,11 +170,11 @@ module bendyz(zoff=0,yangle=90,maxcub=MAXCUB) {
       T(0,0,zoff) children(0);
     }
   }
-  echo("end(bendyz)");
+  if (VERBOSE) echo("end(bendyz)");
 }
 
 module bendzx(xoff=0,zangle=90,maxcub=MAXCUB) {
-  echo("begin(bendzx,",xoff,")");
+  if (VERBOSE) echo("begin(bendzx,",xoff,")");
   union() {
     rz(zangle) intersection() {
       T(maxcub/2,0,0) cubint(maxcub,maxcub,maxcub);
@@ -184,11 +185,11 @@ module bendzx(xoff=0,zangle=90,maxcub=MAXCUB) {
       T(xoff,0,0) children(0);
     }
   }
-  echo("end(bendzx)");
+  if (VERBOSE) echo("end(bendzx)");
 }
 
 module bendzy(yoff=0,zangle=90,maxcub=MAXCUB) {
-  echo("begin(bendzy,",yoff,")");
+  if (VERBOSE) echo("begin(bendzy,",yoff,")");
   union() {
     rz(zangle) intersection() {
       T(0,maxcub/2,0) cubint(maxcub,maxcub,maxcub);
@@ -199,7 +200,7 @@ module bendzy(yoff=0,zangle=90,maxcub=MAXCUB) {
       T(0,yoff,0) children(0);
     }
   }
-  echo("end(bendzy)");
+  if (VERBOSE) echo("end(bendzy)");
 }
 
 module label(txt,colori="black",siz=5,ht=.5) {
@@ -226,7 +227,7 @@ module bary(w,d,l,c="bary",roundtype=1,roundness=0)  { rx(90) bar(w,d,l,c,roundt
 
 // lbar
 module L_bar(w,d,l,t=1,c="L_bar")   {
-  echo("L_bar",w,d,l,t,c);
+  if (VERBOSE) echo("L_bar",w,d,l,t,c);
   T(0,w/2-t/2,0) cubint(w,t,l);
   T(d/2-t/2,0,0) cubint(t,d,l);
 }
@@ -236,7 +237,7 @@ module L_bary(w,d,l,t=1,c="L_bary")  { rx(90) L_bar(w,d,l,t,c); }
 
 // tbar
 module T_bar(w,d,l,t=1,c="T_bar")   {
-  echo("T_bar",w,d,l,t,c);
+  if (VERBOSE) echo("T_bar",w,d,l,t,c);
   T(0,w/2-t/2,0) cubint(w,t,l);
   cubint(t,d,l);
 }
@@ -246,7 +247,7 @@ module T_bary(w,d,l,t=1,c="T_bary")  { rx(90) T_bar(w,d,l,t,c); }
 
 // ubar
 module U_bar(w,d,l,tb=1,ts=1,c="U_bar")   {
-  echo("U_bar",w,d,l,tb,ts,c);
+  if (VERBOSE) echo("U_bar",w,d,l,tb,ts,c);
   T(0,d/2-tb/2,0) cubint(w,tb,l);  // bottom
   T(w/2-ts/2,0,0) cubint(ts,d,l);  // sides
   T(-w/2+ts/2,0,0) cubint(ts,d,l);
@@ -257,7 +258,7 @@ module U_bary(w,d,l,tb=1,ts=1,c="U_bary")  { rx(90) U_bar(w,d,l,tb,ts,c); }
 
 // ibar
 module I_bar(w,d,l,tb=1,ts=1,c="I_bar")   {
-  echo("I_bar",w,d,l,tb,ts,c);
+  if (VERBOSE) echo("I_bar",w,d,l,tb,ts,c);
   T(0,0,0) cubint(tb,d,l);  // middle
   T(0,d/2-ts/2,0) cubint(w,ts,l);  // end caps
   T(0,-d/2+ts/2,0) cubint(w,ts,l);
@@ -270,7 +271,7 @@ module sq_tube(x,y,z_len,t=1,c="",roundtype=1,roundness=0) {
   material_volume_m3 = 2*(x+y)*z_len*t/1000000000;
   weight_kg = material_volume_m3*MATERIAL_WEIGHT;
   lab = z_len > 400 ? str(x," x ",y," x ",z_len,", ",round(100*weight_kg)/100," kg") : (z_len > 200 ? str(x," x ",y," x ",z_len) : str(z_len));
-  echo("sq_tube",x,y,z_len,t,c,material_volume_m3,weight_kg);
+  if (VERBOSE) echo("sq_tube",x,y,z_len,t,c,material_volume_m3,weight_kg);
   difference() {
     cubint(x,y,z_len,"outer",roundtype,roundness);
     cubint(x-2*t,y-2*t,z_len+10,"hole",roundtype,roundness);
@@ -289,7 +290,7 @@ module cylint(D,H,c="") {
 
 module cyl(D,H,c="") {
   if (c) {
-    echo("cylinder",D,H,c);
+    if (VERBOSE) echo("cylinder",D,H,c);
   }
   cylinder(d=D,h=H, center=true);
 }
@@ -298,22 +299,22 @@ module cylz(d,l,c="axlez")  { cyl(d,l,c); }
 module cylx(d,l,c="axlex")  { ry(90) cyl(d,l,c); }
 module cyly(d,l,c="axley")  { rx(90) cyl(d,l,c); }
 
-module axle(d,l,c="axle")    { echo("axle",d,l,c); cylint(d,l); }
+module axle(d,l,c="axle")    { if (VERBOSE) echo("axle",d,l,c); cylint(d,l); }
 module axlez(d,l,c="axlez")  { axle(d,l,c); }
 module axlex(d,l,c="axlex")  { ry(90) axle(d,l,c); }
 module axley(d,l,c="axley")  { rx(90) axle(d,l,c); }
 
-module hole(d,l=200,c="hole")    { echo("hole",d,l,c); cylint(d,l); }
+module hole(d,l=200,c="hole")    { if (VERBOSE) echo("hole",d,l,c); cylint(d,l); }
 module holez(d,l=200,c="holez")  { hole(d,l,c); }
 module holex(d,l=200,c="holex")  { ry(90) hole(d,l,c); }
 module holey(d,l=200,c="holey")  { rx(90) hole(d,l,c); }
 
-module holetoz(x,y,z,d,l=200,c="holetoz") {  echo("holetoz",x,y,z,d,l,c); T(x,y,z) cylint(d,l); }
-module holetox(x,y,z,d,l=200,c="holetox") {  echo("holetox",x,y,z,d,l,c); T(x,y,z,ry=90) cylint(d,l); }
-module holetoy(x,y,z,d,l=200,c="holetoy") {  echo("holetoy",x,y,z,d,l,c); T(x,y,z,rx=90) cylint(d,l); }
+module holetoz(x,y,z,d,l=200,c="holetoz") {  if (VERBOSE) echo("holetoz",x,y,z,d,l,c); T(x,y,z) cylint(d,l); }
+module holetox(x,y,z,d,l=200,c="holetox") {  if (VERBOSE) echo("holetox",x,y,z,d,l,c); T(x,y,z,ry=90) cylint(d,l); }
+module holetoy(x,y,z,d,l=200,c="holetoy") {  if (VERBOSE) echo("holetoy",x,y,z,d,l,c); T(x,y,z,rx=90) cylint(d,l); }
 
 module tube(D,H,T=1,C="tube") {
-  echo("tube",D,H,T,C);
+  if (VERBOSE) echo("tube",D,H,T,C);
   difference() {
     cylint(D,H);
     cylint(D-2*T,H+10);
@@ -329,13 +330,13 @@ module curved_cyl(r,deg,od) {
 }
 
 module T_conn(od,t=1) {
-  echo("T_conn id,od",od-2*t,od);
+  if (VERBOSE) echo("T_conn id,od",od-2*t,od);
   rx(90) tube(od,3*od);
   T(0,0,-0.7*od) tube(od,1.5*od);
 }
 
 module elbow(r_curve,deg,od,t=1) {
-  echo("elbow",deg,od-2*t,od);
+  if (VERBOSE) echo("elbow",deg,od-2*t,od);
   difference() {
     curved_cyl(r_curve,deg,od);
     rot(0,0,-1) curved_cyl(r_curve,deg+2,od-2*t);
@@ -343,7 +344,7 @@ module elbow(r_curve,deg,od,t=1) {
 }
 
 module pipe_flange(ly,d_int,d_hole=4,t=1) {
-  echo("pipe_flange",d_int,d_int+2*t,ly);
+  if (VERBOSE) echo("pipe_flange",d_int,d_int+2*t,ly);
   union() {
     tubey(d_int+2*t,ly,t);
     difference() {
@@ -361,7 +362,7 @@ module cone(D1,D2,H) {
 module hollow_cone(D1,D2,H,T_WALL=1) {
   difference() {
     cone(D1, D2, H);
-    echo(D2=D2,T_WALL=T_WALL,D1INT=D1-2*T_WALL,D2INT=D2-2*T_WALL);
+    if (VERBOSE) echo(D2=D2,T_WALL=T_WALL,D1INT=D1-2*T_WALL,D2INT=D2-2*T_WALL);
     T(0,0,0) cone(D1-2*T_WALL<0?0:D1-2*T_WALL, D2-2*T_WALL, H+1);
   }
 }
@@ -376,7 +377,7 @@ module pipe_adapter(d1=8, d2=12, lz=24, t=1) {  // muhvi
 }
 
 module nut(screw_diam) {
-  echo("nut",screw_diam);
+  if (VERBOSE) echo("nut",screw_diam);
   T(0,0,screw_diam*.35) difference() {
     cylinder(d=screw_diam*2,h=screw_diam*.7,center=true,$fn=6);
     cylinder(d=screw_diam,h=screw_diam,center=true,$fn=20);    
@@ -400,7 +401,7 @@ module nuty(screw_diam) { rx(90) nut(screw_diam); }
 // Thread is not rendered.
 
 module flush_screw(screw_diam,h,h_nut=0,t_washer=.5,c="") {  // aka counter-sunk
-  echo("flush_screw",screw_diam,h,h_nut,c);
+  if (VERBOSE) echo("flush_screw",screw_diam,h,h_nut,c);
   T(0,0,-h/2) union() {
     cylint(screw_diam,h,c);
     T(0,0,h/2-screw_diam*.25) cone(screw_diam,2.5*screw_diam,screw_diam*.5);
@@ -418,7 +419,7 @@ module flush_screwx(d,h,h_nut=0,t_washer=.5,c="") {  ry(90) flush_screwz(d,h,h_n
 module flush_screwy(d,h,h_nut=0,t_washer=.5,c="") {  rx(90) flush_screwz(d,h,h_nut,t_washer,c); }
 
 module allen_screw(screw_diam,h,h_nut=0,t_washer=.5,c="") {  // socket screw, kuusiokolo
-  echo("allen_screw",screw_diam,h,h_nut,c);
+  if (VERBOSE) echo("allen_screw",screw_diam,h,h_nut,c);
   T(0,0,-h/2) union() {
     cylint(screw_diam,h,c);
     T(0,0,h/2+screw_diam*.5) difference() {
@@ -570,7 +571,7 @@ module snap_clip(wid=2,depth=2,height=8) {
 
 module sq_triangle(a,b,h=100,c="") {
   if (c) {
-    echo("sq_triangle",a,b,h,c);
+    if (VERBOSE) echo("sq_triangle",a,b,h,c);
   }
   linear_extrude(height=h,center=true)
     polygon(points=[[0,0],[a,0],[0,b]]);

@@ -712,6 +712,8 @@ Protective covers for car battery terminals. Note that these do not seem to be v
 
 ### eggcase.scad
 
+### Makefile.eggcase
+
 Case for ceramic egg by Anja Suonsivu.
 
 ### tippadosetti.scad
