@@ -40,21 +40,22 @@ objectxgap=locknotchd/2+1;
 //xsize=1.3;
 ysize=1.3;
 basedepth=28;
-textheight=(print > 0) ? 7 : 2;
+deeptext=0;
+textheight=7;
 textspace=textheight/3;
-textdepth=0.8;
+textdepth=1;
 basewidth=eggmaxd*eggs*ysize;
 baselength=eggmaxd + lockdepth + lockback + eggspace + textspace + textheight + lockdepth + lockback;
 eggxposition=eggmaxd/2 + tolerance + wall + locknotchd;
 eggtextxposition=baselength - tolerance - lockdepth - lockback - textspace;
-echo("textheigth ", textheight);
+//echo("textheigth ", textheight);
 eggholedepth=2.9;
 
 yfree=basewidth - eggmaxd*eggs;//)/2;//????
   
 eggy=yfree/(eggs+1)+eggmaxd/2;
 eggdistance=(eggmaxd+yfree/(eggs+1));
-echo("eggdistance ", eggdistance);
+//echo("eggdistance ", eggdistance);
 
 eggbasez=basedepth+eggd/eggholedepth-eggd/2;
 
@@ -141,7 +142,7 @@ module triangle(x,y,z,mode) {
   }
 }
 
-echo("width ",basewidth, " length ",baselength);
+//echo("width ",basewidth, " length ",baselength);
 
 if ((print == 0) || (print == 1) || (print == 2)) {
   difference() {
@@ -160,21 +161,22 @@ if ((print == 0) || (print == 1) || (print == 2)) {
       translate([eggtextxposition, basewidth/2,basedepth-textdepth-tolerance]) 
 	linear_extrude(height=textdepth+0.01) rotate([0,0,90]) text(teksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
 
-      translate([eggtextxposition, basewidth/2,basedepth-textdepth-textdepth-tolerance]) 
-	for (xb=[-0.1,0.1]) {
-	  for (yb=[-0.1,0.1]) {
-	    translate([xb,yb,0]) linear_extrude(height=textdepth+0.02) rotate([0,0,90]) text(teksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
+      if (deeptext) {
+	translate([eggtextxposition, basewidth/2,basedepth-textdepth-textdepth-tolerance]) 
+	  for (xb=[-0.1,0.1]) {
+	    for (yb=[-0.1,0.1]) {
+	      translate([xb,yb,0]) linear_extrude(height=textdepth+0.02) rotate([0,0,90]) text(teksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
+	    }
 	  }
-	}
 	
-      translate([eggtextxposition, basewidth/2,basedepth-2*textdepth-textdepth-textdepth-tolerance]) 
-	for (xs=[-0.2,0.2]) {
-	  for (ys=[-0.2,0.2]) {
-	    translate([xs,ys,0]) linear_extrude(height=2*textdepth+0.02) rotate([0,0,90]) text(teksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
+	translate([eggtextxposition, basewidth/2,basedepth-2*textdepth-textdepth-textdepth-tolerance]) 
+	  for (xs=[-0.2,0.2]) {
+	    for (ys=[-0.2,0.2]) {
+	      translate([xs,ys,0]) linear_extrude(height=2*textdepth+0.02) rotate([0,0,90]) text(teksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
+	    }
 	  }
-	}
+      }
     }
-
 
     for (x=[tolerance-0.01,baselength-lockdepth-lockback-tolerance]) {
       for (y=[-lockwidth/2-lockcut,lockwidth/2]) {

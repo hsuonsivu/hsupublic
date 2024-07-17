@@ -1,0 +1,13 @@
+SOURCE=eggcase.scad
+DEPENDS=hsu.scad Makefile.eggcase
+
+all: eggcasebase.stl eggcasetop.stl
+
+eggcasebase.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+eggcasetop.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
