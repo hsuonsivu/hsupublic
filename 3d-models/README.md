@@ -730,4 +730,7 @@ axleendl to make hinge work.
 
 Simple pads to raise furniture items a bit.
 
+### flyswatter.scad
+
+Keeping windows open during summer brings in bugs. This is a basic weapon against them.
 
