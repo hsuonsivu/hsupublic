@@ -100,3 +100,10 @@ module tassu(direction,size) {
     }
   }
 }
+
+module ring(diameter,wall,height) {
+  difference() {
+    cylinder(d=diameter,h=height);
+    translate([0,0,-0.1]) cylinder(d=diameter-wall*2,h=height+0.2);
+  }
+}
