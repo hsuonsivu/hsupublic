@@ -734,3 +734,11 @@ Simple pads to raise furniture items a bit.
 
 Keeping windows open during summer brings in bugs. This is a basic weapon against them.
 
+### berrypicker.scad
+
+Picker tool for bilberries (In Finnish mustikka).
+
+### berrycleaner.scad
+
+Tool to help with cleaning berries. Berries roll out, while leaves and other non-round objects stay or drop through slits.
+
