@@ -28,7 +28,7 @@ use <hsu.scad>
 //include <MCAD/fonts.scad>
 //include <Arial.scad>
 
-PRINT=9;   // 0=normal model, 1=parts
+PRINT=9;   // 0=normal model, 1=full top, 2=end top, 3=round cup, 4=square cover, 5=square cup, 6=round cover, 7=top with square and round holes, 8=top with two square holes, 9=storage for covers
 XRAY=0;
 
 BRIM=1;    // Include support structures for horizontal printing
@@ -38,6 +38,10 @@ CID=.4;
 
 D_PIPE=6;
 T_PIPE=1.5;
+
+versiontext="v1.4";
+textsize=7;
+textdepth=0.7;
 
 pyoreareika=70;
 pyoreakansimaxd=pyoreareika+10+1;
@@ -118,6 +122,7 @@ module pyorea_kartio_kori() {
     for (a=[5:15:360]) {
       rz(a) T(21,0,61) cubint(7,2,20);
     }
+    translate([0,-45+textsize+2,textdepth-0.6]) rotate([180,0,180]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize-2,valign="center",halign="center");
   }
 }
 
@@ -154,6 +159,7 @@ module nelio_kartio_kori() {
     T(y,-16-abs(y)/2,65) cubint(2,17-abs(y),15);    
   }
   hole(7);
+  translate([0,-45+textsize+1.5,textdepth-0.6]) rotate([180,0,180]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize-2,valign="center",halign="center");
 }
 }
 
@@ -185,6 +191,7 @@ module pyorea_kansi() {
       T(0,0,1) tube(pyoreareika-4,3);
     }
     translate([0,0,-1]) cylinder(d=handled,h=handlewall+0.1);
+    translate([0,nelioreuna/2-2,0.19]) rotate([180,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
   }
 
   handle();
@@ -199,6 +206,7 @@ module nelio_kansi() {
 	  T(0,0,1.5) sq_tube(nelioreuna - 4,nelioreuna - 4,3,roundness=15);
 	}
 	translate([0,0,-1]) cylinder(d=handled,h=handlewall+0.1);
+	translate([0,nelioreuna/2-1,0.19]) rotate([180,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
       }
 
       handle();
@@ -241,6 +249,12 @@ module ritila() {
     T(-85,45,0)  hole(pyoreareika,3);
     T(-85,-45,0)  hole(pyoreareika,3);
     T(0,0,0) symxy(170,45) hole(pyoreareika,3);
+
+    translate([200,0,-textdepth+0.3]) rotate([180,0,-90]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
+
+    translate([80,0,-textdepth+0.3]) rotate([180,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
+
+    translate([0,0,-textdepth+0.3]) rotate([180,0,]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
   }
 }
 
@@ -252,6 +266,7 @@ module kansiteline() {
 #      translate([kansitelinecornerd+i*(kansithickness+kansigap)+1,kansitelinew/2,1+kansiwidth/2]) rotate([0,90,0]) nelio_kansi();
 
     }
+    translate([kansitelinel/2,textdepth-0.01,kansitelineh/2]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center");
   }
 }
 
