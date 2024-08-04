@@ -67,5 +67,5 @@ module flyswatter() {
   }
 }
 
-flyswatter();
+rotate([0,0,45]) flyswatter();
 
