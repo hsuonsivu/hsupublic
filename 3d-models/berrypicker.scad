@@ -6,10 +6,10 @@ include <hsu.scad>
 
 debug=0;
 
-length=230;
+length=228;
 height=70; // 125;
 
-versiontextb="v1.1";
+versiontextb="v1.2";
 textsize=7;
 textdepth=1;
 
@@ -24,11 +24,14 @@ fingers=9;
 fingerh=3*wall;
 fingerdistance=15.5;// width/fingers; // This should be diameter of a full grown blueberry, need to test
 width=fingerdistance*9; //140;
-fingerendh=5;
+fingerendh=8;
 fingertoph=height-10;
 fingertopl=topl+20;
 fingerstart=bottoml-20;
 fingernarrowl=6;
+
+storagel=100;
+storageh=10;
 
 handled=20;
 handleattachd=25;
@@ -42,14 +45,23 @@ versiontext=str("piikki ",fingerw,"  rako ",fingerdistance-fingerw,"  ",versiont
 
 module berrypicker() {
   // bottom
-  roundedbox(wall,width,bottoml,cornerd);
-
+  translate([0,0,storagel]) roundedbox(wall,width,bottoml-storagel,cornerd);
+  translate([-storageh,0,0]) roundedbox(wall,width,storagel-storageh,cornerd);
+  hull() {
+    translate([0,0,storagel]) roundedbox(wall,width,wall,cornerd);
+    translate([-storageh,0,storagel-storageh-wall]) roundedbox(wall,width,wall,cornerd);
+  }
   // sides
   for (y=[0,width-wall]) {
     hull() {
       translate([0,y,0]) roundedbox(height,wall,topl,cornerd);
       translate([fingerendh,y,length]) roundedbox(wall,wall,wall,cornerd);
       translate([fingertoph,y,fingertopl]) roundedbox(wall,wall,wall,cornerd);
+    }
+
+    hull() {
+      translate([-storageh,y,0]) roundedbox(storageh+wall,wall,storagel-storageh,cornerd);
+      translate([0,y,storagel]) roundedbox(wall,wall,wall,cornerd);
     }
   }
   
@@ -60,7 +72,7 @@ module berrypicker() {
   }
 
   // back
-  roundedbox(height,width,wall,cornerd);
+  translate([-storageh,0,0]) roundedbox(height+storageh,width,wall,cornerd);
   
   // handle
   difference() {
