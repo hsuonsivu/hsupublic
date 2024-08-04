@@ -504,6 +504,7 @@ printers as well.
 
 There are multiple options in the beginning of the file for debugging.
 
+Supports older 46mm wide film type, filmtype 35 is normal film, 46 is the older wide film.
 Possible future improvements could be tuning the film hole knobs to more
 accurately keep the film positioned and straight. Older films or
 negatives are often curved. I did try to use frame separators to make
@@ -519,6 +520,7 @@ No supports are needed to print. I use black PLA to print
 these. Lighter colours may cause reflections.
 
 ![filmscanframe in scad.](filmscanframe.png)
+![filmscanframe for 46mm film in scad.](filmscanframe46.png)
 ![filmscanframe with film and cover not installed](filmscanframe.jpg)
 ![filmscanframe with film and cover installed](filmscanframe2.jpg)
 
@@ -759,4 +761,18 @@ Simple utensil boxes which can be stacked. Size and number of slots can be tuned
 ![Top box in scad.](utensilboxtop.png)
 ![Lower box with 2 slots in scad.](utensilbox2slot.png)
 ![Lower box in scad.](utensilboxbottom.png)
+
+### yrttiviljelma.scad
+
+A growing box for herbs from Lidl needed adaption for ready-grown
+herbs sold in Finnish grocery stores. We made new top, cups and covers
+which are large enough to fit the ready-grown herbs. Some of the herbs
+grow fine in this thing, such as basil and some others. To avoid water
+loss due to evaporation you need to use covers for unused cups, so
+there is a holder for unused covers.
+
+![Parts for yrttiviljelma in scad.](yrttiviljelmaparts.png)
+![Holder for extra covers in scad.](yrttiviljelmaholder.png)
+
+
 

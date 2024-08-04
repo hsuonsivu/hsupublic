@@ -2,10 +2,10 @@
 
 use <hsu.scad>;
 
-filmtype=35; //46; //35; // 35mm or 46
+filmtype=46; //46; //35; // 35mm or 46
 
 print=3; // 1 = print film frame, 2 print 1 cover, 2 = print covers for all film frames, 3 = print one whole set, 4 print attachment test
-debug=1; // 1 just one strip, 2 smallest possible
+debug=0; // 1 just one strip, 2 smallest possible
 tappitypemale=1; // 0 = rounded cube, 1 = circular
 tappitypefemale=1; // 0 = rounded cube, 1 = circular
 filmstrips=((debug==0) || (debug==3))?((filmtype==35)?4:3):1;
