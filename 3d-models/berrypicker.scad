@@ -19,7 +19,7 @@ topl=190;
 bottoml=170;
 
 fingerl=70;
-fingerw=7;
+fingerw=9;
 fingers=9;
 fingerh=3*wall;
 fingerdistance=15.5;// width/fingers; // This should be diameter of a full grown blueberry, need to test
