@@ -712,11 +712,15 @@ Also makes round hole protectors for the outer window.
 
 Protective covers for car battery terminals. Note that these do not seem to be very standardized, so might not work for all batteries.
 
+![Battery terminal covers in scad.](akkunapa.png)
+
 ### eggcase.scad
 
 ### Makefile.eggcase
 
 Case for ceramic egg by Anja Suonsivu.
+
+![Egg case in scad.](eggcase.png)
 
 ### tippadosetti.scad
 
@@ -769,10 +773,16 @@ herbs sold in Finnish grocery stores. We made new top, cups and covers
 which are large enough to fit the ready-grown herbs. Some of the herbs
 grow fine in this thing, such as basil and some others. To avoid water
 loss due to evaporation you need to use covers for unused cups, so
-there is a holder for unused covers.
+there is a holder for unused covers. The top needs to be printed in multiple parts as it is larger than most printers.
+
+Credits for Sampo Kellomaki, who
+did the first version.
 
 ![Parts for yrttiviljelma in scad.](yrttiviljelmaparts.png)
 ![Holder for extra covers in scad.](yrttiviljelmaholder.png)
 
+### treemeter.scad
 
+Handy measurement tool to figure out sizes of trees, to find out if the trees should be spaced (12 cm) or if the tree is fully grown (27cm).  Also includes 6cm for pre-thinning.
 
+![treemeter in Openscad.](treemeter.png)
