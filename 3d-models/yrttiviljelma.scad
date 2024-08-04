@@ -271,6 +271,14 @@ module kansiteline() {
 }
 
 rotate([0,0,0]) {
+  if (PRINT==0) {
+    ritila();
+#      T(0,45,-1.5) pyorea_kartio_kori();
+#      T(-85,46,-2) pyorea_kansi();
+# T(0,-45,-1.5) nelio_kartio_kori();
+#    T(85,-45,-2) nelio_kansi();
+  }
+  
   if (PRINT==1) {
     ritila();
   }
