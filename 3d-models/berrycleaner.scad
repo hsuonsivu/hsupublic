@@ -6,12 +6,16 @@
 
 include <hsu.scad>
 
-versiontext="Berrycleaner v1.1";
+// Length is limited by bed size, width of 200 seems practical.
+maxlength=360;
+maxwidth=200;
+
+versiontext="Berrycleaner v1.2";
 textsize=7;
 textdepth=1;
 
 berryslitw=5; // Measured more than 6.5mm for berries.
-supportdistance=50;
+supportdistance=40;
 barw=1.5;
 barh=3;
 supportw=1.5;
@@ -20,8 +24,8 @@ height=50;
 cornerd=5;
 wall=2.5;
   
-length=floor(300/(supportdistance+supportw)) * (supportdistance+supportw); // y, 220
-width=floor(200/(berryslitw+barw)) * (berryslitw+barw); // x, 200
+length=floor(maxlength/(supportdistance+supportw)) * (supportdistance+supportw); // y, 220
+width=floor(maxwidth/(berryslitw+barw)) * (berryslitw+barw); // x, 200
 
 module berrycleaner() {
   intersection() {
