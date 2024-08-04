@@ -728,23 +728,35 @@ axleendl to make the hinge work.
 
 ### raisepad.scad
 
-Simple pads to raise furniture items a bit.
+Simple pads to raise furniture items a bit. Prints four. No supports needed.
+
+![raisepad in scad.](raisepad.png)
 
 ### flyswatter.scad
 
 Keeping windows open during summer brings in bugs. This is a basic weapon against them.
 
+![flyswatter in scad.](flyswatter.png)
+
 ### berrypicker.scad
 
 Picker tool for bilberries (In Finnish mustikka).
+
+![berrypicker in scad.](berrypicker.png)
 
 ### berrycleaner.scad
 
 Tool to help with cleaning berries. Berries roll out, while leaves and other non-round objects stay or drop through slits.
 
+![berrycleaner in scad.](berrycleaner.png)
+
 ### utensilbox.scad
 
 ### Makefile.utensilbox
 
-Simple utensil boxes which can be stacked. Size and number of slots can be tuned.
+Simple utensil boxes which can be stacked. Size and number of slots can be tuned to fit a specific furniture.
+
+![Top box in scad.](utensilboxtop.png)
+![Lower box with 2 slots in scad.](utensilbox2slot.png)
+![Lower box in scad.](utensilboxbottom.png)
 
