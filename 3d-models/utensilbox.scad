@@ -6,13 +6,13 @@ include <hsu.scad>
 
 debug=0;
 
-print=2; // 1 = lower box with no mid walls with guides, 2 = upper box with mid walls, no guides, 3 = lower box with 1 mid wall with guides
+print=3; // 1 = lower box with no mid walls with guides, 2 = upper box with mid walls, no guides, 3 = lower box with 1 mid wall with guides
 
 withguides=(print==1 || print==3) ? 1 : 0;
 withbottomguideinterface=(print==1 || print==3) ? 0 : 1;
 
 brandtext="Utensilbox";
-versiontext="v1.0";
+versiontext="v1.2";
 textsize=7;
 textdepth=1;
 
@@ -26,24 +26,26 @@ handledepth=10;
 handleheight=20;
 handlelength=100;
 handlecornerd=5;
-handlecylinderd=2*wall;
+handlecylinderd=3*wall;
+handlecylinderw=1.5*wall;
 handlecut=1; // Cut in the middle to make removing handle filler easier
 handlecutwall=1; // The part to cut out should be thinner than wall
 snapy=0.1;
 snapw=0.3;
 snapz=0.1;
 
-holed=10;
-holedistance=5;
+holed=8;
+holedistance=4;
 slotwidth=(width-wall)/slots;
 
-guidelength=50;
-guideheight=20;
+guidelength=70;
+guideheight=21;
 guidemidh=5;
 guideh=10;
 guidewall=1.5;
-guideout=0.5;
+guideout=0.7;
 guidetolerance=0.2;
+guidecornerw=5;
 
 boxsupporth=6;
 boxsupportheight=height - boxsupporth;
@@ -82,6 +84,12 @@ module guide() {
     translate([guidelength,-guidetolerance+guidewall/2,guidemidh-guidewall/2]) sphere(d=guidewall,$fn=60);
     translate([-guidetolerance+guidewall/2-guideout,-guidetolerance+guidewall/2-guideout,guideheight-guideh-guidewall/2]) sphere(d=guidewall,$fn=60);
     translate([guidelength,-guidetolerance+guidewall/2-guideout,guideheight-guideh-guidewall/2]) sphere(d=guidewall,$fn=60);
+  }
+
+  // Corner support
+  hull() {
+    translate([wall-cornerd/2,0,-boxsupporth]) triangle(boxsupportw,guidelength/2,boxsupporth,1);    
+    translate([wall-cornerd/2,0,-boxsupporth]) triangle(guidecornerw,guidecornerw,boxsupporth,1);    
   }
 }
 
@@ -126,7 +134,7 @@ module utensilbox() {
 	  translate([x+wall/2-wall/2-0.1,depth/2-handlecut/2,height-handledepth-handleheight]) cube([wall+0.2,handlecut,handleheight]);
 	}
 
-	translate([x+wall/2,depth/2-handlelength/2-0.1,height-handledepth+handlecylinderd/2]) rotate([-90,0,0]) resize([wall,0,0]) cylinder(d=handlecylinderd,h=handlelength+0.2,$fn=60);
+	translate([x+wall/2,depth/2-handlelength/2-0.1,height-handledepth+handlecylinderd/2]) rotate([-90,0,0]) resize([handlecylinderw,0,0]) cylinder(d=handlecylinderd,h=handlelength+0.2,$fn=60);
       }
 
       for (x=[0,width-wall-guidewall-guidetolerance]) {
@@ -148,7 +156,7 @@ module utensilbox() {
     for (x=[wall+guidewall:slotwidth:width-wall-2*guidewall]) {
       for (xx=[(slotwidth-holesperslot*(holed+holedistance))/2+holed/2:holed+holedistance:slotwidth-wall-2*guidewall]) {
 	for (y=[depth-guidewall-holesperdepth*(holed+holedistance)+holed/2:holed+holedistance:depth-wall]) {
-	  translate([x+xx,y,-0.1]) cylinder(h=wall+0.2,d=holed);
+	  translate([x+xx-holed/2,y-holed/2,-0.1]) cube([holed,holed,wall+0.2]); //cylinder(h=wall+0.2,d=holed);
 	}
       }
     }
@@ -176,14 +184,14 @@ module utensilbox() {
     translate([width/2,textdepth-0.01,texth+textsize+2]) rotate([90,0,0]) linear_extrude(height=textdepth) text(brandtext,font="Liberation Sans:style=Bold",size=textsize,halign="center", valign="center");
     translate([width/2,textdepth-0.01,texth]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,halign="center", valign="center");
 
-    translate([wall+1,depth-wall+textdepth-0.01,texth+textsize+2]) rotate([90,0,0]) linear_extrude(height=textdepth) text(brandtext,font="Liberation Sans:style=Bold",size=textsize,halign="left", valign="center");
-    translate([wall+1,depth-wall+textdepth-0.01,texth]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,halign="left", valign="center");
+    translate([wall+2,depth-wall+textdepth-0.01,texth+textsize+2]) rotate([90,0,0]) linear_extrude(height=textdepth) text(brandtext,font="Liberation Sans:style=Bold",size=textsize,halign="left", valign="center");
+    translate([wall+2,depth-wall+textdepth-0.01,texth]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,halign="left", valign="center");
   }
 }
 
 difference() {
   utensilbox();
   if (debug) {
-    translate([-2,-2,-0.1]) cube([wall+guidewall+10+4,depth+4,height+guideh+0.2]);
+    translate([-2,-2,-0.1]) cube([wall+guidewall+1+4,depth+4,height+guideheight+0.2]);
   }
 }
