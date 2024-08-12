@@ -752,9 +752,15 @@ Picker tool for bilberries (In Finnish mustikka).
 
 ### berrycleaner.scad
 
-Tool to help with cleaning berries. Berries roll out, while leaves and other non-round objects stay or drop through slits.
+### Makefile.berrycleaner
+
+Tool to help with cleaning berries. Berries roll out, while leaves and
+other non-round objects stay or drop through slits. The model includes
+a top part for cleaning and bottom part to collect non-verry stuff
+drops through slits. 
 
 ![berrycleaner in scad.](berrycleaner.png)
+![berrycleaner base and top in scad.](berrycleanerall.png)
 
 ### utensilbox.scad
 
