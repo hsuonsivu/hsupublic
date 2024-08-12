@@ -266,7 +266,7 @@ module kansiteline() {
 #      translate([kansitelinecornerd+i*(kansithickness+kansigap)+1,kansitelinew/2,1+kansiwidth/2]) rotate([0,90,0]) nelio_kansi();
 
     }
-    translate([kansitelinel/2,textdepth-0.01,kansitelineh/2]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center");
+    translate([kansitelinel/2,textdepth-0.01,kansitelineh/2]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
   }
 }
 
