@@ -4,14 +4,16 @@
 
 include <hsu.scad>
 
+tpu=1; // Make some dimensions thicker for tpu
+
 diameter=120;
-thickness=1.2;
+thickness=tpu?1.8:1.2;
 w=0.8;
-edgethickness=2;
+edgethickness=tpu?3:2;
 edgew=0.8;
 $fn=90;
 
-versiontext="v1.0";
+versiontext="v1.1";
 textsize=7;
 textdepth=1;
 
@@ -19,7 +21,7 @@ cornerd=1;
 
 handlel=200;
 handlew=20;
-handlethickness=3;
+handlethickness=tpu?4:3;
 handledistance=20; // from diameter
 handlethicknesscenter=2;
 holdl=100;
@@ -30,7 +32,7 @@ hangholed=handlew/2-1;
 hangholel=handlew;
 hangholex=diameter/2+handledistance+handlel+holdl-hangholel-15;
 dstart=5;
-ddistance=8;
+ddistance=9;
 
 //diametertable=[2,5,11];
 //dividertable=[1,2,4];

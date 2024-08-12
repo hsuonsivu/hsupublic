@@ -740,7 +740,10 @@ Simple pads to raise furniture items a bit. Prints four. No supports needed.
 
 ### flyswatter.scad
 
-Keeping windows open during summer brings in bugs. This is a basic weapon against them.
+Keeping windows open during summer brings in bugs. This is a basic
+weapon against them. If printing with tpu, you get more flexible
+weapon, but it needs to be a bit thicker, so edit tpu setting in the
+beginning of the file.  You need a large printer..
 
 ![flyswatter in scad.](flyswatter.png)
 
