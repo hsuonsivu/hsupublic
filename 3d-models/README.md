@@ -123,13 +123,20 @@ larger.
 
 ### nimikyltit.scad
 
+### Makefile.nimikyltit
+
 Bunch of name labels. These we designed to be put on top of
 rack for towels. You can modify the names at the start of the
 file. End the list of names with "". You can
 have several labels printed in one go. You also need to configure the
 size of your printer print area, as it will arrange labels automatically.
 
-I have printed these with black at the bottom and lighter color on top
+Additionally, you can print a holder for name labels to hang to a
+wall. This needs to be printed on its side, and it is very narrow
+print, so for bedslingers, you need to position the print to direction
+of the bed movement and use brim.
+
+I have printed the labels with black at the bottom and lighter color on top
 to make text more visible.
 
 The design expects a small gap between wall and rack. We installed
@@ -140,6 +147,8 @@ which change variables.
 
 ![Image of the name label](nimikyltit.jpg)
 ![Name labels in openscad](nimikyltit-openscad.png)
+![Image of the label holder](nimikylttiteline.jpg)
+![Label holder in openscad.](nimikylttiteline.png)
 
 ### lundiacarrier.scad
 

@@ -1,0 +1,13 @@
+SOURCE=nimikyltit.scad
+DEPENDS=hsu.scad Makefile.nimikyltit
+
+all: nimikyltitback.stl nimikylttiteline.stl
+
+nimikyltitback.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+nimikylttiteline.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+

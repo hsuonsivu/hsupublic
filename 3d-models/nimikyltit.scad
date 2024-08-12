@@ -1,3 +1,13 @@
+// Copyright 2024 Heikki Suonsivu
+// Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
+// For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
+
+debug=0;
+
+include <hsu.scad>
+
+print=2;
+
 tekstit=["Juha",
 	 "Timo",
 	 "Matti",
@@ -34,7 +44,7 @@ tekstit=["Juha",
 
 bedsize=220;
 bedx=bedsize;
-bedy=bedsize;
+bedsizey=300;
 
 fontsize=10;
 fontwidthmultiplier=0.72;
@@ -50,58 +60,50 @@ thickness=textdepth+backthickness;
 labelwidthextra=10;
 labelheightextra=5;
 textoffset=1;
+ztolerance=0.5;//0.4;
+xtolerance=0.4;//.4;
+ytolerance=0.4;//0.4;
+cornerd=0.5;
+wall=1.5;
 
+module roundedbox(x,y,z,c) {
+  cube([x,y,z]);
+}
+
+// Holder for name plates
+nametagsidespace=1+xtolerance+wall;
+holderbase=1;
+holderbasetop=backthickness+1.5*ztolerance;
+  
+labeltotalheight=fontsize+labelheightextra+backheight;
+
+versiontext="Guest nametags   v1.1";
+versiontextdepth=0.6;
+versiontextsize=backheight-3;
+
+// Angle for label holder
+angle=-14;//8; // -11
+nametagdistance=(fontsize+labelheightextra++1)*cos(angle);;
+yangled=-cos(angle)*(labeltotalheight+holderbase);
+		   zangled=sin(angle)*(labeltotalheight+holderbase);
+
+				     holderbaseh=zangled;
+  
 between=0.5;
 
-module roundedbox(x,y,z) {
-  smallcornerdiameter=1.5;
-  f=30;
-  hull() {
-    translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([smallcornerdiameter/2,y-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([x-smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([x-smallcornerdiameter/2,y-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([smallcornerdiameter/2,smallcornerdiameter/2,z-smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([smallcornerdiameter/2,y-smallcornerdiameter/2,z-smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([x-smallcornerdiameter/2,smallcornerdiameter/2,z-smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([x-smallcornerdiameter/2,y-smallcornerdiameter/2,z-smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-  }
-}
+ruuvid=3.5;
+ruuvitornid=3*ruuvid;
+ruuvidistance=bedsize/1.5;
+maxrows=floor(bedsizey/nametagdistance)-1;
+maxheight=(maxrows+1)*nametagdistance+backheight+1;
 
-module triangle(x,y,z,mode) {
-  if (mode==0) {
-    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[x,z],[x,0]]);
-  } else if (mode==1) {
-    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,z]]);
-  } else if (mode==2) {
-    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,0]]);
-  } else if (mode==3) {
-    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,z],[x,z],[x,0]]);
-  } else if (mode==4) {
-    translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[y,x],[y,0]]);
-  } else if (mode==5) {
-    translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[0,x],[y,x]]);
-  } else if (mode==6) {
-    translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[0,x],[y,0]]);
-  } else if (mode==7) {
-    translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,x],[y,x],[y,0]]);
-  } else if (mode==8) {
-    translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[z,y],[z,0]]);
-  } else if (mode==9) {
-    translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[0,y],[z,y]]);
-  } else if (mode==10) {
-    translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[0,y],[z,0]]);
-  } else if (mode==11) {
-    translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,y],[z,y],[z,0]]);
-  }
-}
+// Holder for unallocated name tags
 
-module nimikyltti(t, w) {
-  //echo("text ", t, " w ", w);
+module nametag(t, w) {
 
   difference() {
     union() {
-      roundedbox(w,fontsize+labelheightextra,thickness);
+      roundedbox(w,fontsize+labelheightextra,thickness,cornerd);
       translate([backnarrowing,fontsize,0]) cube([w-2*backnarrowing,backheight+labelheightextra,backthickness]);
     }
 
@@ -109,30 +111,33 @@ module nimikyltti(t, w) {
   }
 }
 
-//echo("0 ",tekstit[0], "1 ",tekstit[1], "2 ",tekstit[2]);
-//echo(tekstit);
-//echo(tekstit);
+module nametagb(t, w) {
+  difference() {
+    union() {
+      roundedbox(w,fontsize+labelheightextra,thickness,cornerd);
+      translate([backnarrowing,fontsize,0]) cube([w-2*backnarrowing,backheight+labelheightextra,backthickness]);
+    }
+
+    translate([w/2,fontsize+labelheightextra-labelheightextra/2-textoffset,thickness-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text(text=t,font="Liberation Sans:style=Bold",size=fontsize,valign="bottom", halign="center");
+  }
+}
 
 module r(tekstit,x,y,i) {
   charm=search("m", tekstit[i], 0);
   charM=search("M", tekstit[i], 0);
   widechars=len(charm[0]) + len(charM[0]); 
-  echo("widechars ", widechars);
   chari=search("i", tekstit[i], 0);
   charI=search("I", tekstit[i], 0);
   charl=search("l", tekstit[i], 0);
   narrowchars=len(chari[0]) + len(charI[0]) + len(charl[0]);
-  echo("narrowchars ", narrowchars);
   normalchars = len(tekstit[i]) - widechars - narrowchars;
-  echo("t ", tekstit[i], " normalchars ", normalchars);
   
   width=normalchars*fontsize*fontwidthmultiplier + widechars * fontsize * fontwidthmultiplier * widecharmultiplier + narrowchars * fontsize * fontwidthmultiplier * narrowcharmultiplier + labelwidthextra;
   
   newx = (x + width + 1 > bedx) ? 0 : x;
   newy = (x + width + 1 > bedx) ? y+fontsize+labelheightextra+backheight+1 : y;
 
-  echo("x ", newx, " y ", newy);
-  translate([newx,newy,0]) nimikyltti(tekstit[i],width);
+  translate([newx,newy,0]) nametag(tekstit[i],width);
 
   if (tekstit[i+1] != "") {
     xoffset = width;
@@ -140,6 +145,75 @@ module r(tekstit,x,y,i) {
   }
 }
 
-r(tekstit,0,0,0);
+module labelholder() {
+  difference() {
+    union() {
+      for (i=[0:1:maxrows]) {
+	difference() {
+	  union() {
+    
+	    translate([0,i*nametagdistance,0]) rotate([angle,0,0]) {
+	      difference() {
+		union() {
+		  roundedbox(bedsize,labeltotalheight+holderbase,backthickness,cornerd);
+		  translate([0,labeltotalheight,0]) roundedbox(bedsize,holderbase,backthickness+holderbasetop+backthickness+ztolerance,cornerd);
+		  translate([0,labeltotalheight-backheight+holderbase,backthickness+holderbasetop+ztolerance]) roundedbox(bedsize,backheight,backthickness,cornerd);
+		}
+	      }
+	    }
+
+	    hull() {
+	      translate([0,i*nametagdistance,0]) rotate([angle,0,0]) translate([0,0,backthickness+ztolerance]) {
+		translate([0,labeltotalheight,0]) roundedbox(bedsize,holderbase,backthickness+holderbasetop,cornerd);
+	      }
+	      translate([0,i*nametagdistance+cos(angle)*labeltotalheight-sin(angle)*(backthickness+holderbasetop),zangled]) roundedbox(bedsize,holderbase,backthickness,cornerd);
+	    }
+	  }
+	}
+
+	# if (debug) translate([2*wall,i*nametagdistance,0]) rotate([angle,0,0]) translate([0,0,backthickness+ztolerance]) nametag(tekstit[0],100);
+	translate([0,i*nametagdistance,zangled]) roundedbox(bedsize,labeltotalheight+holderbase,backthickness,cornerd);
+      }
+    }
+    translate([0,maxrows*nametagdistance,0]) rotate([angle,0,0]) {
+      translate([bedsize/2,labeltotalheight-versiontextsize/2,3*backthickness+holderbasetop-ztolerance-versiontextdepth+0.01]) rotate([180,180,0]) linear_extrude(height=versiontextdepth) text(text=versiontext,font="Liberation Sans:style=Bold",size=versiontextsize,valign="center", halign="center");
+    }
+  }
+
+  if (!debug) {
+    for (x=[-wall*2,bedsize+wall]) translate([x,0,zangled]) {
+	hull() {
+	  roundedbox(wall,maxheight,-zangled+cornerd+wall,cornerd);
+	  translate([(x==-wall*2)?2*wall:-2*wall,0,0]) roundedbox(wall,maxheight,-zangled+cornerd-wall,cornerd);
+	}
+      }
+  }
+
+  difference() {
+    hull() {
+      translate([0,0,zangled]) roundedbox(bedsize,holderbase,-zangled+cornerd,cornerd);
+
+      for (x=[bedsize/2-ruuvidistance/2,bedsize/2+ruuvidistance/2]) {
+	translate([x,-ruuvitornid/2,zangled]) cylinder(h=-zangled+cornerd,d=ruuvitornid);
+      }
+    }
+
+    for (x=[bedsize/2-ruuvidistance/2,bedsize/2+ruuvidistance/2]) {
+      translate([x,-ruuvitornid/2,zangled-0.01]) ruuvireika(-zangled+cornerd+0.02,ruuvid,1);
+    }
+    
+    textsize=ruuvitornid-ruuvid; // -1
+    translate([bedsize/2,-textsize/2-2,cornerd-textdepth+0.01]) rotate([180,180,0]) linear_extrude(height=textdepth) text(text="NAME TAGS",font="Liberation Sans:style=Bold",size=textsize,valign="center", halign="center");
+  }
+}
+
+if (print==1) {
+  r(tekstit,0,0,0);
+ }
+
+if (print==2) {
+  translate([0,0,bedsize]) rotate([0,90,0])
+  labelholder();
+ }
 
 	  
