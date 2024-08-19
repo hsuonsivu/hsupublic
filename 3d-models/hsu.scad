@@ -75,7 +75,7 @@ module triangle(x,y,z,mode) {
 module roundedbox(x,y,z,c) {
   corner=(c > 0) ? c : 1;
   scd = ((x < 1 || y < 1 || z < 1) ? min(x,y,z) : corner);
-  f=(print > 0) ? 180 : 90;
+  f=(print > 0) ? 90 : 30;
   
   hull() {
     translate([scd/2,scd/2,scd/2]) sphere(d=scd,$fn=f);
