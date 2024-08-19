@@ -12,7 +12,7 @@ print=0; // 0=both units for testing, 1=cleaner, 2=box co collect litter
 maxlength=360;
 maxwidth=200;
 
-versiontext="Berrycleaner v1.4";
+versiontext="Berrycleaner v1.5";
 textsize=7;
 textdepth=1;
 
@@ -24,7 +24,7 @@ supportw=1.5;
 supporth=2;
 height=50;
 cornerd=5;
-wall=2;// 2.5
+wall=2; //1.6;// 2.5
 
 length=floor(maxlength/(supportdistance+supportw)) * (supportdistance+supportw); // y, 220
 width=floor(maxwidth/(berryslitw+barw)) * (berryslitw+barw); // x, 200
@@ -208,7 +208,7 @@ module berrycleanerbase() {
 	      translate([width/2-narroww/2,length-height+below,0]) roundedbox(wall,wall,wall,wall);
 	    }
 	    hull() {
-	    translate([0,narrowstart,height-below]) roundedbox(wall,wall,wall,wall);
+	      translate([0,narrowstart,height-below]) roundedbox(wall,wall,wall,wall);
 	      translate([width/2-narroww/2,length-height+below,0]) roundedbox(wall,wall,wall,wall);
 	      translate([width/2-narroww/2,length,height-below]) roundedbox(wall,wall,wall,wall);
 	    }
@@ -233,7 +233,7 @@ module berrycleanerbase() {
 }
 
 if (print==0) {
-#  berrycleaner();
+  #  berrycleaner();
   berrycleanerbase();
  }
 

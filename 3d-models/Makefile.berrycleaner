@@ -3,11 +3,11 @@ DEPENDS=hsu.scad Makefile.berrycleaner
 
 all: berrycleanerbottom.stl berrycleanertop.stl
 
-berrycleanerbottom.stl: $(SOURCE) $(DEPENDS)
+berrycleanertop.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
-berrycleanertop.stl: $(SOURCE) $(DEPENDS)
+berrycleanerbottom.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=2 -o $@ $(SOURCE)
 	echo $@ built.
 
