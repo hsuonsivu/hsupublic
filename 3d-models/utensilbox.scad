@@ -6,7 +6,7 @@ include <hsu.scad>
 
 debug=0;
 
-print=3; // 1 = lower box with no mid walls with guides, 2 = upper box with mid walls, no guides, 3 = lower box with 1 mid wall with guides
+print=0; // 1 = lower box with no mid walls with guides, 2 = upper box with mid walls, no guides, 3 = lower box with 1 mid wall with guides
 
 withguides=(print==1 || print==3) ? 1 : 0;
 withbottomguideinterface=(print==1 || print==3) ? 0 : 1;
@@ -19,7 +19,7 @@ textdepth=1;
 depth=295; // y
 width=310; // x
 height=60; // z, 120mm total height, two on top of each other
-wall=1.5;
+wall=2;
 cornerd=1;
 slots=(print == 1) ? 1 : (print == 3) ? 2 : 4;
 handledepth=10;
@@ -100,7 +100,7 @@ module cornerguide() {
   }
 }
 
-module utensilbox() {
+module utensilbox(withguides,withbottomguideinterface) {
   difference() {
     union() {
       if (withguides) {
@@ -190,8 +190,7 @@ module utensilbox() {
 }
 
 difference() {
-  utensilbox();
-  if (debug) {
-    translate([-2,-2,-0.1]) cube([wall+guidewall+1+4,depth+4,height+guideheight+0.2]);
-  }
+  utensilbox(1,0); // Bottom
+  # translate([0,0,height])  utensilbox(0,1); // Top
+  //translate([-2,-2,-0.1]) cube([wall+guidewall+1+4,depth+4,height+guideheight+0.2]);
 }
