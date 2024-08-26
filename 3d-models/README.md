@@ -758,6 +758,8 @@ beginning of the file.  You need a large printer..
 
 ### berrypicker.scad
 
+### Makefile.berrypicker
+
 Picker tool for bilberries (In Finnish mustikka).
 
 ![berrypicker in scad.](berrypicker.png)
@@ -768,7 +770,7 @@ Picker tool for bilberries (In Finnish mustikka).
 
 Tool to help with cleaning berries. Berries roll out, while leaves and
 other non-round objects stay or drop through slits. The model includes
-a top part for cleaning and bottom part to collect non-verry stuff
+a top part for cleaning and bottom part to collect non-berry stuff
 drops through slits. 
 
 ![berrycleaner in scad.](berrycleaner.png)
