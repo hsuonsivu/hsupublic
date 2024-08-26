@@ -6,10 +6,11 @@ include <hsu.scad>
 
 debug=0;
 
-print=0; // 1 = lower box with no mid walls with guides, 2 = upper box with mid walls, no guides, 3 = lower box with 1 mid wall with guides
+print=3; // 1 = lower box with no mid walls with guides, 2 = upper box with mid walls, no guides, 3 = lower box with 1 mid wall with guides
 
 withguides=(print==1 || print==3) ? 1 : 0;
 withbottomguideinterface=(print==1 || print==3) ? 0 : 1;
+holeybottom=(withbottomguideinterface?1:0);
 
 brandtext="Utensilbox";
 versiontext="v1.2";
@@ -100,7 +101,7 @@ module cornerguide() {
   }
 }
 
-module utensilbox(withguides,withbottomguideinterface) {
+module utensilbox(withguides,withbottomguideinterface,holeybottom) {
   difference() {
     union() {
       if (withguides) {
@@ -153,10 +154,12 @@ module utensilbox(withguides,withbottomguideinterface) {
       }
     }
 
-    for (x=[wall+guidewall:slotwidth:width-wall-2*guidewall]) {
-      for (xx=[(slotwidth-holesperslot*(holed+holedistance))/2+holed/2:holed+holedistance:slotwidth-wall-2*guidewall]) {
-	for (y=[depth-guidewall-holesperdepth*(holed+holedistance)+holed/2:holed+holedistance:depth-wall]) {
-	  translate([x+xx-holed/2,y-holed/2,-0.1]) cube([holed,holed,wall+0.2]); //cylinder(h=wall+0.2,d=holed);
+    if (holeybottom) {
+      for (x=[wall+guidewall:slotwidth:width-wall-2*guidewall]) {
+	for (xx=[(slotwidth-holesperslot*(holed+holedistance))/2+holed/2:holed+holedistance:slotwidth-wall-2*guidewall]) {
+	  for (y=[depth-guidewall-holesperdepth*(holed+holedistance)+holed/2:holed+holedistance:depth-wall]) {
+	    translate([x+xx-holed/2,y-holed/2,-0.1]) cube([holed,holed,wall+0.2]); //cylinder(h=wall+0.2,d=holed);
+	  }
 	}
       }
     }
@@ -189,8 +192,15 @@ module utensilbox(withguides,withbottomguideinterface) {
   }
 }
 
-difference() {
-  utensilbox(1,0); // Bottom
-  # translate([0,0,height])  utensilbox(0,1); // Top
-  //translate([-2,-2,-0.1]) cube([wall+guidewall+1+4,depth+4,height+guideheight+0.2]);
-}
+if (print==0) {
+  difference() {
+    utensilbox(1,0,0); // Bottom
+    # translate([0,0,height])  utensilbox(0,1,1); // Top
+    //translate([-2,-2,-0.1]) cube([wall+guidewall+1+4,depth+4,height+guideheight+0.2]);
+  }
+ }
+
+if ((print==1) || (print==2) || (print==3)) {
+  utensilbox(withguides,withbottomguideinterface,holeybottom);
+ }
+
