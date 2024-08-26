@@ -1,0 +1,30 @@
+SOURCE=filmscanframe.scad
+DEPENDS=hsu.scad
+
+all: filmscanframebaseandcovers.stl filmscanframebase.stl filmscanframecovers.stl
+# filmscanframebaseandcovershooksoncover.stl filmscanframebasehooksoncover.stl filmscanframecovershooksoncover.stl 
+
+filmscanframebase.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -D hooksoncover=0 -o $@ $(SOURCE)
+	echo $@ built.
+
+filmscanframecovers.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -D hooksoncover=0 -o $@ $(SOURCE)
+	echo $@ built.
+
+filmscanframebaseandcovers.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -D hooksoncover=0 -o $@ $(SOURCE)
+	echo $@ built.
+
+filmscanframebasehooksoncover.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -D hooksoncover=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+filmscanframecovershooksoncover.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -D hooksoncover=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+filmscanframebaseandcovershooksoncover.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -D hooksoncover=1 -o $@ $(SOURCE)
+	echo $@ built.
+

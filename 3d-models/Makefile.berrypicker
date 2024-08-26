@@ -1,0 +1,25 @@
+SOURCE=berrypicker.scad
+DEPENDS=hsu.scad Makefile.berrypicker
+
+all: berrypickerbody.stl berrypickerplunger.stl berrypickertest.stl berrypickerallparts.stl springtest.stl
+
+berrypickerbody.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+berrypickerplunger.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+berrypickerallparts.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+berrypickertest.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+springtest.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+

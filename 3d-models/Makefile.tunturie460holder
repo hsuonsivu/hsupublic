@@ -1,0 +1,20 @@
+SOURCE=tunturie460holder.scad
+
+all: tunturie460holdertop.stl tunturie460holderbase.stl tunturie460holderruuvitesti.stl tunturie460holderclip.stl
+
+tunturie460holderbase.stl: $(SOURCE)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+tunturie460holdertop.stl: $(SOURCE)
+	openscad -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+tunturie460holderruuvitesti.stl: $(SOURCE)
+	openscad -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+tunturie460holderclip.stl: $(SOURCE)
+	openscad -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+
