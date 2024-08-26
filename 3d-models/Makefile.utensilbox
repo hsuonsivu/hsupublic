@@ -1,0 +1,17 @@
+SOURCE=utensilbox.scad
+DEPENDS=hsu.scad Makefile.utensilbox
+
+all: utensilboxbottom1.stl utensilboxbottom2.stl utensilboxtop4.stl
+
+utensilboxbottom1.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+utensilboxbottom2.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+utensilboxtop4.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
