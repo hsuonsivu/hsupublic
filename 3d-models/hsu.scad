@@ -74,7 +74,8 @@ module triangle(x,y,z,mode) {
 
 module roundedbox(x,y,z,c) {
   corner=(c > 0) ? c : 1;
-  scd = ((x < 1 || y < 1 || z < 1) ? min(x,y,z) : corner);
+  //scd = ((x < 1 || y < 1 || z < 1) ? min(x,y,z) : corner);
+  scd = min(x,y,z,corner);
   f=(print > 0) ? 90 : 30;
   
   hull() {
@@ -107,3 +108,66 @@ module ring(diameter,wall,height) {
     translate([0,0,-0.1]) cylinder(d=diameter-wall*2,h=height+0.2);
   }
 }
+
+// Make a spring. Springs generated are not very reliable, and need to be put inside a tube to work.
+springangle=1.2;
+module spring(h,d,plateh,thickness) {
+  $fn=120;
+
+  s=1;
+
+  // Need to raise height pi*d for 360 degrees
+  degrees=360*h/(d*3.14159)*springangle;
+  
+  // Printability
+  printabilityh=d/2; // Below 1 makes steeper angle which causes problems with overhans. 1 equals 45 degrees
+  
+  platetwist=degrees*(d/2)/(h/2);
+  twist=degrees;
+
+  translate([0,0,h]) rotate([180,0,0]) {
+    for (t=[1,-1]) {
+      translate([0,0,t==1?0:h/2-plateh/2]) {
+	hull() {
+	  linear_extrude(height=d/2,center=false,convexity=10,twist=t*platetwist,$fn=90) translate([d/2-s-thickness/2,0,0]) circle(d=thickness);
+	  intersection() {
+	    translate([0,-d/2,0]) cube([d/2,d/2,plateh]);
+	    cylinder(h=plateh+d/2,d=d);
+	  }
+	}
+	linear_extrude(height=h/2,center=false,convexity=10,twist=t*twist,$fn=90) translate([d/2-s-thickness/2,0,0]) circle(d=thickness);
+
+	hull() {
+	  linear_extrude(height=d/2,center=false,convexity=10,twist=t*platetwist,$fn=90) translate([-d/2+s+thickness/2,0,0]) circle(d=thickness);
+	  intersection() {
+	    translate([-d/2,0,0]) cube([d/2,d/2,plateh]);
+	    cylinder(h=plateh+d/2,d=d);
+	  }
+	}
+	linear_extrude(height=h/2,center=false,convexity=10,twist=t*twist,$fn=90) translate([-d/2+s+thickness/2,0,0]) circle(d=thickness);
+
+	hull() {
+	  linear_extrude(height=d/2,center=false,convexity=10,twist=t*platetwist,$fn=90) translate([0,d/2-s-thickness/2,0]) circle(d=thickness);
+	  intersection() {
+	    translate([0,0,0]) cube([d/2,d/2,plateh]);
+	    cylinder(h=plateh+d/2,d=d);
+	  }
+	}
+	linear_extrude(height=h/2,center=false,convexity=10,twist=t*twist,$fn=90) translate([0,d/2-s-thickness/2,0]) circle(d=thickness);
+
+	hull() {
+	  linear_extrude(height=d/2,center=false,convexity=10,twist=t*platetwist,$fn=90) translate([0,-d/2+s+thickness/2,0]) circle(d=thickness);
+	  intersection() {
+	    translate([-d/2,-d/2,0]) cube([d/2,d/2,plateh]);
+	    cylinder(h=plateh+d/2,d=d);
+	  }
+	}
+	linear_extrude(height=h/2,center=false,convexity=10,twist=t*twist,$fn=90) translate([0,-d/2+s+thickness/2,0]) circle(d=thickness);
+      }
+    }
+  
+    // Top
+    translate([0,0,h-plateh]) cylinder(h=plateh,d=d);
+  }
+}
+
