@@ -10,16 +10,18 @@ print=0; // 0=both units for testing, 1=cleaner, 2=box co collect litter
 
 // Length is limited by bed size, width of 200 seems practical.
 maxlength=360;
-maxwidth=200;
+maxwidth=360;
 
-versiontext="Berrycleaner v1.5";
+versiontext="Berrycleaner v1.6";
 textsize=7;
 textdepth=1;
 
 berryslitw=5; // Measured more than 6.5mm for berries.
-supportdistance=40;
+supportdistance=43;
 barw=1.5;
 barh=3;
+frontslideh=4;
+frontslidel=(berryslitw+barw)*3;
 supportw=1.5;
 supporth=2;
 height=50;
@@ -29,7 +31,9 @@ wall=2; //1.6;// 2.5
 length=floor(maxlength/(supportdistance+supportw)) * (supportdistance+supportw); // y, 220
 width=floor(maxwidth/(berryslitw+barw)) * (berryslitw+barw); // x, 200
 
-narrowstart=length-60;
+echo(length,width);
+
+narrowstart=length-100;
 narroww=100;
 
 tolerance=0.3;
@@ -46,7 +50,7 @@ module berrycleaner() {
       intersection() {
 	union() {
 	  for (x=[0:berryslitw+barw:width]) {
-	    translate([x,0,0]) cube([barw,length,barh]);
+	    translate([x,0,-barw]) roundedbox(barw,length+supportw,barh+barw,barw); // cube([barw,length,barh+barw]);
 	  }
 
 	  for (y=[0:supportdistance+supportw:length]) {
@@ -57,12 +61,11 @@ module berrycleaner() {
       }
       difference() {
 	union() {
-	  //translate([0,0,-cornerd]) roundedbox(width,narrowstart+wall,height,cornerd);
 	  translate([0,0,-cornerd]) roundedbox(wall,narrowstart+wall,height,wall);
 	  translate([width-wall,0,-cornerd]) roundedbox(wall,narrowstart+wall,height,wall);
 	  translate([0,0,-cornerd]) roundedbox(width,wall,height,wall);
 	}
-	//    translate([wall,wall,-cornerd]) roundedbox(width-2*wall,length+cornerd,height+wall*2+cornerd,cornerd);
+
 	translate([width/2,textdepth-0.01,height/2]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,halign="center", valign="center");
       }
 
@@ -72,8 +75,22 @@ module berrycleaner() {
       }
 
       hull() {
+	translate([0,narrowstart,-cornerd]) roundedbox(wall,wall,frontslideh+cornerd,wall);
+	translate([width/2-narroww/2,length,-cornerd]) roundedbox(wall,wall,frontslideh+cornerd,wall);
+	translate([0,narrowstart-frontslidel,-cornerd]) roundedbox(wall,wall,supporth+cornerd,wall);
+	translate([width/2-narroww/2+frontslidel,length,-cornerd]) roundedbox(wall,wall,supporth+cornerd,wall);
+      }
+
+      hull() {
 	translate([width-wall,narrowstart,-cornerd]) roundedbox(wall,wall,height,wall);
 	translate([width/2+narroww/2,length,-cornerd]) roundedbox(wall,wall,height,wall);
+      }
+
+      hull() {
+	translate([width-wall,narrowstart,-cornerd]) roundedbox(wall,wall,frontslideh+cornerd,wall);
+	translate([width/2+narroww/2,length,-cornerd]) roundedbox(wall,wall,frontslideh+cornerd,wall);
+	translate([width-wall,narrowstart-frontslidel,-cornerd]) roundedbox(wall,wall,supporth+cornerd,wall);
+	translate([width/2+narroww/2-frontslidel,length,-cornerd]) roundedbox(wall,wall,supporth+cornerd,wall);
       }
     }
     translate([0,narrowstart+wall,-cornerd]) triangle(width/2-narroww/2,length-narrowstart,height,7);
@@ -216,7 +233,6 @@ module berrycleanerbase() {
 	    hull() {
 	      translate([width-wall,narrowstart,0]) roundedbox(wall,wall,height-below+wall,wall);
 	      translate([width/2+narroww/2,length-height+below,0]) roundedbox(wall,wall,wall,wall);
-	      //translate([width/2+narroww/2,length,height-below]) roundedbox(wall,wall,wall,wall);
 	    }
 	    hull() {
 	      translate([width-wall,narrowstart,height-below]) roundedbox(wall,wall,wall,wall);
