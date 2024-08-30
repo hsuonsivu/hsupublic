@@ -12,7 +12,7 @@
 // +Side walls are thin and have broken once, add strengtening to the edges.
 include <hsu.scad>
 
-print=3; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model, spring test
+print=1; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model, spring test
 
 adhesion=1; // Additional bits to allow using skirt when printing.
 
@@ -31,13 +31,13 @@ testslreduction=(print==4)?50:0;
 length=228-testlreduction;
 height=75-testhreduction; // 125;
 
-versiontextb=str("v1.7",(print==4)?"D":"");;
+versiontextb=str("v1.8",(print==4)?"D":"");;
 
 textsize=(print==4)?4:7;
 textdepth=1;
 
-wall=1.5;
-strengthd=2.5;//2.5;
+wall=2.0;
+strengthd=3.2;//2.5;
 
 topl=190-testlreduction;
 bottoml=160-testlreduction;
@@ -45,7 +45,7 @@ bottoml=160-testlreduction;
 fingerl=70;
 fingerw=9;
 fingers=(print==4)?4:9;
-fingerh=3*wall;
+fingerh=5; //3*1.5;
 fingerdistance=15.5;// width/fingers; // This should be diameter of a full grown blueberry, need to test
 width=fingerdistance*fingers; //140;
 fingerendh=8;
@@ -61,7 +61,7 @@ preventerdistance=width/preventers;
 
 storagel=176-2*preventerh-preventerdistance-testslreduction;
 
-handled=25;
+handled=23.5+2*wall;
 handleattachd=30;
 handlex=42.5;
 handlefrontattach=topl-handleattachd;
@@ -91,11 +91,11 @@ plungerz=plungerdown?-clipplungerzmovement-ztolerance:0;
 
 plungerh=handlel-clippullh-clipplungerzmovement+clipslided; // height;
 echo("plungerh ",plungerh);
+echo("clipslided ",clipslided);
 plungerd=clipslided;
 plungerangledh=clipslided*2;
 
 plungeclipshelfdepth=2;
-plungeclipshelfw=handled/2+0.01;//clipslided;
 plungeclipshelfh=2;
 plungeclipcut=0.5;
 plungeclipdepth=3;
@@ -110,6 +110,7 @@ plungecliptopadjusth=plungecliph-20;
 plungercountersupporth=plungerangledh+clipplungerzmovement;
 plungercountersupportw=2;
 plungercountersupportheight=clipplungerzmovement+plungercountersupportw;
+plungeclipshelfw=plungeclipw+3*wall+0.01;//clipslided;
 longhandlel=500;
 longhandled=handled;
 
@@ -125,7 +126,7 @@ plungespringsteps=7;
 plungespringsteph=2;
 plungespringendh=4;
 
-plungespringthickness=3;
+plungespringthickness=2.8;
 plungespringplatethickness=2;
 plungespringd=13; // spring diameter
 plungespringspaced=plungespringd+1;
@@ -150,7 +151,7 @@ hingeh=axleh+axleoutd/2;
 backopening=axlefrombottom+4.5;
 backcornersupport=10;
 //hinged=axledlargeout-axledtolerance;
-handlelowh=clippullh+clipplungerzmovement+3+handled-plungespringbaseh*2;
+handlelowh=clippullh+clipplungerzmovement+3+handled-plungespringbaseh*2+wall;
 plungespringheight=handlelowh-wall; //clipslided+clipplungerzmovement; // From start of the plunger
 
 slitd=fingerdistance-fingerw;
@@ -231,7 +232,7 @@ module plunger() {
   // Spring
   translate([-plungespringxoffset,0,plungespringbottomheight+ztolerance+plungespringh+plungespringthickness/2]) rotate([180,0,0]) spring(plungespringh+ztolerance+plungerz+1,plungespringd,plungespringplatethickness,plungespringthickness);
 
-  translate([-plungespringcenteringxoffset,0,plungespringbottomheight-plungespringcenteringh+ztolerance-plungerz]) cylinder(h=plungespringcenteringh+0.01,d1=plungespringcenteringd/3,d2=plungespringcenteringd,$fn=60);
+translate([-plungespringcenteringxoffset,0,plungespringbottomheight-plungespringcenteringh+ztolerance-plungerz]) cylinder(h=plungespringcenteringh+ztolerance+0.01,d1=plungespringcenteringd/3,d2=plungespringcenteringd,$fn=60);
   
   if (0)  translate([-plungespringdepth+wall,-plungespringw/2,clipslided+plungespringbaseh*2+ztolerance-plungespringendh+ztolerance-plungerz]) roundedbox(plungespringthickness,plungespringw,plungespringendh+plungespringthickness,1);
   
@@ -401,13 +402,12 @@ module berrypicker() {
       translate([height+plungerx-wall,width/2-clipslided/2,0]) roundedbox(wall,clipslided,clippullh,cornerd);
       
        hull() {
-	 translate([height+plungerx-wall,width/2-clipslided/2,clippullh]) roundedbox(wall*2,clipslided,cornerd,cornerd);
-	 translate([height-wall,width/2-clipslided/2,clippullh+cliph]) roundedbox(wall*2,clipslided,cornerd,cornerd);
-	 //translate([height+plungerx-wall,width/2-clipslided/2,clippullh]) roundedbox(wall*2,clipslided,cliph+clippullh,cornerd);
+	 translate([height+plungerx-wall,width/2-clipslided/2,clippullh]) roundedbox(wall+1.5,clipslided,cornerd,cornerd);
+	 translate([height-wall,width/2-clipslided/2,clippullh+cliph]) roundedbox(wall+1.5,clipslided,cornerd,cornerd);
        }
 	    
       hull() {
-	translate([height-wall,width/2-clipslided/2,cliph+cutw]) roundedbox(wall*2,clipslided,clipsideh-cutw,cornerd);
+	translate([height-wall,width/2-clipslided/2,cliph+cutw]) roundedbox(wall+1.5,clipslided,clipsideh-cutw,cornerd);
 	translate([height-0.1,width/2-clipslided/2-clipsidew,cliph+cutw]) roundedbox(0.1,clipsidew+clipslided+clipsidew,clipsideh-cutw,cornerd);
       }
     }
@@ -569,7 +569,7 @@ module berrypicker() {
 	    // Low handle part
 	    union() {
 	      hull() {
-		translate([height-wall,width/2-handleattachd/2,0]) roundedbox(wall,handleattachd,handleattachd-handlex/3,cornerd);
+		translate([height-wall,width/2-handleattachd/2,0]) roundedbox(wall,handleattachd,handleattachd,cornerd); //-handlex/3
 		translate([height+handlex,width/2,0]) cylinder(d=handled,h=handlelowh);
 
 		hull() {
@@ -583,7 +583,7 @@ module berrypicker() {
 	    // Cut insides
 	    hull() {
 	      translate([height-wall,width/2-bridgey/2,plungerheight+plungespringbottomheight-plungespringstopperh-1]) cube([handlex+wall,bridgey,1]);
-	      translate([height-wall,width/2-clipw/2,wall]) cube([handlex+wall,clipw,clippullh+clipplungerzmovement*2-wall]);
+	      translate([height-wall,width/2-clipw/2,wall]) cube([handlex+wall,clipw,handleattachd]); //clippullh+clipplungerzmovement*2-wall
 	    }
 	  }
 
@@ -596,18 +596,11 @@ module berrypicker() {
 	      }
 
 	      // Cut insides
-	      // Does not work properly, makes it difficult to close the lower part
 	      hull() {
 		translate([height-0.1,width/2-handleattachd/2+wall,handlefrontattach+wall*0.7]) roundedbox(0.1,handleattachd-wall*2,handleattachd-wall*2.5,cornerd);
 		translate([height+handlex,width/2,handlel+wall]) cylinder(d=handled-2*wall,h=0.1);
 	      }
 	    }
-	  }
-
-	  // Close upper handle support
-	  if (0) intersection() {
-	    translate([height+handlex,width/2,handlel]) cylinder(d=handled,h=handlel+clipslided);
-	    translate([height+handlex-handled/2,width/2-handled/2,handlel-0.01]) triangle(handled/2,handled,clipslided+ztolerance+wall*2.0,2);
 	  }
 	}
 
@@ -635,21 +628,14 @@ module berrypicker() {
 	//translate([height+handlex,width/2,handlel-0.01]) cylinder(d=handled-wall*2,h=handled+0.01);
       }
 
-	  // Close upper handle support
-      if (0)	  intersection() {
-	    difference() {
-	      translate([height+handlex,width/2,handlel]) cylinder(d=handled,h=handlel+clipslided);
-	      translate([height+handlex,width/2,handlel]) cylinder(d=handled-wall*2,h=handlel+clipslided);
-	    }
-
-	    translate([height+handlex-handled/2,width/2-handled/2,handlel-0.01]) triangle(handled/2,handled,clipslided+ztolerance+wall+wall,2);
-	  }
-	  
       // Holdback to keep clip movement in place
       translate([height+cutw+clipdepth+wall+xtolerance,width/2+clipw/2-clippullh,0]) triangle(handlex-cutw-clipdepth-wall-xtolerance,clippullh,clippullh,11);
       translate([height+cutw+clipdepth+wall+xtolerance,width/2-clipw/2,0]) triangle(handlex-cutw-clipdepth-wall-xtolerance,clippullh,clippullh,8);
-      translate([height+cutw+clipdepth+wall+xtolerance,width/2+clipw/2-clippullh,clippullh]) triangle(handlex-clipslided/2-clipdepth-plungercountersupportheight/2,clippullh,clippullh,9);
-      translate([height+cutw+clipdepth+wall+xtolerance,width/2-clipw/2,clippullh]) triangle(handlex-clipslided/2-clipdepth-plungercountersupportheight/2,clippullh,clippullh,10);
+      translate([height+cutw+clipdepth+wall+xtolerance,width/2+clipw/2-clippullh,clippullh]) triangle(handlex-clipslided/2-clipdepth-plungercountersupportheight/2-wall,clippullh,clippullh,9);
+      translate([height+cutw+clipdepth+wall+xtolerance,width/2-clipw/2,clippullh]) triangle(handlex-clipslided/2-clipdepth-plungercountersupportheight/2-wall,clippullh,clippullh,10);
+
+  // Shelf to prevent plunger to drop out from above (plug has clip)
+  translate([height+handlex-handled/2,width/2-plungeclipshelfw/2,handlel+wall]) cube([plungeclipshelfdepth,plungeclipshelfw,plungeclipshelfh+clipslided-wall]);
 
     }
 
@@ -657,9 +643,6 @@ module berrypicker() {
     translate([height+handlex-handled/2-xtolerance-plungeclipd,width/2-plungeclipw/2-plungeclipcut/2*2,handlel+clipslided-plungeclipd*2]) cube([handlex,plungeclipw+plungeclipcut*2,plungeclipd*2]);
     translate([height+handlex-handled/2-xtolerance+plungeclipshelfdepth,width/2-plungeclipw/2-plungeclipcut/2*2,handlel+clipslided-plungeclipd*2]) cube([handlex,plungeclipw+plungeclipcut*2,topl]);
   }
-
-  // Shelf to prevent plunger to drop out from above (plug has clip)
-  translate([height+handlex-handled/2-xtolerance,width/2-plungeclipshelfw/2,handlel+clipslided]) cube([plungeclipshelfdepth,plungeclipshelfw,plungeclipshelfh]);
 
   // fingers
   if (print!=4) {
@@ -698,7 +681,14 @@ intersection() {
     }
   
     if (print==2 || print==3 || print==4) {
-      translate([height,width+1+clipslided/2,plungerh]) rotate([180,0,120]) plunger();
+      if (adhesion) {
+  translate([height+wall+1-0.4,width+1-(plungerh-plungerd)/3,0]) triangle(0.8,(plungerh-plungerd)/3-0.5+0.01,plungerh-plungerd,11);
+  translate([height+wall+1-0.25,width+1-0.5,0]) cube([0.5,0.51,(plungerh-plungerd)]);
+      }
+      
+      translate([height+wall+1,width+1+clipslided/2,plungerh]) {
+	rotate([180,0,180]) plunger();
+      }
     }
   }
 }
