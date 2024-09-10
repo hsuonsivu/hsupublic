@@ -96,6 +96,8 @@ some phones need to be upside down. It is relatively easy to tune for
 various phones, the settings are in top of the files, hopefully
 self-explanatory.
 
+To make a holder for Tesla Model S, change teslamodels to 1, otherwise desktop version is made. Difference is different base and lower angle for Tesla.
+
 ![Image of charger base for Lidl dual wireless phone charger](lidllaturiteline.jpg)
 ![Second image of charger base for Lidl dual wireless phone charger](lidllaturiteline2.jpg)
 
@@ -117,7 +119,9 @@ which change variables.
 We had problems with birds picking up yellow labels and throwing them
 around. I have no idea what they were thinking, but yellow might not
 be the right color choice. Next summer we will try red and make labels
-larger.
+larger. Update: Added structures to keep them better in the
+ground. The birds left those in place, but sample is too small to make
+any definitive conclusions.
 
 ![Veggie Labels in openscad](kasvikyltit-openscad.png)
 
