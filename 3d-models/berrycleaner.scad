@@ -10,7 +10,7 @@ print=0; // 0=both units for testing, 1=cleaner, 2=box co collect litter
 
 // Length is limited by bed size, width of 200 seems practical.
 maxlength=360;
-maxwidth=360;
+maxwidth=300; //360
 
 versiontext="Berrycleaner v1.6";
 textsize=7;
