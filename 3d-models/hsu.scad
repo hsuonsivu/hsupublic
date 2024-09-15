@@ -119,9 +119,6 @@ module spring(h,d,plateh,thickness) {
   // Need to raise height pi*d for 360 degrees
   degrees=360*h/(d*3.14159)*springangle;
   
-  // Printability
-  printabilityh=d/2; // Below 1 makes steeper angle which causes problems with overhans. 1 equals 45 degrees
-  
   platetwist=degrees*(d/2)/(h/2);
   twist=degrees;
 

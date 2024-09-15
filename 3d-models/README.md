@@ -85,10 +85,14 @@ The default license file.
 
 ### lidllaturiteline.scad
 
+### Makefile.lidllaturiteline
+
 Lidl sells wireless phone charger for two phones. It is not very
 practical as the mobile phones need to be placed accurately to the
 correct position. This holder allows simply dropping the two phones to
-the slots, and they will start charging.
+the slots, and they will start charging. The desktop version has angle
+of 45 degrees which seems convenient, Tesla Model S version has lower
+angle to allow better view of the phone screen.
 
 This was designed for my Blackview phones. Unfortunately, many phones
 seem to have the induction loop at different position. For example,
@@ -96,7 +100,16 @@ some phones need to be upside down. It is relatively easy to tune for
 various phones, the settings are in top of the files, hopefully
 self-explanatory.
 
-To make a holder for Tesla Model S, change teslamodels to 1, otherwise desktop version is made. Difference is different base and lower angle for Tesla.
+The model generates large support underneath if the angle is less than
+45 degrees, so printing with lightning fill is recommend to reduce
+filament consumption.
+
+Makefile makes both desktop and Tesla Model S versions.
+
+To make a holder for Tesla Model S, change teslamodels to 1, otherwise
+desktop version is made. Difference is different base and lower angle
+for a Tesla and raise to allow holder to stay in place between trim in
+the centre console.
 
 ![Image of charger base for Lidl dual wireless phone charger](lidllaturiteline.jpg)
 ![Second image of charger base for Lidl dual wireless phone charger](lidllaturiteline2.jpg)
@@ -663,6 +676,29 @@ switching filament during printing.
 
 Collected some modules or functions into a library to use in my
 models.
+
+Modules
+
+ruuvireika makes a hole for screw, including countersink shape. This
+is intended to be used to cut out the hole for screw. I normally use wood screws for 3D prints.
+
+ruuvitorni makes a tower for a screw to be used with ruuvireika above.
+
+triangle makes a triagle with given x,y,z size. Fourth parameter tells which orientation the triangle should be.
+
+roundedbox makes a cube with rounded edges. Third parameter is corner diameter.
+
+tassu makes a shape to place in corners of a model to improve bed
+adhesion, useful in particular for materials which are prone to
+warping and using wide brim is not practical.
+
+ring makes a cylinder with inside cut out, given diameter, wall thickness and height.
+
+spring makes a spring, with flat ends and mid plate. Mid plate splits
+the spring direction to avoid spring creating torsion when
+compressing. You need cylinder around the spring to avoid it being
+easily, and 3D printed springs are generally not very reliable. The
+spring can be printed vertically and needs no supports.
 
 ### lattialista.scad
 
