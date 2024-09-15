@@ -1,0 +1,13 @@
+SOURCE=lidllaturiteline.scad
+DEPENDS=hsu.scad Makefile.lidllaturiteline
+
+all: lidllaturitelinedesk.stl lidllaturitelineteslamodels.stl
+
+lidllaturitelinedesk.stl: $(SOURCE) $(DEPENDS)
+	openscad -D teslamodels=0 -o $@ $(SOURCE)
+	echo $@ built.
+
+lidllaturitelineteslamodels.stl: $(SOURCE) $(DEPENDS)
+	openscad -D teslamodels=1 -o $@ $(SOURCE)
+	echo $@ built.
+

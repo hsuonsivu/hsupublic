@@ -8,12 +8,13 @@ $fn=60;
 
 teslamodels=1;
 
-versiontext=str("V1.1",teslamodels?"S":"");;
+versiontext=str("V1.2",teslamodels?"S":"");;
 textdepth=0.8;
 textsize=8;
 
+wall=2;
 chargerthickness=9;
-chargerwidth=teslamodels?175:180.2;
+chargerwidth=180.2;
 chargerheight=85.2;
 phonethickness=15;
 phonewidth=82;
@@ -27,10 +28,10 @@ usbholethickness=1;
 bottomheight=25;
 backthickness=2;
 thicknessmargin=2;
-legwidth=10;
+legwidth=wall;
 legheight=phoneheight;
 legthickness=phoneheight;
-legposition=teslamodels?5:10;
+legposition=teslamodels?11:5;
 phonecutdiameter=10;
 phonecut=5; // Edge to which phone drops and stays in place
 keycutposition=30-55;
@@ -42,12 +43,11 @@ microphoneholeangle=45;
 microphoneholeposition=0; // Offset from center
 smallcornerdiameter=5;
 largecornerdiameter=10;
-bottomlift=teslamodels?12:0;
+baselift=teslamodels?7:0;
+bottomlift=teslamodels?baselift+legposition:legposition;
 angle=teslamodels?15:45;
 bottomy=bottomlift*sin(angle);
 bottomz=bottomlift*cos(angle);
-echo("y,z ",bottomy,bottomz);
-wall=2;
 midcut=3;
 width=chargerwidth+10;
 height=chargerheight+phoneheight-phoneheightreduction+bottomheight;
@@ -56,19 +56,19 @@ union() {
   difference() {
     union() {
       // left leg
-      translate([legposition,0,0]) cube([wall,height*cos(angle),bottomlift/2]);
+      translate([legposition,0,0]) cube([legwidth,height*cos(angle),baselift]);
       hull() {
-	translate([legposition,0,bottomlift/2-0.01]) cube([wall,height*cos(angle),wall]);
-	translate([0,0,bottomlift]) rotate([angle,0,0]) {
+	translate([legposition,0,baselift]) cube([legwidth,height*cos(angle),wall]);
+#	translate([0,0,bottomlift]) rotate([angle,0,0]) {
 	  translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	  translate([smallcornerdiameter/2,height-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	}
       }
 
       // front leg
-      translate([legposition,0,0]) cube([width-legposition*2,wall,bottomlift/2]);
+      translate([legposition,0,0]) cube([width-legposition*2-legwidth,legwidth,baselift]);
       hull() {
-	translate([legposition,0,bottomlift/2-0.01]) cube([width-legposition*2,wall,wall]);
+	translate([legposition,0,baselift]) cube([width-legposition*2-legwidth,legwidth,wall]);
 	translate([0,0,bottomlift]) rotate([angle,0,0]) {
 	  translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	  translate([width-smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
@@ -76,9 +76,9 @@ union() {
       }
 
       // right leg
-      translate([width-legposition-wall,0,0]) cube([wall,height*cos(angle),bottomlift/2]);
+      translate([width-legposition-legwidth,0,0]) cube([legwidth,height*cos(angle),baselift]);
       hull() {
-	translate([width-legposition-wall,0,bottomlift/2-0.01]) cube([wall,height*cos(angle),wall]);
+	translate([width-legposition-legwidth,0,baselift]) cube([legwidth,height*cos(angle),wall]);
 	translate([0,0,bottomlift]) rotate([angle,0,0]) {
 	  translate([width-smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	  translate([width-smallcornerdiameter/2,height-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
@@ -86,26 +86,32 @@ union() {
       }
     
       // support for printing
-      //      translate([bottomlift,bottomlift/2,0]) cube([width-bottomlift*2,(height+bottomlift)*cos(angle)/2,bottomlift/2]);
       hull() {
-	h=height*cos(angle)+bottomlift;
-	midlift=(h/2)*sin(angle)+bottomlift*2;
-	translate([bottomlift,bottomlift,0]) cube([width-bottomlift*2,0.1,bottomlift]);
-	translate([midlift,h-midlift-bottomlift,0]) cube([width-midlift*2,0.1,bottomlift]);
-	translate([0,0,bottomlift]) rotate([angle,0,0]) {
-	  translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
-	  translate([width-smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
-	      translate([smallcornerdiameter/2,height-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
-	      translate([width-smallcornerdiameter/2,height-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);	}
+	h=height*cos(angle);
+	l=height*sin(angle);
+	if (h>l) {
+	  ll=h-l;
+	  xx=(angle==0)?0:ll/cos(angle);
+	  x=xx*sin(angle);
+	  //echo("h ",h," l ",l," ll ",ll," xx ",xx," x ",x);
+	  translate([bottomlift,bottomlift,0]) cube([width-(bottomlift)*2,0.1,bottomlift]);
+	  translate([x,ll,0]) cube([width-x*2,0.1,0.1]);
+	  translate([0,0,bottomlift]) rotate([angle,0,0]) {
+	    translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
+	    translate([width-smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
+	    translate([smallcornerdiameter/2,height-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
+	    translate([width-smallcornerdiameter/2,height-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
+	  }
+	}
       }
 
       translate([0,0,bottomlift]) rotate([angle,0,0]) {
 	union() {
-	  translate([width/2,bottomheight+divideredge+0.5,backthickness+chargerthickness+usbholethickness]) rotate([0,0,45]) cube([usbholewidth/2.18,usbholewidth/2.18,thickness-backthickness-chargerthickness-usbholethickness]);
+	  //translate([width/2,bottomheight+divideredge+0.5,backthickness+chargerthickness+usbholethickness]) rotate([0,0,45]) cube([usbholewidth/2.18,usbholewidth/2.18,thickness-backthickness-chargerthickness-usbholethickness]);
       
 	  union() {
 	    hull() {
-	      translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
+#	      translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	      translate([smallcornerdiameter/2,height-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	      translate([width-smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	      translate([width-smallcornerdiameter/2,height-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
