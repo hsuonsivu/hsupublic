@@ -12,7 +12,7 @@
 // +Side walls are thin and have broken once, add strengtening to the edges.
 include <hsu.scad>
 
-print=1; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model, spring test
+print=2; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model, spring test
 
 adhesion=1; // Additional bits to allow using skirt when printing.
 
@@ -31,7 +31,7 @@ testslreduction=(print==4)?50:0;
 length=228-testlreduction;
 height=75-testhreduction; // 125;
 
-versiontextb=str("v1.8",(print==4)?"D":"");;
+versiontextb=str("v1.9",(print==4)?"D":"");;
 
 textsize=(print==4)?4:7;
 textdepth=1;
@@ -90,8 +90,6 @@ plungerx=plungerdown?clipdepth+xtolerance:0; //clipplungerzmovement/2:0;
 plungerz=plungerdown?-clipplungerzmovement-ztolerance:0;
 
 plungerh=handlel-clippullh-clipplungerzmovement+clipslided; // height;
-echo("plungerh ",plungerh);
-echo("clipslided ",clipslided);
 plungerd=clipslided;
 plungerangledh=clipslided*2;
 
@@ -682,8 +680,12 @@ intersection() {
   
     if (print==2 || print==3 || print==4) {
       if (adhesion) {
-  translate([height+wall+1-0.4,width+1-(plungerh-plungerd)/3,0]) triangle(0.8,(plungerh-plungerd)/3-0.5+0.01,plungerh-plungerd,11);
-  translate([height+wall+1-0.25,width+1-0.5,0]) cube([0.5,0.51,(plungerh-plungerd)]);
+	zz=floor((plungerh-plungerd)/10)*10-9;
+	translate([height+wall+1-0.4,width+1-zz/3,0]) triangle(0.8,zz/3-0.5+0.01,zz,11);
+	translate([height+wall+1-0.4,width-0.5,0]) cube([0.8,1,zz]);
+	for (z=[10:10:zz-1]) {
+	  translate([height+wall+1-0.25,width+1-0.5,z]) cube([0.5,0.51,1]);
+	}
       }
       
       translate([height+wall+1,width+1+clipslided/2,plungerh]) {
