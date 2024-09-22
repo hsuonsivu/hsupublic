@@ -14,6 +14,7 @@ versiontext="V1.2";
 textdepth=0.8;
 textsize=8;
 copyrighttext="© Heikki Suonsivu CC-BY-NC-SA";
+copyrighttextsize=textsize-3;
 baseheight=5;
 basethickness=3;
 baseshaped=60; // curve diameter
@@ -235,7 +236,7 @@ module leafbatteryfan() {
 	      translate([-backscrewbased/2-cornerd/2,yy,baseheight-cornerd/2]) triangle(backscrewbased/2+1,backattachsupportw,backattachh,2);
 	    }
 	    hull() {
-	      translate([backscrewbased/2-screwlength,0,baseheight+screwtowerd/2+0.1]) rotate([90,0,-90]) ruuvitorni(screwlength,screwtowerd);
+	      translate([backscrewbased/2-2*screwlength,0,baseheight+screwtowerd/2+0.1]) rotate([90,0,90]) ruuvitorni(screwlength,screwtowerd);
 	      translate([backscrewbased/2-2*screwlength-backattachl,-screwtowerd/2,baseheight+0.1]) cube([screwlength+backattachl,screwtowerd,basethickness]);
 	    }
 	  }
@@ -296,7 +297,7 @@ module leafbatteryfan() {
       }
       
 
-      translate([frontscrewbased/2,0,baseheight+screwtowerd/2+0.1]) rotate([90,0,90]) ruuvitorni(screwlength,screwtowerd);
+      translate([frontscrewbased/2+screwlength,0,baseheight+screwtowerd/2+0.1]) rotate([90,0,-90]) ruuvitorni(screwlength,screwtowerd);
     }
 
     // front screwhole
@@ -354,7 +355,7 @@ module leafbatteryfan() {
     }
 
     translate([fancenterx,-width/2+5,baseheight+basethickness-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="bottom",halign="center",font="Liberation Sans:style=Bold");
-    translate([frontbackscrewdistance-backscrewbased/2-backattachl-screwlength-2,width/2-9,baseheight+basethickness-textdepth+0.01]) rotate([0,0,180]) linear_extrude(height=textdepth) text(copyrighttext, size=textsize-3, valign="bottom",halign="left",font="Liberation Sans:style=Bold");
+    translate([frontbackscrewdistance-backscrewbased/2-backattachl-screwlength-2,width/2-9,baseheight+basethickness-textdepth+0.01]) rotate([0,0,180]) linear_extrude(height=textdepth) text(copyrighttext, size=copyrighttextsize, valign="bottom",halign="left",font="Liberation Sans:style=Bold");
   }
 }
 
