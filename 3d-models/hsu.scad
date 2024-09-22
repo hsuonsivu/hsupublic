@@ -10,38 +10,36 @@ countersinkdiametermultiplier=2.4;
 
 function countersinkd(diameter) = diameter*countersinkdiametermultiplier;
 
-module ruuvireika(height,diameter,countersink) {
-  $fn=90;
-  cylinder(h=height,d=diameter-0.1); // Slightly smaller hole
+module ruuvireika(height,diameter,countersink,strong) {
+  makestrong=(strong=="")?1:strong;
+  
+  hull() {
+    translate([0,0,diameter/2]) cylinder(h=height-diameter/2,d=diameter-0.1,$fn=90); // Slightly smaller hole
+    translate([0,0,0]) cylinder(h=diameter/2,d2=diameter-0.1,d1=1,$fn=90); // screw head
+  }
 
-  if (strong) {
-    if (1) {
-      maxd=diameter*countersinkdiametermultiplier-(diameter+0.4)+1;
-      for (i=[0:1:maxd]) {
-	di=diameter+0.3+i;
-	// i=maxd -> 0, i=0 >diameter/3
-	hfix=(maxd-i)/maxd*diameter/3-0.1; //screwtowerd
-	translate([0,0,-1])
-	  difference() {
-	  cylinder(h=height+hfix+1-0.1,d=di+0.05,$fn=20);
-	  translate([0,0,-0.01]) cylinder(h=height+hfix+1+0.02,d=di,$fn=20);
-	}
-      }
-    } else {
-      for (xx=[-2*diameter:1:2*diameter]) {
-	translate([xx,-2*diameter,-1]) cube([0.05,4*diameter,height+1-0.1]);
+  if (makestrong) {
+    maxd=diameter*countersinkdiametermultiplier-(diameter+0.3)+1;
+    for (d=[diameter+0.8:0.9:diameter*3-0.6]) {
+      di=d;
+      bottom=(d<diameter*3*0.6-0.8)?-diameter/3*3+0.4:-diameter/3*3+(d-diameter)*1-diameter*0.6+0.4;
+      top=(d>countersinkd(diameter))?height-0.4:height-0.8-diameter+d/2-0.4;
+      translate([0,0,0])
+	difference() {
+	translate([0,0,bottom]) cylinder(h=top-bottom,d=di+0.03,$fn=20);
+	translate([0,0,bottom-0.01]) cylinder(h=top-bottom+0.02,d=di,$fn=20);
       }
     }
   }
 
   if (countersink) {
-    translate([0,0,height-diameter*countersinkheightmultiplier]) cylinder(h=diameter*countersinkheightmultiplier,d1=diameter,d2=diameter*countersinkdiametermultiplier);
+    translate([0,0,height-diameter*countersinkheightmultiplier]) cylinder(h=diameter*countersinkheightmultiplier,d1=diameter-0.1,d2=diameter*countersinkdiametermultiplier,$fn=90);
   }
 }
 
 module ruuvitorni(height,diameter) {
   cylinder(h=height,d=diameter);
-  translate([0,0,height-0.01]) cylinder(h=diameter/3,d1=diameter,d2=diameter*0.6);
+  translate([0,0,-diameter/3+0.01]) cylinder(h=diameter/3,d2=diameter,d1=diameter*0.6,$fn=90);
 }
 
 module triangle(x,y,z,mode) {
