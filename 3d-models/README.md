@@ -109,7 +109,7 @@ Makefile makes both desktop and Tesla Model S versions.
 To make a holder for Tesla Model S, change teslamodels to 1, otherwise
 desktop version is made. Difference is different base and lower angle
 for a Tesla and raise to allow holder to stay in place between trim in
-the centre console.
+the centre console. Tesla Model S needs narrow legs
 
 ![Image of charger base for Lidl dual wireless phone charger](lidllaturiteline.jpg)
 ![Second image of charger base for Lidl dual wireless phone charger](lidllaturiteline2.jpg)
@@ -696,9 +696,11 @@ ring makes a cylinder with inside cut out, given diameter, wall thickness and he
 
 spring makes a spring, with flat ends and mid plate. Mid plate splits
 the spring direction to avoid spring creating torsion when
-compressing. You need cylinder around the spring to avoid it being
+compressing. You need cylinder around the spring to avoid it bending
 easily, and 3D printed springs are generally not very reliable. The
-spring can be printed vertically and needs no supports.
+spring can be printed vertically and needs no supports. It takes
+height, diameter, end plate thickness, spring thickness. In particular
+spring thickness is very material specific.
 
 ### lattialista.scad
 
@@ -846,3 +848,53 @@ did the first version.
 Handy measurement tool to figure out sizes of trees, to find out if the trees should be spaced (12 cm) or if the tree is fully grown (27cm).  Also includes 6cm for pre-thinning.
 
 ![treemeter in Openscad.](treemeter.png)
+
+### stevensonshield.scad
+
+### Makefile.stevensonshield
+
+A stevenson shield to protect outside air sensors such as temperature
+and moisture sensors.  Makefile generates all parts. The strange shape
+of the wall attachment is trying to avoid rain droplets bouncing off
+and getting inside the shield.
+
+The model includes corner plates to attach various electronics to. The
+model is stacked, with towers supporting next shield. Clips are used
+so the model should not need other joiners, but if needed, drop of
+glue to towers might do the trick.
+
+The model can be tuned, but likely trying to make it too small will
+make it too weak. When editing in openscad, print=0 setting gives you
+cutthrough model.
+
+The base includes attachment which is inteneded for wall
+installation. You may also install this to a 62mm diameter pole with
+attachement parts. The screws needed are 3.5mm 30mm wood screws. 62mm
+is the common pole in Finland.
+
+TODO: The shield might benefit from a bug netting inside to avoid
+spider nets and bug nests inside. This could be easy to add, but would
+limit airflow.
+
+Tunables in stevensonshield.scad:
+
+shields: number of shields, not including top cover. It does not have
+a height limit, but likely it becomes too wobbly if made too high.
+
+forceinfill: For some reason, slicers (cura and prusaslicer) get
+confused on what is inside and what is outside, and do not generate
+infill for the base. While I have successfully printed the base
+without infill, this will add some rudimentary infill to support the
+base. Alternatively, if this option is not on, extra supports are
+generated for towers.
+
+plated: Circumference of the baseplate. This will control the
+circumference of the shield, make it larger if you have larger thing
+to put inside. Other variables are based on this.
+
+There are plenty of variables which can be tuned, you can try your
+luck. Many variables may have unintended effects when changing them,
+none of these have been tested for large alterations, other than
+number of shields.
+
+![stevensonshield in Openscad.](stevensonshield.png)
