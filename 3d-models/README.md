@@ -802,7 +802,9 @@ beginning of the file.  You need a large printer..
 
 ### Makefile.berrypicker
 
-Picker tool for bilberries (In Finnish mustikka).
+Picker tool for bilberries (In Finnish mustikka). Latest version has
+opening bottom mechanism so you can empty the berries to a bucket
+easily.  
 
 ![berrypicker in scad.](berrypicker.png)
 
@@ -902,3 +904,4 @@ they should be printed in sets, as they have a bit of attachment to
 each other for stability.
 
 ![stevensonshield in Openscad.](stevensonshield.png)
+![stevensonshield in a temporary install.](stevensonshield.jpg)
