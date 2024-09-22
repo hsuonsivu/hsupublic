@@ -4,10 +4,10 @@ DEPENDS=hsu.scad Makefile.lidllaturiteline
 all: lidllaturitelinedesk.stl lidllaturitelineteslamodels.stl
 
 lidllaturitelinedesk.stl: $(SOURCE) $(DEPENDS)
-	openscad -D teslamodels=0 -o $@ $(SOURCE)
+	openscad -D teslamodels=0 -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
 lidllaturitelineteslamodels.stl: $(SOURCE) $(DEPENDS)
-	openscad -D teslamodels=1 -o $@ $(SOURCE)
+	openscad -D teslamodels=1 -D print=1 -D strong=1 -o $@ $(SOURCE)
 	echo $@ built.
 
