@@ -93,6 +93,7 @@ between=0.5;
 
 ruuvid=3.5;
 ruuvitornid=3*ruuvid;
+ruuvilength=30;
 ruuvidistance=bedsize/1.5;
 maxrows=floor(bedsizey/nametagdistance)-1;
 maxheight=(maxrows+1)*nametagdistance+backheight+1;
@@ -176,7 +177,7 @@ module labelholder() {
       }
     }
     translate([0,maxrows*nametagdistance,0]) rotate([angle,0,0]) {
-      translate([bedsize/2,labeltotalheight-versiontextsize/2,3*backthickness+holderbasetop-ztolerance-versiontextdepth+0.01]) rotate([180,180,0]) linear_extrude(height=versiontextdepth) text(text=versiontext,font="Liberation Sans:style=Bold",size=versiontextsize,valign="center", halign="center");
+    translate([bedsize/2,labeltotalheight-versiontextsize/2,3*backthickness+holderbasetop-ztolerance-versiontextdepth+0.01]) rotate([180,180,0]) linear_extrude(height=versiontextdepth) text(text=versiontext,font="Liberation Sans:style=Bold",size=versiontextsize,valign="center", halign="center");
     }
   }
 
@@ -199,7 +200,7 @@ module labelholder() {
     }
 
     for (x=[bedsize/2-ruuvidistance/2,bedsize/2+ruuvidistance/2]) {
-      translate([x,-ruuvitornid/2,zangled-0.01]) ruuvireika(-zangled+cornerd+0.02,ruuvid,1);
+      translate([x,-ruuvitornid/2,+cornerd-ruuvilength+0.01]) ruuvireika(ruuvilength,ruuvid,1,1);
     }
     
     textsize=ruuvitornid-ruuvid; // -1
