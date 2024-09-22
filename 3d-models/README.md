@@ -897,4 +897,8 @@ luck. Many variables may have unintended effects when changing them,
 none of these have been tested for large alterations, other than
 number of shields.
 
+No supports are needed to print. Towers are prone to collapsing so
+they should be printed in sets, as they have a bit of attachment to
+each other for stability.
+
 ![stevensonshield in Openscad.](stevensonshield.png)
