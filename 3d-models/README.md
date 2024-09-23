@@ -109,7 +109,8 @@ Makefile makes both desktop and Tesla Model S versions.
 To make a holder for Tesla Model S, change teslamodels to 1, otherwise
 desktop version is made. Difference is different base and lower angle
 for a Tesla and raise to allow holder to stay in place between trim in
-the centre console. Tesla Model S needs narrow legs
+the centre console. Tesla Model S needs narrow legs. For tesla model S
+you need 4 3.5mm 19mm(wood) screws to attach the lower parts of the legs.
 
 ![Image of charger base for Lidl dual wireless phone charger](lidllaturiteline.jpg)
 ![Second image of charger base for Lidl dual wireless phone charger](lidllaturiteline2.jpg)
@@ -895,11 +896,11 @@ without infill, this will add some rudimentary infill to support the
 base. Alternatively, if this option is not on, extra supports are
 generated for towers.
 
-plated: Circumference of the baseplate. This will control the
+plated: circumference of the baseplate. This will control the
 circumference of the shield, make it larger if you have larger thing
 to put inside. Other variables are based on this.
 
-bugprotection: enable but protection mesh. Bottom of mesh has a small
+bugprotection: enable bug protection mesh. Bottom of mesh has a small
 part which suitable opening can be snapped off to allow cables
 through. The base includes small clips to hold bug mesh in place.
 
@@ -918,3 +919,44 @@ each other for stability.
 
 ![stevensonshield in Openscad.](stevensonshield.png)
 ![stevensonshield in a temporary install.](stevensonshield.jpg)
+
+### hyllynpidike.scad
+
+Spare part, shelf support was missing in furniture.
+
+### expandable-businesscard-holder.scad
+
+Business card holders which attach to each other. This was my first
+ever 3d model, so looking at code may cause headache.
+
+### kaiuttimen-jalka.scad
+
+Foot for high-end speaker which apparantly is intended to insulate the
+speaker from floor. This is copy of the original. Likely best to print
+upside down with plenty of skirt.
+
+### batterysorter.scad
+
+This is intended for storing various batteries, in particular for
+rechargeable ones.
+
+### kivisen-jalka.scad
+
+Tero Kivinen made a gaming table and this is a foot for its square steel legs.
+
+### viemaritulppa.scad
+
+We have part missing in the floor drain, this is a replacement.
+
+### rattistopperi.scad
+
+### momowheelfiller.scad
+
+My momo racing wheel broke, and I tried to fix is with these two
+parts. Rattistopperi is a part which limits the wheel movement range,
+and original had completely disintegrated. Momowheelfiller was a form
+for the inside of the wheel which had broken down, with the idea that
+it could be fixed with epoxy and glass fiber. This failed as epoxy
+escaped the form and the wheel was ruined beyond repair. Maybe someone has use for these.
+
+
