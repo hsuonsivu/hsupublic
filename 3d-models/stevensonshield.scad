@@ -4,14 +4,20 @@
 
 include <hsu.scad>
 
-print=0; // 0=model, 1=base only, 2=top only, 3=single shield, 4=set of towers, 5=base, towers, one shield, 6=top and shield, 7=2 shields, 8=one tower, 9=pair of 62mm pipe attachment
+print=0; // 0=model, 1=base only, 2=top only, 3=single shield, 4=set of towers, 5=base, bugscreen, 6=top, shield and 3 towers, 7=2 shields and 6 towers, 8=one tower, 9=pair of 62mm pipe attachment, 10 bug shield
 
 $fn=60;
 
 shields=3; // Not including top
 forceinfill=1;
 
-versiontext="v1.1";
+// Turn on bug protection
+bugprotection=1;
+
+// Make a tunnel for cables
+cabletunnel=0;
+
+versiontext="v1.2";
 copyrighttext="© Heikki Suonsivu CC-BY-NC-SA";
 
 textsize=7;
@@ -22,8 +28,9 @@ textdepth=1;
 wall=2;
 
 plated=100;
-incircled=plated-24; //
+incircled=plated-24;
 ind=plated-30;
+towerpositiond=(ind+plated)/2;
 topplated=plated;
 topbottomd=plated*1.34;
 topmidd=plated*1.16;
@@ -40,7 +47,7 @@ baseh=40;
 cornerd=1;
 componentplateoffset=plated/5;
 componentw=40;
-componentplateh=shielddistance*shields+shieldoverlap; //100;
+componentplateh=shielddistance*shields+shieldoverlap;
 componentholeedge=6;
 componentholed=4.5;
 componentholes=4;
@@ -94,6 +101,31 @@ pipeattachthickness=screwtowerd+cornerd;
 pipeattachcut=1;
 pipeattachscrewdepth=13;
 pipeattachscrewlength=35;
+
+cablemaxdiameter=10;
+cabletunnelw=cablemaxdiameter+2*wall;
+cabletunnelyoffset=componentplateoffset+cablemaxdiameter/2;
+cabletunnelxstart=componentplateoffset+wall/2;
+cabletunnelslide=4; // Slight slide towards outside.
+cabletunnelyslide=cablemaxdiameter/2+wall*2;
+cabletunnelzstart=baseh-wall+cablemaxdiameter/2;
+cabletunnell=plated/2-componentplateoffset+cabletunnelw+wall*2;
+cabletunnelthinning=0;
+
+bugscreend=ind-wall-dtolerance;
+bugscreenwall=1.2;
+bugscreenwallh=0.6;
+bugscreenh=(shields+1)*shielddistance-wall*2;
+bugscreendensity=3.6;
+bugscreenclipangle=10;
+bugscreencliph=3;
+bugscreenclipshift=-0.7;
+
+// Weaken bugsheet structure in places to make clipping cable holes easier
+bugscreenweakenangle=20;
+bugscreenweakenh=20;
+bugscreenweakcut=bugscreenwallh*2;
+bugscreenweaksnapwidth=3;
 
 module line(x1,y1,x2,y2,diameter) {
   hull() {
@@ -153,13 +185,17 @@ module tower() {
   translate([0,0,-shielddistance]) towerbody();
 }
 
-module setoftowers() {
-  translate([-towerbodyd/sqrt(2)-2,-towerbodyd*1.5+2,0])
-    for (y=[0,(towerbodyd*2)*1.5-4.5]) {
-    for (i=[0:1:2]) {
-      translate([(y==0?-towerbodyd/2-0.5:0)+(towerbodyd+textdepth)*i+0.5,y,shielddistance]) tower();
-      for (z=[cornerd/2,len(versiontext)*smalltextsize-0.4-cornerd/2]) {
-	if (i<2) translate([(y==0?-towerbodyd/2-0.5:0)+(towerbodyd+textdepth)*i+0.5+towerbodyd/2,y,z]) cube([wall/2+0.4,0.4,0.4]);
+module setoftowers(count) {
+  // Only 3 or 6 supported now.
+  translate([-towerbodyd/sqrt(2)-2,(count==6)?-towerbodyd*1.5+2:0,0]) {
+    ylist=(count==6)?[0,(towerbodyd*2)*1.5-4.5]:[0];
+    echo(ylist);
+    for (y=ylist) {
+      for (i=[0:1:2]) {
+	translate([(y==0?-towerbodyd/2-0.5:0)+(towerbodyd+textdepth)*i+0.5,y,shielddistance]) tower();
+	for (z=[cornerd/2,len(versiontext)*smalltextsize-0.4-cornerd/2]) {
+	  if (i<2) translate([(y==0?-towerbodyd/2-0.5:0)+(towerbodyd+textdepth)*i+0.5+towerbodyd/2,y,z]) cube([wall/2+0.4,0.4,0.4]);
+	}
       }
     }
   }
@@ -224,20 +260,142 @@ module shield() {
   }
 }
 
+module bugscreen() {
+  astep=360/(3.14159*bugscreend/bugscreendensity);
+  wider=bugscreend/2-bugscreenwall+(incircled-ind+wall)/2;
+  bottomr=bugscreend/2-bugscreenwall;
+  hdiff=shielddistance-shieldoverlap-wall;
+  
+  difference() {
+    union() {
+      translate([0,0,bugscreenh-wall*2]) cylinder(d=len(versiontext)*textsize,h=bugscreenwallh+wall);
+      
+      for (zz=[0:bugscreendensity:bugscreenh-wall]) {
+	z=(zz>bugscreenh-wall?bugscreenh-wall:zz);
+	dd=(incircled-ind)/shielddistance*(shielddistance-wall-z*2)+bugscreend;
+	d=(z<(shielddistance-shieldoverlap-wall)?dd+wall:bugscreend);
+	translate([0,0,z]) ring(d,bugscreenwall,bugscreenwallh);
+      }
+
+      for (a=[0:astep:359]) {
+	rotate([0,0,a]) {
+	  translate([bottomr,0,shielddistance-shieldoverlap-wall]) cube([bugscreenwall,bugscreenwall,bugscreenh-(shielddistance-shieldoverlap)]);
+
+	  difference() {
+	    hull() {
+	      translate([wider,0,0]) cube([bugscreenwall,bugscreenwall,bugscreenwallh]);
+	      translate([bottomr,0,hdiff]) cube([bugscreenwall,bugscreenwall,bugscreenwallh]);
+	    }
+	  }
+	}
+      }
+
+      for (a=[0:astep:bugscreenweakenangle]) {
+	rotate([0,0,a]) {
+	  hull() {
+	    translate([wider-bugscreenwall/2,((a==0)?-bugscreendensity/2:0)-bugscreenweaksnapwidth/2+bugscreenwall+0.5,0]) cube([bugscreenwall,bugscreenweaksnapwidth+((a==0)?bugscreendensity/2:0),bugscreenwallh]);
+	    translate([wider-bugscreenweaksnapwidth/2,-bugscreenweaksnapwidth/2+bugscreenwall*2+0.5/2,0]) cube([bugscreenwall,bugscreenwall,bugscreenwallh]);
+	    translate([wider+bugscreenwall-bugscreenwall*1.5,0,bugscreenweaksnapwidth]) cube([bugscreenwall/2,bugscreenwall,bugscreenwallh]);
+	  }
+	}
+      }
+
+      translate([0,0,bugscreenh-wall]) {
+	for (dd=[bugscreendensity:bugscreendensity*2:bugscreend+bugscreendensity]) {
+	  previousd=dd-bugscreendensity*2;
+	  d=(dd>bugscreend?bugscreend:dd);
+	  ring(d,bugscreenwall,bugscreenwallh);
+	  for (a=[0:360/(3.14159*d/bugscreendensity):359]) {
+	    rotate([0,0,a]) {
+	      translate([previousd/2-bugscreenwall/2.1,-bugscreenwall/2,0]) cube([d/2-previousd/2+0.1,bugscreenwall,bugscreenwallh]);
+	    }
+	  }
+	}
+      }
+
+      translate([0,0,bugscreenh-bugscreenwallh*2-wall]) ring(bugscreend,bugscreenwall*2,bugscreenwallh*3);
+    }
+
+    // Weaken part to allow easily make cable holes
+    for (a=[0:astep:359]) {
+      rotate([0,0,a]) {
+	wider=bugscreend/2-bugscreenwall+(incircled-ind+wall)/2;
+	bottomr=bugscreend/2-bugscreenwall;
+	hdiff=shielddistance-shieldoverlap-wall;
+	if (a<bugscreenweakenangle) {
+	  ddiff=wider-bottomr;
+	  for (z=[0:bugscreendensity:bugscreenweakenh]) {
+	    offset=ddiff/hdiff*(z-bugscreenwallh);
+	    translate([wider+bugscreenwall-offset-bugscreenwall/2,-0.1,z-bugscreenwallh*2]) triangle(bugscreenweakcut,bugscreenwall+0.2,bugscreenweakcut,3);
+	    rotate([0,0,astep-bugscreenwall*2]) {
+	      translate([wider+bugscreenwall-offset-bugscreenwall/2-bugscreenwall/3,0,z-bugscreenwallh*2+bugscreenwall-0.1]) triangle(bugscreenweakcut,bugscreenwall+0.2,bugscreenweakcut+0.2,4);
+	    }
+	    if (a==0) {
+	      rotate([0,0,bugscreenwall*2-astep]) {
+			      translate([wider+bugscreenwall-offset-bugscreenwall/2-bugscreenwall/3,0,z-bugscreenwallh*2+bugscreenwall-0.1]) triangle(bugscreenweakcut,bugscreenwall+0.2,bugscreenweakcut+0.2,6);
+	      }
+	    }
+	  }
+	}
+      }
+    }
+
+    translate([0,0,bugscreenh-wall+bugscreenwallh-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,halign="center", valign="center");
+  }
+}
+
 module base(strong) {
   difference() {
     union() {
       translate([0,0,baseh]) cylinder(d=plated,wall);
+
+      // Clips to hold bugscreen in place
+      for (a=[60-bugscreenclipangle/2:120:359]) {
+	for (b=[0:360/(3.14159*(bugscreend+bugscreenwall)/(bugscreenwall/2)):bugscreenclipangle]) {
+	  d=((incircled-ind)/shielddistance*(shielddistance-wall)+bugscreend)/2+bugscreenwall+dtolerance/2;
+	  	    rotate([0,0,a+b]) {
+	    translate([d,-bugscreenwall/2,baseh+wall-0.01]) cube([bugscreenwall*2,bugscreenwall,bugscreenwallh+ztolerance*2+0.01]);
+	    hull() {
+	      translate([d,-bugscreenwall/2,baseh+wall+bugscreenwallh+ztolerance*2-0.01]) cube([bugscreenwall*2,bugscreenwall,0.1]);
+	      translate([d+bugscreenclipshift,-bugscreenwall/2,baseh+wall+bugscreenwallh+ztolerance*2+bugscreencliph-0.01]) cube([bugscreenwall,bugscreenwall,0.1]);
+	    }
+	  }
+	}
+      }
+      
       difference() {
 	hull() {
 	  translate([0,0,0]) cylinder(d1=plated-baseh*2,d2=plated,h=baseh);
 	  translate([plated/4,0,0]) cylinder(d=plated/2,h=baseh);
 	  translate([bottomd/2-plated/4,0,0]) cylinder(d=plated/2,h=baseh-shieldoverlap-2-1/2);
 	}
-	hull() {
-	  translate([0,0,wall]) cylinder(d1=plated-baseh*2-2*wall,d2=plated-2*wall,h=baseh-wall);
-	  translate([plated/4,0,wall]) cylinder(d=plated/2-2*wall,h=baseh-wall);
-	  translate([bottomd/2-plated/4,0,wall]) cylinder(d=plated/2-2*wall,h=baseh-shieldoverlap-2-1/2-wall);
+	difference() {
+	  hull() {
+	    translate([0,0,wall]) cylinder(d1=plated-baseh*2-2*wall,d2=plated-2*wall,h=baseh-wall);
+	    translate([plated/4,0,wall]) cylinder(d=plated/2-2*wall,h=baseh-wall);
+	    translate([bottomd/2-plated/4,0,wall]) cylinder(d=plated/2-2*wall,h=baseh-shieldoverlap-2-1/2-wall);
+	  }
+
+	  // Tunnel for cables
+	  if (cabletunnel) {
+	    for (y=[-cabletunnelyoffset]) {
+	      intersection() {
+		union() {
+		  hull() {
+		    translate([cabletunnelxstart,y,cabletunnelzstart]) sphere(d=cabletunnelw);
+		    translate([cabletunnelxstart+cabletunnell-cabletunnelw/2,y+cabletunnelyslide,baseh]) sphere(d=cabletunnelw-cabletunnelthinning);
+		    translate([cabletunnelxstart+cabletunnell-cabletunnelw/2,y+cabletunnelyslide,baseh-cabletunnelslide]) sphere(d=cabletunnelw-cabletunnelthinning);
+		  }
+		  hull() {
+		    translate([cabletunnelxstart,y,cabletunnelzstart]) sphere(d=cabletunnelw-wall);
+		    translate([cabletunnelxstart+cabletunnell-cabletunnelw/2,y+cabletunnelyslide,baseh-cabletunnelslide]) sphere(d=cabletunnelw-wall);
+		    translate([componentplateoffset,y+wall,baseh/2]) cube([plated/2-componentplateoffset,wall,0.1]);
+		  }
+		  translate([componentplateoffset,y+wall,wall-0.01]) cube([plated/2-componentplateoffset,wall,baseh/2]);
+		}
+	      }
+	    }
+	  }
 	}
       }
 
@@ -363,7 +521,7 @@ module base(strong) {
 	    towerclip();
 	  }
 
-	  // Support towers. Not needed if forceinfill is used.
+	  // Support towers. Not needed if forceinfill is used or slicer does what it is doing..
 	  if (!forceinfill) difference() {
 	    hull() {
 	      translate([plated/2-(plated/2-incircled/2)/2,0,baseh]) cylinder(d=towerbodyd,h=0.1);
@@ -373,6 +531,19 @@ module base(strong) {
 	      translate([plated/2-(plated/2-incircled/2)/2,0,baseh+0.01]) cylinder(d=towerbodyd-wall*2,h=0.1);
 	      translate([a==0?plated/2-(plated/2-incircled/2)/2:(plated-baseh*2-towerbodyd)/2,0,0]) cylinder(d=towerbodyd-wall*2,h=0.1);
 	    }
+	  }
+	}
+      }
+    }
+
+    // Tunnel for cables
+    if (cabletunnel) {
+      for (y=[-cabletunnelyoffset]) {
+	intersection() {
+	  hull() {
+	    translate([cabletunnelxstart,y,cabletunnelzstart]) sphere(d=cablemaxdiameter);
+	    translate([cabletunnelxstart+cabletunnell-cabletunnelw/2,y+cabletunnelyslide,baseh]) sphere(d=cablemaxdiameter-cabletunnelthinning);
+	    translate([cabletunnelxstart+cabletunnell-cabletunnelw/2,y+cabletunnelyslide,baseh-cabletunnelslide]) sphere(d=cablemaxdiameter-cabletunnelthinning);
 	  }
 	}
       }
@@ -401,7 +572,7 @@ module pipeattach(pipediameter, strong) {
 	translate([attachmentdistance+bardepth+xtolerance+pipeattachthickness+pipediameter/2,0,0]) ring(ringoutd,pipeattachthickness,pipeattachh);
       }
 
-      // Towers for screws to close around the pipe
+      // Towers for screws to close around pipe with pipediameter diameter
       for (z=[screwtowerd/2+cornerd]) {
 	for (y=[-pipediameter/2-screwtowerd/2,pipediameter/2+screwtowerd/2]) {
 	  translate([attachmentdistance+bardepth+xtolerance+ringoutd/2+pipeattachscrewdepth-pipeattachscrewlength+0.01,y,z]) rotate([0,90,0]) ruuvitorni(pipeattachscrewlength,screwtowerd);
@@ -436,7 +607,9 @@ module pipeattach(pipediameter, strong) {
 
 module stevensonscreen() {
   base(0);
-
+  
+  if (bugprotection) translate([0,0,baseh+wall+ztolerance]) rotate([0,0,-bugscreenweakenangle-towerbodyd*2]) bugscreen();
+  
   for (z=[baseh-shieldoverlap+wall/2:shielddistance:shields*shielddistance+baseh-shieldoverlap]) {
     translate([0,0,z]) shield();
   }
@@ -451,7 +624,7 @@ module stevensonscreen() {
     }
   }
 
-  for (z=[baseh-shieldoverlap+wall/2+shielddistance:shielddistance:(shields-1)*shielddistance+wall/2]) {
+  for (z=[baseh-shieldoverlap+wall/2:shielddistance:shields*shielddistance+wall/2]) {
     for (a=[0,120,240]) {
       rotate([0,0,a]) {
 	translate([plated/2-(plated/2-incircled/2)/2,0,z-shielddistance+shieldh+wall/2+ztolerance/2]) towerbody();
@@ -466,7 +639,7 @@ module stevensonscreen() {
 if (print==0) {
   intersection() {
     stevensonscreen();
-    translate([-plated*2,-35,0]) cube([plated*6-56,plated*2,(shields+2)*shieldh+shieldh+baseh]);
+    translate([-plated*2,-30,0]) cube([plated*6-56,plated*2,(shields+2)*shieldh+shieldh+baseh]);
   }
  }
 
@@ -479,7 +652,7 @@ if (print==2 || print==6) {
  }
 
 if (print==6) {
-  setoftowers();
+  setoftowers(3);
  }
 
 if (print==3 || print==6 || print==7) {
@@ -488,19 +661,16 @@ if (print==3 || print==6 || print==7) {
 
 if (print==7) {
   translate([bottomd/sqrt(2)+sqrt(2.5),bottomd/sqrt(2)+sqrt(2.5),shieldh+wall/2]) rotate([180,0,0]) shield();
-  setoftowers();
+  setoftowers(6);
  }
 
 if (print==4) {
-  setoftowers();
+  setoftowers(6);
  }
 
 if (print==5) {
-  translate([0,0,shieldh+wall/2]) rotate([180,0,0]) shield();
+  translate([-barw,plated/2-bugscreend/2+barw/2+5,bugscreenh+bugscreenwallh]) rotate([180,0,0]) bugscreen();
 
-  setoftowers();
-
-  echo(attachmentdistancew);
   translate([-plated/1.5-7,plated-attachmentdistancew/2+65/2-10,0]) base(1);
  }
 
@@ -513,3 +683,6 @@ if (print==9) {
   translate([attachmentdistance*2+bardepth*2-1,0,pipeattachh]) rotate([0,180,0]) pipeattach(62,1);
  }
 
+if (print==10) {
+  translate([0,0,bugscreenh+bugscreenwallh]) rotate([180,0,0]) bugscreen();
+ }

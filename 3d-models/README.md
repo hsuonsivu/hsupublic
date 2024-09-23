@@ -867,12 +867,17 @@ glue to towers might do the trick.
 
 The model can be tuned, but likely trying to make it too small will
 make it too weak. When editing in openscad, print=0 setting gives you
-cutthrough model.
+cut-through model.
 
-The base includes attachment which is inteneded for wall
+The base includes attachment which is intended for wall
 installation. You may also install this to a 62mm diameter pole with
-attachement parts. The screws needed are 3.5mm 30mm wood screws. 62mm
-is the common pole in Finland.
+pole attachement parts. The screws needed are 3.5mm 30mm wood
+screws. 62mm is the common pole in Finland, often used for car block
+heater boxes in parking areas.
+
+This is a complex model and thus can be slow to view and process. It
+also takes quite a bit of time to print. Makefile generates some sets
+of parts to allow parts printed in few sessions.
 
 TODO: The shield might benefit from a bug netting inside to avoid
 spider nets and bug nests inside. This could be easy to add, but would
@@ -894,10 +899,18 @@ plated: Circumference of the baseplate. This will control the
 circumference of the shield, make it larger if you have larger thing
 to put inside. Other variables are based on this.
 
+bugprotection: enable but protection mesh. Bottom of mesh has a small
+part which suitable opening can be snapped off to allow cables
+through. The base includes small clips to hold bug mesh in place.
+
+cabletunnel: makes a short tunnel for easier routing of
+cables. However, not compatible with bugprotection screen as bugs can
+pass through the tunnel.
+
 There are plenty of variables which can be tuned, you can try your
 luck. Many variables may have unintended effects when changing them,
 none of these have been tested for large alterations, other than
-number of shields.
+number of shields, which controls the height of the model.
 
 No supports are needed to print. Towers are prone to collapsing so
 they should be printed in sets, as they have a bit of attachment to

@@ -1,7 +1,11 @@
 SOURCE=stevensonshield.scad
 DEPENDS=hsu.scad Makefile.stevensonshield
+ALL=stevensonshield-base.stl stevensonshield-top.stl stevensonshield-shield.stl stevensonshield-towers.stl stevensonshield-base-and-bugscreen.stl stevensonshield-top-and-shield-and-towers.stl stevensonshield-two-shields-and-towers.stl stevensonshield-tower.stl stevensonshield-62mmpipeattach.stl stevensonshield-bugscreen.stl
 
-all: stevensonshield-base.stl stevensonshield-top.stl stevensonshield-shield.stl stevensonshield-towers.stl stevensonshield-base-and-towers-and-shield.stl stevensonshield-top-and-shield-and-towers.stl stevensonshield-two-shields.stl stevensonshield-tower.stl stevensonshield-62mmpipeattach.stl
+all: $(ALL)
+
+clean:
+	rm $(ALL)
 
 stevensonshield-base.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=1 -o $@ $(SOURCE)
@@ -19,7 +23,7 @@ stevensonshield-towers.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=4 -o $@ $(SOURCE)
 	echo $@ built.
 
-stevensonshield-base-and-towers-and-shield.stl: $(SOURCE) $(DEPENDS)
+stevensonshield-base-and-bugscreen.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=5 -o $@ $(SOURCE)
 	echo $@ built.
 
@@ -27,7 +31,7 @@ stevensonshield-top-and-shield-and-towers.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=6 -o $@ $(SOURCE)
 	echo $@ built.
 
-stevensonshield-two-shields.stl: $(SOURCE) $(DEPENDS)
+stevensonshield-two-shields-and-towers.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=7 -o $@ $(SOURCE)
 	echo $@ built.
 
@@ -38,4 +42,8 @@ stevensonshield-tower.stl: $(SOURCE) $(DEPENDS)
 stevensonshield-62mmpipeattach.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=9 -o $@ $(SOURCE)
 	echo $@ built.
-	
+
+stevensonshield-bugscreen.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=10 -o $@ $(SOURCE)
+	echo $@ built.
+
