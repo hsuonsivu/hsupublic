@@ -4,12 +4,12 @@
 
 include <hsu.scad>
 
-print=0; // 0=model, 1=base only, 2=top only, 3=single shield, 4=set of towers, 5=base, bugscreen, 6=top, shield and 3 towers, 7=2 shields and 6 towers, 8=one tower, 9=pair of 62mm pipe attachment, 10 bug shield
+print=10; // 0=model, 1=base only, 2=top only, 3=single shield, 4=set of towers, 5=base, bugscreen, 6=top, shield and 3 towers, 7=2 shields and 6 towers, 8=one tower, 9=pair of 62mm pipe attachment, 10 bug shield
 
 $fn=60;
 
 shields=3; // Not including top
-forceinfill=1;
+forceinfill=0;
 
 // Turn on bug protection
 bugprotection=1;
@@ -113,13 +113,13 @@ cabletunnell=plated/2-componentplateoffset+cabletunnelw+wall*2;
 cabletunnelthinning=0;
 
 bugscreend=ind-wall-dtolerance;
-bugscreenwall=1.2;
-bugscreenwallh=0.6;
+bugscreenwall=1.6;
+bugscreenwallh=0.8;
 bugscreenh=(shields+1)*shielddistance-wall*2;
-bugscreendensity=3.6;
+bugscreendensity=3.8;
 bugscreenclipangle=10;
-bugscreencliph=3;
-bugscreenclipshift=-0.7;
+bugscreencliph=4.5;
+bugscreenclipshift=-1.1;
 
 // Weaken bugsheet structure in places to make clipping cable holes easier
 bugscreenweakenangle=20;
@@ -347,22 +347,24 @@ module bugscreen() {
 module base(strong) {
   difference() {
     union() {
+      // Base plate
       translate([0,0,baseh]) cylinder(d=plated,wall);
 
       // Clips to hold bugscreen in place
       for (a=[60-bugscreenclipangle/2:120:359]) {
 	for (b=[0:360/(3.14159*(bugscreend+bugscreenwall)/(bugscreenwall/2)):bugscreenclipangle]) {
-	  d=((incircled-ind)/shielddistance*(shielddistance-wall)+bugscreend)/2+bugscreenwall+dtolerance/2;
+	  d=((incircled-ind)/shielddistance*(shielddistance-wall)+bugscreend)/2+1.2+dtolerance/2;
 	  	    rotate([0,0,a+b]) {
-	    translate([d,-bugscreenwall/2,baseh+wall-0.01]) cube([bugscreenwall*2,bugscreenwall,bugscreenwallh+ztolerance*2+0.01]);
+	    translate([d,-bugscreenwall/2,baseh+wall-0.01]) cube([bugscreenwall*2,bugscreenwall,bugscreenwallh+ztolerance+0.01]);
 	    hull() {
-	      translate([d,-bugscreenwall/2,baseh+wall+bugscreenwallh+ztolerance*2-0.01]) cube([bugscreenwall*2,bugscreenwall,0.1]);
+	      translate([d,-bugscreenwall/2,baseh+wall+bugscreenwallh+ztolerance-0.01]) cube([bugscreenwall*2,bugscreenwall,0.1]);
 	      translate([d+bugscreenclipshift,-bugscreenwall/2,baseh+wall+bugscreenwallh+ztolerance*2+bugscreencliph-0.01]) cube([bugscreenwall,bugscreenwall,0.1]);
 	    }
 	  }
 	}
       }
-      
+
+      // Base body
       difference() {
 	hull() {
 	  translate([0,0,0]) cylinder(d1=plated-baseh*2,d2=plated,h=baseh);
@@ -399,6 +401,7 @@ module base(strong) {
 	}
       }
 
+      // Component plate (y-axis)
       difference() {
 	translate([componentplateoffset,-componentw/2,baseh]) roundedbox(wall,componentw+wall,componentplateh,cornerd);
 	for (y=[-componentw/2+componentholestart:componentholedistance:componentw/2-componentholed-componentholedistance/2]) {
@@ -407,8 +410,11 @@ module base(strong) {
 	  }
 	}
       }
+
+      // Component plate support (y-axis)
       translate([componentplateoffset,-componentw/2,0]) roundedbox(wall,componentw,baseh,cornerd);
-      
+
+      // Component plate (x-axis)
       difference() {
 	translate([-componentplateoffset,componentplateoffset,baseh]) roundedbox(componentplateoffset*2+wall,wall,componentplateh,cornerd);
 	for (x=[-componentw/2+componentsquareholestart:componentsquareholedistance:componentw/2-componentsquareholed-componentsquareholedistance/2]) {
@@ -417,17 +423,20 @@ module base(strong) {
 	  }
 	}
       }
-      
+
+      // component plate support (x-axis)
       hull() {
 	translate([-componentplateoffset,componentplateoffset,baseh]) roundedbox(componentplateoffset*2+wall,wall,wall,cornerd);
 	translate([0,0,0]) roundedbox(componentplateoffset+wall,wall,wall,cornerd);
       }
 
+      // Wall/other attachment plate
       difference() {
 	translate([attachmentdistance,-attachmentdistancew/2-barw/2,0]) roundedbox(bardepth,attachmentdistancew+barw,barh,cornerd);
 	translate([attachmentdistance+wall,-attachmentdistancew/2-barw/2+wall,wall]) roundedbox(bardepth-wall*2,attachmentdistancew+barw-wall*2,barh-wall*2,cornerd);
       }
 
+      // Right attachment
       difference() {
 	hull() {
 	  translate([componentplateoffset,-plated/4+wall,0]) roundedbox(cornerd,barw,1,cornerd);
@@ -443,6 +452,7 @@ module base(strong) {
 	}
       }
 
+      // Left attachment
       difference() {
 	hull() {
 	  translate([componentplateoffset,plated/4-barw-wall,0]) roundedbox(cornerd,barw,1,cornerd);
@@ -458,6 +468,7 @@ module base(strong) {
 	}
       }
 
+      // Middle attachment
       difference() {
 	hull() {
 	  translate([bottomd/2-plated/4,-barw/2,0]) roundedbox(attachmentdistance-bottomd/2+plated/4+cornerd+bardepth-wall,barw,cornerd,cornerd);
@@ -484,6 +495,7 @@ module base(strong) {
 	}
       }
 
+      // Screw towers in the wall/other attachment
       for (z=[screwtowerd/2+cornerd,barh-screwtowerd/2-cornerd]) {
 	for (y=[-attachmentdistancew/2-barw/2+screwtowerd/2+cornerd,attachmentdistancew/2+barw/2-screwtowerd/2-cornerd]) {
 	  translate([attachmentdistance+bardepth,y,z]) rotate([0,-90,0]) cylinder(h=bardepth,d=screwtowerd);
@@ -514,7 +526,8 @@ module base(strong) {
 	  }
 	}
       }
-      
+
+      // Clips in the base
       for (a=[0,120,240]) {
 	rotate([0,0,a]) {
 	  translate([plated/2-(plated/2-incircled/2)/2,0,baseh-shieldoverlap-shielddistance+shieldh+wall/2+ztolerance/2+wall/2]) {
@@ -556,7 +569,7 @@ module base(strong) {
       }
     }
     
-    translate([-plated/2+wall+textsize/2,0,baseh+wall-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,halign="center", valign="center");
+    translate([-plated/2+wall+textsize/2-0.5,0,baseh+wall-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,halign="center", valign="center");
     translate([attachmentdistance+textdepth-0.01,0,barh-textsize+wall]) rotate([90,0,-90]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,halign="center", valign="center");
     translate([-plated/2+baseh+2,0,-0.01]) mirror([1,0,0]) rotate([0,0,180]) linear_extrude(height=textdepth) text(copyrighttext, size=copyrighttextsize, valign="center",halign="left",font="Liberation Sans:style=Bold");
   }
@@ -580,12 +593,14 @@ module pipeattach(pipediameter, strong) {
       }
     }
 
-    translate([attachmentdistance+bardepth+xtolerance+pipeattachthickness/2,0,pipeattachh-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,halign="center", valign="center");
-    translate([attachmentdistance+bardepth+xtolerance+pipeattachthickness+pipediameter+pipeattachthickness/2,0,pipeattachh-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,halign="center", valign="center");
+    translate([attachmentdistance+bardepth+xtolerance+pipeattachthickness/2,0,pipeattachh-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth) text(str(versiontext, " d=", pipediameter,"mm"),font="Liberation Sans:style=Bold",size=textsize-1,halign="center", valign="center");
+    translate([attachmentdistance+bardepth+xtolerance+pipeattachthickness+pipediameter+pipeattachthickness/2-2,0,pipeattachh-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth) text(str(versiontext," d=", pipediameter,"mm"),font="Liberation Sans:style=Bold",size=textsize-3,halign="center", valign="center");
     
     translate([attachmentdistance+bardepth+xtolerance+pipeattachthickness+pipediameter/2,0,-0.1]) cylinder(d=pipediameter,h=pipeattachh+0.2);
 
-    translate([attachmentdistance+bardepth+xtolerance+pipeattachthickness+pipediameter/2-pipeattachcut/2,-ringoutd/2-0.1,-0.1]) cube([pipeattachcut,ringoutd+0.2,pipeattachh+0.2]);
+    cutw=max(ringoutd,attachmentdistancew);
+    
+    translate([attachmentdistance+bardepth+xtolerance+pipeattachthickness+pipediameter/2-pipeattachcut/2,-cutw/2-0.1,-0.1]) cube([pipeattachcut,cutw+0.2,pipeattachh+0.2]);
 
     // Screws to attach to the base
     for (z=[screwtowerd/2+cornerd]) {
@@ -639,7 +654,7 @@ module stevensonscreen() {
 if (print==0) {
   intersection() {
     stevensonscreen();
-    translate([-plated*2,-30,0]) cube([plated*6-56,plated*2,(shields+2)*shieldh+shieldh+baseh]);
+    translate([-plated*2,0,0]) cube([plated*6-56,plated*2,(shields+2)*shieldh+shieldh+baseh]);
   }
  }
 
