@@ -929,6 +929,8 @@ Spare part, shelf support was missing in furniture.
 Business card holders which attach to each other. This was my first
 ever 3d model, so looking at code may cause headache.
 
+![expandable-businesscard-holder in Openscad.](expandable-businesscard-holder.png)
+
 ### kaiuttimen-jalka.scad
 
 Foot for high-end speaker which apparantly is intended to insulate the
