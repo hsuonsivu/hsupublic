@@ -4,7 +4,9 @@
 
 include <hsu.scad>
 
-print=10; // 0=model, 1=base only, 2=top only, 3=single shield, 4=set of towers, 5=base, bugscreen, 6=top, shield and 3 towers, 7=2 shields and 6 towers, 8=one tower, 9=pair of 62mm pipe attachment, 10 bug shield
+print=0; // 0=model, 1=base only, 2=top only, 3=single shield, 4=set of towers, 5=base, bugscreen, 6=top, shield and 3 towers, 7=2 shields and 6 towers, 8=one tower, 9=pair of 62mm pipe attachment, 10 bug shield
+
+printstrong=0; // Makefile turns this on
 
 $fn=60;
 
@@ -98,9 +100,9 @@ screwtowerd=3*screwd;
 pipeattachh=screwtowerd+cornerd*2;
 pipeattachw=attachmentdistancew;
 pipeattachthickness=screwtowerd+cornerd;
-pipeattachcut=1;
+pipeattachcut=2.5;
 pipeattachscrewdepth=13;
-pipeattachscrewlength=35;
+pipeattachscrewlength=30;
 
 cablemaxdiameter=10;
 cabletunnelw=cablemaxdiameter+2*wall;
@@ -189,7 +191,6 @@ module setoftowers(count) {
   // Only 3 or 6 supported now.
   translate([-towerbodyd/sqrt(2)-2,(count==6)?-towerbodyd*1.5+2:0,0]) {
     ylist=(count==6)?[0,(towerbodyd*2)*1.5-4.5]:[0];
-    echo(ylist);
     for (y=ylist) {
       for (i=[0:1:2]) {
 	translate([(y==0?-towerbodyd/2-0.5:0)+(towerbodyd+textdepth)*i+0.5,y,shielddistance]) tower();
@@ -583,6 +584,7 @@ module pipeattach(pipediameter, strong) {
       hull() {
 	translate([attachmentdistance+bardepth+xtolerance,-attachmentdistancew/2-barw/2,0])  roundedbox(cornerd,attachmentdistancew+barw,pipeattachh,cornerd);
 	translate([attachmentdistance+bardepth+xtolerance+pipeattachthickness+pipediameter/2,0,0]) ring(ringoutd,pipeattachthickness,pipeattachh);
+	translate([attachmentdistance+bardepth+xtolerance+ringoutd-cornerd,-ringoutd/2,0])  roundedbox(cornerd,ringoutd,pipeattachh,cornerd);
       }
 
       // Towers for screws to close around pipe with pipediameter diameter
@@ -614,7 +616,10 @@ module pipeattach(pipediameter, strong) {
     for (z=[screwtowerd/2+cornerd]) {
       for (y=[-pipediameter/2-screwtowerd/2,pipediameter/2+screwtowerd/2]) {
 	translate([attachmentdistance+bardepth+xtolerance+ringoutd/2+pipeattachscrewdepth-pipeattachscrewlength+0.01,y,z]) rotate([0,90,0]) ruuvireika(pipeattachscrewlength,screwd,1,strong);
-	translate([attachmentdistance+bardepth+xtolerance+ringoutd/2+pipeattachscrewdepth,y,z]) rotate([0,90,0]) cylinder(h=ringoutd/2,d=screwtowerd);
+	hull() {
+	  translate([attachmentdistance+bardepth+xtolerance+ringoutd/2+pipeattachscrewdepth+countersinkd(screwd)/2,y,z]) rotate([0,90,0]) cylinder(h=ringoutd/2,d=screwtowerd);
+	  translate([attachmentdistance+bardepth+xtolerance+ringoutd/2+pipeattachscrewdepth,y,z]) rotate([0,90,0]) cylinder(h=ringoutd/2,d1=countersinkd(screwd),d2=screwtowerd);
+	}
       }
     }
   }
@@ -649,6 +654,22 @@ module stevensonscreen() {
 
   pipeattach(62,0);
   translate([0,0,barh-pipeattachh]) pipeattach(62,0);
+}
+
+module pipeattachin(pipediameter,strong) {
+  intersection() {
+    translate([pipeattachh,0,0]) rotate([0,-90,0]) translate([-attachmentdistance-bardepth-xtolerance,0,0]) pipeattach(pipediameter,strong);
+    translate([0,-pipediameter,0]) cube([pipeattachh,pipediameter*2,pipediameter/2+pipeattachthickness]);
+  }
+}
+
+module pipeattachout(pipediameter,strong) {
+  translate([0,0,pipediameter+pipeattachthickness*2]) rotate([180,0,0]) {
+    intersection() {
+      translate([pipeattachh,0,0]) rotate([0,-90,0]) translate([-attachmentdistance-bardepth,0,0]) pipeattach(pipediameter,strong);
+      translate([0,-pipediameter,pipediameter/2+pipeattachthickness]) cube([pipeattachh,pipediameter*2,pipediameter/2+pipeattachthickness]);
+    }
+  }
 }
 
 if (print==0) {
@@ -694,8 +715,16 @@ if (print==8) {
  }
 
 if (print==9) {
-  render() pipeattach(62,1);
-  translate([attachmentdistance*2+bardepth*2-1,0,pipeattachh]) rotate([0,180,0]) pipeattach(62,1);
+  difference() {
+    rotate([0,0,90]) {
+      pipeattachin(62,printstrong,);
+      translate([pipeattachh+1,0,0]) pipeattachin(62,printstrong);
+      translate([(pipeattachh+1)*2,0,0]) pipeattachout(62,printstrong);
+      translate([(pipeattachh+1)*3,0,0]) pipeattachout(62,printstrong);
+    }
+
+    //    translate([-50,-1,10]) cube([100,100,50]);
+  }
  }
 
 if (print==10) {
