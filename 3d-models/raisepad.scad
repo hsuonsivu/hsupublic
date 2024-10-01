@@ -1,9 +1,11 @@
 // Pads to set below furniture to raise them a bit
 
+include <hsu.scad>
+
 diameter=50; // INside diameter
-height=5; // How much to raise
-edgewidth=8;
-edgeheight=10;
+height=8; // How much to raise
+edgewidth=4;
+edgeheight=height+5;
 $fn=90;
 
 module pad() {
