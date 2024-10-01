@@ -10,8 +10,9 @@ countersinkdiametermultiplier=2.4;
 
 function countersinkd(diameter) = diameter*countersinkdiametermultiplier;
 
-module ruuvireika(height,diameter,countersink,strong) {
+module ruuvireika(height,diameter,countersink,strong,strongl) {
   makestrong=(strong=="")?1:strong;
+  sl=(strongl=="")?height:strongl;
   
   hull() {
     translate([0,0,diameter/2]) cylinder(h=height-diameter/2,d=diameter-0.1,$fn=90); // Slightly smaller hole
@@ -67,9 +68,43 @@ module triangle(x,y,z,mode) {
     translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[0,y],[z,0]]);
   } else if (mode==11) {
     translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,y],[z,y],[z,0]]);
+  } else if (mode==12) {
+    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[x/2,z],[x,0]]);
+  } else if (mode==13) {
+    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,z/2]]);
+  } else if (mode==14) {
+    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[x/2,z],[x,0]]);
+  } else if (mode==15) {
+    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,z],[x,z],[x/2,0]]);
+  } else if (mode==16) {
+    translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[y/2,x],[y,0]]);
+  } else if (mode==17) {
+    translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[0,x],[y,x/2]]);
+  } else if (mode==18) {
+    translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,y/2],[y,x],[y,0]]);
+  } else if (mode==19) {
+    translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,x],[y,x],[y/2,0]]);
+  } else if (mode==20) {
+    translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[z/2,y],[z,0]]);
+  } else if (mode==21) {
+    translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[0,y],[z,y/2]]);
+  } else if (mode==22) {
+    translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,y/2],[z,y],[z,0]]);
+  } else if (mode==23) {
+    translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,y],[z,y],[z/2,0]]);
   }
 }
 
+module triangletest() {
+  for (i=[0:1:23]) {
+    colorselect=floor(i/4) % 4;
+    color([colorselect%4==0?1:0,floor((colorselect+1)/4)==0?1:0,floor((colorselect+2)/4)==0?1:0]) {
+      translate([0,i*6,0]) triangle(4,4,4,i);
+      translate([5+textsize,i*6,0]) rotate([0,0,90]) text(text=str(i),size=textsize);
+    }
+  }
+}
+  
 module roundedbox(x,y,z,c) {
   corner=(c > 0) ? c : 1;
   //scd = ((x < 1 || y < 1 || z < 1) ? min(x,y,z) : corner);
@@ -166,3 +201,31 @@ module spring(h,d,plateh,thickness) {
   }
 }
 
+// This is used by onehinge
+module axle(diameter,width,axledepth,cutout) {
+  if (cutout) {
+    translate([0,-width/2,0]) rotate([90,0,0]) cylinder(d2=diameter-axledepth*2,d1=diameter,h=axledepth,$fn=90);
+    translate([0,width/2,0]) rotate([-90,0,0]) cylinder(d2=diameter-axledepth*2,d1=diameter,h=axledepth,$fn=90);
+  } else {
+    hull() {
+      translate([0,-width/2,0]) rotate([-90,0,0]) cylinder(d=diameter,h=width,$fn=90);
+      translate([0,width/2+axledepth,0]) rotate([90,0,0]) cylinder(d=diameter-axledepth*2,h=0.01,$fn=90);
+
+      translate([0,-width/2-axledepth,0]) rotate([-90,0,0]) cylinder(d=diameter-axledepth*2,h=0.01,$fn=90);
+    }
+  }
+}
+
+// diameter, width - Makes the hinge structure with axle direction in x axis
+// If cutout is 1, makes female cutout for axle
+// Hinge is centered at y, x and z axis
+module onehinge(diameter,width,axledepth,cutout,ytolerance,dtolerance) {
+  if (cutout) {
+    difference() {
+      translate([0,0,0]) axle(diameter+dtolerance,width,axledepth+ytolerance,cutout);
+      translate([0,0,0]) axle(diameter,width,axledepth,cutout);
+    }
+  } else {
+        translate([0,0,0]) axle(diameter,width,axledepth,cutout);
+  }
+}
