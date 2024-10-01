@@ -40,7 +40,7 @@ stevensonshield-tower.stl: $(SOURCE) $(DEPENDS)
 	echo $@ built.
 
 stevensonshield-62mmpipeattach.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=9 -o $@ $(SOURCE)
+	openscad -D print=9 -D printstrong=1 -o $@ $(SOURCE)
 	echo $@ built.
 
 stevensonshield-bugscreen.stl: $(SOURCE) $(DEPENDS)
