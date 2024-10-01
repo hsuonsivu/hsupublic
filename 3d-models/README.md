@@ -685,7 +685,10 @@ is intended to be used to cut out the hole for screw. I normally use wood screws
 
 ruuvitorni makes a tower for a screw to be used with ruuvireika above.
 
-triangle makes a triagle with given x,y,z size. Fourth parameter tells which orientation the triangle should be.
+triangle makes a triagle with given x,y,z size. Fourth parameter tells
+which orientation the triangle should be (0-11 for off-center
+triangles and 12-23 for centered triangles). To see the shapes
+generated, call triangletest() in openscad.
 
 roundedbox makes a cube with rounded edges. Third parameter is corner diameter.
 
@@ -961,4 +964,19 @@ for the inside of the wheel which had broken down, with the idea that
 it could be fixed with epoxy and glass fiber. This failed as epoxy
 escaped the form and the wheel was ruined beyond repair. Maybe someone has use for these.
 
+### rainmeter.scad
 
+(Electronics and weather cover still in progress)
+
+A simple rain meter, which uses balanced cups to meter amount of
+rain. Set print=1 in openscad to get printable model. No supports are
+needed.
+
+The hole for magnet is designed round magnet which has diameter of
+6.4mm and thickness of 3.2mm. A drop of superglue should keep it in
+place.
+
+Electronics (not yet done) will consist of ESP32 and reed switch, to
+allow reading the values remotely.
+
+![rainmeter in Openscad.](rainmeter.png.png)
