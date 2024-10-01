@@ -12,7 +12,7 @@
 // +Side walls are thin and have broken once, add strengtening to the edges.
 include <hsu.scad>
 
-print=2; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model, spring test
+print=0; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model, spring test
 
 adhesion=1; // Additional bits to allow using skirt when printing.
 
@@ -253,6 +253,7 @@ module sides() {
   for (y=[0,width-wall]) {
     difference() {
       union() {
+	// side plate
 	hull() {
 	  translate([0,y,0]) roundedbox(height,wall,topl,cornerd);
 	  translate([fingerendh,y,length]) roundedbox(wall,wall,wall,cornerd);
@@ -270,12 +271,14 @@ module sides() {
 	  translate([fingertoph+wall/2,y+wall/2,fingertopl+wall/2]) sphere(d=strengthd,$fn=30);
 	}
 
+	// Storage side plate
 	hull() {
 	  translate([-storageh,y,0]) roundedbox(storageh+wall,wall,storagel-storageh,cornerd);
 	  translate([0,y,storagel]) roundedbox(wall,wall,wall,cornerd);
 	}
       }
 
+      // Axle hole cut in the side
       for (y=[0,width-wall]) {
 	if (y==0) {
 	  translate([-storageh+axlefrombottom,y,axleh]) axlehole(180);
@@ -286,11 +289,13 @@ module sides() {
     }
   }
 
+  // strengtening of top front
   hull() {
     translate([height-wall/2,strengthd/2+wall/2-strengthd/2,topl-wall/2]) sphere(d=strengthd,$fn=30);
     translate([height-wall/2,width+wall/2-wall,topl-wall/2]) sphere(d=strengthd,$fn=30);
   }
 
+  // Outside axle
   for (y=[0,width]) {
     if (y==0) {
       translate([-storageh+axlefrombottom,y+wall+ytolerance,axleh]) axletappi(180);
@@ -303,14 +308,22 @@ module sides() {
 module berrypicker() {
   // bottom
   difference() {
+    // Bottom
     union() {
       translate([0,0,storagel]) roundedbox(wall,width,bottoml-storagel,cornerd);
       difference() {
+	// Storage bottom
 	translate([-storageh,0,0]) roundedbox(wall,width,storagel-storageh,cornerd);
+
+	// Cutouts for hinges
 	for (y=[wall,width-wall-ytolerance-hingew-ytolerance]) {
 	  translate([-storageh-0.1,y,-0.01]) cube([wall+0.2,ytolerance+hingew+ytolerance,axleh+axleoutd/2+axleh-axleoutd/2+2]);
 	}
+
+	// cut bottom back (later filled with structure
 	translate([-storageh-0.01,wall+ytolerance+hingew,-0.01]) cube([wall+axlefrombottom+0.02,width-2*(wall+hingew+ytolerance),axleh]);
+
+	// Openings for leaves and other trash
 	for (y=[fingerw/2:fingerdistance:width-slitd]) {
 	  hull() {
 	    translate([-storageh-0.1,y+slitd/2,slitstart+slitd/2]) rotate([0,90,0]) cylinder(h=wall+0.2,d=slitd);
@@ -318,6 +331,8 @@ module berrypicker() {
 	  }
 	}
       }
+
+      // Plate between bottom upper and storage bottom
       hull() {
 	translate([0,0,storagel]) roundedbox(wall,width,wall,cornerd);
 	translate([-storageh,0,storagel-storageh-wall]) roundedbox(wall,width,wall,cornerd);
@@ -364,6 +379,7 @@ module berrypicker() {
 	  }
       }
 
+      // Bottom back structure
       hull() {
 	translate([-storageh,wall+hingew+2*ytolerance,backopening+axleoutd]) roundedbox(wall,width-2*wall-4*ytolerance-2*hingew,wall,cornerd);
 	translate([-storageh+backopening+wall+0.5*xtolerance,wall+hingew+2*ytolerance,wall]) roundedbox(wall,width-2*wall-4*ytolerance-2*hingew,0.2,cornerd);
@@ -375,7 +391,8 @@ module berrypicker() {
       // sides
       sides();
     }
-      
+
+    // Axle hole inside
     for (y=[0,width-wall]) {
       if (y==0) {
 	translate([-storageh+axlefrombottom,y+wall+ytolerance+hingew,axleh]) axlehole(0);
@@ -388,22 +405,26 @@ module berrypicker() {
   // top
   difference() {
     union() {
+      // Guides to drop berries past structure which keeps back in position
       for (y=[wall,width-wall-ytolerance-backcornersupport]) {
 	translate([height-wall-backcornersupport-0.01,y-0.01,wall+ztolerance]) triangle(backcornersupport+0.02,backcornersupport+ytolerance+0.02,backcornersupport,3);
 	translate([height-wall-backcornersupport-0.01,y-0.01,wall+backcornersupport+ztolerance-0.01]) triangle(backcornersupport+0.02,backcornersupport+ytolerance+0.02,backcornersupport+0.01,0);
       }
-      
+
+      // Top plate
       difference() {
 	translate([height-wall,0,0]) roundedbox(wall,width,topl,cornerd);
 	translate([height-wall-0.1,width/2-clipslided/2,-0.1]) cube([wall+0.2,clipslided,cliph+0.1]);
       }
       translate([height+plungerx-wall,width/2-clipslided/2,0]) roundedbox(wall,clipslided,clippullh,cornerd);
-      
-       hull() {
-	 translate([height+plungerx-wall,width/2-clipslided/2,clippullh]) roundedbox(wall+1.5,clipslided,cornerd,cornerd);
-	 translate([height-wall,width/2-clipslided/2,clippullh+cliph]) roundedbox(wall+1.5,clipslided,cornerd,cornerd);
-       }
-	    
+
+      // Leaf spring to return the back lock to locked position
+      hull() {
+	translate([height+plungerx-wall,width/2-clipslided/2,clippullh]) roundedbox(wall+1.5,clipslided,cornerd,cornerd);
+	translate([height-wall,width/2-clipslided/2,clippullh+cliph]) roundedbox(wall+1.5,clipslided,cornerd,cornerd);
+      }
+
+      // T-shape for spring
       hull() {
 	translate([height-wall,width/2-clipslided/2,cliph+cutw]) roundedbox(wall+1.5,clipslided,clipsideh-cutw,cornerd);
 	translate([height-0.1,width/2-clipslided/2-clipsidew,cliph+cutw]) roundedbox(0.1,clipsidew+clipslided+clipsidew,clipsideh-cutw,cornerd);
@@ -419,13 +440,16 @@ module berrypicker() {
     translate([height-wall-0.1,width/2+clipw/2-cutw-0.01,cliph]) cube([wall+0.2,clipsidew+cutw+0.01,cutw+0.1]);
     translate([height-wall-0.1,width/2-clipw/2-clipsidew,cliph+clipsideh]) cube([wall+0.2,clipsidew+clipw+clipsidew+0.01,cutw+0.1]);
 
+    // Cut to weaken spring to allow it to detach in desired position.
     translate([height+plungerx-wall/2,width/2-clipw/2,clippullh]) triangle(wall*1.5+0.01,clipw,wall*2,0); // DUPLICATED in handle
   }
     
   // Clip to keep back closed
   translate([height-wall+plungerx,width/2-clipw/2+cutw,0]) roundedbox(wall,clipw-cutw*2,clippullh,cornerd);
   translate([height-wall-cornerd+plungerx,width/2-clipw/2+cutw,0]) roundedbox(wall+cornerd,clipw-cutw*2,clipheight,cornerd);
- difference() {
+
+  // Lock
+  difference() {
     hull() {
       translate([height-wall-clipdepth+plungerx,width/2-clipw/2+cutw,0]) roundedbox(clipdepth,clipw-cutw*2,clipheight,cornerd);
       translate([height-wall-clipdepth+plungerx,width/2-cornerd/2,wall+clipw/2]) roundedbox(clipdepth,cornerd,cornerd,cornerd  );
@@ -461,6 +485,8 @@ module berrypicker() {
       translate([height+plungerx+wall+xtolerance,width/2+clipslided/2-clippullh,clippullh]) triangle(handlex-wall-clipslided-xtolerance-xtolerance,clippullh,clippullh,8);
   
     }
+
+    // Cutout for lower handle
     union() {
       hull() {
 	translate([height+plungerx+handlex-clipdepth-xtolerance,width/2,0]) cylinder(h=clippullh+plungerangledh+clipplungerzmovement,d=clipslided);
@@ -487,13 +513,17 @@ module berrypicker() {
     
     // Opening back
     intersection() {
+      // Back movement circle to help cut shape to lock parts to allow easy opening
       hull() {
 	translate([-storageh+axlefrombottom,wall,axleh]) rotate([-90,0,0]) cylinder(h=width-2*wall,r=height+storageh-axlefrombottom-wall-xtolerance,$fn=90);
 	translate([-storageh+axlefrombottom,wall,0]) rotate([-90,0,0]) cylinder(h=width-2*wall,r=height+storageh-axlefrombottom-wall-xtolerance,$fn=90);
       }
+
+      // Back plate and its parts
       union() {
 	difference() {
 	  union() {
+	    // Structures to limit back plate movement
 	    for (y=[wall+ytolerance+cornerd/2,width-wall-ytolerance-backcornersupport]) {
 	      intersection() {
 		translate([height-wall-backcornersupport-0.01,y-0.01,wall-0.01]) triangle(backcornersupport+0.01,backcornersupport+ytolerance+0.02,backcornersupport+0.01,2);
@@ -501,11 +531,14 @@ module berrypicker() {
 	      }
 	      translate([height-wall-2*backcornersupport,y,wall-0.01]) triangle(backcornersupport,backcornersupport-ytolerance+0.03,backcornersupport+0.01,0);
 	    }
-	  
+
+	    // Plate
 	    hull() {
 	      translate([-storageh+wall+backopening+xtolerance,wall+ytolerance,0]) roundedbox(height+storageh-backopening-2*wall-2*xtolerance,width-2*wall-2*ytolerance,0.2,cornerd);
 	      translate([-storageh+wall+backopening+wall+xtolerance,wall+ytolerance,0]) roundedbox(height+storageh-backopening-2*wall-2*xtolerance-wall,width-2*wall-2*ytolerance,wall,cornerd);
 	    }
+
+	    // Structure for lock, keeping back closed until lock is opened
 	    difference() {
 	      hull() {
 		translate([height-wall-clipdepth-wall-xtolerance-wall,width/2-clipw/2-wall,0]) roundedbox(clipdepth+wall+wall,clipw+2*wall,clipw/2+3*wall,cornerd);
@@ -513,16 +546,19 @@ module berrypicker() {
 		translate([height-wall-clipdepth-wall-xtolerance-wall-clipw/2-2*wall-clipdepth-wall,width/2-clipw/2-wall,wall]) roundedbox(wall,clipw+2*wall,wall,cornerd);
 	      }
 
+	      // Cutout for lock structure
 	      hull() {
 		translate([height-wall-clipdepth-xtolerance,width/2-clipw/2,-0.1]) cube([clipdepth+wall,clipw,clipheight+0.1]);
 		translate([height-wall-clipdepth-xtolerance,width/2-cornerd/2,wall+clipw/2+2*ztolerance]) cube([clipdepth+cornerd,cornerd,cornerd]);
 	      }
 	    }
 	  }
-	
+
+	  // Cutout for lock structure (related to above)
 	  translate([height-wall-clipdepth-xtolerance,width/2-clipw/2,-0.1]) cube([clipdepth+xtolerance+0.1,clipw,wall+0.2]);
 	}
 
+	// Hinge to back plate attachment
 	for (y=[wall+ytolerance,width-wall-ytolerance-hingew]) {
 	  hull() {
 	    translate([-storageh+axlefrombottom,y,0]) roundedbox(height+storageh-axlefrombottom-2*wall-backcornersupport,hingew,wall,cornerd);
@@ -530,6 +566,7 @@ module berrypicker() {
 	  }
 	}
 
+	// Inside Axle
 	for (y=[0,width]) {
 	  if (y==0) {
 	    //	    translate([-storageh+axlefrombottom,y+wall+ytolerance,axleh]) axletappi(180);
