@@ -15,11 +15,11 @@ suihkupaaheight=-10;
 letkutolerance=1;
 
 tukil=50;
-tukiind=30;
-tukioutd=tukiind+3;
-tukioutoffset=3;
+tukiind=28;
+tukioutd=tukiind+2;
+tukioutoffset=4;
 tukiinterfaced=28;
-tukiinterfaceoffset=tukiind/2-3;
+tukiinterfaceoffset=tukiind/2-5;
 tukiinterfacel=8; // Not measured, guess
 tukiinterfaceheight=5; // Not measured, guess
 tukiheight=-10;
@@ -65,22 +65,25 @@ module pidike() {
 		translate([-tukioutoffset,tukiinterfaceoffset,tukiinterfaceheight+tukiinterfaced/2]) rotate([-90,0,0]) cylinder(d=tukiinterfaced+pidikewall,h=tukiinterfacel+pidikeflangeh);
 		translate([-tukioutoffset,tukiinterfaceoffset+tukiinterfacel,tukiinterfaceheight+tukiinterfaced/2]) rotate([-90,0,0]) cylinder(d=tukiinterfaced+pidikewall+pidikeflangewall,h=pidikeflangeh);
 	      }
-	      translate([-tukioutoffset-tukiinterfaced-4,tukiinterfaceoffset,tukiinterfaceheight-pidikewall]) cube([tukiinterfaced+pidikewall,tukiinterfaced/2,tukiinterfaced+pidikewall*2]);
+	      translate([-tukioutoffset-tukiinterfaced-4,tukiinterfaceoffset,tukiinterfaceheight+tukiinterfaced/2-pidikewall]) cube([tukiinterfaced+pidikewall,tukiinterfaced/2,tukiinterfaced+pidikewall*2]);
 	    }
 	    translate([-tukioutoffset,0,0]) scale([0.95,1.15,1]) cylinder(d=tukioutd,h=pidikesupporth);
 	  }
 	}
 	translate([-tukioutoffset,0,pidikel-pidikesupporth-0.01]) scale([0.95,1.15,1]) cylinder(d=tukioutd,h=pidikesupporth+0.01);
-    translate([0,0,tukiheight-pidikeheight]) difference() {
-      translate([-tukioutoffset,0,tukiinterfaceheight+tukiinterfaced/2]) rotate([-90,0,0]) cylinder(d=tukiinterfaced,h=tukiind/2+tukiinterfacel+pidikeflangeh+0.01);
-    }
+	translate([0,0,tukiheight-pidikeheight]) difference() {
+	  hull() {
+	    translate([-tukioutoffset,0,tukiinterfaceheight+tukiinterfaced/2]) rotate([-90,0,0]) cylinder(d=tukiinterfaced,h=tukiind/2+tukiinterfacel+pidikeflangeh+0.01);
+	    translate([-tukioutoffset,0,0]) rotate([-90,0,0]) cylinder(d=tukiinterfaced,h=tukiind/2+tukiinterfacel+pidikeflangeh+0.01);
+	  }
+	}
       }
     }
     translate([0,0,-pidikeheight+suihkupaaheight]) union() {
       translate([0,0,suihkupaaconnectl+(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2-0.01]) cylinder(d=suihkupaabodyd+pidikedtolerance,h=suihkupaal);
       translate([0,0,(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2]) cylinder(h=suihkupaaconnectl,d1=suihkupaaconnect1d+pidikedtolerance,d2=suihkupaaconnect2d+pidikedtolerance);
       translate([0,0,0]) cylinder(h=(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2+0.01,d1=suihkuletkud+pidikedtolerance,d2=suihkupaaconnect1d+pidikedtolerance);
-      translate([0,0,-suihkuletkuh]) cylinder(d=suihkuletkud+pidikedtolerance,h=suihkuletkuh);
+      translate([0,0,-suihkuletkuh]) cylinder(d=suihkuletkud+pidikedtolerance,h=suihkuletkuh+0.01);
     }
     hull() {
       translate([0,0,-suihkuletkuh]) cylinder(d=suihkuletkud+pidikedtolerance,h=suihkuletkuh);
