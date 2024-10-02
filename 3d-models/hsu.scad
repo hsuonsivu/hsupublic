@@ -135,10 +135,15 @@ module tassu(direction,size) {
   }
 }
 
-module ring(diameter,wall,height) {
+module ring(diameter,wall,height,printsupport) {
+  p=(printsupport=="")?0:printsupport;
+  w=(p==1)?wall:0;
   difference() {
-    cylinder(d=diameter,h=height);
-    translate([0,0,-0.1]) cylinder(d=diameter-wall*2,h=height+0.2);
+    cylinder(d=diameter,h=height+w);
+    translate([0,0,-0.1]) cylinder(d=diameter-wall*2,h=height+0.1);
+    if (p==1) {
+      translate([0,0,height-0.01]) cylinder(d2=diameter,d1=diameter-wall*2,h=wall+0.2);
+    }
   }
 }
 
