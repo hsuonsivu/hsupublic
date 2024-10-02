@@ -7,19 +7,20 @@ include <hsu.scad>
 suihkuletkud=14;
 suihkuletkuh=100;
 suihkupaaconnect1d=21.3;
-suihkupaaconnect2d=25; // measured? 23.3;
+suihkupaaconnect2d=24; // measured? 23.3;
 suihkupaaconnectl=30;
-suihkupaabodyd=25;
+suihkupaabodyd=24;
 suihkupaal=200; // Not measured, guess
 suihkupaaheight=-10;
 letkutolerance=1;
 
 tukil=50;
-tukiind=32;
-tukioutd=37;
+tukiind=30;
+tukioutd=tukiind+3;
 tukioutoffset=3;
 tukiinterfaced=28;
-tukiinterfacel=10; // Not measured, guess
+tukiinterfaceoffset=tukiind/2-3;
+tukiinterfacel=8; // Not measured, guess
 tukiinterfaceheight=5; // Not measured, guess
 tukiheight=-10;
 
@@ -29,7 +30,7 @@ pidikel=tukil+10;
 pidiketopsupporth=5;
 pidikesupporth=pidikel-6;
 pidikewall=3;
-pidikeflangeh=1;
+pidikeflangeh=0;
 pidikeflangewall=pidikewall+2;
 echo(pidiketopsupporth);
   
@@ -61,10 +62,10 @@ module pidike() {
 	  translate([0,0,tukiheight-pidikeheight]) difference() {
 	    intersection() {
 	      union() {
-		translate([-tukioutoffset,tukiind/2,tukiinterfaceheight+tukiinterfaced/2]) rotate([-90,0,0]) cylinder(d=tukiinterfaced+pidikewall,h=tukiinterfacel+pidikeflangeh);
-		translate([-tukioutoffset,tukiind/2+tukiinterfacel,tukiinterfaceheight+tukiinterfaced/2]) rotate([-90,0,0]) cylinder(d=tukiinterfaced+pidikewall+pidikeflangewall,h=pidikeflangeh);
+		translate([-tukioutoffset,tukiinterfaceoffset,tukiinterfaceheight+tukiinterfaced/2]) rotate([-90,0,0]) cylinder(d=tukiinterfaced+pidikewall,h=tukiinterfacel+pidikeflangeh);
+		translate([-tukioutoffset,tukiinterfaceoffset+tukiinterfacel,tukiinterfaceheight+tukiinterfaced/2]) rotate([-90,0,0]) cylinder(d=tukiinterfaced+pidikewall+pidikeflangewall,h=pidikeflangeh);
 	      }
-	      translate([-tukioutoffset-tukiinterfaced-4,tukiind/2,tukiinterfaceheight-pidikewall]) cube([tukiinterfaced+pidikewall,tukiinterfaced/2,tukiinterfaced+pidikewall*2]);
+	      translate([-tukioutoffset-tukiinterfaced-4,tukiinterfaceoffset,tukiinterfaceheight-pidikewall]) cube([tukiinterfaced+pidikewall,tukiinterfaced/2,tukiinterfaced+pidikewall*2]);
 	    }
 	    translate([-tukioutoffset,0,0]) scale([0.95,1.15,1]) cylinder(d=tukioutd,h=pidikesupporth);
 	  }
@@ -76,8 +77,9 @@ module pidike() {
       }
     }
     translate([0,0,-pidikeheight+suihkupaaheight]) union() {
-      translate([0,0,0]) cylinder(h=suihkupaaconnectl,d1=suihkupaaconnect1d+pidikedtolerance,d2=suihkupaaconnect2d+pidikedtolerance);
-      translate([0,0,suihkupaaconnectl-0.01]) cylinder(d=suihkupaabodyd+pidikedtolerance,h=suihkupaal);
+      translate([0,0,suihkupaaconnectl+(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2-0.01]) cylinder(d=suihkupaabodyd+pidikedtolerance,h=suihkupaal);
+      translate([0,0,(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2]) cylinder(h=suihkupaaconnectl,d1=suihkupaaconnect1d+pidikedtolerance,d2=suihkupaaconnect2d+pidikedtolerance);
+      translate([0,0,0]) cylinder(h=(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2+0.01,d1=suihkuletkud+pidikedtolerance,d2=suihkupaaconnect1d+pidikedtolerance);
       translate([0,0,-suihkuletkuh]) cylinder(d=suihkuletkud+pidikedtolerance,h=suihkuletkuh);
     }
     hull() {
