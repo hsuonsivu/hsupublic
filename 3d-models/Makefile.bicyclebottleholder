@@ -1,0 +1,9 @@
+SOURCE=bicyclebottleholder.scad
+DEPENDS=hsu.scad Makefile.bicyclebottleholder
+
+all: bicyclebottleholder.stl
+
+bicyclebottleholder.stl: $(SOURCE) $(DEPENDS)
+	openscad -D teslamodels=0 -D print=1 -D strong=1 -o $@ $(SOURCE)
+	echo $@ built.
+
