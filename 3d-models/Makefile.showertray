@@ -1,0 +1,9 @@
+SOURCE=showertray.scad
+DEPENDS=hsu.scad Makefile.showertray
+
+all: showertray.stl
+
+showertray.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
