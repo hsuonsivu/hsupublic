@@ -137,12 +137,38 @@ module tassu(direction,size) {
 
 module ring(diameter,wall,height,printsupport) {
   p=(printsupport=="")?0:printsupport;
-  w=(p==1)?wall:0;
+  w=(p)?wall:0;
   difference() {
-    cylinder(d=diameter,h=height+w);
-    translate([0,0,-0.1]) cylinder(d=diameter-wall*2,h=height+0.1);
+    union() {
+      hull() {
+	cylinder(d=diameter,h=height+(p==1?wall:0));
+	if (p==2) {
+	  translate([0,0,height]) cylinder(d1=diameter,d2=diameter-wall*2,h=wall);
+	  //	  translate([0,0,height]) cylinder(
+	}
+      }
+    }
+    translate([0,0,-0.1]) cylinder(d=diameter-wall*2,h=height+w+0.2);
     if (p==1) {
-      translate([0,0,height-0.01]) cylinder(d2=diameter,d1=diameter-wall*2,h=wall+0.2);
+      translate([0,0,height-0.1]) cylinder(d2=diameter,d1=diameter-wall*2,h=wall+0.2);
+    }
+  }
+}
+
+// TODO:
+// - This does not work if diameter1 is smaller than 2*wall
+// - Height is not adjusted correctly, do the math, what needs to be the height where wall can be given.
+// Add error checking and messages.
+module cone(diameter1,diameter2,wall,height) {
+  difference() {
+    cylinder(d1=diameter1,d2=diameter2,h=height);
+    if (diameter2<wall*2) {
+      hadjust1=wall*2-diameter2;
+      hadjust=hadjust1<wall?wall:hadjust1;
+      diameter2adjusted=diameter2;
+      translate([0,0,-0.01]) cylinder(d1=diameter1-wall*2,d2=diameter2adjusted,h=height-hadjust);
+    } else {
+      translate([0,0,-0.01]) cylinder(d1=diameter1-wall*2,d2=diameter2-wall*2,h=height+0.02);
     }
   }
 }
