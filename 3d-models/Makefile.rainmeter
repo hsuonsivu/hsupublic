@@ -1,0 +1,13 @@
+SOURCE=rainmeter.scad
+DEPENDS=hsu.scad Makefile.rainmeter
+ALL=rainmeter.stl 
+
+all: $(ALL)
+
+clean:
+	rm $(ALL)
+
+rainmeter.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
