@@ -966,11 +966,12 @@ escaped the form and the wheel was ruined beyond repair. Maybe someone has use f
 
 ### rainmeter.scad
 
+### Makefile.rainmeter
+
 (Electronics and weather cover still in progress)
 
 A simple rain meter, which uses balanced cups to meter amount of
-rain. Set print=1 in openscad to get printable model. No supports are
-needed.
+rain. Set print=1 in openscad to get printable model. 
 
 The hole for magnet is designed round magnet which has diameter of
 6.4mm and thickness of 3.2mm. A drop of superglue should keep it in
@@ -979,4 +980,31 @@ place.
 Electronics (not yet done) will consist of ESP32 and reed switch, to
 allow reading the values remotely.
 
+No supports are needed to print.
+
 ![rainmeter in Openscad.](rainmeter.png.png)
+
+### bicyclebottleholder.scad
+
+My bicycle bottle holder disintegrated, this is a replacement.
+
+No supports are needed to print.
+
+### suihkupaa.scad
+
+Our office shower mixes were replaced, and the new shower heads do not
+properly fit in the old fittins. This is an adapter to work around the problem.
+
+No supports are needed to print.
+
+### showertray.scad
+
+Tray for shower for shampoos etc.
+
+Our setup has pipes behind the vertical car, you might not need the
+openings for those so they can be disabled in showertray.scad with
+"pipes" option..
+
+No supports are needed to print.
+
+
