@@ -8,8 +8,12 @@ print=0;
 
 $fn=90;
 
+versiontext="hsu BH V1.0";
+textdepth=0.8;
+textsize=7;
+
 bicyclebarh=60;
-bicyclebarw=42;
+bicyclebarw=38;
 barl=250; // Only used for testing
 
 dtolerance=0.7;
@@ -17,7 +21,7 @@ xtolerance=0.3;
 ytolerance=0.3;
 ztolerance=0.3;
 
-wall=2;
+wall=2.5;
 
 screwdistance=62;
 
@@ -43,19 +47,22 @@ bodyattachh=originalh;
 
 bottleholderh=80;
 
-screwd=5;
+screwd=5.4;
 screwl=21;
-screw1h=22;
-screw2h=screw1h+62.5;
+screw1h=24;
+screw2h=screw1h+63.5;
 screwbased=10.5;
 screwbaseh=4;
-
+screw1l=1; // Screw 1 hole slightly lengthened to allow easier installation.
+screwinsidespace=1;
+screwinsidespaced=10;
+  
 binderw=8.4;
-binderh=2.4;
-binderwall=3;
-binder1height=screw1h-screwbased-wall;
-binder2height=screw2h+screwbased+wall;
-frontcutd=10;
+binderh=2.6;
+binderwall=2+binderh;
+binder1height=screw1h-screwbased-screw1l-wall*3;
+binder2height=screw2h+screwbased-wall;
+frontcutd=15;
 
 rainholed=10;
 
@@ -93,19 +100,34 @@ module bottleholder() {
       translate([-bicyclebarh/2,0,-0.01]) resize([bicyclebarh,bicyclebarw,barl]) cylinder(d=bicyclebarw,h=bodyattachh+0.02,$fn=60);
 
       translate([drinkcenter,0,wall]) cylinder(d=cand+dtolerance,h=bottleholderh+0.02);
+      translate([drinkcenter,0,wall-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth+1) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
 
       hull() {
-	translate([drinkcenter,0,screw1h]) rotate([0,90,0]) cylinder(d=frontcutd,h=cand+dtolerance+wall);
+	translate([drinkcenter,0,screw1h-screw1l/2]) rotate([0,90,0]) cylinder(d=frontcutd,h=cand+dtolerance+wall);
 	translate([drinkcenter,0,bottleholderh]) rotate([0,90,0]) cylinder(d=frontcutd,h=cand+dtolerance+wall);
       }
 
-      for (z=[screw1h,screw2h]) {
-	translate([screwbaseh-screwl,0,z]) rotate([0,90,0]) ruuvireika(screwl,screwd,0,print==1?1:0,screwbaseh);
-	translate([screwbaseh-0.01,0,z]) rotate([0,90,0]) cylinder(d1=screwbased,d2=screwbased*2,h=screwl);
+      hull() {
+	translate([screwbaseh-screwl,0,screw1h-screw1l/2]) rotate([0,90,0]) ruuvireika(screwl,screwd,0,0,screwbaseh);
+	translate([screwbaseh-screwl,0,screw1h+screw1l/2]) rotate([0,90,0]) ruuvireika(screwl,screwd,0,0,screwbaseh);
+      }
+      translate([screwbaseh-screwl,0,screw2h]) rotate([0,90,0]) ruuvireika(screwl,screwd,0,print==1?1:0,screwbaseh);
+      
+      hull() {
+	translate([screwbaseh-0.01,0,screw1h-screw1l/2]) rotate([0,90,0]) cylinder(d1=screwbased,d2=screwbased+screwl,h=screwl);
+	translate([screwbaseh-0.01,0,screw1h+screw1l/2]) rotate([0,90,0]) cylinder(d1=screwbased,d2=screwbased+screwl,h=screwl);
       }
 
+      hull() {
+	translate([-5,0,screw1h-screw1l/2]) rotate([0,90,0]) cylinder(d2=screwinsidespaced,d1=screwinsidespaced+screwinsidespace+5,h=screwinsidespace+5);
+	translate([-5,0,screw1h+screw1l/2]) rotate([0,90,0]) cylinder(d2=screwinsidespaced,d1=screwinsidespaced+screwinsidespace+5,h=screwinsidespace+5);
+      }
+      translate([-5,0,screw2h]) rotate([0,90,0]) cylinder(d2=screwinsidespaced,d1=screwinsidespaced+screwinsidespace+5,h=screwinsidespace+5);
+	
+      translate([screwbaseh-0.01,0,screw2h]) rotate([0,90,0]) cylinder(d1=screwbased,d2=screwbased+screwl,h=screwl);
+
       for (z=[binder1height,binder2height]) {
-	translate([-bicyclebarh/2,0,z]) resize([bicyclebarh+binderwall*2,bicyclebarw+binderwall*2,binderw]) ring(bicyclebarh,binderh,binderw,1);
+	translate([-bicyclebarh/2,0,z]) scale([1,bicyclebarw/bicyclebarh,1]) ring(bicyclebarh+binderwall*2+binderh,binderh,binderw,1);
       }
 
       // Rain emptying hole
@@ -118,7 +140,10 @@ module bottleholder() {
 //#bar();
 //#can();
 if (print==0) {
-  bottleholder();
+  intersection() {
+    bottleholder();
+    //    translate([-100,0,0]) cube([200,200,binder2height+1]);
+  }
  }
 
 if (print==1) {
