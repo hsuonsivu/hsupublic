@@ -173,6 +173,12 @@ module cone(diameter1,diameter2,wall,height) {
   }
 }
 
+module tubeclip(length,diameter,tolerance) {
+  hull() {
+    for (x=[-length/2,length/2]) translate([x,0,0]) sphere(diameter+tolerance,$fn=60);
+  }
+}
+
 // Make a spring. Springs generated are not very reliable, and need to be put inside a tube to work.
 springangle=1.2;
 module spring(h,d,plateh,thickness) {
@@ -260,3 +266,4 @@ module onehinge(diameter,width,axledepth,cutout,ytolerance,dtolerance) {
         translate([0,0,0]) axle(diameter,width,axledepth,cutout);
   }
 }
+
