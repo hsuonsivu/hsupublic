@@ -12,7 +12,7 @@ debug=0;
 strong=0; // Add strengtening structures around screwholes. Slicer dependent.
 
 adhesion=1;
-adhesiongap=0.03;
+adhesiongap=0.02;
 adhesionwd=6;
 adhesionh=0.2;
 
@@ -54,6 +54,7 @@ cupaxlewidth=cupwidth;
 
 cupangle=-atan(cuph/cuplength);
 cornerd=0.5;
+largecornerd=1;
 smallcornerd=0.01;
 
 basel=cuplength*cos(-cupangle)-cupbaseh*sin(-cupangle);
@@ -140,7 +141,7 @@ poledistance=funneltopd/2+20+poled/2; // From rain cover
 screwd=3.5;
 screwlength=35;
 screwtowerd=3*screwd;
-screwbasel=10;
+screwbasel=9;
 screwbaselflat=6;
 attachflatfeeth=1;
 
@@ -578,7 +579,7 @@ module attachmale() {
       }
 
       // bottom support plate
-      translate([basel-attachplatel,-attachmalebottomw/2,attachheight-0.01]) cube([attachmalel,attachmalebottomw+0.02,ztolerance+cornerd/2+0.02]);
+      translate([basel-attachplatel,-attachmalebottomw/2,attachheight+ztolerance-largecornerd/2-0.01]) cube([attachmalel,attachmalebottomw+0.02,ztolerance+largecornerd/2+0.02]);
     }
 
     // Screwto to lock rainmeter to the poleattach
@@ -614,18 +615,19 @@ module poleattach() {
     union() {
       hull() {
 	translate([0,-poledistance,poleattachheight]) cylinder(d=attachthickeningd,h=attachthickeningh);
-	translate([0,-poledistance+screwlength,poleattachheight]) cylinder(d=attachthickeningd,h=attachthickeningh);
+	translate([0,-poledistance+screwlength-screwbasel,poleattachheight]) cylinder(d=attachthickeningd,h=attachthickeningh);
 	translate([0,-poledistance,poleattachheight+attachthickeningh+attachthickeningdh-0.1]) cylinder(d=attachd,h=0.1);
+	translate([0,-poledistance+screwlength-screwbasel,poleattachheight+attachthickeningh+attachthickeningdh-0.1]) cylinder(d=attachd,h=0.1);
       }
       hull() {
 	translate([0,-poledistance,poleattachheight]) cylinder(d=attachd,h=poleattachh);
-	translate([0,-poledistance+screwlength,poleattachheight]) cylinder(d=attachd,h=poleattachh);
+	translate([0,-poledistance+screwlength-screwbasel,poleattachheight]) cylinder(d=attachd,h=poleattachh);
       }
       hull() {
 	translate([0,-poledistance,poleattachheight+poleattachh-attachthickeningh]) cylinder(d=attachthickeningd,h=attachthickeningh);
-	translate([0,-poledistance+screwlength,poleattachheight+poleattachh-attachthickeningh]) cylinder(d=attachthickeningd,h=attachthickeningh);
+	translate([0,-poledistance+screwlength-screwbasel,poleattachheight+poleattachh-attachthickeningh]) cylinder(d=attachthickeningd,h=attachthickeningh);
 	translate([0,-poledistance,poleattachheight+poleattachh-(attachthickeningh+attachthickeningdh-0.1)]) cylinder(d=attachd,h=0.1);
-	translate([0,-poledistance+screwlength,poleattachheight+poleattachh-(attachthickeningh+attachthickeningdh-0.1)]) cylinder(d=attachd,h=0.1);
+	translate([0,-poledistance+screwlength-screwbasel,poleattachheight+poleattachh-(attachthickeningh+attachthickeningdh-0.1)]) cylinder(d=attachd,h=0.1);
 	translate([0,-poledistance,poleattachheight+poleattachh]) cylinder(d1=attachthickeningd,d2=poled+dtolerance,h=poleattachtopnarrowh);
       }
 
@@ -633,8 +635,8 @@ module poleattach() {
       
       // Structure between pole base
       hull() {
-	translate([basel-attachplatel,-attachplatew/2,-attachplateh-ztolerance-cornerd]) roundedbox(attachplatel,attachplatew,cornerd,cornerd);
-	translate([0,-poledistance+screwlength+poled/2+poleattachbased/2,poleattachheight]) cylinder(d=poleattachbased,h=1);
+	translate([basel-attachplatel,-attachplatew/2,-attachplateh-ztolerance-largecornerd]) roundedbox(attachplatel,attachplatew,largecornerd,largecornerd);
+	translate([0,-poledistance+screwlength-screwbasel+poled/2+poleattachbased/2,poleattachheight]) cylinder(d=poleattachbased,h=1);
 	translate([0,-poledistance+screwlength,poleattachheight+attachthickeningh]) cylinder(d=poleattachbased,h=poleattachbaseh);
       }
       for (z=[poleattachheight+screwtowerd/2,poleattachheight+poleattachh-attachthickeningh+screwtowerd/2]) {
@@ -687,7 +689,7 @@ if (print==0) {
  }
 
 if (print==1 || print==6) {
-  translate([-weathercoveroutd/2-1,weathercoveroutd/2+weathercoverstartnarrowing/2-16+2,basel]) rotate([0,90,0]) rainmeter();
+  translate([-weathercoveroutd/2-1,weathercoveroutd/2+weathercoverstartnarrowing/2-17,basel]) rotate([0,90,0]) rainmeter();
  }
 
 if (print==2 || print==6) {
@@ -699,7 +701,7 @@ if (print==2 || print==6) {
  }
 
 if (print==3 || print==6) {
-  translate([-weathercoveroutd/2-funneltopd/2-gridstep*1.5+4,attachplatew+screwlength/2+gridstep+1,-grillheight]) grill();
+  translate([-weathercoveroutd/2-funneltopd/2-gridstep*1.5+3,attachplatew+screwlength/2+gridstep+4-screwbasel,-grillheight]) grill();
  }
 
 if (print==4 || print==6) {
@@ -714,7 +716,7 @@ if (print==4 || print==6) {
 	  translate([-ringd/2,-ringd/2,0]) cube([ringd,ringd/2,1]);
 	}
       }
-      translate([0,screwlength-poledistance,poleattachheight]) {      
+      translate([0,screwlength-screwbasel-poledistance,poleattachheight]) {      
 	intersection() {
 	  ring(ringd,adhesionwd,adhesionh,0);
 	  translate([-ringd/2,0,0]) cube([ringd,ringd/2,1]);
