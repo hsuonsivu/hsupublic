@@ -13,11 +13,11 @@ fnlarge=print?90:30;
 bardiameter=18;
 distancefromwall=52+4.45-bardiameter;
 
-piped=12.5;
-pipeseparation=125.5+piped;
+piped=13.5;
+pipeseparation=126+piped;
 pipedepth=22-piped/2;
 
-versiontext="Showertray V1.0";
+versiontext="Showertray V1.1";
 textdepth=0.8;
 textsize=7;
 
@@ -29,7 +29,7 @@ topextension=5;
 bardepth=distancefromwall-bardiameter/2;
 barnarrowing=0.3;
 depth=distancefromwall-bardiameter/2+height*2+20;
-wall=1.6;
+wall=2.0;
 
 holed=12;
 holesx=3;
