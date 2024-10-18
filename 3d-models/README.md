@@ -980,7 +980,50 @@ place.
 Electronics (not yet done) will consist of ESP32 and reed switch, to
 allow reading the values remotely.
 
-No supports are needed to print.
+No supports are needed to print. The openscad file includes option
+"adhesion" which is enabled by default, this will create some adhesion
+structures around higher objects or objects which have shown tendency
+to warp. You can disable this option and use printer's brim if these
+do not work well enough.
+
+Makefile will make all parts. These include:
+
+- Meter part itself.
+
+- Weather cover for the unit which also includes rain collecting
+  funnel.
+
+- Grill to cover the funnel which is part of weather cover, to protect
+  funnel from leaves.
+
+- Attachments for flat surface, a 62mm pole, and vertical
+  surface. These all assume 35mm wood screws to be used. The unit
+  itself will stand on flat surface, but can be screwed into place
+  with flat attachment.
+
+- Plastic tweezers to help putting magnet into its slot.
+
+- Very small part to lock the magnet in place after the magnet is in
+  its slot. Narrow bent-nose pliers are very useful to install this
+  after. This allows magnets to be recovered from the print. The lock
+  part has a tiny ball clip and keeps it in place quite well.
+
+- A tool to help placing the magnet into its slot. This does not work
+  very well and it is overkill anyway, so this is not printed by
+  default. Tiny magnets are difficult to handle as dropping them will
+  almost certainly lead into lost magnet stuck to a metal table leg
+  somewhere. This part requires accurate printer.
+
+- rainmeterall.stl will print all parts except wall and pole
+  attachments and magnet tool. Pick the one which you will use and
+  print that.
+
+- rainmeterattachments.stl will print both wall and 62pole attachments, as
+  those are the largest.
+
+- hallmetersensortester.stl is a addition to test hall sensor. 
+
+Electronics to calculate rain is not yet ready. Real Soon Now...
 
 ![rainmeter in Openscad.](rainmeter.png.png)
 
