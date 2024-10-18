@@ -175,7 +175,7 @@ module cone(diameter1,diameter2,wall,height) {
 
 module tubeclip(length,diameter,tolerance) {
   hull() {
-    for (x=[-length/2,length/2]) translate([x,0,0]) sphere(diameter+tolerance,$fn=60);
+    for (x=[-length/2,length/2]) translate([x,0,0]) sphere(d=diameter+tolerance,$fn=60);
   }
 }
 
