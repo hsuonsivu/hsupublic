@@ -5,7 +5,7 @@
 print=1;
 strong=1;
 supports=1; // patches for easier printing
-$fn=90;
+$fn=print?90:30;
 
 width=50.3;
 depth=70.2;
@@ -25,7 +25,16 @@ screwholed=3.5;
 screwholebase=1; // countersink
 screwlength=30; //19;
 screwtowerd=3*screwholed;
-  
+cupcutoffsetlow=-50;
+cupcutoffsethigh=-45;
+
+headphonehanglowd=10;
+headphonehangd=10;
+headphonehangw=70+headphonehangd;
+headphonehangh=50;
+headphonehangout=10;
+thinwall=1.6;
+
 module deeptext(teksti, height, depth, ha) {
   h=depth/3;
   translate([0,0,h*2]) linear_extrude(height=h) text(teksti,size=height,font="Liberation Sans:style=Bold",halign=ha);
@@ -134,11 +143,55 @@ module cupholderfront() {
 	}
 	hull() {
 	  translate([-width/2-wall,-depth/2,0]) roundedbox(wall,depth+wall,collarz,cornerd);
-#	  translate([-width/2-wall/2-screwtowerd/2,-depth/2,0]) cube([0.01+wall/2+screwtowerd/2,1,1]);
+	  translate([-width/2-wall/2-screwtowerd/2,-depth/2,0]) cube([0.01+wall/2+screwtowerd/2,1,1]);
 	  translate([-width/2-screwtowerd/2,-depth/2,screwtowerd/2]) rotate([270,0,0]) ruuvitorni(screwlength-wall,screwtowerd);
 	  translate([-width/2-screwtowerd/2,-depth/2,collarz-screwtowerd/2]) rotate([270,0,0]) ruuvitorni(screwlength-wall,screwtowerd);
 	}
 	translate([-width/2-wall,depth/2,0]) roundedbox(width+2*wall,wall,collarz,cornerd);
+
+	// Headphone hanger
+	hull() {
+	  translate([-width/2-wall-headphonehanglowd/2+wall,depth/2-35,0]) cylinder(d=headphonehanglowd,h=1);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout+10,depth/2,collarz-headphonehangd/2]) sphere(d=headphonehangd);
+	}
+	hull() {
+	  translate([-width/2-wall-headphonehangd/2+wall,depth/2,collarz-headphonehangd/2]) sphere(d=headphonehangd);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout+10,depth/2,collarz-headphonehangd/2]) sphere(d=headphonehangd);
+	  translate([-width/2-wall-headphonehangd/2+wall,depth/2-headphonehangd*sin(angle),collarz-headphonehangd/2-headphonehangd]) sphere(d=thinwall);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout+headphonehangd+10,depth/2-headphonehangd*sin(angle),collarz-headphonehangd/2-headphonehangd]) sphere(d=thinwall);
+	}
+	hull() {
+	  translate([-width/2-wall-headphonehanglowd/2+wall,depth/2-35,0]) cylinder(d=thinwall,h=1);
+	  translate([-width/2-wall-headphonehangd/2+wall,depth/2-headphonehangd*sin(angle),collarz-headphonehangd/2-headphonehangd]) sphere(d=thinwall);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout+headphonehangd+10,depth/2-headphonehangd*sin(angle),collarz-headphonehangd/2-headphonehangd]) sphere(d=thinwall);
+	}
+	hull() {
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout+10,depth/2,collarz-headphonehangd/2]) sphere(d=headphonehangd);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout,depth/2+(headphonehangh-headphonehangd)*sin(angle),collarz+headphonehangh-headphonehangd]) sphere(d=headphonehangd);
+	}
+	hull() {
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout,depth/2+(headphonehangh)*sin(angle),collarz+headphonehangh]) sphere(d=headphonehangd);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout,depth/2+(headphonehangh-headphonehangd)*sin(angle),collarz+headphonehangh-headphonehangd]) sphere(d=headphonehangd);
+	}
+	hull() {
+	  translate([-width/2-wall-headphonehangd/2-headphonehangout,depth/2,collarz-headphonehangd/2]) sphere(d=headphonehangd);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangout,depth/2+headphonehangh*sin(angle),collarz+headphonehangh]) sphere(d=headphonehangd);
+	  translate([-width/2-wall-headphonehangd/2+wall,depth/2,collarz-headphonehangd/2]) sphere(d=headphonehangd);
+	  translate([-width/2-wall-headphonehangd/2+wall,depth/2+headphonehangout*2*sin(angle),collarz-headphonehangd/2-headphonehangout*2*2]) sphere(d=thinwall);
+	  translate([-width/2-wall-headphonehangd/2+wall,-depth/4,collarz-headphonehangd/2]) sphere(d=headphonehangd);
+	}
+	hull() {
+	  translate([-width/2-wall-headphonehangd/2-headphonehangout,depth/2+(headphonehangh-headphonehangd)*sin(angle),collarz+headphonehangh-headphonehangd]) sphere(d=headphonehangd);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout,depth/2+(headphonehangh-headphonehangd)*sin(angle),collarz+headphonehangh-headphonehangd]) sphere(d=headphonehangd);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangout,depth/2+(headphonehangh-headphonehangd*2)*sin(angle),collarz+headphonehangh-headphonehangd*2]) sphere(d=thinwall);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout,depth/2+(headphonehangh-headphonehangd*2)*sin(angle),collarz+headphonehangh-headphonehangd*2]) sphere(d=thinwall);
+	}
+	hull() {
+	  translate([-width/2-wall-headphonehangd/2-headphonehangout,depth/2+(headphonehangh-headphonehangd*2)*sin(angle),collarz+headphonehangh-headphonehangd*2]) sphere(d=thinwall);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout,depth/2+(headphonehangh-headphonehangd*2)*sin(angle),collarz+headphonehangh-headphonehangd*2]) sphere(d=thinwall);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangw-headphonehangout+10,depth/2,collarz-headphonehangd/2]) sphere(d=thinwall);
+	  translate([-width/2-wall-headphonehangd/2-headphonehangout,depth/2,collarz-headphonehangd/2]) sphere(d=thinwall);
+	}
       }
       for (x=[-width/2-screwtowerd/2,width/2+screwtowerd/2]) 
 	for (z=[screwtowerd/2,collarz-screwtowerd/2]) 
@@ -158,32 +211,33 @@ module cupholderfront() {
       cylinder(h=wall,d=cupoutdiameter/2);
     rotate([angle,0,0]) {
       translate([-width/2-wall,depth/2,0]) roundedbox(width+2*wall,wall,collarz,cornerd);
-      //      translate([0,depth,0]) cylinder(h=1,d=cupoutdiameter/5);
-    }
-  }
-  hull() {
-    translate([0,
-	       depth/2*cos(angle)-collarz*sin(angle)+cupoutdiameter/2+cupout,
-	       collarz-depth/2*sin(angle)+depth/2*sin(angle)+wall-cupoutdiameter/2])
-      cylinder(h=wall,d=cupoutdiameter/2);
-    rotate([angle,0,0]) {
-      translate([-width/2-wall,depth/2,0]) roundedbox(width+2*wall,wall,collarz,cornerd);
-      translate([0,supportdistance,0]) cylinder(h=1,d=cupoutdiameter/5);
     }
   }
 
+  hull() {
   translate([0,
 	     depth/2*cos(angle)-collarz*sin(angle)+cupoutdiameter/2+cupout,
-	     collarz-depth/2*sin(angle)+depth/2*sin(angle)+wall-0.01]) {
-    difference() {
-      cylinder(h=cupheight,d1=cupoutdiameter,d2=cupoutdiameter+cupexpansion);
-      cylinder(h=cupheight+0.01,d1=cupdiameter,d2=cupdiameter+cupexpansion);
-      hull() {
-      translate([-cupoutdiameter/2-cupexpansion/2-0.01,0,cuphandlediameter/2+cuphandleraise]) rotate([90,0,90]) cylinder(h=cupoutdiameter+cupexpansion+0.02,d=cuphandlediameter);
-      translate([-cupoutdiameter/2-cupexpansion/2-0.01,0,cuphandlediameter/2+cuphandleraise+cupheight]) rotate([90,0,90]) cylinder(h=cupoutdiameter+cupexpansion+0.02,d=cuphandlediameter);
-      }
+	     collarz-depth/2*sin(angle)+depth/2*sin(angle)+wall-cupoutdiameter/2])
+    cylinder(h=wall,d=cupoutdiameter/2);
+  rotate([angle,0,0]) {
+    translate([-width/2-wall,depth/2,0]) roundedbox(width+2*wall,wall,collarz,cornerd);
+    translate([0,supportdistance,0]) cylinder(h=1,d=cupoutdiameter/5);
+  }
+}
+
+translate([0,
+	   depth/2*cos(angle)-collarz*sin(angle)+cupoutdiameter/2+cupout,
+	   collarz-depth/2*sin(angle)+depth/2*sin(angle)+wall-0.01]) {
+  difference() {
+    cylinder(h=cupheight,d1=cupoutdiameter,d2=cupoutdiameter+cupexpansion);
+    cylinder(h=cupheight+0.02,d1=cupdiameter,d2=cupdiameter+cupexpansion);
+    // Front cut to accomodate bikes form
+    hull() {
+      translate([-cupoutdiameter/2-cupexpansion/2-0.01,cupcutoffsetlow,cuphandlediameter/2+cuphandleraise]) rotate([90,0,90]) cylinder(h=cupoutdiameter+cupexpansion+0.02,d=cuphandlediameter);
+      translate([-cupoutdiameter/2-cupexpansion/2-0.01,cupcutoffsethigh,cuphandlediameter/2+cuphandleraise+cupheight]) rotate([90,0,90]) cylinder(h=cupoutdiameter+cupexpansion+0.02,d=cuphandlediameter);
     }
   }
+}
 }
 
 module cupholder() {
@@ -195,7 +249,7 @@ if (print==0)
   cupholder();
 
 if (print==1 || print==2)
-  translate([width+wall+wall+screwtowerd/2+1,0,0]) 
+  translate([-width-wall-wall-headphonehangd*cos(angle)-screwtowerd/2+3,0,0]) 
   rotate([-angle-90,0,0]) 
   translate([0,depth/2*cos(angle),depth/2*sin(angle)])
       cupholderback();
