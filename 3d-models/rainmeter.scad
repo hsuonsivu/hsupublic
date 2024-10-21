@@ -8,7 +8,7 @@
 
 include <hsu.scad>
 
-print=13;
+print=0;
 debug=0;
 strong=0; // Add strengtening structures around screwholes. Slicer dependent.
 
@@ -23,7 +23,8 @@ includeflatattach=1;
 includewallattach=0;
 includetweezers=1;
 includemagnettool=1;
-includehallsensortester=1;
+includehallsensortester=0;
+includehallsensorbase=1;
 weathercover=0;
 
 $fn=(print>0)?120:60;
@@ -359,6 +360,46 @@ module hallsensortester() {
       }
     }
   }
+}
+
+reedswitchd=2.5;
+reedswitchl=14;
+reedswitchboardh=17;
+reedswitchboardy=6.2;
+reedswitchheight=cupaxleheight+cupbaseh+cupwall-magnetd/2;
+reedswitchheightonreedswitchboard=15;
+reedswitchboardl=35;
+reedswitchboardthickness=9; // Including reed switch etc
+reedswitchboardheightond1mini=15;
+reedswitchboardheight=reedswitchheight-reedswitchheightonreedswitchboard;
+d1minih=25;
+d1minil=35;
+d1minithickness=9;
+d1miniheight=reedswitchboardheight-15;
+d1miniy=reedswitchboardy-d1minithickness;
+
+module reedswitch() {
+  hull() {
+    translate([-reedswitchl/2,0,0]) sphere(d=reedswitchd);
+    translate([reedswitchl/2,0,0]) sphere(d=reedswitchd);
+  }
+}
+
+module reedswitchboard() {
+#  translate([-reedswitchboardl/2,0,0]) cube([reedswitchboardl,reedswitchboardthickness,reedswitchboardh]);
+  translate([-reedswitchboardl/2,reedswitchboardy,reedswitchheightonreedswitchboard]) reedswitch();
+}
+
+module d1mini() {
+  translate([-d1minil/2,0,0]) cube([d1minil,d1minithickness,0]);
+  translate([0,-reedswitchboardthickness,reedswitchboardheightond1mini]) reedswitchboard();
+}
+
+module magnetsensorbase() {
+#translate([0,0,d1miniheight]) d1mini();
+
+  //#translate([0,0,reedswitchboardheight
+  //#translate([0,-funnelbasew/2-cupwall,cupaxleheight+cupbaseh+cuph+cupwall-magnetd/2]) rotate([0,0,180]) hallsensor();
 }
 
 module magnetlock() {
@@ -1157,6 +1198,7 @@ if (print==0) {
       if (includeflatattach) flatattach();
       if (includewallattach) wallattach();
       if (includehallsensortester) hallsensortester();
+      if (includehallsensorbase) magnetsensorbase();
     }
     if (0) hull() {
       //translate([-basel*2,-weathercoveroutd-100,-200]) cube([basel*2+100,weathercoveroutd+100,400]); //-9.05
