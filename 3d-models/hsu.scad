@@ -267,3 +267,28 @@ module onehinge(diameter,width,axledepth,cutout,ytolerance,dtolerance) {
   }
 }
 
+// Used to work out placement of components being printed
+module printareacube(printer) {
+  xysize=(printer=="ankermake")?232:(print==anycubic)?380:380; // No other working printers at the moment
+  height=(printer=="ankermake")?249:(print==anycubic)?380:380; // No other working printers at the moment
+  xsize=xysize; // Leave some space for safety
+  ysize=xysize;
+  wall=0.4;
+  h=0.2;
+  
+  difference() {
+    translate([-xsize/2,-ysize/2,0]) cube([xsize,ysize,h]);
+    translate([-xsize/2+wall,-ysize/2+wall,-0.1]) cube([xsize-wall*2,ysize-wall*2,h+0.2]);
+  }
+  
+  translate([0,0,height-0.2]) difference() {
+    translate([-xsize/2,-ysize/2,0]) cube([xsize,ysize,h]);
+    translate([-xsize/2+wall,-ysize/2+wall,-0.1]) cube([xsize-wall*2,ysize-wall*2,h+0.2]);
+  }
+
+  for (x=[-xsize/2,xsize/2-wall]) {
+    for (y=[-ysize/2,ysize/2-wall]) {
+      translate([x,y,0]) cube([wall,wall,height]);
+    }
+  }
+}
