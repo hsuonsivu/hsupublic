@@ -4,20 +4,22 @@
 
 include <hsu.scad>
 
-suihkuletkud=14;
+print=2;
+
+suihkuletkud=print==2?13:14;
 suihkuletkuh=100;
 suihkupaaconnect1d=21.3;
 suihkupaaconnect2d=24; // measured? 23.3;
 suihkupaaconnectl=30;
-suihkupaabodyd=24;
+suihkupaabodyd=print==2?27:24;
 suihkupaal=200; // Not measured, guess
 suihkupaaheight=-10-2;
 letkutolerance=1;
 
 foo=12;
 tukil=50-12+foo;
-tukiind=28;
-tukiinlowd=26;
+tukiind=print==2?31:28;
+tukiinlowd=print==2?27:26;
 tukioutd=tukiind+4;
 tukioutoffset=4;
 tukiinterfaced=28;
@@ -59,7 +61,7 @@ module oldpidike() {
 module pidike() {
   difference() {
     union() {
-      cylinder(d2=tukiind,d1=tukiinlowd,h=pidikel);
+            scale([1,26/27,1]) cylinder(d2=tukiind,d1=tukiinlowd,h=pidikel);
       hull() {
 	translate([-tukioutoffset,0,pidikel-pidiketopsupporth]) scale([0.95,1.15,1]) cylinder(d=tukioutd,h=pidiketopsupporth);
 	translate([-tukioutoffset-(tukioutd-tukiind),0,pidikel-pidiketopsupporth]) scale([0.95,1.15,1]) cylinder(d=tukioutd,h=pidiketopsupporth);
@@ -90,7 +92,15 @@ module pidike() {
       translate([0,-pidikereunaw/2,pidikereunastart]) roundedbox(pidikereunal,pidikereunaw,pidikereunah,cornerd);
     }
     translate([0,0,-pidikeheight+suihkupaaheight]) union() {
-      translate([0,0,suihkupaaconnectl+(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2-0.01]) cylinder(d=suihkupaabodyd+pidikedtolerance,h=suihkupaal);
+      hull() {
+	translate([0,0,suihkupaaconnectl+(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2-0.01]) scale([26/27,1,1]) cylinder(d=suihkupaabodyd+pidikedtolerance,h=suihkupaal);
+	intersection() {
+	  translate([0,0,suihkupaaconnectl+(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2-(suihkupaabodyd-suihkupaaconnect2d)-0.01]) scale([26/27,1,1]) cylinder(d=suihkupaabodyd+pidikedtolerance,h=suihkupaal);
+	  translate([0,0,(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2]) cylinder(h=suihkupaaconnectl,d1=suihkupaaconnect1d+pidikedtolerance,d2=suihkupaaconnect2d+pidikedtolerance);
+	}
+      
+	//	#	translate([0,0,(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2-(suihkupaabodyd-suihkupaaconnect2d)]) cylinder(h=suihkupaabodyd-suihkupaaconnect2d,d1=suihkupaaconnect2d+pidikedtolerance,d2=suihkupaabodyd+pidikedtolerance);
+      }
       translate([0,0,(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2]) cylinder(h=suihkupaaconnectl,d1=suihkupaaconnect1d+pidikedtolerance,d2=suihkupaaconnect2d+pidikedtolerance);
       translate([0,0,0]) cylinder(h=(suihkupaaconnect1d+pidikedtolerance-suihkuletkud+pidikedtolerance)/2+0.01,d1=suihkuletkud+pidikedtolerance,d2=suihkupaaconnect1d+pidikedtolerance);
       translate([0,0,-suihkuletkuh]) cylinder(d=suihkuletkud+pidikedtolerance,h=suihkuletkuh+0.01);
