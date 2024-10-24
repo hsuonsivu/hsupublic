@@ -3,12 +3,22 @@
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
 // TODO:
-// weathercover screw attachment, underneath?
-// reed switch/sensor, ESP32
+// weathercover screw attachment, underneath?q
+
+// Larger funnel sizes would be useful to increase resolution or make
+// cups smaller. However, current funnel size is used everywhere and
+// changing it would require larger changes to the
+// weathercover. Making cups smaller may increase weight dead mass the
+// mechanism more unreliable, and finding even smaller magnets could
+// be difficult. Likely easiest is to let funneltopd calculated as
+// currently from 90mm and then extend the weathercover upper funnel
+// part keeping the other shapes as they are.  Current resolution is
+// multiples of 1.62mm of rain as that is the amount of water in cup
+// before it will swing.
 
 include <hsu.scad>
 
-print=14;
+print=0;
 debug=0;
 strong=0; // Add strengtening structures around screwholes. Slicer dependent.
 
@@ -86,8 +96,6 @@ stopperh=wall;
 stopperl=wall*3;
 stopperheight = cupaxleheight+cupsideraisel*sin(-cupangle)+cupbaseh+cupsideraiseh-cupwall+ztolerance*2.5; //basetoph+wall;
 
-//magnetd=6.36;
-//magneth=3.2;
 magnettoolxtolerance=0.2;
 magnettoolytolerance=0.2;
 magnettoolztolerance=0.15;
@@ -161,7 +169,7 @@ funnelbasew=cupaxlewidth+(cupaxlew/2+wall+ytolerance)*2;
 funnelh=cupbaseh+cupwall+cuph+max(stopperh,magnetd)+magnetd/2;
 baselargerthancup=(basel*2>=90);
 funneltopd=baselargerthancup?basel*2:raincupd;
-funneloffset=0; //baselargerthancup?0:-funneltopd/2+basel;
+funneloffset=0;
   
 funnelheight=cupaxleheight+funnelh;
 basetoph=cupaxleheight+funnelh;
@@ -677,31 +685,29 @@ module cups() {
 	union() {
 	  translate([-basel,-funnelbasew/2,0]) roundedbox(basel*2,wall,weathercoverstartnarrowing,cornerd);
 	  translate([-basel,funnelbasew/2-wall,0]) roundedbox(basel*2,wall,weathercoverstartnarrowing,cornerd);
+
+	  // Extension flanges to help with printing
+	  hull() {
+	    translate([basel-wall,-funnelbasew/2-2*wall,0]) roundedbox(wall,3*wall,weathercoverstartnarrowing,cornerd);
+	    if (adhesion) {
+	      translate([basel-wall,-funnelbasew/2-extensionflangew,0]) roundedbox(wall,wall+extensionflangew,baseguideh,cornerd);
+	    }
+	  }
+
+	  hull() {
+	    translate([basel-wall,funnelbasew/2-wall,0]) roundedbox(wall,3*wall,weathercoverstartnarrowing,cornerd);
+	    if (adhesion) {
+	      translate([basel-wall,funnelbasew/2-wall,0]) roundedbox(wall,wall+extensionflangew,baseguideh,cornerd);
+	    }
+	  }
 	}
 	translate([0,0,-ztolerance*1.5]) funneloutside();
 
-	//	translate([0,-funnelbasew/2+cupwall/2-0.01,textheight]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
 	translate([0,funnelbasew/2+cupwall/2-textdepth*2+0.01,textheight]) rotate([-90,180,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
 
-	//	translate([0,-funnelbasew/2+cupwall/2-0.01,areatextheight]) rotate([90,0,0]) linear_extrude(height=textdepth) text(areatext, size=textsize-2, valign="center",halign="center",font="Liberation Sans:style=Bold");
 	translate([0,funnelbasew/2+cupwall/2-textdepth*2+0.01,areatextheight]) rotate([-90,180,0]) linear_extrude(height=textdepth) text(areatext, size=textsize-2, valign="center",halign="center",font="Liberation Sans:style=Bold");
       }
 
-      // Extension flanges to help with printing
-      hull() {
-	translate([basel-wall,-funnelbasew/2-2*wall,0]) roundedbox(wall,3*wall,weathercoverstartnarrowing,cornerd);
-	if (adhesion) {
-	  translate([basel-wall,-funnelbasew/2-extensionflangew,0]) roundedbox(wall,wall+extensionflangew,baseguideh,cornerd);
-	}
-      }
-
-      hull() {
-	translate([basel-wall,funnelbasew/2-wall,0]) roundedbox(wall,3*wall,weathercoverstartnarrowing,cornerd);
-	if (adhesion) {
-	  translate([basel-wall,funnelbasew/2-wall,0]) roundedbox(wall,wall+extensionflangew,baseguideh,cornerd);
-	}
-      }
-      
       // Top stoppers to limit cup movement
       hull() {
 	translate([basel-stopperl,-funnelbasew/2,stopperheight]) roundedbox(stopperl,stopperw,stopperh,cornerd);
@@ -1258,7 +1264,7 @@ if (print==0) {
     union() {
       
       grill();
-      //#weathercover();
+      #weathercover();
       rainmeter();
       magnetlock();
       if (includepoleattach) poleattach();
