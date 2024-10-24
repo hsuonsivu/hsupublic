@@ -8,7 +8,7 @@
 
 include <hsu.scad>
 
-print=0;
+print=14;
 debug=0;
 strong=0; // Add strengtening structures around screwholes. Slicer dependent.
 
@@ -68,7 +68,7 @@ basel=cuplength*cos(-cupangle)-cupbaseh*sin(-cupangle);
 basew=cupaxlewidth+cupwall*3+ytolerance*2;
 centerraise=3;
 
-angle=(print>0) ? cupangle:0; //cupangle; //cupangle;
+angle=(print>0) ? cupangle:cupangle; //cupangle; //cupangle;
 lowercupangle=cupangle+10;
 
 towerw=cupaxled+1;
@@ -267,12 +267,62 @@ diodelegl=35;
 buttoncellh=3.2;
 buttoncelld=20;
 
-versiontext=str("V1.7 d", funneltopd);
+versiontext=str("V1.8 d", funneltopd);
 areatext=str("a=",floor(3.14159*(funneltopd/2)*(funneltopd/2)),"mm2");
 textheight=basetoph-10;
 areatextheight=textheight-textsize;
 
 extensionflangew=adhesion?basesidew/2+wall:2*wall;
+
+reedswitchd=2.5;
+reedswitchl=14;
+reedswitchy=3.25;
+reedswitchboardh=17;
+reedswitchheight=cupaxleheight+cupbaseh+cuph+cupwall;
+reedswitchheightonreedswitchboard=15;
+reedswitchboardl=35;
+//reedswitchboardthickness=9; // Including reed switch etc
+reedswitchboardthickness=2.2; // Including reed switch etc
+reedswitchboardtotalthickness=8;
+reedswitchboardy=3.2;
+reedswitchboardheightond1mini=35;
+reedswitchboardheight=reedswitchheight-reedswitchheightonreedswitchboard;
+d1minireedcablew=14;
+d1minireedcableuh=6.6;
+d1minireedcableuw=30;
+d1minih=27.5;
+d1minil=35;
+d1miniresetoffset=10;
+d1minitotalthickness=9;
+d1miniboardthickness=1.3;
+d1miniboardy=5;
+d1miniheight=reedswitchboardheight-35;
+d1miniy=reedswitchboardy-d1minitotalthickness;
+d1miniusbcheight=8; // From d1miniedge
+d1miniusbcw=14;
+d1miniusbcfrombottom=0;
+d1miniusbch=8;
+d1minireset=d1minil-5;
+d1miniresetfrombottom=0.3;
+d1miniresetw=6;
+d1minireseth=6;
+d1miniresetheight=d1minih;
+magnetsensorbasesupportl=basel+20;
+magnetsensorbasesupporth=20;
+magnetsensorbasesupportdepth=20;
+
+magnetsensorbasey=-cupaxlewidth/2-cupwall*2-cupaxlew/2-ytolerance;
+magnetsensorbasesupportw=15;
+
+magnetbasew=magnetsensorbasesupportw-ytolerance*2-cupwall;
+magnetbaseheight=cupwall+ztolerance;
+magnetbasey=magnetsensorbasey-ytolerance-magnetbasew;;
+magnetbasel=d1minil+5;
+magnetbasex=basel-magnetsensorbasesupportdepth-magnetbasel-xtolerance;
+magnetbaseh=56;
+magnetbaseclipheight=10;
+magnetbaseclipl=15;
+magnetbaseclipd=cupwall+ytolerance+0.5;
 
 // Hallsensor sensor x=centered, sensorback y=0, z=0
 module hallsensor() {
@@ -290,7 +340,7 @@ module hallsensor() {
     }
 
     for (i=[-1:1:1]) {
-#      translate([i*hallsensorpinstep,hallsensorpinfromback+0.3-0.01,-hallsensorh/2-3]) rotate([-90,180,180]) linear_extrude(0.31) text(str(i+2),size=0.5,valign="center",halign="center");
+      translate([i*hallsensorpinstep,hallsensorpinfromback+0.3-0.01,-hallsensorh/2-3]) rotate([-90,180,180]) linear_extrude(0.31) text(str(i+2),size=0.5,valign="center",halign="center");
     }
   }
 }
@@ -360,46 +410,6 @@ module hallsensortester() {
       }
     }
   }
-}
-
-reedswitchd=2.5;
-reedswitchl=14;
-reedswitchboardh=17;
-reedswitchboardy=6.2;
-reedswitchheight=cupaxleheight+cupbaseh+cupwall-magnetd/2;
-reedswitchheightonreedswitchboard=15;
-reedswitchboardl=35;
-reedswitchboardthickness=9; // Including reed switch etc
-reedswitchboardheightond1mini=15;
-reedswitchboardheight=reedswitchheight-reedswitchheightonreedswitchboard;
-d1minih=25;
-d1minil=35;
-d1minithickness=9;
-d1miniheight=reedswitchboardheight-15;
-d1miniy=reedswitchboardy-d1minithickness;
-
-module reedswitch() {
-  hull() {
-    translate([-reedswitchl/2,0,0]) sphere(d=reedswitchd);
-    translate([reedswitchl/2,0,0]) sphere(d=reedswitchd);
-  }
-}
-
-module reedswitchboard() {
-#  translate([-reedswitchboardl/2,0,0]) cube([reedswitchboardl,reedswitchboardthickness,reedswitchboardh]);
-  translate([-reedswitchboardl/2,reedswitchboardy,reedswitchheightonreedswitchboard]) reedswitch();
-}
-
-module d1mini() {
-  translate([-d1minil/2,0,0]) cube([d1minil,d1minithickness,0]);
-  translate([0,-reedswitchboardthickness,reedswitchboardheightond1mini]) reedswitchboard();
-}
-
-module magnetsensorbase() {
-#translate([0,0,d1miniheight]) d1mini();
-
-  //#translate([0,0,reedswitchboardheight
-  //#translate([0,-funnelbasew/2-cupwall,cupaxleheight+cupbaseh+cuph+cupwall-magnetd/2]) rotate([0,0,180]) hallsensor();
 }
 
 module magnetlock() {
@@ -548,7 +558,7 @@ module sideguide(w) {
       translate([funneloffset-weathercoveroutd/2+wall+xtolerance+w,-funneltopd/2+wall+ytolerance+w,0]) cube([weathercoveroutd-wall*2-xtolerance*2-w*2,funneltopd-wall*2-ytolerance*2-w*2,weathercoverstartnarrowing]);
     }
 
-    translate([0,-weathercoverclipdistance,weathercoverclipheight]) tubeclip(weathercovercliplength,weathercoverclipd,weathercoverclipdtolerance);
+    translate([0,-weathercoverclipdistance,weathercoverclipheight]) tubeclip(weathercovercliplength+xtolerance,weathercoverclipd,weathercoverclipdtolerance);
   }
 }
 
@@ -728,6 +738,12 @@ module cups() {
 	translate([-0.01,-basew/2,cupwall+centerraise]) cube([0.02,basew,0.1]);
       }
 
+      // Magnetbase support
+      translate([basel-magnetsensorbasesupportl,magnetsensorbasey,0]) roundedbox(magnetsensorbasesupportl,cupwall*2,cupaxleheight+towerw/2,cornerd);
+      translate([basel-magnetsensorbasesupportl,magnetsensorbasey-magnetsensorbasesupportw,0]) roundedbox(magnetsensorbasesupportl,cupwall,cupaxleheight+towerw/2,cornerd);
+      translate([basel-magnetsensorbasesupportl+magnetbasel/2,magnetsensorbasey-magnetsensorbasesupportw+magnetbaseclipd/2,cupwall+magnetbaseclipheight]) tubeclip(magnetbaseclipl,magnetbaseclipd,0);
+      translate([basel-magnetsensorbasesupportdepth,magnetsensorbasey-magnetsensorbasesupportw,0]) roundedbox(magnetsensorbasesupportdepth,magnetsensorbasesupportw+cupwall*2,cupaxleheight+towerw/2,cornerd);
+
       // Support weather cover
       hull() {
 	translate([-basel/2+funneloffset,-funneltopd/2,0]) roundedbox(basel,funneltopd,cupwall,cornerd);
@@ -842,7 +858,7 @@ module attachmale() {
     translate([0,0,-attachplateh+attachmaleh+0.01-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
 
     // clip cut
-    translate([attachclipposition,0,attachclipheight]) rotate([0,0,90]) tubeclip(attachclipl,attachclipd,attachclipdtolerance);
+    translate([attachclipposition,0,attachclipheight]) rotate([0,0,90]) tubeclip(attachclipl,attachclipd+ytolerance,attachclipdtolerance);
   }
 }
 
@@ -1093,7 +1109,7 @@ module magnettool() {
     translate([magnettoolcontrolstart-magnettoolxtolerance,-magnettoolcontrolslit/2-magnettoolytolerance,magnettoolpathheight+magnettoolpathh-0.02]) cube([magnettooll-(magnettoolcontrolstart-magnettoolwall),magnettoolcontrolslit+magnettoolytolerance*2,magnettoolpathheight+magnettoolpathh+magnettoolpathnarrow]);
     
     // Magnet at mounth, just for debugging
-    translate([0,0,magnettoolwall+magnettoolztolerance]) #cylinder(d=magnetd,h=magneth);
+    translate([0,0,magnettoolwall+magnettoolztolerance]) cylinder(d=magnetd,h=magneth);
 
     // Version text
     translate([magnettooll/2,0,magnettoolwall/2-0.01]) rotate([180,0,0]) linear_extrude(height=magnettoolwall/2) text(versiontext, size=6, valign="center",halign="center",font="Liberation Sans:style=Bold");
@@ -1123,11 +1139,11 @@ tweezerswl=50;
 tweezersjoin=26.55;
 tweezersjoinh=4;
 tweezersheadw=magnetd+magnettoolwall*2;
-tweezersh=4;
-tweezerslh=2;
+tweezersh=5;
+tweezerslh=2.5;
 tweezersangle=3;
-tweezersend1h=2;
-tweezersend2h=2;
+tweezersend1h=2.5;
+tweezersend2h=2.5;
 tweezersendl=1.5*magnetd;
 tweezersendslope=10;
 
@@ -1179,6 +1195,57 @@ module tweezers() {
 	translate([tweezersjoin+tweezersw/2,0.1,tweezerslh+diameter2/2]) rotate([90,0,0]) cylinder(d=diameter2,h=tweezersw+0.2);
       }
     }
+  }
+}
+
+module reedswitch() {
+#  hull() {
+    translate([-reedswitchl/2,0,0]) sphere(d=reedswitchd);
+    translate([reedswitchl/2,0,0]) sphere(d=reedswitchd);
+  }
+}
+
+module reedswitchboard() {
+#  translate([-reedswitchboardl/2,0,0]) cube([reedswitchboardl,reedswitchboardthickness,reedswitchboardh]);
+#  translate([0,reedswitchboardthickness+reedswitchy,reedswitchheightonreedswitchboard]) reedswitch();
+}
+
+module d1mini() {
+  translate([-d1minil/2,0,0]) cube([d1minil,d1miniboardthickness,d1minih]);
+  translate([0,d1miniboardthickness+reedswitchboardy,reedswitchboardheightond1mini]) reedswitchboard();
+}
+
+module magnetsensorbase() {
+  if (print==0) #translate([0,-funnelbasew/2-d1minitotalthickness-reedswitchboardy,d1miniheight]) d1mini();
+
+  difference() {
+    union() {
+      difference() {
+	translate([magnetbasex,magnetbasey,magnetbaseheight]) roundedbox(magnetbasel,magnetbasew,magnetbaseh,cornerd);
+
+	// D1 mini cut
+	translate([magnetbasex+cupwall,magnetbasey+cupwall,d1miniheight-ztolerance]) roundedbox(magnetbasel-cupwall*2,magnetbasew-cupwall+cornerd,d1minih+ztolerance*2,cornerd);
+
+	// Reed switch board cut
+	translate([magnetbasex+cupwall,magnetbasey+magnetbasew-reedswitchboardtotalthickness,reedswitchboardheight-ztolerance]) roundedbox(magnetbasel-cupwall*2,reedswitchboardtotalthickness+0.1,reedswitchboardh+ztolerance*2,cornerd);
+
+	// Opening for USB C connector
+	translate([magnetbasex-0.1,magnetbasey+cupwall+ytolerance+d1miniusbcfrombottom,d1miniheight+d1miniusbcheight]) cube([cupwall+0.2,d1miniusbch,d1miniusbcw]);
+
+	// Opening for reset switch
+	translate([magnetbasex-0.1,magnetbasey+cupwall+ytolerance+d1miniresetfrombottom,d1miniheight+d1miniresetheight]) cube([cupwall+d1miniresetoffset+0.2,d1minireseth,d1miniresetw]);
+
+	// Cable path from d1mini to reedswitchboard
+	translate([magnetbasex+magnetbasel/2-d1minireedcablew/2,magnetbasey+cupwall,d1miniheight+d1minih-cornerd/2-0.1]) roundedbox(d1minireedcablew,magnetbasew-cupwall+cornerd,reedswitchboardheight-d1miniheight-d1minih+cornerd*2,cornerd);
+	translate([magnetbasex+magnetbasel/2-d1minireedcableuw/2,magnetbasey+cupwall,reedswitchboardheight-ztolerance]) roundedbox(d1minireedcableuw,magnetbasew-cupwall+cornerd,d1minireedcableuh,cornerd);
+	
+	// Clip to keep the base in place
+	translate([basel-magnetsensorbasesupportl+magnetbasel/2,magnetsensorbasey-magnetsensorbasesupportw+magnetbaseclipd/2,cupwall+magnetbaseclipheight]) tubeclip(magnetbaseclipl+xtolerance,magnetbaseclipd+dtolerance,0);
+      }
+
+      translate([magnetbasex+cupwall,magnetbasey+magnetbasew-d1minitotalthickness,d1miniheight-ztolerance-0.01]) triangle(magnetbasel-cupwall*2+ztolerance*2,d1minitotalthickness,d1minitotalthickness,11);
+    }
+    translate([magnetbasex+magnetbasel/2,magnetbasey+magnetbasew-textdepth+0.01,cupwall+textsize]) rotate([-90,180,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
   }
 }
 
@@ -1329,3 +1396,7 @@ if (print==12 || (print==6 && includetweezers) || print==8) {
 if (print==13) {
   rotate([-90,0,0]) translate([0,funnelbasew/2-cupwall/2+2,-hallsensorheight]) hallsensortester();
 }
+
+if (print==14) {
+  translate([0,45,0]) rotate([90,0,0]) translate([0,-magnetbasey,-cupwall-ztolerance]) magnetsensorbase();
+ }

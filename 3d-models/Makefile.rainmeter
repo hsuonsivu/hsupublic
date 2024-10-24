@@ -1,6 +1,6 @@
 SOURCE=rainmeter.scad
 DEPENDS=hsu.scad Makefile.rainmeter
-ALL=rainmeterbase.stl rainmetergrill.stl rainmeterweathercover.stl rainmeterpoleattach.stl rainmeterflatattach.stl rainmeterall.stl rainmetermagnetlock.stl rainmetermagnettool.stl rainmeterattachments.stl rainmeterwallattach.stl rainmetertweezers.stl rainmetertest.stl rainmeterhallsensortester.stl
+ALL=rainmeterbase.stl rainmetergrill.stl rainmeterweathercover.stl rainmeterpoleattach.stl rainmeterflatattach.stl rainmeterall.stl rainmetermagnetlock.stl rainmetermagnettool.stl rainmeterattachments.stl rainmeterwallattach.stl rainmetertweezers.stl rainmetertest.stl rainmeterhallsensortester.stl rainmetermagnetsensorbase.stl
 
 all: $(ALL)
 
@@ -59,3 +59,6 @@ rainmeterhallsensortester.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=13 -o $@ $(SOURCE)
 	echo $@ built.
 
+rainmetermagnetsensorbase.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=14 -o $@ $(SOURCE)
+	echo $@ built.
