@@ -1021,11 +1021,19 @@ Makefile will make all parts. These include:
 - rainmeterattachments.stl will print both wall and 62pole attachments, as
   those are the largest.
 
-- hallmetersensortester.stl is a addition to test hall sensor. 
+- hallmetersensortester.stl is a addition to test hall sensor. In the
+  end we used reed switch so this is obsolete.
 
-Electronics to calculate rain is not yet ready. Real Soon Now...
+- rainmetermagnetsensorbase.stl makes an electronics box for
+  reedswitch board and d1mini. If you want to use some other
+  electronics, modify this to suit your implementation.
 
-![rainmeter in Openscad.](rainmeter.png.png)
+We used d1mini with a reedswitch between GND and pin 4 to detect
+swing. With the 90mm funnel it corresponds to 1.62mm of rain for a
+swing, so this is not very accurate. Making cups smaller and making
+funnel larger would increase resolution. 
+
+![rainmeter in Openscad.](rainmeter.png)
 
 ### bicyclebottleholder.scad
 
