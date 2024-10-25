@@ -1050,4 +1050,12 @@ openings for those so they can be disabled in showertray.scad with
 
 No supports are needed to print.
 
+### postilaatikkokyltti.scad
+
+Mailbox sign designed for [Orthex mailbox]
+(https://www.tokmanni.fi/postilaatikko-valikansi-harmaa-6411760556135?).
+The model includes locking pin to keep the sign in place.
+
+Change "texts" and "textsizes", and possibly adjust width if necessary.
+
 
