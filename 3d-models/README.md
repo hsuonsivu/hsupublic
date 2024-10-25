@@ -968,22 +968,17 @@ escaped the form and the wheel was ruined beyond repair. Maybe someone has use f
 
 ### Makefile.rainmeter
 
-(Electronics and weather cover still in progress)
-
 A simple rain meter, which uses balanced cups to meter amount of
-rain. Set print=1 in openscad to get printable model. 
+rain. Use the Makefile to build the parts.
 
 The hole for magnet is designed round magnet which has diameter of
-6.4mm and thickness of 3.2mm. A drop of superglue should keep it in
+6.4mm and thickness of 3.2mm. 
 place.
-
-Electronics (not yet done) will consist of ESP32 and reed switch, to
-allow reading the values remotely.
 
 No supports are needed to print. The openscad file includes option
 "adhesion" which is enabled by default, this will create some adhesion
 structures around higher objects or objects which have shown tendency
-to warp. You can disable this option and use printer's brim if these
+to warp. You can disable this option and use slicer's brim if these
 do not work well enough.
 
 Makefile will make all parts. These include:
@@ -999,14 +994,16 @@ Makefile will make all parts. These include:
 - Attachments for flat surface, a 62mm pole, and vertical
   surface. These all assume 35mm wood screws to be used. The unit
   itself will stand on flat surface, but can be screwed into place
-  with flat attachment.
+  with flat attachment. The attachments use a clip to keep the unit in
+  place, but you can use a 3.5mm screw to secure the unit.
 
 - Plastic tweezers to help putting magnet into its slot.
 
 - Very small part to lock the magnet in place after the magnet is in
   its slot. Narrow bent-nose pliers are very useful to install this
-  after. This allows magnets to be recovered from the print. The lock
-  part has a tiny ball clip and keeps it in place quite well.
+  after putting the magnet in. This allows magnets to be recovered
+  from the print later. The lock part has a tiny ball clip and keeps
+  the magnet in place quite well.
 
 - A tool to help placing the magnet into its slot. This does not work
   very well and it is overkill anyway, so this is not printed by
@@ -1015,23 +1012,23 @@ Makefile will make all parts. These include:
   somewhere. This part requires accurate printer.
 
 - rainmeterall.stl will print all parts except wall and pole
-  attachments and magnet tool. Pick the one which you will use and
+  attachments and magnet tool. Pick the attachment which you will use and
   print that.
 
 - rainmeterattachments.stl will print both wall and 62pole attachments, as
-  those are the largest.
+  those are the largest. This is in case you have use for both.
 
-- hallmetersensortester.stl is a addition to test hall sensor. In the
+- hallmetersensortester.stl is an addition to test hall sensor. In the
   end we used reed switch so this is obsolete.
 
 - rainmetermagnetsensorbase.stl makes an electronics box for
   reedswitch board and d1mini. If you want to use some other
   electronics, modify this to suit your implementation.
 
-We used d1mini with a reedswitch between GND and pin 4 to detect
-swing. With the 90mm funnel it corresponds to 1.62mm of rain for a
-swing, so this is not very accurate. Making cups smaller and making
-funnel larger would increase resolution. 
+We used d1mini esp32 board with a reedswitch between GND and pin 4 to
+detect swing. With the 90mm funnel it corresponds to 1.62mm of rain
+for a swing, so this is not very accurate. Making cups smaller and
+making funnel larger would increase resolution.
 
 ![rainmeter in Openscad.](rainmeter.png)
 
