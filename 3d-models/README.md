@@ -921,7 +921,7 @@ each other for stability.
 
 ![stevensonshield in Openscad.](stevensonshield.png)
 ![stevensonshield with screen in Openscad.](stevensonshield2.png)
-:![stevensonshield installed.](stevensonshield.jpg)
+![stevensonshield installed.](stevensonshield.jpg)
 
 ### hyllynpidike.scad
 
@@ -1063,4 +1063,6 @@ The model includes locking pin to keep the sign in place.
 
 Change "texts" and "textsizes", and possibly adjust width if necessary.
 
+![postilaatikkokyltti in Openscad.](postilaatikkokyltti1.png)
+![postilaatikkokyltti, backside in Openscad.](postilaatikkokyltti2.png)
 
