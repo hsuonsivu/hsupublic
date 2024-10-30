@@ -1,8 +1,27 @@
 SOURCE=rainmeter.scad
 DEPENDS=hsu.scad Makefile.rainmeter
-ALL=rainmeterbase.stl rainmetergrill.stl rainmeterweathercover.stl rainmeterpoleattach.stl rainmeterflatattach.stl rainmeterall.stl rainmetermagnetlock.stl rainmetermagnettool.stl rainmeterattachments.stl rainmeterwallattach.stl rainmetertweezers.stl rainmetertest.stl rainmeterhallsensortester.stl rainmetermagnetsensorbase.stl
+ALL=rainmeterbase.stl rainmetergrill.stl rainmeterweathercover.stl rainmeterpoleattach.stl rainmeterflatattach.stl rainmeterall.stl rainmetermagnetlock.stl rainmetermagnettool.stl rainmeterattachments.stl rainmeterwallattach.stl rainmetertweezers.stl rainmetermagnetsensorbase.stl
+# rainmeterhallsensortester.stl rainmetertest.stl 
 
 all: $(ALL)
+
+dist: rainmeter-full-distribution.zip rainmeter-source-distribution.zip
+
+rainmeter-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf rainmeter-distribution
+	rm -f rainmeter-distribution.zip
+	mkdir -p rainmeter-distribution
+	cp $(SOURCE) $(DEPENDS) rainmeter-distribution
+	zip -r $@ rainmeter-distribution
+	echo $@ built.      
+
+rainmeter-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS)
+	rm -rf rainmeter-distribution
+	rm -f rainmeter-distribution.zip
+	mkdir -p rainmeter-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) rainmeter-distribution
+	zip -r $@ rainmeter-distribution
+	echo $@ built.      
 
 clean:
 	rm $(ALL)

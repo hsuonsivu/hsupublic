@@ -921,7 +921,7 @@ they should be printed in sets, as they have a bit of attachment to
 each other for stability.
 
 ![stevensonshield in Openscad.](stevensonshield.png)
-![stevensonshield in a temporary install.](stevensonshield.jpg)
+:![stevensonshield installed.](stevensonshield.jpg)
 
 ### hyllynpidike.scad
 
@@ -1012,8 +1012,7 @@ Makefile will make all parts. These include:
   somewhere. This part requires accurate printer.
 
 - rainmeterall.stl will print all parts except wall and pole
-  attachments and magnet tool. Pick the attachment which you will use and
-  print that.
+  attachments. Pick the attachment which you will use and print that.
 
 - rainmeterattachments.stl will print both wall and 62pole attachments, as
   those are the largest. This is in case you have use for both.
@@ -1031,6 +1030,7 @@ for a swing, so this is not very accurate. Making cups smaller and
 making funnel larger would increase resolution.
 
 ![rainmeter in Openscad.](rainmeter.png)
+![rainmeter installed.](rainmeter.jpg)
 
 ### bicyclebottleholder.scad
 

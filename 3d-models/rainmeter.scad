@@ -3,18 +3,15 @@
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
 // TODO:
-// weathercover screw attachment, underneath?q
+// weathercover screw attachment, underneath
 
-// Larger funnel sizes would be useful to increase resolution or make
-// cups smaller. However, current funnel size is used everywhere and
+// Larger funnel sizes or making e cups smaller would increase
+// resolution. However, current funnel size is used everywhere and
 // changing it would require larger changes to the
-// weathercover. Making cups smaller may increase weight dead mass the
-// mechanism more unreliable, and finding even smaller magnets could
-// be difficult. Likely easiest is to let funneltopd calculated as
-// currently from 90mm and then extend the weathercover upper funnel
-// part keeping the other shapes as they are.  Current resolution is
-// multiples of 1.62mm of rain as that is the amount of water in cup
-// before it will swing.
+// weathercover. Making cups smaller may increase dead mass and make
+// the mechanism less reliable, and finding even smaller magnets could
+// be difficult. The current resolution is multiples of 1.62mm of rain
+// as that is the amount of water in cup before it will swing.
 
 include <hsu.scad>
 
@@ -29,8 +26,8 @@ adhesionh=0.2;
 
 grid=1;
 includepoleattach=0;
-includeflatattach=1;
-includewallattach=0;
+includeflatattach=0;
+includewallattach=1;
 includetweezers=1;
 includemagnettool=1;
 includehallsensortester=0;
@@ -84,17 +81,17 @@ lowercupangle=cupangle+10;
 towerw=cupaxled+1;
 
 raincupd=90;
-rainpiped=4; // Inside diameter
+rainpiped=4; 
 raincupbottomh=2*wall;
 raincupmidd=rainpiped+raincupbottomh+wall*2;
-raincupmidh=(raincupd-raincupmidd)/2.35; //30;
+raincupmidh=(raincupd-raincupmidd)/2.35; 
 raincuptoph=5;
 funneltoph=raincupbottomh+raincupmidh+raincuptoph;
 
 stopperw=wall*3;
 stopperh=wall;
 stopperl=wall*3;
-stopperheight = cupaxleheight+cupsideraisel*sin(-cupangle)+cupbaseh+cupsideraiseh-cupwall+ztolerance*2.5; //basetoph+wall;
+stopperheight = cupaxleheight+cupsideraisel*sin(-cupangle)+cupbaseh+cupsideraiseh-cupwall+ztolerance*2.5;
 
 magnettoolxtolerance=0.2;
 magnettoolytolerance=0.2;
@@ -111,7 +108,7 @@ magnetlockh=magnetd*1.3;
 magnettoolcaplockd=1.8;
 magnettoolcapdtolerance=0.2;
 magnettoolcaplockoffset=magnettoolwall-magnettoolcaplockd/2+magnettoolcapdtolerance;
-magnettoolcaplockh=magnettoolcaplockd+magnettoolwall+magnettoolztolerance; // From top of feeder
+magnettoolcaplockh=magnettoolcaplockd+magnettoolwall+magnettoolztolerance;
 magnettoolcaplockattachx=30;
 magnettoolcaplockattachw=2.5;
 magnetytolerance=0.2;
@@ -119,10 +116,10 @@ magnetdtolerance=dtolerance;
 magnetspringcut=0.25;
 magnetspringcutw=magnetlockd;
 magnetspringcutl=magnetlockh;
-magnetspringlow=cupbaseh+cuph+cupwall-magnetd/2; //-cupaxlewidth/2-cupwall/2+magnetwall-magnetdroph; // Center of the magnet
+magnetspringlow=cupbaseh+cuph+cupwall-magnetd/2; // Center of the magnet
 magnetspringhigh=magnetspringlow+magnetspringcutl;
 
-magnettoolpusherposition=0; // 8, magnettoolfeedx to test
+magnettoolpusherposition=0;
 magnettoolfeedx=30; // Length to magnet feeding hole
 magnettoolcontroll=20; // Length of finger place when pushed in
 magnettoolcontrolw=10;
@@ -133,7 +130,7 @@ magnettoolhandled=25;
 magnettoolhandleh=6;
 magnettoolhandlecornerd=4;
 magnettoolcontroloffset=magnettoolwall*3;
-magnettoolplacerl=magnettoolfeedx+magnettoolcontroll+magnetd+magnettoolcontroloffset;//100; // Length to handle when pushed in
+magnettoolplacerl=magnettoolfeedx+magnettoolcontroll+magnetd+magnettoolcontroloffset; // Length to handle when pushed in
 magnettoolcontrolslit=2.5;
 magnettoolcontrolh=magnettoolcontrolslit/2;
 magnettoolgrabberarmw=1.2;
@@ -190,7 +187,7 @@ weathercovertoph=toph-weathercoverstartnarrowing;
 weathercovercliplength=30;
 weathercoverclipd=1.7*2;
 weathercoverclipheight=wall+weathercoverclipd/2+5;
-weathercoverclipdistance=funneltopd/2-weathercoverclipd/2; //wall+0.6;
+weathercoverclipdistance=funneltopd/2-weathercoverclipd/2;
 weathercoverclipdtolerance=0.3;
 basesidew=basew;
 baseguideh=20;
@@ -199,12 +196,11 @@ basesideoffset=5;
 
 grillheight=toph-raincuptoph+ztolerance;
 
-// Not printed, just used when debugging the model and cut out stuff
-// 62mm standard pole
+// Variables for pole and wall attachments
 poled=62;
 poleh=250;
 poleheight=-150;
-poledistance=funneltopd/2+20+poled/2; // From rain cover
+poledistance=funneltopd/2+20+poled/2; // Distance from rain cover
 
 screwd=3.5;
 screwlength=35;
@@ -282,6 +278,7 @@ areatextheight=textheight-textsize;
 
 extensionflangew=adhesion?basesidew/2+wall:2*wall;
 
+// Case for Reed switch and ESP32 board to count swings to measure the rain
 reedswitchd=2.5;
 reedswitchl=14;
 reedswitchy=3.25;
@@ -289,8 +286,7 @@ reedswitchboardh=17;
 reedswitchheight=cupaxleheight+cupbaseh+cuph+cupwall;
 reedswitchheightonreedswitchboard=15;
 reedswitchboardl=35;
-//reedswitchboardthickness=9; // Including reed switch etc
-reedswitchboardthickness=2.2; // Including reed switch etc
+reedswitchboardthickness=2.2;
 reedswitchboardtotalthickness=8;
 reedswitchboardy=3.2;
 reedswitchboardheightond1mini=35;
@@ -322,6 +318,7 @@ magnetsensorbasesupportdepth=20;
 magnetsensorbasey=-cupaxlewidth/2-cupwall*2-cupaxlew/2-ytolerance;
 magnetsensorbasesupportw=15;
 
+// Magnet placement and related variables
 magnetbasew=magnetsensorbasesupportw-ytolerance*2-cupwall;
 magnetbaseheight=cupwall+ztolerance;
 magnetbasey=magnetsensorbasey-ytolerance-magnetbasew;;
@@ -332,7 +329,8 @@ magnetbaseclipheight=10;
 magnetbaseclipl=15;
 magnetbaseclipd=cupwall+ytolerance+0.5;
 
-// Hallsensor sensor x=centered, sensorback y=0, z=0
+// Hallsensor sensor x=centered, sensorback y=0, z=0. This is not used as we opted to use a reed switch
+// Left this in place in case we would make a version which uses a hall sensor
 module hallsensor() {
   difference() {
     union() {
@@ -357,12 +355,12 @@ hallsensortesterxsize=wall+diodepinstep+hallsensorpinx+buttoncellh+hallsensorpin
 hallsensortesterysize=wall+ytolerance+buttoncelld+ytolerance+wall;
 hallsensortesteryshortening=buttoncelld/3;
 hallsensortesterh=wall+ztolerance+buttoncelld+ztolerance+wall;
-hallsensortesterbasey=funneltopd/2-basesidew-basesideoffset+cupwall+cupwall/2;//funnelbasew/2-basesidew/2;
+hallsensortesterbasey=funneltopd/2-basesidew-basesideoffset+cupwall+cupwall/2;
 hallsensortesterbaseh=cupaxleheight-wall;
 
 hallsensortesterxposition=-wall-diodepinstep-hallsensorpinx/2-xtolerance/2+buttoncellh/2-hallsensorpinstep;
-// -wall-hallsensorpinx/2-xtolerance-buttoncellh/2+hallsensorpinstep-hallsensorpinx/2
 
+// Box for testing hall sensor. This is not used, see previous module.
 module hallsensortester() {
   translate([hallsensortesterxposition,0-funnelbasew/2+cupwall/2-2-hallsensortesterbasey,cupwall])  roundedbox(hallsensortesterxsize,hallsensortesterbasey,hallsensortesterbaseh,cornerd);
   translate([0,0-funnelbasew/2+cupwall/2-2,hallsensorheight]) {
@@ -420,9 +418,9 @@ module hallsensortester() {
   }
 }
 
+// This keeps the tiny magnet in its slot.
 module magnetlock() {
   translate([0,0,cupaxleheight]) rotate([0,angle,0]) {
-    //translate([0,-cupaxlewidth/2-cupwall/2+magnetwall-magnetdroph,cupbaseh+cuph+cupwall-magnetd/2]) rotate([-90,0,0]) cylinder(d=magnetd,h=magneth);
     difference() {
       union() {
 	hull() {
@@ -442,6 +440,7 @@ module magnetlock() {
   }
 }
 
+// A grill to protect funnel from leaves and such
 module grill() {
   d=funneltopd-cupwall*3+dtolerance;
 
@@ -552,7 +551,7 @@ module weathercover() {
 
     translate([0,-funneltopd/2+textdepth-0.01,areatextheight]) rotate([90,0,0]) linear_extrude(height=textdepth) text(areatext, size=textsize-2, valign="center",halign="center",font="Liberation Sans:style=Bold");
     translate([0,funneltopd/2-textdepth+0.01,areatextheight]) rotate([-90,180,0]) linear_extrude(height=textdepth) text(areatext, size=textsize-2, valign="center",halign="center",font="Liberation Sans:style=Bold");
-}
+  }
 }
 
 module sideguide(w) {
@@ -602,7 +601,6 @@ module cups() {
 	      translate([0,-cupaxlewidth/2,cupbaseh+cuph+cupwall+cupextrah-0.1]) rotate([-90,0,0]) cylinder(d=0.1,h=cupwidth);
 	      translate([cuph*middleadjust,-cupaxlewidth/2,cupbaseh+cupwall-0.1]) rotate([-90,0,0]) cylinder(d=0.1,h=cupwidth);
 	      translate([-cuph*middleadjust,-cupaxlewidth/2,cupbaseh+cupwall-0.1]) rotate([-90,0,0]) cylinder(d=0.1,h=cupwidth);
-	      //	      translate([-cuph*middleadjust,-cupaxlewidth/2,cupbaseh+cupwall-0.1]) rotate([-90,0,0]) cylinder(d=0.1,h=cupwidth);
 	    }
 
 	    // Magnet holder
@@ -959,6 +957,7 @@ module poleattach() {
   }
 }
 
+// Attachment for a wall
 module wallattach() {
   difference() {
     union() {
@@ -968,7 +967,6 @@ module wallattach() {
       hull() {
 	translate([-wallattachnarroww/2,-walldistance,wallattachheight]) roundedbox(wallattachnarroww,wallattachthickness,wallattachh,cornerd);
 	translate([-wallattachnarroww/2,-walldistance,wallattachheight]) roundedbox(wallattachnarroww,cornerd,wallattachh+cornerd*3,cornerd);
-	//translate([0,0,poleattachmetersupportmidh]) cylinder(d=poleattachbased,h=1);
 	translate([0,0,poleattachheight]) cylinder(d=poleattachbased,h=1);
       }
 
@@ -980,10 +978,12 @@ module wallattach() {
 	
       // Foot to keep the base in balance when testing on table etc
       translate([0,0,poleattachheight]) cylinder(d=wallattachd,wallattachh);
+
+      // Upper structure between wallplate and base
       hull() {
 	translate([basel-attachplatel,-attachplatew/2,-attachplateh-ztolerance-largecornerd]) roundedbox(attachplatel,attachplatew,largecornerd,largecornerd);
 	translate([0,-walldistance+wallattachlowfromwall+poleattachbased/2,poleattachheight+wallattachlowh]) cylinder(d=wallattachlowd,h=wallattachh-wallattachlowh);
-	translate([0,-walldistance+wallattachd/2,wallattachheight+wallattachmidh]) scale([1,1,0.5]) rotate([90,0,0]) cylinder(d=wallattachnarroww,h=1);
+	translate([0,-walldistance+wallattachthickness,wallattachheight+wallattachmidh-wall]) scale([1,1,0.5]) rotate([90,0,0]) cylinder(d=wallattachnarroww,h=1);
       }
 
       hull() {
@@ -1004,7 +1004,7 @@ module wallattach() {
   }
 }
 
-
+// This grabs the magnet
 module claw(y) {
   translate([0,y,0]) {
     intersection() {
@@ -1029,6 +1029,7 @@ module claw(y) {
   }
 }
 
+// This part pushes magnet from feed to magnet placement hole
 module magnettoolpusher() {
   // Center of pusher
   translate([magnettoolpusherposition,0,0]) difference() {
@@ -1063,6 +1064,7 @@ module magnettoolpusher() {
   }
 }
 
+// Cut to create a space for the pusher
 module magnettoolpathcut(start,l) {
   hull() {
     translate([start-magnettooloutpositionw,-magnettoolpathnarrow/2,magnettoolpathheight]) cube([l+magnettooloutpositionw*2,magnettoolpathnarrow,magnettoolpathh]);
@@ -1070,6 +1072,7 @@ module magnettoolpathcut(start,l) {
   }
 }
 
+// Cap for magnet feeder
 module magnettoolcap() {
   outd=magnetd+magnettooldtolerance+magnettoolwall*2+magnettoolcapdtolerance+magnettoolwall*2;
   ind=magnetd+magnettooldtolerance+magnettoolwall*2+magnettoolcapdtolerance;
@@ -1083,6 +1086,7 @@ module magnettoolcap() {
   translate([-magnettoolcaplockattachx+ind/2,-magnettoolcaplockattachw/2,0]) cube([magnettoolcaplockattachx-ind/2-ind/2,magnettoolcaplockattachw,0.4]);
 }
 
+// Tool to place magnets into whatever slot or home they are supposed to go into.
 module magnettool() {
   difference() {
     union() {
@@ -1128,6 +1132,7 @@ module magnettool() {
   }
 }
 
+// Handle part of the magnet tool to make it easier to use
 module magnettoolhandle() {
     translate([magnettooll-cornerd,-magnettoolplacerw/2,0]) roundedbox(magnettoolhandlel-cornerd,magnettoolplacerw,magnettoolplacerh-magnettoolwall,cornerd);
   hull() {
@@ -1139,6 +1144,8 @@ module magnettoolhandle() {
   }
 }
 
+// Tweezers to place single magnets to magnet hole. Normal tweezers
+// are magnetic so they are not useful for small magnets.
 tweezersl=120;
 tweezersw=9;
 tweezerswl=50;
@@ -1204,6 +1211,12 @@ module tweezers() {
   }
 }
 
+
+// You can use D1mini ESP board and reed switch to count the swings to
+// measure amount of rain. We used a small prototyping board to place
+// the reed switch into, as they are fragile and needs to be placed
+// accurately to react to the magnet passing by.
+
 module reedswitch() {
 #  hull() {
     translate([-reedswitchl/2,0,0]) sphere(d=reedswitchd);
@@ -1255,6 +1268,9 @@ module magnetsensorbase() {
   }
 }
 
+// Main part. This is the most complex part (all code is in cups
+// module for historical reasons) and includes print-in-place swing
+// with 3d-printed hinge.
 module rainmeter() {
   cups();
 }
@@ -1273,8 +1289,10 @@ if (print==0) {
       if (includehallsensortester) hallsensortester();
       if (includehallsensorbase) magnetsensorbase();
     }
-    if (0) hull() {
-      //translate([-basel*2,-weathercoveroutd-100,-200]) cube([basel*2+100,weathercoveroutd+100,400]); //-9.05
+
+    // Debugging cuts
+    if (debug) hull() {
+      translate([-basel*2,-weathercoveroutd-100,-200]) cube([basel*2+100,weathercoveroutd+100,400]); //-9.05
       //      translate([0,-weathercoveroutd-100,-200]) cube([basel*2+100,weathercoveroutd+200,400]); //-9.05
     }
   }
@@ -1403,6 +1421,6 @@ if (print==13) {
   rotate([-90,0,0]) translate([0,funnelbasew/2-cupwall/2+2,-hallsensorheight]) hallsensortester();
 }
 
-if (print==14) {
-  translate([0,45,0]) rotate([90,0,0]) translate([0,-magnetbasey,-cupwall-ztolerance]) magnetsensorbase();
+if (print==14 || print==6) {
+  translate([0,magnetbaseh/2,0]) rotate([90,0,0]) translate([0,-magnetbasey,-cupwall-ztolerance]) magnetsensorbase();
  }
