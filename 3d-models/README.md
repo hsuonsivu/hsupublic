@@ -883,9 +883,8 @@ This is a complex model and thus can be slow to view and process. It
 also takes quite a bit of time to print. Makefile generates some sets
 of parts to allow parts printed in few sessions.
 
-TODO: The shield might benefit from a bug netting inside to avoid
-spider nets and bug nests inside. This could be easy to add, but would
-limit airflow.
+The shield includes a bug screen inside to avoid spider nets and bug
+nests inside.
 
 Tunables in stevensonshield.scad:
 
@@ -921,6 +920,7 @@ they should be printed in sets, as they have a bit of attachment to
 each other for stability.
 
 ![stevensonshield in Openscad.](stevensonshield.png)
+![stevensonshield with screen in Openscad.](stevensonshield2.png)
 :![stevensonshield installed.](stevensonshield.jpg)
 
 ### hyllynpidike.scad
