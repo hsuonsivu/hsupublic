@@ -2,29 +2,35 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
-include <hsu.scad>
+//include <hsu.scad>
 
-print=0;
+print=1;
 pipes=1;
 
-fnsmall=print?30:12;
-fnlarge=print?90:30;
+fnsmall=print?60:12;
+fnlarge=print?120:30;
+
+$fn=fnsmall;
 
 bardiameter=18;
 distancefromwall=52+4.45-bardiameter;
 
-piped=13.5;
+piped=14;
 pipeseparation=126+piped;
 pipedepth=22-piped/2;
 
-versiontext="Showertray V1.1";
-textdepth=0.8;
+versiontext="Showertray V1.3";
+textdepth=0.6;
 textsize=7;
 
 cornerd=10;
+xcornerd=2;
+ycornerd=2;
+zcornerd=10;
+
 width=220;
 height=20;
-backcornerd=distancefromwall*2;//height*2;
+backcornerd=distancefromwall*2;
 topextension=5;
 bardepth=distancefromwall-bardiameter/2;
 barnarrowing=0.3;
@@ -34,10 +40,10 @@ wall=2.0;
 holed=12;
 holesx=3;
 holesy=5;
-holexstart=pipedepth+piped; //distancefromwall; // backcornerd/2;
-holeystart=bardiameter/2+cornerd/2;
-holexend=depth-cornerd/2;
-holeyend=width/2-cornerd/2;
+holexstart=pipedepth+piped;
+holeystart=bardiameter/2+ycornerd/2;
+holexend=depth-xcornerd/2;
+holeyend=width/2-ycornerd/2-wall/2;
 holexstep=(holexend-holexstart)/holesx;
 holeystep=(holeyend-holeystart)/holesy;
 
@@ -54,34 +60,34 @@ module trayform(w) {
   difference() {
     intersection() {
       minkowski() {
-	sphere(d=cornerd);
+	scale([xcornerd/cornerd,ycornerd/cornerd,zcornerd/cornerd]) sphere(d=cornerd);
 	difference() {
 	  union() {
-	    translate([cornerd/2+backcornerd/2+w,w-cornerd/2,cornerd/2+w]) cube([depth-backcornerd/2-cornerd/2-cornerd/2-w*2,width/2-w*2,height-cornerd/2-w+topextension]);
+	    translate([xcornerd/2+backcornerd/2+w,w,zcornerd/2+w]) cube([depth-backcornerd/2-xcornerd-w*2,width/2-ycornerd/2-w*2,height-zcornerd/2-w+topextension]);
 	    intersection() {
 	      hull() {
-		translate([backcornerd/2,0,height]) rotate([-90,0,0]) cylinder(d=backcornerd-cornerd-w*2,h=width/2-cornerd/2-w,$fn=fnlarge);
+		translate([backcornerd/2,0,height]) rotate([-90,0,0]) cylinder(d=backcornerd-xcornerd-w*2,h=width/2-xcornerd/2-w,$fn=fnlarge);
 		if (backcornerd/2+topextension > height) {
-		  translate([backcornerd/2,0,backcornerd/2+topextension]) rotate([-90,0,0]) cylinder(d=backcornerd-cornerd-w*2,h=width/2-cornerd/2-w);
+		  translate([backcornerd/2,0,backcornerd/2+topextension]) rotate([-90,0,0]) cylinder(d=backcornerd-xcornerd-w*2,h=width/2-xcornerd/2-w);
 		}
 	      }
-	      translate([cornerd/2,0,cornerd/2+w]) cube([backcornerd/2+cornerd/2,width/2-cornerd/2,height+cornerd/2+topextension]);
+	      translate([xcornerd/2,0,zcornerd/2+w]) cube([backcornerd/2+xcornerd,width/2+ycornerd/2-w,height+zcornerd/2+topextension]);
 	    }
 	  }
 
 	  union() {
 	    // Cut for bar
-	    translate([distancefromwall+bardiameter/2,0,cornerd/2-0.01]) cylinder(h=height+cornerd/2+topextension+0.02,d=bardiameter+cornerd+w*2,$fn=fnlarge);
-	    translate([distancefromwall+bardiameter/2,-cornerd/2,cornerd/2-0.01]) cube([depth-distancefromwall-bardiameter/2,bardiameter/2+cornerd+w-barnarrowing,height+topextension+0.02]);
+	    translate([distancefromwall+bardiameter/2,0,zcornerd/2-0.01]) cylinder(h=height+zcornerd/2+topextension+0.02,d=bardiameter+xcornerd+w*2,$fn=fnlarge);
+	    translate([distancefromwall+bardiameter/2,-ycornerd/2,zcornerd/2-0.01]) cube([depth-distancefromwall-bardiameter/2,bardiameter/2+ycornerd+w-barnarrowing,height+topextension+0.02]);
 
 	    if (pipes) {
 	      // Cuts for pipes on the wall
-	      translate([pipedepth,pipeseparation/2,height-0.01]) cylinder(h=cornerd+topextension+0.02+w,d=piped+cornerd+w*2,$fn=fnlarge);
+	      translate([pipedepth,pipeseparation/2,height-0.01]) cylinder(h=zcornerd+topextension+0.02+w,d=piped+xcornerd+w*2,$fn=fnlarge);
 	      intersection() {
-		translate([pipedepth+distancefromwall,pipeseparation/2,height]) rotate([-90,0,180]) curvedcylinder(height+cornerd/2+topextension+0.02,piped+cornerd+w*2,distancefromwall,90,piped);
-		translate([pipedepth-piped/2-w,pipeseparation/2-piped/2-cornerd/2-w,0]) cube([distancefromwall,piped+cornerd+w*2,height+cornerd/2-w]);
+		translate([pipedepth+distancefromwall,pipeseparation/2,height]) rotate([-90,0,180]) curvedcylinder(height+ycornerd/2+topextension+0.02,piped+xcornerd+w*2,distancefromwall,90,piped);
+		translate([pipedepth-piped/2-w,pipeseparation/2-piped/2-ycornerd/2-w,0]) cube([distancefromwall,piped+ycornerd+w*2,height+cornerd/2-w]);
 	      }
-	      translate([w-0.01,pipeseparation/2-piped/2-cornerd/2-w,w-0.01]) cube([pipedepth,piped+cornerd+w*2,height+topextension+cornerd+1+0.02]);
+	      translate([w-0.01,pipeseparation/2-piped/2-ycornerd/2-w,w-0.01]) cube([pipedepth,piped+ycornerd+w*2,height+topextension+zcornerd+1+0.02]);
 	    }
 	  }
 	}
@@ -121,6 +127,11 @@ module showertray() {
       oneside();
       mirror([0,1,0]) oneside();
       translate([pipedepth,0,wall-0.01]) rotate([0,0,90]) linear_extrude(height=textdepth+1) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
+
+      difference() {
+	translate([0.1,0,depth-height-(pipeseparation-piped-zcornerd)*0.5]) rotate([0,90,0]) scale([0.4,1,1]) cylinder(h=wall-0.1,d=pipeseparation-piped-xcornerd);
+	translate([-0.2,-pipeseparation/2,-pipeseparation/2-0.1]) cube([wall+0.4,pipeseparation,height+pipeseparation/2]);
+      }
     }
   }
 }
