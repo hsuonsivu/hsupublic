@@ -5,13 +5,8 @@
 // TODO:
 // weathercover screw attachment, underneath
 
-// Larger funnel sizes or making e cups smaller would increase
-// resolution. However, current funnel size is used everywhere and
-// changing it would require larger changes to the
-// weathercover. Making cups smaller may increase dead mass and make
-// the mechanism less reliable, and finding even smaller magnets could
-// be difficult. The current resolution is multiples of 1.62mm of rain
-// as that is the amount of water in cup before it will swing.
+// The current resolution with 25446mm2 cup makes 0.40514mm of rain
+// per swing, so that is the maximum resolution.
 
 include <hsu.scad>
 
