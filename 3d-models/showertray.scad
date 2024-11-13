@@ -20,7 +20,7 @@ pipeseparation=126+piped;
 pipedepth=22-piped/2;
 
 versiontext="Showertray V1.3";
-textdepth=0.6;
+textdepth=0.5;
 textsize=7;
 
 cornerd=10;
@@ -35,7 +35,7 @@ topextension=5;
 bardepth=distancefromwall-bardiameter/2;
 barnarrowing=0.3;
 depth=distancefromwall-bardiameter/2+height*2+20;
-wall=2.0;
+wall=2.5;
 
 holed=12;
 holesx=3;
@@ -59,7 +59,7 @@ module curvedcylinder(h,diameter,curved,a,stretch) {
 module trayform(w) {
   difference() {
     intersection() {
-      minkowski() {
+      minkowski(convexity=2) {
 	scale([xcornerd/cornerd,ycornerd/cornerd,zcornerd/cornerd]) sphere(d=cornerd);
 	difference() {
 	  union() {
@@ -128,7 +128,7 @@ module showertray() {
       mirror([0,1,0]) oneside();
       translate([pipedepth,0,wall-0.01]) rotate([0,0,90]) linear_extrude(height=textdepth+1) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
 
-      difference() {
+      if (!pipes) difference() {
 	translate([0.1,0,depth-height-(pipeseparation-piped-zcornerd)*0.5]) rotate([0,90,0]) scale([0.4,1,1]) cylinder(h=wall-0.1,d=pipeseparation-piped-xcornerd);
 	translate([-0.2,-pipeseparation/2,-pipeseparation/2-0.1]) cube([wall+0.4,pipeseparation,height+pipeseparation/2]);
       }
@@ -136,7 +136,13 @@ module showertray() {
   }
 }
 
-intersection() {
-  showertray();
-  //      cube([100,width/2,100]);
-}
+if (print==0) {
+  intersection() {
+    showertray();
+    //      cube([100,width/2,100]);
+  }
+ }
+
+if (print==1) {
+  rotate([0,0,90]) showertray();
+ }
