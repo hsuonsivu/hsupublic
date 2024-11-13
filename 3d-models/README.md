@@ -1040,8 +1040,8 @@ No supports are needed to print.
 
 ### suihkupaa.scad
 
-Our office shower mixes were replaced, and the new shower heads do not
-properly fit in the old fittins. This is an adapter to work around the problem.
+Our office shower mixers were replaced, and the new shower heads do not
+properly fit in the old fittings. This is an adapter to work around the problem.
 
 No supports are needed to print.
 
@@ -1057,8 +1057,8 @@ No supports are needed to print.
 
 ### postilaatikkokyltti.scad
 
-Mailbox sign designed for [Orthex mailbox]
-(https://www.tokmanni.fi/postilaatikko-valikansi-harmaa-6411760556135?).
+Mailbox sign designed for Orthex mailbox
+(https://www.tokmanni.fi/postilaatikko-valikansi-harmaa-6411760556135).
 The model includes locking pin to keep the sign in place.
 
 Change "texts" and "textsizes", and possibly adjust width if necessary.
