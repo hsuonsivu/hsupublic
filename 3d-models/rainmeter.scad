@@ -15,21 +15,21 @@
 
 include <hsu.scad>
 
-print=0;
+print=15;
 debug=0;
 strong=0; // Add strengtening structures around screwholes. Slicer dependent.
 
 adhesion=print?1:0;
-adhesiongap=0.15/2;
+adhesiongap=0.1;//15/2;
 adhesionwd=6;
 adhesionh=0.2;
 
 grid=1;
-includepoleattach=0;
+includepoleattach=1;
 includeflatattach=0;
-includewallattach=1;
+includewallattach=0;
 includetweezers=1;
-includemagnettool=1;
+includemagnettool=0;
 includehallsensortester=0;
 includehallsensorbase=1;
 weathercover=0;
@@ -80,11 +80,12 @@ lowercupangle=cupangle+10;
 
 towerw=cupaxled+1;
 
-raincupd=90;
+weathercovercupd=90;
+topd=180;
 rainpiped=4; 
 raincupbottomh=2*wall;
 raincupmidd=rainpiped+raincupbottomh+wall*2;
-raincupmidh=(raincupd-raincupmidd)/2.35; 
+raincupmidh=(topd-raincupmidd)/2.35; 
 raincuptoph=5;
 funneltoph=raincupbottomh+raincupmidh+raincuptoph;
 
@@ -165,7 +166,7 @@ magnettoolfingerheight=magnettoolplacerh+magnettoolcontrolw+magnettoolcontrolh+m
 funnelbasew=cupaxlewidth+(cupaxlew/2+wall+ytolerance)*2;
 funnelh=cupbaseh+cupwall+cuph+max(stopperh,magnetd)+magnetd/2;
 baselargerthancup=(basel*2>=90);
-funneltopd=baselargerthancup?basel*2:raincupd;
+funneltopd=topd;//weathercovercupd; //baselargerthancup?basel*2:weathercovercupd;
 funneloffset=0;
   
 funnelheight=cupaxleheight+funnelh;
@@ -181,13 +182,13 @@ weathercoveroutd=-funneloffset*2+cuplength*2+cupwidth/2+wall*2; // cupwidth part
 weathercoverringh=2;
 weathercoverinsideh=raincuptoph-gridh-ztolerance;
 weathercoverdroph=raincuptoph-gridh;
-weathercoverstartnarrowing=toph-(weathercoveroutd-funneltopd);
+weathercoverstartnarrowing=toph-(weathercoveroutd-weathercovercupd);
 weathercovertoph=toph-weathercoverstartnarrowing;
 
 weathercovercliplength=30;
 weathercoverclipd=1.7*2;
 weathercoverclipheight=wall+weathercoverclipd/2+5;
-weathercoverclipdistance=funneltopd/2-weathercoverclipd/2;
+weathercoverclipdistance=weathercovercupd/2-weathercoverclipd/2;
 weathercoverclipdtolerance=0.3;
 basesidew=basew;
 baseguideh=20;
@@ -209,13 +210,13 @@ screwbasel=9;
 screwbaselflat=6;
 attachflatfeeth=1;
 
-wallattachh=90;
-wallattachheight=-wallattachh-20;
+wallattachh=topd/2;//90;
+wallattachheight=-wallattachh-topd/2+20;
 wallscrewoffset=screwtowerd/2+screwtowerd;
 wallattachw=70;
 wallattachd=20;
 wallattachnarroww=wallattachw-screwtowerd/2-20;
-walldistance=funneltopd/2+20; // From rain cover
+walldistance=funneltopd/2+10; // From rain cover
 wallattachthickness=8;
 wallattachmidh=wallattachh-wallattachnarroww/4;
 wallattachlowh=50;
@@ -271,7 +272,7 @@ diodelegl=35;
 buttoncellh=3.2;
 buttoncelld=20;
 
-versiontext=str("V1.8 d", funneltopd);
+versiontext=str("V1.9 d", funneltopd);
 areatext=str("a=",floor(3.14159*(funneltopd/2)*(funneltopd/2)),"mm2");
 textheight=basetoph-10;
 areatextheight=textheight-textsize;
@@ -442,7 +443,7 @@ module magnetlock() {
 
 // A grill to protect funnel from leaves and such
 module grill() {
-  d=funneltopd-cupwall*3+dtolerance;
+  d=funneltopd-cupwall*3;
 
   difference() {
     union() {
@@ -462,10 +463,10 @@ module grill() {
       intersection() {
 	translate([funneloffset,0,funnelheight+raincupbottomh+raincupmidh-cupwall]) cylinder(h=raincuptoph+wall*4,d=d);
 	union() {
-	  for (x=[0:gridstep:basel-1]) {
+	  for (x=[0:gridstep:funneltopd/2-1]) {
 	    translate([x-gridthickness/2,-funneltopd/2,grillheight]) triangle(gridthickness,funneltopd-1,gridh,12);
 	  }
-	  for (x=[-gridstep:-gridstep:-basel-1]) {
+	  for (x=[-gridstep:-gridstep:-funneltopd/2-1]) {
 	    translate([x-gridthickness/2,-funneltopd/2,grillheight]) triangle(gridthickness,funneltopd-1,gridh,12);
 	  }
 	  for (y=[gridstep:gridstep:funneltopd/2-1]) {
@@ -502,17 +503,19 @@ module funneloutside() {
   }
 }
 
+module funnelinside() {
+  // Cutout for funnel insides
+  translate([0,0,funnelheight-0.01]) cylinder(h=raincupbottomh+0.02,d1=rainpiped,d2=rainpiped+raincupbottomh);
+  hull() {
+    translate([0,0,funnelheight+raincupbottomh-0.01]) cylinder(h=0.1,d=rainpiped+raincupbottomh);
+    translate([funneloffset,0,funnelheight+raincupbottomh+raincupmidh]) cylinder(h=raincuptoph+0.1,d=funneltopd-wall*2);
+  }
+}
+
 module funnel() {
   difference() {
     funneloutside();
-    
-    // Cutout for funnel insides
-    translate([0,0,funnelheight-0.01]) cylinder(h=raincupbottomh+0.02,d1=rainpiped,d2=rainpiped+raincupbottomh);
-    hull() {
-      translate([0,0,funnelheight+raincupbottomh-0.01]) cylinder(h=0.1,d=rainpiped+raincupbottomh);
-      translate([funneloffset,0,funnelheight+raincupbottomh+raincupmidh]) cylinder(h=raincuptoph+0.1,d=funneltopd-wall*2);
-    }
-
+    funnelinside();
   }
 }
 
@@ -526,31 +529,35 @@ module weathercover() {
       hull() {
 	intersection() {
 	  translate([funneloffset,0,0]) cylinder(d=weathercoveroutd,h=weathercoverstartnarrowing);
-	  translate([funneloffset-weathercoveroutd/2,-funneltopd/2,0]) cube([weathercoveroutd,funneltopd,weathercoverstartnarrowing]);
+	  translate([funneloffset-weathercoveroutd/2,-weathercovercupd/2,0]) cube([weathercoveroutd,weathercovercupd,weathercoverstartnarrowing]);
 	}
-	translate([funneloffset,0,weathercoverstartnarrowing+weathercovertoph-raincuptoph-0.01]) cylinder(d=funneltopd,h=0.01);
+	if (funneltopd<weathercovercupd)
+	  translate([funneloffset,0,weathercoverstartnarrowing+weathercovertoph-raincuptoph-0.01]) cylinder(d=funneltopd,h=0.01);
       }
     }
 
+    funnelinside();
+    
     hull() {
-      translate([-basel/2+funneloffset-xtolerance,-funneltopd/2-ytolerance,-cornerd]) roundedbox(basel+xtolerance*2,funneltopd+ytolerance*2,cupwall+ztolerance+cornerd,cornerd);
-      translate([-basel/2+funneloffset-wall-xtolerance,-funneltopd/2+wall,-cornerd]) roundedbox(basel+wall*2+xtolerance*2,funneltopd-wall*2,cupwall+ztolerance+cornerd,cornerd);
+      translate([-basel/2+funneloffset-xtolerance,-weathercovercupd/2-ytolerance,-cornerd]) roundedbox(basel+xtolerance*2,weathercovercupd+ytolerance*2,cupwall+ztolerance+cornerd,cornerd);
+      translate([-basel/2+funneloffset-wall-xtolerance,-weathercovercupd/2+wall,-cornerd]) roundedbox(basel+wall*2+xtolerance*2,weathercovercupd-wall*2,cupwall+ztolerance+cornerd,cornerd);
     }
     
     hull() {
       intersection() {
 	translate([funneloffset,0,-0.01]) cylinder(d=weathercoveroutd-wall*2,h=toph-(weathercoveroutd-funneltopd)+0.02);
-	translate([funneloffset-weathercoveroutd/2+wall,-funneltopd/2+wall,-0.01]) cube([weathercoveroutd-wall*2,funneltopd-wall*2,weathercoverstartnarrowing+0.02]);
+	translate([funneloffset-weathercoveroutd/2+wall,-weathercovercupd/2+wall,-0.01]) cube([weathercoveroutd-wall*2,weathercovercupd-wall*2,weathercoverstartnarrowing+0.02]);
       }
-      translate([funneloffset,0,weathercoverstartnarrowing+weathercovertoph-raincuptoph-0.01]) cylinder(d=funneltopd-wall*2,h=0.02);
+      if (funneltopd<weathercovercupd)
+	translate([funneloffset,0,weathercoverstartnarrowing+weathercovertoph-raincuptoph-0.01]) cylinder(d=funneltopd-wall*2,h=0.02);
     }
 
 
-    translate([0,-funneltopd/2+textdepth-0.01,textheight]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
-    translate([0,funneltopd/2-textdepth+0.01,textheight]) rotate([-90,180,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
+    translate([0,-weathercovercupd/2+textdepth-0.01,textheight]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
+    translate([0,weathercovercupd/2-textdepth+0.01,textheight]) rotate([-90,180,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
 
-    translate([0,-funneltopd/2+textdepth-0.01,areatextheight]) rotate([90,0,0]) linear_extrude(height=textdepth) text(areatext, size=textsize-2, valign="center",halign="center",font="Liberation Sans:style=Bold");
-    translate([0,funneltopd/2-textdepth+0.01,areatextheight]) rotate([-90,180,0]) linear_extrude(height=textdepth) text(areatext, size=textsize-2, valign="center",halign="center",font="Liberation Sans:style=Bold");
+    translate([0,-weathercovercupd/2+textdepth-0.01,areatextheight]) rotate([90,0,0]) linear_extrude(height=textdepth) text(areatext, size=textsize-2, valign="center",halign="center",font="Liberation Sans:style=Bold");
+    translate([0,weathercovercupd/2-textdepth+0.01,areatextheight]) rotate([-90,180,0]) linear_extrude(height=textdepth) text(areatext, size=textsize-2, valign="center",halign="center",font="Liberation Sans:style=Bold");
   }
 }
 
@@ -562,7 +569,7 @@ module sideguide(w) {
 	translate([funneloffset-baseguidel/2,-basesidew-basesideoffset,baseguideh-w]) cube([baseguidel,wall+w,wall]);
       }
       translate([funneloffset,0,0]) cylinder(d=weathercoveroutd-wall*2-w*2-dtolerance,h=baseguideh+wall);
-      translate([funneloffset-weathercoveroutd/2+wall+xtolerance+w,-funneltopd/2+wall+ytolerance+w,0]) cube([weathercoveroutd-wall*2-xtolerance*2-w*2,funneltopd-wall*2-ytolerance*2-w*2,weathercoverstartnarrowing]);
+      translate([funneloffset-weathercoveroutd/2+wall+xtolerance+w,-weathercovercupd/2+wall+ytolerance+w,0]) cube([weathercoveroutd-wall*2-xtolerance*2-w*2,weathercovercupd-wall*2-ytolerance*2-w*2,weathercoverstartnarrowing]);
     }
 
     translate([0,-weathercoverclipdistance,weathercoverclipheight]) tubeclip(weathercovercliplength+xtolerance,weathercoverclipd,weathercoverclipdtolerance);
@@ -733,7 +740,7 @@ module cups() {
 	  translate([-weathercoveroutd/2+funneloffset,-weathercoveroutd/2,0]) roundedbox(weathercoveroutd/2-funneloffset+basel,basesidew,cupwall,cornerd);
 	}
 	translate([funneloffset,0,0]) cylinder(d=weathercoveroutd-wall*2-dtolerance,h=wall);
-	translate([funneloffset-weathercoveroutd/2+wall+xtolerance,-funneltopd/2+wall+ytolerance,0]) cube([weathercoveroutd-wall*2-xtolerance*2,funneltopd-wall*2-ytolerance*2,weathercoverstartnarrowing]);
+	translate([funneloffset-weathercoveroutd/2+wall+xtolerance,-weathercovercupd/2+wall+ytolerance,0]) cube([weathercoveroutd-wall*2-xtolerance*2,weathercovercupd-wall*2-ytolerance*2,weathercoverstartnarrowing]);
       }
 
       // Raise center of base slightly to avoid water collecting there
@@ -750,8 +757,8 @@ module cups() {
 
       // Support weather cover
       hull() {
-	translate([-basel/2+funneloffset,-funneltopd/2,0]) roundedbox(basel,funneltopd,cupwall,cornerd);
-	translate([-basel/2+funneloffset-wall,-funneltopd/2+wall+ytolerance,0]) roundedbox(basel+wall*2,funneltopd-wall*2-ytolerance*2,cupwall,cornerd);
+	translate([-basel/2+funneloffset,-weathercovercupd/2,0]) roundedbox(basel,weathercovercupd,cupwall,cornerd);
+	translate([-basel/2+funneloffset-wall,-weathercovercupd/2+wall+ytolerance,0]) roundedbox(basel+wall*2,weathercovercupd-wall*2-ytolerance*2,cupwall,cornerd);
       }
       
       // Guides at sides to help weathercover to drop neatly in place
@@ -967,7 +974,7 @@ module wallattach() {
       hull() {
 	translate([-wallattachnarroww/2,-walldistance,wallattachheight]) roundedbox(wallattachnarroww,wallattachthickness,wallattachh,cornerd);
 	translate([-wallattachnarroww/2,-walldistance,wallattachheight]) roundedbox(wallattachnarroww,cornerd,wallattachh+cornerd*3,cornerd);
-	translate([0,0,poleattachheight]) cylinder(d=poleattachbased,h=1);
+	translate([0,0,wallattachheight]) cylinder(d=poleattachbased,h=1);
       }
 
       // Wallplate
@@ -977,12 +984,12 @@ module wallattach() {
       }
 	
       // Foot to keep the base in balance when testing on table etc
-      translate([0,0,poleattachheight]) cylinder(d=wallattachd,wallattachh);
+      translate([0,0,wallattachheight]) cylinder(d=wallattachd,-wallattachheight-attachplateh);
 
       // Upper structure between wallplate and base
       hull() {
 	translate([basel-attachplatel,-attachplatew/2,-attachplateh-ztolerance-largecornerd]) roundedbox(attachplatel,attachplatew,largecornerd,largecornerd);
-	translate([0,-walldistance+wallattachlowfromwall+poleattachbased/2,poleattachheight+wallattachlowh]) cylinder(d=wallattachlowd,h=wallattachh-wallattachlowh);
+	translate([0,-walldistance+wallattachlowfromwall+poleattachbased/2,wallattachheight+wallattachlowh]) cylinder(d=wallattachlowd,h=wallattachh-wallattachlowh);
 	translate([0,-walldistance+wallattachthickness,wallattachheight+wallattachmidh-wall]) scale([1,1,0.5]) rotate([90,0,0]) cylinder(d=wallattachnarroww,h=1);
       }
 
@@ -991,7 +998,7 @@ module wallattach() {
       }
     }
 
-    // Screws to close the poleattach around the pole.
+    // Screws to close the wallattach around the pole.
     for (z=[wallattachheight+screwtowerd/2,wallattachheight+wallattachh-screwtowerd/2]) {
       for (x=[-wallattachw/2,wallattachw/2]) {
 	translate([x-sign(x)*screwtowerd/2,-walldistance-screwlength+wallattachthickness+0.01,z]) rotate([-90,0,0]) ruuvireika(screwlength,screwd,1,strong&&print>0,screwlength);
@@ -1292,7 +1299,7 @@ if (print==0) {
 
     // Debugging cuts
     if (debug) hull() {
-      translate([-basel*2,-weathercoveroutd-100,-200]) cube([basel*2+100,weathercoveroutd+100,400]); //-9.05
+      translate([-funneltopd*2,-weathercoveroutd-100,-200]) cube([funneltopd*4+100,weathercoveroutd+100,400]); //-9.05
       //      translate([0,-weathercoveroutd-100,-200]) cube([basel*2+100,weathercoveroutd+200,400]); //-9.05
     }
   }
@@ -1310,17 +1317,31 @@ if (print==1 || print==6 || print==8) {
   }
  }
 
-if (print==2 || print==6) {
+if (print==2 || print==15) {
   intersection() {
     translate([0,0,toph]) rotate([180,0,0]) weathercover();
     if (debug) translate([0,0,0]) cube([weathercoveroutd,weathercoveroutd,toph+100]);
   }
-  if (adhesion) ring(funneltopd+adhesionwd*2+adhesiongap*2,adhesionwd,0.2,0);
+  if (adhesion) {
+    rotate([0,0,180+45]) {
+      intersection() {
+	ring(funneltopd+adhesionwd*2+adhesiongap*2,adhesionwd,0.2,0);
+	translate([-funneltopd/2-dtolerance-cupwall+1/2-adhesionwd,-funneltopd/2-adhesionwd,-0.01]) cube([funneltopd+adhesionwd,funneltopd+adhesionwd*2,0.2+0.02]);
+      }
+    }
+  }
  }
 
-if (print==3 || print==6) {
-  translate([-weathercoveroutd/2-funneltopd/2+2,0,0]) {
-    if (adhesion) ring(funneltopd-cupwall*3+dtolerance+adhesionwd*2+adhesiongap*2,adhesionwd,0.2,0);
+if (print==3 || print==15) {
+  rotate([0,0,45])
+  translate([-funneltopd/2-funneltopd/2+2,0,0]) {
+    if (0) { // Adhesion is not really needed here
+      intersection() {
+	ring(funneltopd-cupwall*3+adhesionwd*2+adhesiongap*2,adhesionwd,0.2,0);
+	translate([-funneltopd/2-dtolerance-cupwall-1-adhesionwd,-funneltopd/2-adhesionwd,-0.01]) cube([funneltopd+adhesionwd,funneltopd+adhesionwd*2,0.2+0.02]);
+      }
+    }
+    
     translate([0,0,-grillheight]) grill();
   }
  }
@@ -1414,7 +1435,7 @@ if (print==11 || print==10) {
  }
 
 if (print==12 || (print==6 && includetweezers) || print==8) {
-  translate([-weathercoveroutd-44+190+5,weathercoveroutd/2+weathercoveroutd-10,0]) rotate([0,0,-90-tweezersangle/2]) tweezers();
+  translate([-weathercoveroutd-44+190+4,weathercoveroutd/2+weathercoveroutd-10,0]) rotate([0,0,-90]) tweezers();
  }
 
 if (print==13) {
@@ -1422,5 +1443,5 @@ if (print==13) {
 }
 
 if (print==14 || print==6) {
-  translate([0,magnetbaseh/2,0]) rotate([90,0,0]) translate([0,-magnetbasey,-cupwall-ztolerance]) magnetsensorbase();
+  translate([-15,magnetbaseh/2,0]) rotate([90,0,90]) translate([0,-magnetbasey,-cupwall-ztolerance]) magnetsensorbase();
  }

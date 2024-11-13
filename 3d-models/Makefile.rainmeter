@@ -1,7 +1,8 @@
 SOURCE=rainmeter.scad
 DEPENDS=hsu.scad Makefile.rainmeter
-ALL=rainmeterbase.stl rainmetergrill.stl rainmeterweathercover.stl rainmeterpoleattach.stl rainmeterflatattach.stl rainmeterall.stl rainmetermagnetlock.stl rainmetermagnettool.stl rainmeterattachments.stl rainmeterwallattach.stl rainmetertweezers.stl rainmetermagnetsensorbase.stl
+ALL=rainmeterbase.stl rainmetergrill.stl rainmeterweathercover.stl rainmeterpoleattach.stl rainmeterflatattach.stl rainmeterall.stl rainmetermagnetlock.stl rainmetermagnettool.stl rainmeterattachments.stl rainmeterwallattach.stl rainmetertweezers.stl rainmetermagnetsensorbase.stl rainmeterweathercoverandgrill.stl
 # rainmeterhallsensortester.stl rainmetertest.stl 
+IMAGES=rainmeter.jpg rainmeter.png
 
 all: $(ALL)
 
@@ -15,11 +16,11 @@ rainmeter-source-distribution.zip: $(SOURCE) $(DEPENDS)
 	zip -r $@ rainmeter-distribution
 	echo $@ built.      
 
-rainmeter-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS)
+rainmeter-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
 	rm -rf rainmeter-distribution
 	rm -f rainmeter-distribution.zip
 	mkdir -p rainmeter-distribution
-	cp $(ALL) $(SOURCE) $(DEPENDS) rainmeter-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) rainmeter-distribution
 	zip -r $@ rainmeter-distribution
 	echo $@ built.      
 
@@ -80,4 +81,8 @@ rainmeterhallsensortester.stl: $(SOURCE) $(DEPENDS)
 
 rainmetermagnetsensorbase.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=14 -o $@ $(SOURCE)
+	echo $@ built.
+
+rainmeterweathercoverandgrill.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=15 -o $@ $(SOURCE)
 	echo $@ built.
