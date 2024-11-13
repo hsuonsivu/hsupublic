@@ -6,19 +6,19 @@ include <hsu.scad>
 
 print=2;
 
-suihkuletkud=print==2?13:14;
+suihkuletkud=print==2?14:14;
 suihkuletkuh=100;
 suihkupaaconnect1d=21.3;
 suihkupaaconnect2d=24; // measured? 23.3;
 suihkupaaconnectl=30;
-suihkupaabodyd=print==2?27:24;
+suihkupaabodyd=print==2?28:24;
 suihkupaal=200; // Not measured, guess
-suihkupaaheight=-10-2;
+suihkupaaheight=-10-2+8;
 letkutolerance=1;
 
-foo=12;
+foo=12+2;
 tukil=50-12+foo;
-tukiind=print==2?31:28;
+tukiind=print==2?32:28;
 tukiinlowd=print==2?27:26;
 tukioutd=tukiind+4;
 tukioutoffset=4;
@@ -115,4 +115,4 @@ module pidike() {
 
 //#translate([0,0,tukiheight]) oldpidike();
 //#translate([0,0,suihkupaaheight]) suihkupaa();
-rotate([180,0,0]) translate([0,0,pidikeheight]) pidike();
+translate([0,0,pidikel]) rotate([180,0,0]) pidike();
