@@ -120,6 +120,9 @@ module roundedbox(x,y,z,c) {
     translate([scd/2,y-scd/2,z-scd/2]) sphere(d=scd,$fn=f);
     translate([x-scd/2,scd/2,z-scd/2]) sphere(d=scd,$fn=f);
     translate([x-scd/2,y-scd/2,z-scd/2]) sphere(d=scd,$fn=f);
+
+    // Sphere may generate slight rounding errors with smaller $fn values, so for actual cube in the center
+    translate([scd/2,scd/2,scd/2]) cube([x-scd,y-scd,z-scd]);
   }
 }
 
