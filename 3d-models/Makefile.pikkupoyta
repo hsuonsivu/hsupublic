@@ -1,0 +1,32 @@
+SOURCE=pikkupoyta.scad
+DEPENDS=hsu.scad Makefile.pikkupoyta
+ALL=pikkupoytaprint.stl
+IMAGES=pikkupoyta.jpg pikkupoyta.png
+
+all: $(ALL)
+
+dist: pikkupoyta-full-distribution.zip pikkupoyta-source-distribution.zip
+
+pikkupoyta-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf pikkupoyta-distribution
+	rm -f pikkupoyta-distribution.zip
+	mkdir -p pikkupoyta-distribution
+	cp $(SOURCE) $(DEPENDS) pikkupoyta-distribution
+	zip -r $@ pikkupoyta-distribution
+	echo $@ built.      
+
+pikkupoyta-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf pikkupoyta-distribution
+	rm -f pikkupoyta-distribution.zip
+	mkdir -p pikkupoyta-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) pikkupoyta-distribution
+	zip -r $@ pikkupoyta-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+pikkupoytaprint.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
