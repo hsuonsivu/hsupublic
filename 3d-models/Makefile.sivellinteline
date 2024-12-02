@@ -1,0 +1,32 @@
+SOURCE=sivellinteline.scad
+DEPENDS=hsu.scad Makefile.sivellinteline
+ALL=sivellintelineprint.stl
+IMAGES=sivellinteline.jpg sivellinteline.png
+
+all: $(ALL)
+
+dist: sivellinteline-full-distribution.zip sivellinteline-source-distribution.zip
+
+sivellinteline-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf sivellinteline-distribution
+	rm -f sivellinteline-distribution.zip
+	mkdir -p sivellinteline-distribution
+	cp $(SOURCE) $(DEPENDS) sivellinteline-distribution
+	zip -r $@ sivellinteline-distribution
+	echo $@ built.      
+
+sivellinteline-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf sivellinteline-distribution
+	rm -f sivellinteline-distribution.zip
+	mkdir -p sivellinteline-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) sivellinteline-distribution
+	zip -r $@ sivellinteline-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+sivellintelineprint.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
