@@ -1,0 +1,13 @@
+SOURCE=ankermakecover.scad
+DEPENDS=hsu.scad Makefile.ankermakecover
+
+all: ankermakecoverbottom.stl ankermakecovertop.stl
+
+ankermakecoverbackupleft.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+ankermakecoverbackupright.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
