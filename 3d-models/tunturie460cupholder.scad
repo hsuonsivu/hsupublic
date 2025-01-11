@@ -5,11 +5,13 @@
 include <hsu.scad>
 
 print=4;
+debug=1;
+
 strong=(print>0)?1:0;
 supports=1; // patches for easier printing
-$fn=print?90:30;
+$fn=print?120:30;
 
-thinwall=1.6;
+thinwall=2;//1.6;
 width=50.3;
 depth=70.2;
 collarz=130;
@@ -33,22 +35,21 @@ cupcutoffsethigh=-45;
 cupcornerd=3;
 
 handlebard=31;
-handlebarcurved=160;
-handlebarstraight=40+50;
+handlebarcurved=150;//160;
+handlebarstraight=40+50+5;
 headphonehangend=thinwall*2+7;
 headphonehangendd=handlebard+headphonehangend;
-headphonehangendh=2;
+headphonehangendh=2+thinwall;
 
 headphonehanglowd=10;
 headphonehangd=10;
-headphonehangw=70+headphonehangd+screwholed*3/2;
+headphonehangw=72+headphonehangd;//+screwholed*3/2;
 headphonehangh=50;
-headphonehangout=27.2+headphonehangd/2;
 
-dtolerance=0.2;
-xtolerance=0.3;
-ytolerance=0.3;
-ztolerance=0.3;
+dtolerance=0.5;
+xtolerance=0.25;
+ytolerance=0.25;
+ztolerance=0.25;
 
 module deeptext(teksti, height, depth, ha) {
   h=depth/3;
@@ -232,24 +233,25 @@ module cupholder() {
 }
 
 module endcap() {
-  diameter=handlebard+2*thinwall;
-  difference() {
-    hull() {
-      translate([handlebarcurved/2+headphonehangw+headphonehangendh-4,0,0]) rotate([0,90,0]) cylinder(d=headphonehangendd+10,h=2);
-      translate([handlebarcurved/2+headphonehangw-screwholed*3,0,0]) rotate([0,90,0]) cylinder(d1=headphonehangendd,d2=headphonehangendd+10,h=headphonehangendh+screwholed*3);
-      //      translate([handlebarcurved/2+headphonehangw-screwholed*3/2,0,-headphonehangendd/2]) cylinder(d=screwholed*3,h=screwlength+headphonehangend);
-    }
-    rotate([90,0,0]) 
-    hull() {
-      translate([handlebarcurved/2,0,0]) rotate([0,90,0]) {
-	cylinder(d=diameter+dtolerance,h=headphonehangw+thinwall);
+  translate([xtolerance,0,0]) {
+    diameter=handlebard+2*thinwall;
+    difference() {
+      hull() {
+	translate([handlebarcurved/2+headphonehangw+headphonehangendh-4+thinwall,0,0]) rotate([0,90,0]) cylinder(d=headphonehangendd+10,h=2);
+	translate([handlebarcurved/2+headphonehangw-screwholed*3+xtolerance,0,0]) rotate([0,90,0]) cylinder(d1=headphonehangendd,d2=headphonehangendd+10,h=headphonehangendh+screwholed*3+thinwall);
+	//      translate([handlebarcurved/2+headphonehangw-screwholed*3/2,0,-headphonehangendd/2]) cylinder(d=screwholed*3,h=screwlength+headphonehangend);
       }
-      translate([handlebarcurved/2,diameter/2-1,-diameter/4-ztolerance]) cube([headphonehangw+thinwall,1+ztolerance,diameter/2+ztolerance*2]);
-      translate([handlebarcurved/2,-diameter/2-ztolerance,-diameter/4-ztolerance]) cube([headphonehangw+thinwall,1,diameter/2+ztolerance*2]);
-    }
+      rotate([90,0,0]) hull() {
+	translate([handlebarcurved/2,0,0]) rotate([0,90,0]) {
+	  cylinder(d=diameter+dtolerance,h=headphonehangw+thinwall);
+	}
+	//translate([handlebarcurved/2,diameter/2-1,-diameter/4-ztolerance]) cube([headphonehangw+thinnwall,1+ztolerance,diameter/2+ztolerance*2]);
+	translate([handlebarcurved/2,-diameter/2-ztolerance,-diameter/4-ztolerance]) cube([headphonehangw+thinwall,1,diameter/2+ztolerance*2]);
+      }
 
-    translate([handlebarcurved/2+headphonehangw-screwholed*3/2,0,-headphonehangendd/2+screwlength-0.01]) rotate([180,0,0]) ruuvireika(screwlength,screwholed,1);
-    translate([handlebarcurved/2+headphonehangw-screwholed*3/2,0,-headphonehangendd/2+0.01]) rotate([180,0,0]) cylinder(h=10,d1=screwholed*countersinkdiametermultiplier,d2=screwholed*countersinkdiametermultiplier*3);
+      translate([handlebarcurved/2+headphonehangw-screwholed*3/2-xtolerance,0,-headphonehangendd/2+screwlength-0.01]) rotate([180,0,0]) ruuvireika(screwlength,screwholed,1);
+      translate([handlebarcurved/2+headphonehangw-screwholed*3/2-xtolerance,0,-headphonehangendd/2+0.01]) rotate([180,0,0]) cylinder(h=10,d1=screwholed*countersinkdiametermultiplier,d2=screwholed*countersinkdiametermultiplier*3);
+    }
   }
 }
 
@@ -259,16 +261,19 @@ module handlebarform(w) {
     rotate([0,45,0]) rotate([0,-90,90+180]) {
       rotate([0,0,20+(w?-0.1:0)]) rotate_extrude(angle=70+(w?0:0.1),convexity=10) translate([handlebarcurved/2,0]) hull() {
 	circle(d=diameter);
-	if (w) { translate([-diameter/4,diameter/2-1]) square([diameter/2,1]);
-	  translate([-diameter/4,-diameter/2]) square([diameter/2,1]);
+	if (w) {
+	  translate([-diameter/4,diameter/2-1]) square([diameter/2,1]);
+	} else {
+	  translate([-diameter/6,-diameter/2]) square([diameter/3,1]);
 	}
       }
-      rotate([90,0,20]) translate([handlebarcurved/2,0,-0.01]) {
+      rotate([90,0,20]) translate([handlebarcurved/2,0,-0.1]) {
 	hull() {
-	  cylinder(d=diameter,h=handlebarstraight+0.01+(w?-0.1:0));
+	  cylinder(d=diameter,h=handlebarstraight+0.1+(w?-0.1:0));
 	  if (w) {
 	    translate([-diameter/4,diameter/2-1,0]) cube([diameter/2,1,handlebarstraight]);
-	    translate([-diameter/4,-diameter/2,0]) cube([diameter/2,1,handlebarstraight]);
+	  } else {
+	    translate([-diameter/6,-diameter/2-0.2,-0.1+0.2]) cube([diameter/3,1,handlebarstraight-0.2]);
 	  }
 	}
 	 
@@ -291,13 +296,15 @@ module handlebarform(w) {
 	  cylinder(d=diameter,h=headphonehangw+w);
 	}
 	translate([handlebarcurved/2,diameter/2-1,-diameter/4]) cube([headphonehangw+w,1,diameter/2]);
-	translate([handlebarcurved/2,-diameter/2,-diameter/4]) cube([headphonehangw+w,1,diameter/2]);
       } else {
       difference() {
 	translate([handlebarcurved/2,0,0]) rotate([0,90,0]) {
-	  cylinder(d=diameter,h=headphonehangw+thinwall+0.01);
+	  hull() {
+	    translate([0,0,diameter/2+thinwall]) cylinder(d=diameter,h=headphonehangw+thinwall-diameter/2-thinwall+0.01);
+	    translate([-diameter/6,-diameter/2,diameter/2+thinwall]) cube([diameter/3,1,headphonehangw+thinwall-diameter/2-thinwall]);
+	  }
 	}
-	translate([handlebarcurved/2+headphonehangw-screwholed*3/2,diameter/2,0]) rotate([90,0,0]) cylinder(h=diameter,d=screwholed*3);
+	translate([handlebarcurved/2+headphonehangw-screwholed*3/2,diameter/2,0]) rotate([90,0,0]) cylinder(h=diameter+0.01,d=screwholed*3);
       }
     }
   }
@@ -308,9 +315,8 @@ module handlebarform(w) {
       translate([handlebarcurved/2-handlebard/2-screwholed*3/2,0,-diameter/2]) cylinder(h=diameter,d=screwholed*3);
       translate([handlebarcurved/2-screwholed*3/2,0,-diameter/2]) cylinder(h=diameter,d=screwholed*3);
     }
-
   } else {
-    translate([handlebarcurved/2-handlebard/2-screwholed*3/2,0,(handlebard/2+thinwall)-4.2-0.01]) rotate([180,0,0]) ruuvireika(screwlength,screwholed,1);
+    translate([handlebarcurved/2-handlebard/2-screwholed*3/2,0,(handlebard/2+thinwall)-1-4-0.01]) rotate([180,0,0]) ruuvireika(screwlength,screwholed,1);
     translate([handlebarcurved/2+headphonehangw-screwholed*3/2,0,-headphonehangendd/2+screwlength-0.01]) rotate([180,0,0]) ruuvireika(screwlength,screwholed,1);
   }
 }
@@ -323,14 +329,14 @@ module handlebar() {
 }
 
 module headphonehanger() {
-  xmove=45+84+screwholed*3/2/2;
-  ymove=22;
-  yoffset=22;
-  r=8; //12.5;
+  xmove=29;//10+45+84+screwholed*3/2/2;
+  ymove=9;
+  yoffset=14;
+  r=0; //12.5;
 
-  rotate([0,0,0]) {
-    translate([-xmove,-ymove+yoffset,handlebard/2+thinwall]) {
-      if (1) rotate([180,0,r]) intersection() {
+  translate([-4,0,0]) rotate([0,0,-28]) {
+    translate([-xmove,-ymove+yoffset-30,0]) {
+      if (1) rotate([0,0,r]) intersection() {
 	  handlebar();
 	  translate([0,-handlebarcurved,0]) cube([handlebarcurved+headphonehangw,handlebarcurved*2,handlebard/2+thinwall]);
 	}
@@ -360,14 +366,21 @@ if (print==1 || print==3)
     cupholderfront();
 
 if (print==4) {
-  //  printareacube("ankermake");
+  // #printareacube("ankermake");
   
-   rotate([0,0,-5]) translate([6,-2,0]) {
+   rotate([0,0,0]) translate([6,-2,0]) {
      headphonehanger();
-     translate([0,-headphonehangendd+10+9,7+0.23]) rotate([0,90,0]) translate([-handlebarcurved,0,0]) endcap();
+     //     translate([-handlebard*2-20,headphonehangendd-20,headphonehangendh+screwholed*3+thinwall-0.25]) rotate([0,90,0]) translate([-handlebarcurved,0,0]) endcap();
+     translate([-handlebarcurved/2-10,handlebard/2+5,-6]) rotate([0,90,0]) translate([-handlebarcurved/2-headphonehangw-headphonehangend+thinwall-3.5,0,0]) endcap();
    }
  }
 
 if (print==5) {
-  handlebar();
+  intersection() {
+    union() {
+      handlebar();
+      endcap();
+    }
+    if (debug) translate([0,0,-100]) cube([200,200,200]);
+  }
  }
