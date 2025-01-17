@@ -1,0 +1,25 @@
+SOURCE=ankermakeenclosure.scad
+DEPENDS=hsu.scad Makefile.ankermakeenclosure
+
+all: ankermakeenclosureback.stl ankermakeenclosureleft.stl ankermakeenclosureright.stl ankermakeenclosuretop.stl ankermakeenclosurefront.stl
+
+ankermakeenclosureback.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+ankermakeenclosureleft.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+
+ankermakeenclosureright.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=6 -o $@ $(SOURCE)
+	echo $@ built.
+
+ankermakeenclosuretop.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=7 -o $@ $(SOURCE)
+	echo $@ built.
+
+ankermakeenclosurefront.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=8 -o $@ $(SOURCE)
+	echo $@ built.
+
