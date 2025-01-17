@@ -104,7 +104,57 @@ module triangletest() {
     }
   }
 }
-  
+
+module lighten_recurse(w,h,thickness,edge,barw,maxbridge) {
+  for (x=[barw+edge:barw*2+edge*2:w+edge]) {
+    translate([w/2+x,0,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,-0.01,-edge/sqrt(2)/2]) cube([edge/sqrt(2),thickness+0.02,edge/sqrt(2)]);
+    translate([w/2-x,0,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,-0.01,-edge/sqrt(2)/2]) cube([edge/sqrt(2),thickness+0.02,edge/sqrt(2)]);
+  }
+
+   if (edge<w/2) lighten_recurse(w,h,thickness,edge+barw+edge,barw,maxbridge);
+}
+
+// Cutouts to lighten a vertical plate. fill is percent of open space
+module lightenhelper(width,height,thickness,margin,barw,maxbridge) {
+  zadjust=maxbridge/2;
+  w=width-margin*2;
+  h=height-margin*2;
+  //  barw=w*fill/2;
+  sh=sqrt(maxbridge);
+  intersection() {
+    union() {
+      translate([w/2+margin,0,h+margin-w/2+zadjust]) rotate([0,45,0]) translate([-w/sqrt(2)/2,-0.01,-w/sqrt(2)/2]) cube([w/sqrt(2),thickness+0.02,w/sqrt(2)]);
+      if (h>w/2) {
+	translate([margin,-0.01,margin]) cube([w,thickness+0.02,h-w/2+zadjust]);
+      }
+
+      translate([margin,0,margin]) lighten_recurse(w,h,thickness,maxbridge,barw,maxbridge);
+    }
+    translate([margin,-0.01,margin]) cube([w,thickness+0.02,h]);
+  }
+}
+
+module lighten(w,h,thickness,margin,barw,maxbridge,direction) {
+  bw=barw*2;
+  if (direction=="up")
+    lightenhelper(w,h,thickness,margin,bw,maxbridge);
+  else if (direction=="down-yplane")
+    translate([thickness,w,h]) rotate([0,180,90]) lightenhelper(w,h,thickness,margin,bw,maxbridge);
+  else if (direction=="down-xplane")
+    translate([w,0,h]) rotate([0,180,0]) lightenhelper(w,h,thickness,margin,bw,maxbridge);
+  else if (direction=="back-yplane")
+    translate([thickness,0,h]) rotate([0,90,90]) lightenhelper(h,w,thickness,margin,bw,maxbridge);
+  else if (direction=="back-zplane")
+    translate([h,0,0]) rotate([90,0,180]) lightenhelper(h,w,thickness,margin,bw,maxbridge);
+  else if (direction=="left-xplane") // Up is left on x plane
+    translate([h,thickness,w]) rotate([0,90,180]) lightenhelper(w,h,thickness,margin,bw,maxbridge);
+  else if (direction=="right-xplane") // Up is right on x plane
+   translate([0,thickness,0]) rotate([0,-90,180]) lightenhelper(w,h,thickness,margin,bw,maxbridge);
+  else if (direction=="flat-xplane")
+    translate([-0.01,margin,margin]) cube([thickness+0.02,w-margin*2,h-margin*2]);
+  else echo("ERROR missing or incorrect argument for lighten: ",direction);
+}
+
 module roundedbox(x,y,z,c) {
   corner=(c > 0) ? c : 1;
   //scd = ((x < 1 || y < 1 || z < 1) ? min(x,y,z) : corner);
@@ -272,8 +322,8 @@ module onehinge(diameter,width,axledepth,cutout,ytolerance,dtolerance) {
 
 // Used to work out placement of components being printed
 module printareacube(printer) {
-  xysize=(printer=="ankermake")?232:(print==anycubic)?380:380; // No other working printers at the moment
-  height=(printer=="ankermake")?249:(print==anycubic)?380:380; // No other working printers at the moment
+  xysize=(printer=="ankermake")?232:(print=="anycubic")?380:380; // No other working printers at the moment
+  height=(printer=="ankermake")?249:(print=="anycubic")?380:380; // No other working printers at the moment
   xsize=xysize; // Leave some space for safety
   ysize=xysize;
   wall=0.4;
