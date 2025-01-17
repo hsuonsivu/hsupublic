@@ -4,20 +4,19 @@
 
 include <hsu.scad>
 
-print=5;
+print=0;
 
 cornerd=1;
 
 topbarh=25.1;
 topbardepth=18.1;
 bartexts=["GlowPETG", "TPU95", "PETG", "PLA", "ABS"];
-//bartext="PETG";
 bartextsize=16;
-versiontext="v1.1";
+versiontext="v1.2";
 versiontextsize=7;
 textdepth=0.8;
-wall=2;
-thinwall=2;
+wall=2.5;
+thinwall=2.5;
 xtolerance=0.2;
 ytolerance=0.2;
 ztolerance=0.2;
@@ -32,8 +31,8 @@ tweezerboxw=11;
 
 labelthickness=1.2;
 labeledge=1;
-labelclipl=30;
-labelclipdepth=0.5;
+labelclipl=40;
+labelclipdepth=0.6;
 labelclipd=labelclipdepth+thinwall;
 labelclipheight=wall;
   
