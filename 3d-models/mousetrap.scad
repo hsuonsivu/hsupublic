@@ -9,9 +9,12 @@
 
 include <hsu.scad>
 
-print=1;
+print=0;
 adhesion=(print>0 && print<6)?1:0;
-debug=1;
+debug=0;
+antiwarp=(print>0)?1:0;
+antiwarpdistance=4; //3 mm
+antiwarpw=0.8;
 
 // Make some voids in thicker parts. May save material if dense fill is used. At 10% fill, using fill is cheaper.
 makevoids=0; 
@@ -101,6 +104,7 @@ doorholeh=doorl-5-wall;
 //swingweightl=lockaxled+wall*4; //-lockaxlex-swingl/2+lockaxled/2;
 swingweightl=-lockaxlex-swingl/2+lockaxled/2;
 swingweighth=wall;
+weigthvoids=1;
 
 midholel=46+15;
 midholex=boxx+boxl-wall-midholel; //boxl-wall-midholel;
@@ -115,6 +119,7 @@ storageboxw=120;
 storageboxx=boxx-storageboxl-xtolerance;
 storageboxy=-swingtunnelw/2-storageboxw;
 storageboxh=boxh;
+storageboxoutcornerd=boxincornerd+wall*2;
   
 storagel=storageboxl-wall*2;
 storageh=storageboxh-wall*2+boxincornerd;
@@ -221,7 +226,7 @@ module swing(a,l) {
 		yyy=yy+(l&&(y<0)&&(x<0)?wall*2+1:0);
 		if (!l && x<0 && y>0) {
 		  translate([x+wall,yyy,swingheight]) rotate([0,90,0]) cylinder(d=wall,h=0.1);
-		  translate([x,yyy-wall,swingheight]) rotate([0,90,0]) cylinder(d=wall,h=0.1);
+		  translate([x,yyy-wall*1.25,swingheight]) rotate([0,90,0]) cylinder(d=wall,h=0.1);
 		} else {
 		  translate([x,yyy,swingheight]) rotate([0,90,0]) cylinder(d=wall,h=0.1);
 		}
@@ -261,12 +266,12 @@ module swing(a,l) {
 	  voidh=0.1;
 
 	  // Make voids to increase weight
-	  if (0) {
+	  if (weigthvoids) {
 	    if (l && x<0) {
 	      translate([x+wall,-swingw/2+0.5+wall,swingheight]) cube([swingl/2-wall*5,swingw-wall*2-1,voidh]);
 	      translate([x+wall,-swingw/2+0.5+wall,swingheight+0.8]) cube([swingl*3/4/2-wall*2,swingw-wall*2-1,voidh]);
 	      translate([x+wall,-swingw/2+0.5+wall,swingheight+0.8*2]) cube([swingl/4-wall*2,swingw-wall*2-1,voidh]);
-	      translate([x+wall,-swingw/2+0.5+wall,swingheight+0.8*3]) cube([wall*3,swingw-wall*2-1,voidh]);
+	      translate([x+wall-wall,-swingw/2+0.5+wall,swingheight+0.8*3]) cube([wall*4,swingw-wall*2-1,voidh]);
 	    }
 	    if (!l && x>0) {
 	      translate([x-swingl/2+wall*4,-swingw/2+0.5+wall,swingheight]) cube([swingl/2-wall*5,swingw-wall*2-1,voidh]);
@@ -333,7 +338,7 @@ module lock() {
   hull() {
     translate([-lockaxled/2+wall/2,lwy,arml+wall*4]) rotate([-90,0,0]) cylinder(d=wall,h=wall*2);
     translate([-lockaxled/2+wall/2,lwy,arml+wall*3]) rotate([-90,0,0]) cylinder(d=wall,h=wall*2);
-    translate([-lockaxled/2+wall/2+lockweightl,lwy,arml+wall*4.5]) rotate([-90,0,0]) cylinder(d=wall,h=wall*2);
+    translate([-lockaxled/2+wall/2+lockweightl+wall*3,lwy,arml+wall*4.5]) rotate([-90,0,0]) cylinder(d=wall,h=wall*2);
     translate([-lockaxled/2+wall/2+lockweightl,lwy,arml+wall*4.5+lockweighth]) rotate([-90,0,0]) cylinder(d=wall,h=wall*2);
   }
 
@@ -351,7 +356,7 @@ module lock() {
 
   hull() {
     translate([0,ly,lockaxled*1.5]) rotate([90,0,0]) cylinder(d=axled,h=wall);
-    translate([-lockaxled/2+wall*3,ly+wall+0.5,arml-wall-ytolerance-0.5]) rotate([90,0,0]) cylinder(d=wall,h=wall*2);
+    translate([-lockaxled/2+wall*3,ly+wall+0.5-wall*2,arml-wall-ytolerance-0.5]) rotate([-90,0,0]) cylinder(d=wall,h=wall*1.5);
     translate([-lockaxled/2+wall/2,ly+wall+0.5,arml-wall*2-ytolerance-0.5]) rotate([90,0,0]) cylinder(d=wall,h=wall*2);
   }
 
@@ -361,10 +366,10 @@ module lock() {
   }
   hull() {
     translate([1,ry+wall,lockaxled*1.5]) rotate([90,0,0]) cylinder(d=lockaxled+2,h=wall);
-    for (x=[0,wall]) {
+    for (x=[0,wall-0.5]) {
       w=x?0.1:wall;
-      translate([x+lockaxled+wall/2+0.5,ry+wall,arml/2-wall]) rotate([90,0,0]) cylinder(d=wall*2.4+1,h=w);
-      translate([x-lockaxled/2+wall/3/2,ry+wall-0.5,arml+wall]) rotate([90,0,0]) cylinder(d=wall/3,h=w);
+      translate([x+lockaxled+wall/2+0.5,ry+wall-1,arml/2-wall]) rotate([90,0,0]) cylinder(d=wall*2.4+1,h=w);
+      translate([x-lockaxled/2+wall/3/2,ry+wall-1,arml+wall]) rotate([90,0,0]) cylinder(d=wall/3,h=w);
       translate([x+15,ry+wall-0.5,lockaxled+wall*2+0.5]) rotate([90,0,0]) cylinder(d=wall,h=w);
     }
   }
@@ -389,7 +394,11 @@ module mousestorage() {
 	  difference() {
 	    union() {
 	      intersection() {
-		translate([storageboxx,storageboxy,0]) roundedbox(storageboxl,storageboxw,storageboxh,boxcornerd);
+		minkowski() {
+		  cylinder(d=storageboxoutcornerd,h=1);
+		  translate([storageboxx+storageboxoutcornerd/2,storageboxy+storageboxoutcornerd/2,0]) cube([storageboxl-storageboxoutcornerd,storageboxw-storageboxoutcornerd,storageboxh-cornerd]);
+		  //translate([storageboxx,storageboxy,0]) roundedbox(storageboxl,storageboxw,storageboxh,boxcornerd);
+		}
 		translate([storageboxx,storageboxy,0]) cube([storageboxl,storageboxw,storageboxh-wall-ztolerance]);
 	      }
 
@@ -397,6 +406,31 @@ module mousestorage() {
 	      translate([storageboxx+storageboxl-boxcornerd/2,boxlocky,0]) cube([boxlockl+boxcornerd,boxlockw,boxlockh]);
 	      for (y=boxlockpinholeytable) {
 		translate([boxlockpinholex,y,0]) cylinder(d=boxlockpind,h=boxlockpinh);
+	      }
+
+	      if (antiwarp) {
+		antiwarph=storageboxh+5;
+		difference() {
+		  minkowski(convexity=10) {
+		    union() {
+		      translate([storageboxx+storageboxoutcornerd/2-antiwarpdistance-antiwarpw,storageboxy+storageboxoutcornerd/2-antiwarpdistance-antiwarpw,0]) cube([storageboxl-storageboxoutcornerd+antiwarpdistance*2+antiwarpw*2,storageboxw-storageboxoutcornerd+antiwarpdistance*2+antiwarpw*2,antiwarph]);
+		      translate([storageboxx+storageboxl/2-(doorl/2+wall)-storageboxoutcornerd/2+antiwarpdistance+antiwarpw,storageboxy-wall+storageboxoutcornerd/2-antiwarpdistance-antiwarpw,0]) cube([(doorl+wall*2)+storageboxoutcornerd-antiwarpdistance*2-antiwarpw*2,storageboxw-storageboxoutcornerd+antiwarpdistance+antiwarpw*2,antiwarph]);
+		      translate([storageboxx+storageboxl-boxcornerd/2,boxlocky-antiwarpdistance-antiwarpw,0]) cube([boxlockl+boxcornerd-storageboxoutcornerd/2+antiwarpdistance+antiwarpw,boxlockw+antiwarpdistance*2+antiwarpw*2,antiwarph]);
+		    }
+		    cylinder(d=storageboxoutcornerd,h=1);
+		  }
+		  minkowski(convexity=10) {
+		    union() {
+		      translate([storageboxx+storageboxoutcornerd/2-antiwarpdistance,storageboxy+storageboxoutcornerd/2-antiwarpdistance,-0.1]) cube([storageboxl-storageboxoutcornerd+antiwarpdistance*2,storageboxw-storageboxoutcornerd+antiwarpdistance*2,antiwarph+0.2]);
+		      translate([storageboxx+storageboxl/2-(doorl/2+wall)-storageboxoutcornerd/2+antiwarpw+antiwarpdistance,storageboxy-wall+storageboxoutcornerd/2-antiwarpdistance,-0.1]) cube([doorl+wall*2+storageboxoutcornerd-antiwarpdistance*2-antiwarpw*2,storageboxw+wall-storageboxoutcornerd+antiwarpdistance*2,antiwarph+0.2]);
+		      translate([storageboxx+storageboxl-boxcornerd/2,boxlocky-antiwarpdistance,-0.1]) cube([boxlockl+boxcornerd-storageboxoutcornerd/2+antiwarpdistance,boxlockw+antiwarpdistance*2,antiwarph+0.2]);
+		    }
+		    cylinder(d=storageboxoutcornerd,h=1);
+		  }
+
+		  // Space between antiwarp and object needs to be outside to get brim in between.
+		  translate([storageboxx+storageboxl/2,storageboxy+storageboxw,-0.1]) cube([1,antiwarpdistance+antiwarpw+1,0.4+0.1]);
+		}
 	      }
 	    }
 
@@ -406,14 +440,16 @@ module mousestorage() {
 
 	    // Opening between out tunnel and storage
 	    hull() {
-	      translate([storageboxx+storageboxl-wall-boxincornerd/2,-swingtunnelw/2-midwallw-swingtunnelw,wall*2]) roundedbox(boxincornerd+wall,swingtunnelw-wall-ytolerance-wall-ytolerance,outholeh,boxincornerd);
-	      translate([storageboxx+storageboxl-wall-boxincornerd/2,-swingtunnelw/2-midwallw-swingtunnelw+outholeh/2-maxbridge/2,wall*2+outholeh+(outholeh/2-maxbridge)/2]) cube([boxincornerd+wall,maxbridge,maxbridge]);
+  y=-swingtunnelw/2-midwallw-swingtunnelw;
+  w=swingtunnelw-wall-ytolerance-wall-ytolerance;
+	      translate([storageboxx+storageboxl-wall-boxincornerd/2,y,wall*2]) roundedbox(boxincornerd+wall,w,outholeh,boxincornerd);
+  translate([storageboxx+storageboxl-wall-boxincornerd/2,y+(w-maxbridge)/2,wall*2+outholeh+(w-maxbridge-boxincornerd)/4]) cube([boxincornerd+wall,maxbridge,maxbridge]);
 	    }
 	    
 	    // Mouse storage
 	    translate([storageboxx+wall,storageboxy+wall,wall]) roundedbox(storagel/2-boxincornerd-wall*3,storagew,storageh,boxincornerd);
 	    translate([storageboxx+wall,storageboxy+wall+wall,wall]) roundedbox(storagel,storagew-wall,storageh,boxincornerd);
-	    translate([storageboxx+storageboxl-wall-(storagel/2-boxincornerd-wall*3),storageboxy+wall,wall]) roundedbox(storagel/2-boxincornerd-wall*3,storagew-2,storageh,boxincornerd);
+	    translate([storageboxx+storageboxl-wall-(storagel/2-boxincornerd-wall*3),storageboxy+wall,wall]) roundedbox(storagel/2-boxincornerd-wall*3,storagew,storageh,boxincornerd);
 	  }
 	}
       }
@@ -643,7 +679,7 @@ module mousebox() {
 	  }
 
 	  if (adhesion) {
-	    adhesiontowerh=swingsideh+10;
+	    adhesiontowerh=swingsideh+9;
 	    
 	    // Left support
 	    z=boxh-wall-ztolerance+0.1;
@@ -666,7 +702,7 @@ module mousebox() {
 	    ly=0;
 	    lx=-x-swingl/2-swingweightl;
 	    sl=swingl/2+swingweightl*2;
-	    sheight=axleheight+swingheight+wall+swingweighth+wall*2;
+	    sheight=axleheight+swingheight+wall+swingweighth+wall*2.5;
 	    translate([x,ly-swingw/2+wall*2,sheight]) {
 	      cube([sl,swingw-wall*2-1,0.8]);
 	      cube([lx-0.2,swingw-wall*2,0.8]);
@@ -685,9 +721,9 @@ module mousebox() {
 	      translate([x,lyy,sheight]) triangle(sl,0.8,adhesiontowerh,2);
 	      translate([x,lyy,swingmheight]) cube([lx-0.2,0.8,swingmheight]);
 	      hull() {
-		translate([x+lx,lyy,swingmheight]) triangle(swingweightl,0.8,swingmh,3);
-		translate([0,lyy,swingmheight]) cube([0.4,0.8,swingmh]);
-		translate([0,lyy,swingmheight]) cube([swingweightl-lx,0.8,swingmh]);
+		translate([x+lx,lyy,swingmheight-0.9]) triangle(swingweightl,0.8,swingmh+1,3);
+		translate([0,lyy,swingmheight-wall]) cube([0.4,0.8,swingmh+wall]);
+		translate([0,lyy,swingmheight-wall]) cube([swingweightl-lx,0.8,swingmh+wall]);
 	      }
 
 	      for (xx=[x+lx+swingweightl:5:x+sl]) {
@@ -710,7 +746,7 @@ module mousebox() {
 	    ry=-swingtunnelw/2-midwallw-swingtunnelw/2-wall*2-1;
 	    ryy=-swingtunnelw/2-midwallw-swingtunnelw/2;
 
-	    for (ryyy=[ryy-20,ryy+10]) {
+	    for (ryyy=[ryy-18,ryy+10]) {
 	      translate([x,ryy-swingw/2+1,axleheight+swingheight+wall+swingweighth+wall*2]) cube([swingl/2+swingweightl*2,swingw-wall*2-1,0.8]);
 	      translate([x,ryy-swingw/2-1,axleheight+swingheight+wall+swingweighth+wall*2]) cube([-x-swingl/2-0.2,swingw-wall*4-1,0.8]);
 	      translate([x,ryy,axleheight]) cube([-x-swingl/2-0.2,0.8,swingheight+wall+swingweighth+wall*2]);
@@ -720,7 +756,7 @@ module mousebox() {
 	      //swingmh=sheight-swingmheight;
 	      translate([x,ryyy,swingmheight]) cube([lx-0.2,0.8,swingmheight]);
 	      hull() {
-		translate([x,ryyy,swingmheight]) cube([sl,0.8,swingmh]);
+		translate([x,ryyy,swingmheight-wall]) cube([sl,0.8,swingmh+wall]);
 		//	      translate([0,ryy,swingmheight]) cube([0.4,0.8,swingmh]);
 		//	      translate([0,ryy,swingmheight]) cube([swingweightl-lx,0.8,swingmh]);
 	      }
@@ -790,8 +826,12 @@ module storagecover() {
   difference() {
     union() {
       intersection() {
-	translate([storageboxx,storageboxy,0]) roundedbox(storageboxl,storageboxw,storageboxh,cornerd);
-	translate([storageboxx-0.1,storageboxy-0.1,storageboxh-wall]) cube([storageboxl+0.2,storageboxw+0.02,wall]);
+	//translate([storageboxx,storageboxy,0]) roundedbox(storageboxl,storageboxw,storageboxh,cornerd);
+	//translate([storageboxx-0.1,storageboxy-0.1,storageboxh-wall]) cube([storageboxl+0.2,storageboxw+0.02,wall]);
+	minkowski() {
+	  cylinder(d=storageboxoutcornerd,h=1);
+	  translate([storageboxx+storageboxoutcornerd/2,storageboxy+storageboxoutcornerd/2,storageboxh-wall]) cube([storageboxl-storageboxoutcornerd,storageboxw-storageboxoutcornerd,wall-1]);
+	}
       }
 
       theight=axleheight+swingheight+swingl/2*sin(closedangle)-wall;
@@ -804,15 +844,15 @@ module storagecover() {
 	  difference() {
 	    union() {
 	      // Mouse storage
-	      roundedroof(storageboxx+wall,storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-doorl/2-2-boxincornerd,storagew,boxincornerd/2,boxincornerd);
-	      roundedroof(storageboxx+wall,storageboxy+wall+2,storageboxh-wall-boxincornerd/2,storagel,storagew-2,boxincornerd/2,boxincornerd);
-	      roundedroof(storageboxx+storageboxl/2+doorl/2+2+boxincornerd,storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-doorl/2-2-boxincornerd,storagew-2,boxincornerd/2,boxincornerd);
+	      roundedroof(storageboxx+wall,storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-boxincornerd-wall*3,storagew,boxincornerd/2,boxincornerd);
+	      roundedroof(storageboxx+wall,storageboxy+wall+wall,storageboxh-wall-boxincornerd/2,storagel,storagew-wall,boxincornerd/2,boxincornerd);
+	      roundedroof(storageboxx+storageboxl-wall-(storagel/2-boxincornerd-wall*3),storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-boxincornerd-wall*3,storagew-2,boxincornerd/2,boxincornerd);
 	    }
 
 	    // Storage roof cut
-	    roundedroofcut(storageboxx+wall,storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-doorl/2-2-boxincornerd,storagew,boxincornerd/2,boxincornerd);
-	    roundedroofcut(storageboxx+wall,storageboxy+wall+2,storageboxh-wall-boxincornerd/2,storagel,storagew-2,boxincornerd/2,boxincornerd);
-	    roundedroofcut(storageboxx+storageboxl/2+doorl/2+2+boxincornerd,storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-doorl/2-2-boxincornerd,storagew-2,boxincornerd/2,boxincornerd);
+	    roundedroofcut(storageboxx+wall,storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-boxincornerd-wall*3,storagew,boxincornerd/2,boxincornerd);
+	    roundedroofcut(storageboxx+wall,storageboxy+wall+wall,storageboxh-wall-boxincornerd/2,storagel,storagew-wall,boxincornerd/2,boxincornerd);
+	    roundedroofcut(storageboxx+storageboxl-wall-(storagel/2-boxincornerd-wall*3),storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-boxincornerd-wall*3,storagew,boxincornerd/2,boxincornerd);
 	  }
 	}
       }
@@ -822,17 +862,22 @@ module storagecover() {
     translate([storageboxx+storageboxl/2,storageboxy+storageboxw-copyrighttextoffset-15,storageboxh-textdepth+0.01]) linear_extrude(height=textdepth) text(copyrighttext, size=copyrighttextsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
 
     // Cover locking clips
-    for (x=[storageboxx+storageboxl/6,storageboxx+storageboxl/2,storageboxx+storageboxl-storageboxl/6]) {
+    for (x=[storageboxx+storageboxl/5,storageboxx+storageboxl-storageboxl/5]) {
+      for (y=[storageboxy+clipd/2]) {
+	translate([x,y,clipheight]) tubeclip(clipl,clipd,dtolerance);
+      }
+    }
+    
+    for (x=[storageboxx+storageboxl/4,storageboxx+storageboxl/2,storageboxx+storageboxl-storageboxl/4]) {
       for (y=[storageboxy+clipd/2,storageboxy+wall+storagew+wall-clipd/2,storageboxy+wall+storagew+clipd/2,storageboxy+storageboxw-clipd/2]) {
 	translate([x,y,clipheight]) tubeclip(clipl,clipd,dtolerance);
       }
     }
+    
     for (x=[storageboxx+clipd/2,storageboxx+storageboxl-clipd/2]) {
       for (y=[-swingtunnelw/2-midwallw-swingtunnelw/2,storageboxy+wall+storagew/4,storageboxy+wall+storagew*3/4]) {
 	translate([x,y,clipheight]) rotate([0,0,90]) tubeclip(clipl,clipd,dtolerance);
       }
-	  
-      translate([storageboxx+storageboxw-clipd/2,0,clipheight]) rotate([0,0,90]) tubeclip(clipl,clipd,dtolerance);
     }
 
     doorcut();
@@ -934,13 +979,13 @@ module cover() {
 		roundedroof(boxx+boxl-wall-midholel,-swingtunnelw/2-midwallw-swingtunnelw,boxh-wall-boxincornerd/2,midholel-swingtunnelladjust+wall,swingtunnelw*2+midwallw,boxincornerd/2,boxincornerd);
 		hull() {
 		  roundedroof(boxx+boxl-wall-midholel+xtolerance,-swingtunnelw/2-midwallw/2-endwin/2,boxh-wall-c/2,midholel-xtolerance*2,endwin,c/2,c);
-		  translate([boxx+boxl-wall-midholel+xtolerance,-swingtunnelw/2-midwallw/2-endwin/2+ytolerance,boxh-wall-c/2]) cube([midholel-xtolerance*2,endwin-ytolerance*2,c/2]);
+		  hull() {
+		    translate([boxx+boxl-wall-midholel+xtolerance,-swingtunnelw/2-midwallw/2-endwin/2+ytolerance,boxh-wall-0.1]) cube([midholel-xtolerance*2,endwin-ytolerance*2,0.1]);
+		    translate([boxx+boxl-wall-midholel+xtolerance,-swingtunnelw/2-midwallw/2-endwin/2+ytolerance,boxh-wall-c/2]) cube([midholel-xtolerance*2-0.5,endwin-ytolerance*2,c/2]);
+		  }
 		}
 	      }
 	      
-	      // Opening between out and storage tunnels
-	      //	      roundedroof(boxx+wall,-swingtunnelw/2-midwallw-swingtunnelw+ytolerance,theight,boxl-wall-tl-wall,swingtunnelw-ytolerance-0.5-wall-ytolerance-wall-ytolerance-wall-0.5-ytolerance,boxh-wall-theight,boxincornerd);
-
 	      // Close extra spaces
 	      translate([boxx,-swingtunnelw/2-midwallw-swingtunnelw+ytolerance,theight-boxincornerd/2]) roundedbox(boxl-tl-wall+boxincornerd/2,swingtunnelw-ytolerance-0.5-wall-ytolerance-wall-ytolerance,boxh-wall-theight+boxincornerd/2+wall,cornerd*2);
 	    }
@@ -1073,15 +1118,16 @@ if (print==0) {
   intersection() {
     union() {
       mechanics(angle,lockangle);
-      mousestorage();
-           door();
-      //storagecover();
-      cover();
+      //mousestorage();
+      //door();
+      //   storagecover();
+      #  cover();
     }
     //if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
     //if (debug) translate([boxx,-swingtunnelw/2-swingtunnelw-50,boxh-wall*15]) cube([590,swingtunnelw*2+midwallw+50,100]);//axleheight+1
-    //if (debug) translate([boxx,0,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
-    if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
+    if (debug) translate([storageboxx+storageboxl/2-0,storageboxy,50]) cube([storageboxl+50,storageboxw,100]);
+    //if (debug) translate([boxx,-swingtunnelw/2-midwallw-swingtunnelw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
+    // if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
   }
  }
 
@@ -1091,7 +1137,8 @@ if (print==1) {
     union() {
       mousetrap(0,lockangleprint);
     }
-    if (debug) translate([-200,-swingtunnelw/2+10,30]) cube([400,400,60]);//axleheight+1
+    //if (debug) translate([-200,-swingtunnelw/2+10,30]) cube([400,400,60]);//axleheight+1
+    if (debug) translate([-200,-swingtunnelw/2-midwallw-swingtunnelw+1,30]) cube([400,400,60]);//axleheight+1
 
     if (0) union() {
       translate([xxx+0.01,-swingtunnelw/2-midwallw-swingtunnelw-axledepth+ytolerance,wall/2]) cube([lockweightl+lockweighth+0.01,-ytolerance+axledepth+swingtunnelw+midwallw+swingtunnelw+axledepth-ytolerance,boxh-wall-wall/2+lockweightl-40]);
@@ -1141,7 +1188,9 @@ if (print==5) {
 
 if (print==6) {
   intersection() {
-    cover();
-    mechanics(angle,lockangle);
+    mousestorage();
+    storagecover();
+    //cover();
+    //mechanics(angle,lockangle);
   }
  }
