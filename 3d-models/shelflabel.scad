@@ -3,6 +3,7 @@
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
 include <hsu.scad>
+absmode=0;
 
 textarea=20;
 shelfthickness=19;//.75;
@@ -23,12 +24,9 @@ bedy=230;
 bedz=249;
 
 //texts=["SCI-FI", "BIO", ""];
-//texts=["NOVEL", "COMICS", "CS", "HISTORY", "LAW", "SEAFARING", "AVIATION", "PERIODICALS", ""];
-//texts=["BUSINESS", ""];
-//texts=["ARCHITECTURE", "HSU", ""];
-//texts=["THESIS", ""];
+//texts=["NOVEL", "COMICS", "HISTORY", "LAW", "SEAFARING", "AVIATION", "PERIODICALS", ""];
 //texts=["BUSINESS", "SOCIETY", "SELF IMPROVEMENT","TECHNOLOGY", "PERIODICALS",""];
-texts=["DICTIONARY", "DATABOOK", "PERIODICALS", "COOKING", "TRAVEL", ""];
+texts=["DICTIONARY", "CS", "TRAVEL", "DATABOOK", "PERIODICALS", "HSU", "ARCHITECTURE", "COOKING", "THESIS",""];
 
 module shelflabel(t,width) {
   echo(width);
@@ -38,29 +36,40 @@ module shelflabel(t,width) {
 	roundedbox(width,labelheight,wall,cornerd);
 	translate([width+arrowwidth,labelheight/2,wall/2]) scale([1,1,wall/cornerd]) sphere(d=cornerd,$fn=30);
       }
-      for (x=[0,width-shelfw]) {
-	translate([x,topwall+shelfthickness,0]) roundedbox(shelfw,topwall,shelfdepth,cornerd);
+      if (absmode) {
+	for (x=[0,width-shelfw]) {
+	  translate([x,topwall+shelfthickness,0]) roundedbox(shelfw,topwall,shelfdepth,cornerd);
+	  hull() {
+	    translate([x,0,0]) roundedbox(shelfw,topwall,shelfdepth,cornerd);
+	    translate([x,topwall-cornerd,shelfdepth]) roundedbox(shelfw,cornerd,topwall*2+cornerd,cornerd);
+	  }
+	}
+      } else {
+	translate([0,topwall+shelfthickness,0]) roundedbox(width,topwall,shelfdepth,cornerd);
 	hull() {
-	  translate([x,0,0]) roundedbox(shelfw,topwall,shelfdepth,cornerd);
-	  translate([x,topwall-cornerd,shelfdepth]) roundedbox(shelfw,cornerd,topwall*2+cornerd,cornerd);
+	  translate([0,0,0]) roundedbox(width,topwall,shelfdepth,cornerd);
+	  translate([0,topwall-cornerd,shelfdepth]) roundedbox(width,cornerd,topwall*2+cornerd,cornerd);
 	}
       }
 
-      for (z=[0, shelfdepth/2, shelfdepth-3]) {
-	translate([0,0,z]) roundedbox(width,topwall,2,cornerd);
-      }
 
-      shelfopening=width-shelfw*2;
-      shelfsupportmidtowers=floor(shelfopening/(shelfgap+shelfw));
-      step=shelfopening/shelfsupportmidtowers;
-      for (x=[shelfw+step/2-shelfw/2:step:width-shelfw-1]) {
-	translate([x,topwall+shelfthickness,0]) roundedbox(shelfw,topwall,shelfdepth,cornerd);
-	hull() {
-	  translate([x,0,0]) roundedbox(shelfw,topwall,shelfdepth,cornerd);
-	  translate([x,topwall-cornerd,shelfdepth]) roundedbox(shelfw,cornerd,topwall*2+cornerd,cornerd);
+      if (absmode) {
+	for (z=[0, shelfdepth/2, shelfdepth-3]) {
+	  translate([0,0,z]) roundedbox(width,topwall,2,cornerd);
 	}
+
+	shelfopening=width-shelfw*2;
+	shelfsupportmidtowers=floor(shelfopening/(shelfgap+shelfw));
+	step=shelfopening/shelfsupportmidtowers;
+	for (x=[shelfw+step/2-shelfw/2:step:width-shelfw-1]) {
+	  translate([x,topwall+shelfthickness,0]) roundedbox(shelfw,topwall,shelfdepth,cornerd);
+	  hull() {
+	    translate([x,0,0]) roundedbox(shelfw,topwall,shelfdepth,cornerd);
+	    translate([x,topwall-cornerd,shelfdepth]) roundedbox(shelfw,cornerd,topwall*2+cornerd,cornerd);
+	  }
+	}
+	translate([0,topwall+shelfthickness,shelfdepth-3]) roundedbox(width,topwall,2,cornerd);
       }
-      translate([0,topwall+shelfthickness,shelfdepth-3]) roundedbox(width,topwall,2,cornerd);
     }
 
     translate([width/2,labelheight-textheight,-0.02]) linear_extrude(textdepth) rotate([180]) text(text=t,font="Liberation Sans:style=Bold",size=textsize,valign="bottom",halign="center");
@@ -80,4 +89,4 @@ module printlabels(x,y,i) {
 }
 
 //rotate([0,0,00]) printlabels(0,0,0);
-rotate([0,0,90]) printlabels(0,0,0);
+rotate([0,0,0]) printlabels(0,0,0);
