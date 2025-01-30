@@ -19,7 +19,7 @@ antiwarpw=0.8;
 // Make some voids in thicker parts. May save material if dense fill is used. At 10% fill, using fill is cheaper.
 makevoids=0; 
 
-version="V1.0";
+version="V1.1";
 name="Heikki's Mousetrap";
 versiontext=str(name, " ",version);
 textdepth=0.8;
@@ -38,7 +38,7 @@ ztolerance=0.4;
 axledtolerance=0.8;
 dtolerance=0.5;
 maxbridge=10;
-cutsmall=3;
+cutsmall=4;
 
 $fn=60;
 
@@ -93,6 +93,13 @@ boxl=248; //235  -boxx+swingl-25;
 boxw=wall+swingtunnelw+midwallw+swingtunnelw+wall;
 boxy=swingtunnelw/2+wall-boxw;
 
+boxcrosssupportheight=boxh-wall-boxincornerd/2-wall-ztolerance;
+boxcrosssupporth=wall;
+boxcrosssupportl=10;
+boxcrosssupportx=boxx+boxl/2-swingtunnelw/2+clipl;
+
+boxinsupporth=10;
+
 doorl=50;
 doorw=wall;
 doorhandleh=15;
@@ -103,7 +110,7 @@ doorholeh=doorl-5-wall;
 
 //swingweightl=lockaxled+wall*4; //-lockaxlex-swingl/2+lockaxled/2;
 swingweightl=-lockaxlex-swingl/2+lockaxled/2;
-swingweighth=wall;
+swingweighth=wall-ztolerance;
 weigthvoids=1;
 
 midholel=46+15;
@@ -544,9 +551,10 @@ module mousebox() {
     
 	    // Incoming tunnel
 	    c=boxincornerd;
+	    translate([boxx-c/2,-swingtunnelw/2,wall*2]) roundedbox(swingtunnell,swingtunnelw,boxh-wall*3+c/2,c);
 	    hull() {
-	      translate([boxx-c/2,-swingtunnelw/2,wall*2]) roundedbox(swingtunnell,swingtunnelw,boxh-wall+c,c);
-	      translate([-swingl/2*cos(closedangle)-swingheight*cos(closedangle)-cornerd/2-cornerd/2-swingweightl,-swingtunnelw/2,wall*2]) roundedbox(cornerd+2*swingweightl+swingl*cos(closedangle)-wall,swingtunnelw,boxh-wall*3,cornerd);
+	      translate([boxx-c/2,-swingtunnelw/2,wall*2]) roundedbox(swingtunnell-wall-c/2,swingtunnelw,boxh-wall*3-c/2,c);
+	      translate([-swingl/2*cos(closedangle)-swingheight*cos(closedangle)-cornerd/2-cornerd/2-swingweightl,-swingtunnelw/2,wall*2]) roundedbox(cornerd+2*swingweightl+swingl*cos(closedangle)-wall,swingtunnelw,boxh-wall*3-c/2,cornerd);
 	    }
 
 	    // Outgoing tunnel
@@ -678,6 +686,23 @@ module mousebox() {
 	    }
 	  }
 
+	  // Roof crossbar to make cover stay in place better
+	  for (yy=[0,-swingtunnelw/2-midwallw-swingtunnelw/2]) {
+	    for (y=[-swingtunnelw/2-cornerd/2,swingtunnelw/2]) {
+	      hull() {
+		for (x=[boxcrosssupportx,boxcrosssupportx+(swingtunnelw/2-maxbridge/2)]) {
+		  translate([x,yy+y,boxcrosssupportheight]) roundedbox(boxcrosssupportl,cornerd,wall,cornerd);
+		}
+		translate([boxcrosssupportx+(swingtunnelw/2-maxbridge/2),yy+sign(y)*(maxbridge/2-cornerd/2),boxcrosssupportheight]) roundedbox(boxcrosssupportl,cornerd,boxcrosssupporth,cornerd);
+	      }
+	    }
+
+	    translate([boxcrosssupportx+(swingtunnelw/2-maxbridge/2),yy-(maxbridge/2-cornerd/2),boxcrosssupportheight]) roundedbox(boxcrosssupportl,maxbridge,boxcrosssupporth,cornerd);
+	  }
+
+	  // Incoming side crossbar
+	  translate([boxx,-swingtunnelw/2-midwallw-swingtunnelw-cornerd/2,boxh-wall-boxinsupporth-ztolerance]) roundedbox(wall,boxw-wall-wall+cornerd,boxinsupporth,cornerd);
+	  
 	  if (adhesion) {
 	    adhesiontowerh=swingsideh+9;
 	    
@@ -812,14 +837,14 @@ module mousebox() {
 // Make a roof insert for cover. Call roundedroofcut separately as these may be unionized.
 module roundedroof(x,y,z,l,w,h,c) {
   intersection() {
-    translate([x+xtolerance,y+ytolerance,z-c/2]) roundedbox(l-xtolerance*2,w-ytolerance*2,h+c,c);
-    translate([x,y,z+cutsmall]) cube([l,w,h-cutsmall]);
+    translate([x,y,z-c/2]) roundedbox(l,w,h+c,c);
+    translate([x+xtolerance,y+ytolerance,z+cutsmall]) cube([l-xtolerance*2,w-ytolerance*2,h-cutsmall]);
   }
 }
 
 // Cutout part of roof insert
 module roundedroofcut(x,y,z,l,w,h,c) {
-  translate([x+xtolerance,y+ytolerance,z-c/2]) roundedbox(l-xtolerance*2,w-ytolerance*2,c,c);
+  translate([x,y,z-c/2]) roundedbox(l,w,c,c);
 }
 
 module storagecover() {
@@ -962,16 +987,16 @@ module cover() {
 	      // Incoming tunnel
 	      difference() {
 		intersection() {
-		  roundedroof(boxx-c/2,-swingtunnelw/2,boxh-wall-c/2,swingtunnell,swingtunnelw,c/2,c);
-		  translate([boxx-c/2,-swingtunnelw/2+ytolerance,boxh-wall-boxincornerd]) cube([swingtunnell-xtolerance,swingtunnelw-ytolerance*2,boxincornerd]);
+		  roundedroof(boxx+wall,-swingtunnelw/2,boxh-wall-c/2,swingtunnell-wall-c/2,swingtunnelw,c/2,c);
+		  //		  translate([boxx+wall+xtolerance,-swingtunnelw/2+ytolerance,boxh-wall-boxincornerd]) cube([swingtunnell-wall-c/2-xtolerance*2,swingtunnelw-ytolerance*2,boxincornerd]);
 		}
 
-		translate([boxx-c/2-0.1,-swingtunnelw/2,boxh-wall-boxincornerd]) cube([c/2+0.1,swingtunnell,swingtunnelw]);
+		//		translate([boxx+wall,-swingtunnelw/2,boxh-wall-boxincornerd]) cube([wall,swingtunnell,swingtunnelw]);
 	      }
 
 	      // Outgoing tunnel main section
 	      roundedroof(tx,-swingtunnelw/2-midwallw-swingtunnelw,boxh-wall-c/2,tl-swingtunnelladjust,swingtunnelw,c/2,c);
-	      translate([boxx+wall+c/2+xtolerance,-swingtunnelw/2-midwallw-swingtunnelw+ytolerance,boxh-wall-c/2+cutsmall]) cube([tx-boxx+c/2-xtolerance*2,swingtunnelw-ytolerance-0.5-wall-ytolerance-wall-ytolerance*2,c/2]);
+	      translate([boxx+wall+c/2+xtolerance,-swingtunnelw/2-midwallw-swingtunnelw+ytolerance,boxh-wall-c/2+cutsmall]) cube([tx-boxx+c/2-xtolerance*2,swingtunnelw-ytolerance-0.5-wall-ytolerance-wall-ytolerance*2,c/2-wall]);
 	      translate([tx+c/2,-swingtunnelw/2-midwallw-swingtunnelw+ytolerance,boxh-wall-c/2+cutsmall]) cube([c/2+xtolerance,swingtunnelw-ytolerance*2,c/2-1-cutsmall]);
 
 	      // Opening between in and out tunnels
@@ -987,11 +1012,11 @@ module cover() {
 	      }
 	      
 	      // Close extra spaces
-	      translate([boxx,-swingtunnelw/2-midwallw-swingtunnelw+ytolerance,theight-boxincornerd/2]) roundedbox(boxl-tl-wall+boxincornerd/2,swingtunnelw-ytolerance-0.5-wall-ytolerance-wall-ytolerance,boxh-wall-theight+boxincornerd/2+wall,cornerd*2);
+	      translate([boxx+wall+xtolerance,-swingtunnelw/2-midwallw-swingtunnelw+ytolerance,theight-boxincornerd/2]) roundedbox(boxl-wall-tl-wall+boxincornerd/2-xtolerance,swingtunnelw-ytolerance-0.5-wall-ytolerance-wall-ytolerance,boxh-wall-theight+boxincornerd/2+wall,cornerd*2);
 	    }
 
 	    // Incoming tunnel roof cut
-	    roundedroofcut(boxx-boxincornerd/2,-swingtunnelw/2,boxh-wall-boxincornerd/2,boxincornerd/2+boxl-wall-swingtunnelladjust,swingtunnelw,boxincornerd/2,boxincornerd);
+	    roundedroofcut(boxx+wall,-swingtunnelw/2,boxh-wall-c/2,boxl-wall-c/2-swingtunnelladjust,swingtunnelw,boxincornerd/2,boxincornerd);
 	
 	    // Outgoing tunnel roof cut
 	    roundedroofcut(tx+boxincornerd/2,-swingtunnelw/2-midwallw-swingtunnelw,boxh-wall-boxincornerd/2,tl-boxincornerd/2-swingtunnelladjust,swingtunnelw,boxincornerd/2,boxincornerd);
@@ -1117,17 +1142,18 @@ module box() {
 if (print==0) {
   intersection() {
     union() {
-      mechanics(angle,lockangle);
+      #mechanics(angle,lockangle);
       //mousestorage();
       //door();
       //   storagecover();
-      #  cover();
+       cover();
     }
     //if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
     //if (debug) translate([boxx,-swingtunnelw/2-swingtunnelw-50,boxh-wall*15]) cube([590,swingtunnelw*2+midwallw+50,100]);//axleheight+1
-    if (debug) translate([storageboxx+storageboxl/2-0,storageboxy,50]) cube([storageboxl+50,storageboxw,100]);
-    //if (debug) translate([boxx,-swingtunnelw/2-midwallw-swingtunnelw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
-    // if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
+    //if (debug) translate([storageboxx+storageboxl/2-0,storageboxy,50]) cube([storageboxl+50,storageboxw,100]);
+    if (debug) translate([boxx,-swingtunnelw/2-midwallw-swingtunnelw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
+    //if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
+    //if (debug) translate([boxx-50,0,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
   }
  }
 
