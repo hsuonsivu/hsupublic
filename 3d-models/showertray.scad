@@ -2,7 +2,7 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
-//include <hsu.scad>
+include <hsu.scad>
 
 print=1;
 pipes=1;
@@ -144,5 +144,8 @@ if (print==0) {
  }
 
 if (print==1) {
-  rotate([0,0,90]) showertray();
+  rotate([0,0,90]) {
+    antiwarpwall(0,-width/2,0,depth,width,height+topextension); // ,3,0.8);
+    showertray();
+  }
  }
