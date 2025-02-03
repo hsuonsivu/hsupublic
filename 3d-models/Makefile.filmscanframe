@@ -1,30 +1,32 @@
 SOURCE=filmscanframe.scad
 DEPENDS=hsu.scad
 
-all: filmscanframebaseandcovers.stl filmscanframebase.stl filmscanframecovers.stl
-# filmscanframebaseandcovershooksoncover.stl filmscanframebasehooksoncover.stl filmscanframecovershooksoncover.stl 
+all: filmscanframebaseandcovers35.stl filmscanframebase35.stl filmscanframecovers35.stl filmscanframetestversion35.stl filmscanframebase46.stl filmscanframecovers46.stl filmscanframetestversion46.stl
 
-filmscanframebase.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=1 -D hooksoncover=0 -o $@ $(SOURCE)
+filmscanframebase46.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -D filmtype=46 -D hooksoncover=0 -o $@ $(SOURCE)
 	echo $@ built.
 
-filmscanframecovers.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=2 -D hooksoncover=0 -o $@ $(SOURCE)
+filmscanframecovers46.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -D filmtype=46 -D hooksoncover=0 -o $@ $(SOURCE)
 	echo $@ built.
 
-filmscanframebaseandcovers.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=3 -D hooksoncover=0 -o $@ $(SOURCE)
+filmscanframetestversion46.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=5 -D filmtype=46 -D hooksoncover=0 -o $@ $(SOURCE)
 	echo $@ built.
 
-filmscanframebasehooksoncover.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=1 -D hooksoncover=1 -o $@ $(SOURCE)
+filmscanframebase35.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -D filmtype=35 -D hooksoncover=0 -o $@ $(SOURCE)
 	echo $@ built.
 
-filmscanframecovershooksoncover.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=2 -D hooksoncover=1 -o $@ $(SOURCE)
+filmscanframecovers35.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -D filmtype=35 -D hooksoncover=0 -o $@ $(SOURCE)
 	echo $@ built.
 
-filmscanframebaseandcovershooksoncover.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=3 -D hooksoncover=1 -o $@ $(SOURCE)
+filmscanframebaseandcovers35.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -D filmtype=35 -D hooksoncover=0 -o $@ $(SOURCE)
 	echo $@ built.
 
+filmscanframetestversion35.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=5 -D filmtype=35 -D hooksoncover=0 -o $@ $(SOURCE)
+	echo $@ built.
