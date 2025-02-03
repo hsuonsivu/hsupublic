@@ -25,8 +25,8 @@ bedz=249;
 
 //texts=["SCI-FI", "BIO", ""];
 //texts=["NOVEL", "COMICS", "HISTORY", "LAW", "SEAFARING", "AVIATION", "PERIODICALS", ""];
-//texts=["BUSINESS", "SOCIETY", "SELF IMPROVEMENT","TECHNOLOGY", "PERIODICALS",""];
-texts=["DICTIONARY", "CS", "TRAVEL", "DATABOOK", "PERIODICALS", "HSU", "ARCHITECTURE", "COOKING", "THESIS",""];
+texts=["BUSINESS", "SOCIETY", "SELF IMPROVEMENT","TECHNOLOGY", ""];
+//texts=["DICTIONARY", "CS", "TRAVEL", "DATABOOK", "PERIODICALS", "HSU", "ARCHITECTURE", "COOKING", "THESIS",""];
 
 module shelflabel(t,width) {
   echo(width);
