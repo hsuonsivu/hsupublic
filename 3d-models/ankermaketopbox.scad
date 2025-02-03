@@ -5,7 +5,7 @@
 include <hsu.scad>
 
 print=2;
-howmany=2;
+howmany=4;
 
 debug=print>0?0:1;
 
@@ -15,7 +15,7 @@ cornerd=1;
 
 topbarh=25.1;
 topbardepth=18.1;
-bartexts=["PLA", "ABS", "PETG", "TPU95", "GlowPETG"];
+bartexts=["PLA", "ABS", "PETG", "PLA", "TPU95", "GlowPETG"];
 bartextsize=16;
 versiontext="v1.2";
 versiontextsize=7;
@@ -60,8 +60,8 @@ module label(t) {
       translate([boxw/2,y,labelclipheight+labelclipd/2]) tubeclip(labelclipl,labelclipd,dtolerance);
     }
 
-    translate([boxw/2,thinwall+ytolerance+textdepth-0.01,boxh/2]) rotate([90,0,0]) linear_extrude(textdepth) text(t,size=bartextsize,valign="center",halign="center");
-    translate([boxw/2,thinwall+ytolerance+textdepth-0.01,versiontextsize+wall]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,size=versiontextsize,valign="center",halign="center");
+    translate([boxw/2,thinwall+ytolerance+textdepth-0.01,boxh/2]) rotate([90,0,0]) linear_extrude(textdepth) text(t,size=bartextsize,font="Liberation Sans:style=Bold",valign="center",halign="center");
+    translate([boxw/2,thinwall+ytolerance+textdepth-0.01,versiontextsize+wall]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,size=versiontextsize,font="Liberation Sans:style=Bold",valign="center",halign="center");
   }
 }
 
@@ -78,11 +78,11 @@ module ankermaketopbox() {
     translate([wall+labeledge,-0.01,-0.01]) cube([boxw-wall*2-labeledge*2,thinwall+ytolerance+0.02,labelh-labeledge+0.01]);
     translate([wall+labeledge,boxdepth-thinwall-0.01,-0.01]) cube([boxw-wall*2-labeledge*2,thinwall+ytolerance+0.02,labelh-labeledge+0.01]);
     
-    translate([boxw/2,thinwall+ytolerance+labelthickness+ytolerance+textdepth-0.01,versiontextsize+wall]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,size=versiontextsize,valign="center",halign="center");
+    translate([boxw/2,thinwall+ytolerance+labelthickness+ytolerance+textdepth-0.01,versiontextsize+wall]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,size=versiontextsize,font="Liberation Sans:style=Bold",valign="center",halign="center");
 
     translate([cornerd/2+wall,boxdepth/2-tweezerboxdepth/2,utilityboxheight]) roundedbox(tweezerboxw,tweezerboxdepth,utilityboxh,cornerd);
     
-    translate([boxw/2,boxdepth-thinwall-ytolerance-labelthickness-ytolerance-textdepth+0.01,versiontextsize+wall]) rotate([-90,180,0]) linear_extrude(textdepth) text(versiontext,size=versiontextsize,valign="center",halign="center");
+    translate([boxw/2,boxdepth-thinwall-ytolerance-labelthickness-ytolerance-textdepth+0.01,versiontextsize+wall]) rotate([-90,180,0]) linear_extrude(textdepth) text(versiontext,size=versiontextsize,font="Liberation Sans:style=Bold",valign="center",halign="center");
   }
 
   // Clips to keep box attached to the top bar
@@ -138,8 +138,11 @@ if (print==2) {
  }
 
 if (print==3) {
-  for (i=[4:1:4+3]) {
-    translate([0,(i-4)*(labelh+0.5),wall+ytolerance+labelthickness]) rotate([-90,0,0]) label(bartexts[floor(i/2)]);
+  for (i=[6:1:9]) {
+    translate([0,(i-6)*(labelh+0.5),0]) rotate([-90,0,0]) translate([-wall-ytolerance,-thinwall-ytolerance-labelthickness,0]) label(bartexts[floor(i/2)]);
+  }
+  for (i=[10:1:11]) {
+    translate([labelw+0.5+(i-10)*(labelh+0.5),labelw,0]) rotate([-90,0,-90]) translate([-wall-ytolerance,-thinwall-ytolerance-labelthickness,0]) label(bartexts[floor(i/2)]);
   }
  }
 
