@@ -292,7 +292,8 @@ module spring(h,d,plateh,thickness) {
 }
 
 // This is used by onehinge
-module axle(diameter,width,axledepth,cutout) {
+module axle(diameter,width,axledepthin,cutout) {
+  axledepth=axledepthin>diameter/3?diameter/3:axledepthin;
   if (cutout) {
     translate([0,-width/2,0]) rotate([90,0,0]) cylinder(d2=diameter-axledepth*2,d1=diameter,h=axledepth,$fn=90);
     translate([0,width/2,0]) rotate([-90,0,0]) cylinder(d2=diameter-axledepth*2,d1=diameter,h=axledepth,$fn=90);
@@ -345,3 +346,57 @@ module printareacube(printer) {
     }
   }
 }
+
+// Create heat protection box around an object for warpy materials
+// such as abs. Curvy walls needed to avoid corners warping open.
+// distance is distance from the object, 3mm or more (curved corners
+// need to be accommodated, wall is wall thickness, 1-2 times
+// nozzle. I use 2x for wall.
+
+module antiwarpwall(x,y,z,l,w,h,distanceoption,walloption) {
+  distance=distanceoption?distanceoption:3;
+  wall=walloption?walloption:0.8;
+  diameterin=min(distance+wall,l+distance*2,w+distance*2);
+  diameterout=diameterin+wall*2;
+  
+  hh=max(h+2,2);
+  
+  difference() {
+    translate([x,y,0]) minkowski() {
+      cube([l,w,hh]);
+      cylinder(d=diameterout,h=1);
+    }
+
+    translate([x,y,-0.1]) minkowski() {
+      cube([l,w,hh+0.2]);
+      cylinder(d=diameterin,h=1);
+    }
+
+    translate([x-diameterout/2-0.1,y+w/2,-0.01]) cube([diameterout/2-0.1+0.1,1,1.01]);
+  }
+}
+
+// Rounded box with different roudings in xy and z directions. If printable is 1, bottom is set to max 45 degree angle.
+// height must be non-zero, if 0, it will become 0.01..
+
+module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
+  $fn=(fn!="" || fn>0)?fn:30;
+  height=heightin>0?heightin:0.01;
+  
+  hull() {
+    if (printable) cylinder(d=diameter-cornerd/1.7,h=height/2);
+
+    translate([0,0,cornerd/2]) rotate_extrude() translate([diameter/2-cornerd/2,0,0]) circle(d=cornerd);
+    translate([0,0,height-cornerd/2]) rotate_extrude() translate([diameter/2-cornerd/2,0,0]) circle(d=cornerd);
+  }
+}
+
+module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
+  dz=dzin>0?dzin:0.01;
+  $fn=(fn!="" || fn>0)?fn:30;
+  translate([dxy/2,dxy/2,0]) minkowski(convexity=10) {
+    cube([x-dxy,y-dxy,z-dz]);
+    roundedcylinder(dxy,dz,dz,printable,$fn);
+  }
+}
+
