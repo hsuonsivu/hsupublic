@@ -2,7 +2,7 @@
 
 use <hsu.scad>;
 
-filmtype=35; //35; //46; //35; // 35mm or 46
+filmtype=46; //35; //46; //35; // 35mm or 46
 
 filmshrunksize=149;
 filmshouldbesize=150; // Observed on kodak film
@@ -29,9 +29,12 @@ frameseparators=((filmtype==35) && (hooks==1))?0:1;
 v="V1.31";
 versiontext=debug?str(v, "-", debug):v;
 
+copyrighttext="© Heikki Suonsivu CC-BY-NC-SA";
+  
 textdepth=1;
 textsize=6;
 textxposition=textsize/6;
+copyrighttextsize=5;
 
 wall=textdepth+1;
 
@@ -90,6 +93,10 @@ framestart=1;
 frameseparator=0.8; //1.2; // 2 mm minus tolerance
 frameseparatoroffset=(2-frameseparator)/2;
 framedistance=((filmtype==35)?38:45)*filmshrink;
+
+// Openings widened toward scanning glass to reduce reflections
+framewidenedw=frameimagew+filmh*0.7*2;
+framewidenedy=framew/2-framewidenedw/2;
 
 adapterw=19.7; // From right side
 adapterl=24.9;
@@ -359,7 +366,7 @@ module scanadapter() {
 		translate([-0.1,y+framew/2-covertopw/2-ytolerance,filmheight]) cube([length+0.2,covertopw+ytolerance*2,thickness-filmheight+0.01]);
 
 	// Vertical support for film to drop neatly in place.
-	translate([filmholderx+framestart,filmholdery,filmheight]) {
+	translate([filmholderx+framestart,y,filmheight]) {
 	  hull() {
 	    translate([xtolerance,-ytolerance/2-(thickness-filmheight),0]) triangle(filmholderl-framestart-xtolerance*2,thickness-filmheight,thickness-filmheight,11);
 	    translate([xtolerance,0,0]) cube([filmholderl-framestart-xtolerance*2,ytolerance,thickness-filmheight]);
@@ -431,13 +438,15 @@ module scanadapter() {
 
     translate([guidex+guidel/2,guidey+2+textsize/2,guideh-textdepth+0.01])  rotate([0,0,180]) linear_extrude(height=textdepth) text("Top", size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
     translate([guidex+guidel/2,guidey+guidew-2-textsize/2,guideh-textdepth+0.01])  rotate([0,0,180]) linear_extrude(height=textdepth) text(filmshrinktext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
+    translate([adapteroffset+adapterl+1,lightenholeystart/2,thickness-textdepth+0.01])  rotate([0,0,180]) linear_extrude(height=textdepth) text(copyrighttext, size=copyrighttextsize, valign="center",halign="right",font="Liberation Sans:style=Bold");
   }
 
   // Frame separators
   for (y=[filmholdery:filmholderoffset:width-filmholdery]) {
     if (frameseparators) {
       for (x=[filmholderx+framestart:framedistance:filmholderx+filmholderl-framedistance]) {
-	translate([x,y+framew/2-filmw/2-0.01,0]) cube([frameseparator,filmw+0.02,framehookh]);
+	translate([x,y+framewidenedy-cornerd/2,0]) cube([frameseparator,framewidenedw+cornerd,framehookh]);
+	//	translate([x,y+framew/2-covertopw-cornerd/2,0]) cube([frameseparator,covertopw-cornerd,framehookh]);
 	//		translate([x,y-filmh*0.7+frameimagey,0]) cube([frameseparator,frameimagew+2*filmh*0.7,framehookh]);
       }
     }
@@ -468,7 +477,7 @@ module scancover() {
     if (frameseparators) {
       for (x=[filmholderx+framestart:framedistance:filmholderx+filmholderl-framedistance]) {
 	//	translate([x,y+framew/2-covertopw/2,thickness-covertoph]) roundedbox(frameseparator,covertopw,covertoph,cornerd);
-	translate([x,y+framew/2-covertopw/2,coverh]) cube([frameseparator,covertopw,thickness-coverh]);
+	translate([x,y+framew/2-covertopw/2+cornerd/2,coverh]) cube([frameseparator,covertopw-cornerd,thickness-coverh]);
 	//translate([x,y-filmh*0.7+frameimagey,coverh]) cube([frameseparator,frameimagew+2*filmh*0.7,thickness-coverh]);
       }
     }
