@@ -494,10 +494,8 @@ screw parts. No supports are needed for printing.
 
 A frame to scan film strips in a flat bed scanner, for both negatives
 and positives. This is designed for Epson Perfection V850 Pro, so it
-has Epson's positioning knobs. The positioning knobs are detachable,
-as with them the frame is too wide for A4 pocket. To store the frame
-turn the epson bits upside down and towards film strips to avoid
-losing them.
+has Epson's positioning knobs. The positioning knobs can be turned
+over the frame as with them the frame is too wide for A4 pocket.
 
 I am using vuescan to scan the film strips.
 
@@ -521,30 +519,24 @@ in the frame. At the current filament prices they cost approximately 2
 euro per piece as printed, using about 100g of filament. I use plastic
 binder pockets to store the frames.
 
-The clips and film hole knobs require accurate printer. When using a
-new frame, it seems to be better to install covers without film first
-to make sure that all clips are ok and there are no strings etc which
-would show in the final scan. The film hole knobs are the hardest thing to
-get right, as they are small and printers tend to make small towerlike
-knobs misshaped. It may be that clips require tuning for various
-printers as well.
+The clips and film hole knobs require accurate printer. When using
+less accurate printer, for a new frame, it seems to be better to
+install covers without film first to make sure that all clips are ok
+and there are no strings etc which would show in the final scan. 
 
 There are multiple options in the beginning of the file for debugging.
 
-Supports older 46mm wide film type, filmtype 35 is normal film, 46 is the older wide film.
-Possible future improvements could be tuning the film hole knobs to more
-accurately keep the film positioned and straight. Older films or
-negatives are often curved. I did try to use frame separators to make
-sure that the film is as flat as possible, but frame separators are not
-well standardized for position, and different cameras are not doing
-frames identically in relation to film holes.
+The frame supports 35mm (135), 46mm (127), 16mm (110) films (use
+Makefile to generate frames for difference formats).
 
-Originally, I tried to use film hole knobs to snap to the covers, but
-this was too unreliable due to misshapen film hole knobs, thus I did
-side clips to keep the covers in place.
+Frame separators are used to flatten the film as negatives are often
+curved. One issue I noticed with this is that most films seem to have
+shrunk, so I had to add shrink factor to compensate for this. This is
+relevant for 35mm film as the gap between frames is very small
+(2mm). The value is tunable (set filmshouldbesize and filmshrunksize).
 
 No supports are needed to print. I use black PLA to print
-these. Lighter colours may cause reflections.
+these. Lighter colours may cause reflections. 
 
 ![filmscanframe in scad.](filmscanframe.png)
 ![filmscanframe for 46mm film in scad.](filmscanframe46.png)
