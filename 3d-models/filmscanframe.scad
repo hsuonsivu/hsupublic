@@ -6,7 +6,7 @@
 
 use <hsu.scad>;
 
-filmtype=35; //35; //46; //35; // 35mm or 46
+filmtype=46; // 110 //35; //46; //35; // 35mm or 46
 
 filmshrunksize=149;
 filmshouldbesize=150; // Observed on kodak film
@@ -18,7 +18,7 @@ print=0; // 1 = print film frame, 2 print 1 cover set, 2 = print covers for all 
 debug=0; // 1 just one strip, 2 smallest possible
 tappitypemale=1; // 0 = rounded cube, 1 = circular
 tappitypefemale=1; // 0 = rounded cube, 1 = circular
-filmstrips=((debug>0) || (print==5))?1:((filmtype==35)?4:3);
+filmstrips=((debug>0) || (print==5))?1:(filmtype==110?7:((filmtype==35)?4:3));
 detachable_epson_bits=1;
 testcuts=0; // Cutouts to reveal clip structures.
 adhesion=print>0?0:0; // Adds some structures to increase bed adhesion.
@@ -26,11 +26,10 @@ tassusizelarge=10;
 tassusizesmall=5;
 antiwarp=0;
 
-hooks=0;//((filmtype==35) ?1:0);
-starthooksonly=1; // Only make hooks for first frame or so
-frameseparators=((filmtype==35) && (hooks==1))?0:1;
+//starthooksonly=1; // Only make hooks for first frame or so
+frameseparators=1;//((filmtype==35 || filmtype==110) && (hooks==1))?0:1;
 
-v="V1.34";
+v="V1.39";
 versiontext=debug?str(v, "-", debug):v;
 
 copyrighttext="© Heikki Suonsivu CC-BY-NC-SA";
@@ -54,23 +53,15 @@ tappiztolerance=0.35;
 length=(debug==2)?90:(debug==1)?225:((filmtype==35)?230:230);
 thickness=5; // Thickness.
 
-filmw=filmtype==35?35:46; // Actual width of physical film
+filmw=filmtype==110?16:(filmtype==35?35:45.9); // Actual width of physical film should be exact but seems that films shrink
 
-holeoutsidew=(filmtype==35)?30.8:42; //8;
 framew=filmw; //(filmtype==35)?35:46;
-holefromoutw=(framew-holeoutsidew)/2;
 
-echo("filmw", filmw);
+holedistance=filmtype==35?38/8:(filmtype==110?25:0);
 
-holedistance=38/8;
+//holewidth=1.6; // Width of film holes. Actual 2.2.
 
-holewidth=1.6; // Width of film holes. Actual 2.2.
-holew=(filmtype==35)?holewidth:2; //2;//(holeoutsidew - holeinsidew)/2-0.9;
-holeoffset=(4-holewidth)/2;
-tappiw=holew;//+0.1;
-
-holeinsidew=holeoutsidew-2*holew; //25.3;
-framel=(filmtype==35)?36:44;
+framel=(filmtype==35)?36:(filmtype==110?17:(filmtype==46?44:0));
 framegap=2;
 
 // Width of image data (for 46mm film this is expanded close to film
@@ -78,43 +69,43 @@ framegap=2;
 // film type codes in the sides. For 35mm side data is scanned through
 // side slits so this does not need to be that accurate.
 
-frameimagew=(filmtype==35) ? 24.6 : filmw-0.5;
+frameimagew=(filmtype==35) ? 24.6 : (filmtype==46 ? filmw-0.5 : (filmtype==110 ? filmw-0.5 : 0)); // 110 was 13
 frameimagey=framew/2-frameimagew/2;
 //echo(frameimagey,framew,frameimagew);
 
-filmholdery=(filmtype==35)?31:31;
+filmholdery=31;//(filmtype==35)?31:31;
 filmholderx=10;
-filmthickness=0.12; // was 0.2, 0.12 measured
+filmthickness=0.18; // was 0.2, 0.12 measured - note needs to have some slack due to tolerance issues
 // frame starts at hole, new frame every 8 holes.
 
 filmh=2-filmthickness/2; // Position of the film above the glass
 
-framehookx=holewidth;//*0.9; // 0.9 compensate 3d printer inaccuracy
+//framehookx=holewidth;//*0.9; // 0.9 compensate 3d printer inaccuracy
 framehookh=thickness-filmh-filmthickness;
 coverthickness=thickness-filmh; // Thing above the film
 coverh=thickness-filmh;
-framehooktoph=thickness;
-framehooky=2+holew;
-hookcornerd=1.5;
+//framehooktoph=thickness;
+//framehooky=2+holew;
+//hookcornerd=1.5;
 filmheight=coverh-filmthickness;
 
-tappih=min(thickness - framehookh,1.5);//framehookh - 0.5;
+//tappih=min(thickness - framehookh,1.5);//framehookh - 0.5;
 
 // First frame start
 framestart=1;
 
 frameseparator=0.8; //1.2; // 2 mm minus tolerance
 frameseparatoroffset=(2-frameseparator)/2;
-framedistance=((filmtype==35)?38:46)*filmshrink;
+framedistance=(filmtype==110 ? 25 : ((filmtype==35)?38:46)*filmshrink);
 
 // Openings widened toward scanning glass to reduce reflections
-framewidenedw=frameimagew+(filmtype==35?filmh*0.7*2:0);
+framewidenedw=frameimagew+((filmtype==35 || filmtype==110)?filmh*0.7*2:0);
 //framewidenedw=frameimagew+filmh*0.7*2;
 //framewidenedw=frameimagew+(filmtype==35?filmh*0.7*2:0);
 framewidenedy=framew/2-framewidenedw/2;
 
 // Make small support notches for 46mm
-framesidesupportwidening=0.8;
+framesidesupportwidening=1.0; //0.8;
 framesidesupportw=(filmtype==35?0:frameimagew-framesidesupportwidening);
 framesidesupportdistance=framedistance/4;
 
@@ -180,19 +171,32 @@ clipwidth=20;
 clipxtolerance=0.30;
 clipytolerance=0.5;
 
+sideclipsperframe=filmtype==110?1:2;
+sideclipxtolerance=0.50;
 sideclipdepth=0.7;
 sidecliph=2;
+sideclipgap=1+sideclipxtolerance*2;
 sideclipz=1;
 sideclipy=1.2;
-sideclipdistance=framel/2-1;//20;
-sideclipwidth=7;
+sideclipwidth=6;
+sidecliparea=framedistance-frameseparator;
+//sideclipdistance=(framedistance-framegap-frameseparator)/sideclipsperframe;
+sideclipsl=sideclipwidth*2+sideclipgap;
+sideclipsgapx=sidecliparea-sideclipsl*sideclipsperframe-sideclipsl/2;
+sideclipsgap=sideclipsgapx<1+sideclipxtolerance*2?sideclipgap:sideclipsgapx;
+//echo("sideclipsl", sideclipsl,"sideclipsgap", sideclipsgap);
+sideclipsalll=sideclipsl*sideclipsperframe+sideclipsgap*(sideclipsperframe-1);
+sideclipdistance=sideclipsl+sideclipsgap;
+//echo("sideclipdistance",sideclipdistance);
+//sideclipsl=sideclipwidth*(2*sideclipsperframe)+sideclipgap*(2*sideclipsperframe-1);
+//echo(sideclipwidth,sideclipdistance);
 sideclipspace=1.5;
-sideclipoffset=sideclipdistance/2; //10; // between right and left side.
+sideclipoffset=sideclipwidth+sideclipgap; // sideclipdistance/sideclipsperframe; //10; // between right and left side.
 sideclipysink=2.2;//1;
-sideclipxtolerance=0.50;
 sideclipytolerance=0.30; //0.45; //55
 //sideclipstart=filmholderx+framestart+framegap+1;//+sideclipdistance/2;
-sideclipstart=framegap+1;//+sideclipdistance/2;
+sideclipstart=frameseparator+sidecliparea/2-sideclipsalll/2;//+sideclipdistance/2;
+//echo(framedistance, framegap, frameseparator, sideclipwidth, sideclipgap,"sideclipstart", sideclipstart);
 sideclipend=filmholderx+framestart+filmholderl-sideclipdistance-framestart-2;
   
 holdertotalw=framew+sideclipysink+ytolerance+sideclipy;
@@ -202,15 +206,17 @@ covertopwiden=7.5;
 covertopw=framew+covertopwiden;
 covertoph=1-filmthickness;
 
-filml=framedistance*(filmtype==35?5:4)+2;
-filmsprocketdistancew=filmtype==35?25.17:42; //24.89;
-filmsprocketl=1.854;
-filmsprocketw=filmtype==35?2.794:1;
+filmframew=filmtype==110?13:filmtype==35?24.5:40;//25.0;
+filmsprocketoneside=filmtype==110?1:0;
+filmframefromedge=filmtype==110?filmw-1.9-filmframew:filmw/2-filmframew/2;
+filml=framedistance*(filmtype==110?7:(filmtype==35?5:4))+2;
+filmsprocketdistancew=filmtype==110?0.8:(filmtype==35?25.17:42); //24.89;
+filmsprocketl=filmtype==110?2.5:1.854;
+filmsprocketw=filmtype==110?1.75:filmtype==35?2.794:1;
 filmsprocketcornerd=0.4;
-filmframel=filmtype==35?36:40;
-filmframew=filmtype==35?24.5:40;//25.0;
+filmframel=filmtype==110?17:filmtype==35?36:40;
 filmframecornerd=3;
-filmsprocketfromedge=(filmw-filmsprocketdistancew-filmsprocketw*2)/2;
+filmsprocketfromedge=filmtype==110?filmsprocketdistancew:(filmw-filmsprocketdistancew-filmsprocketw*2)/2;
 //echo(filmsprocketfromedge);
 
 module filmstrip() {
@@ -220,13 +226,21 @@ module filmstrip() {
     union() {
       translate([filmholderx+framestart,yy,h]) cube([filml,filmw,filmthickness]);
 
-      for (x=[filmholderx+framestart+(filmtype==35?0.35:2):framedistance:filmholderx+framestart+filml-2]) {
-	color("green") translate([x+1,yy+filmw/2-filmframew/2,h]) roundedboxxyz(filmframel,filmframew,filmthickness,filmframecornerd,0,0,30);
+      for (x=[filmholderx+framestart+(filmtype==35?0.35:filmtype==110?5:2):framedistance:filmholderx+framestart+filml-2]) {
+	color("green") translate([x+1,yy+filmframefromedge,h]) roundedboxxyz(filmframel,filmframew,filmthickness,filmframecornerd,0,0,30);
       }
     }
-    if (filmw==35) {
+    if (filmtype==35) {
       for (x=[filmholderx+framestart+1:holedistance:filmholderx+framestart+filml-2]) {
 	for (y=[yy+filmw/2-filmsprocketdistancew/2-filmsprocketw,yy+filmw/2+filmsprocketdistancew/2]) {
+	  	  translate([x,y,h-0.01]) roundedboxxyz(filmsprocketl,filmsprocketw,filmthickness+0.02,filmsprocketcornerd,0,0,30);
+	}
+      }
+    }
+
+    if (filmtype==110) {
+      for (x=[filmholderx+framestart+1:holedistance:filmholderx+framestart+filml-2]) {
+	for (y=[yy+filmw-filmsprocketdistancew-filmsprocketw]) {
 	  	  translate([x,y,h-0.01]) roundedboxxyz(filmsprocketl,filmsprocketw,filmthickness+0.02,filmsprocketcornerd,0,0,30);
 	}
       }
@@ -372,7 +386,7 @@ module scanadapter() {
     }
 
     // Film openings
-    for (y=[filmholdery:filmholderoffset:width-filmholdery]) {
+    for (y=[filmholdery:filmholderoffset:width-filmholderoffset]) {
       // Open slits in sides to let scanner see film type and bar codes
       if (filmtype==35) {
 	for (yy=[y+framew/2-filmw/2,y+framew/2+filmw/2-filmsprocketfromedge]) {
@@ -398,7 +412,7 @@ module scanadapter() {
       }
       
       // Frame separator cuts
-      for (y=[filmholdery:filmholderoffset:width-filmholdery]) {
+      for (y=[filmholdery:filmholderoffset:width-filmholderoffset]) {
 	if (frameseparators) {
 	  for (x=[filmholderx+framestart:framedistance:filmholderx+filmholderl-framedistance]) {
 	    translate([x-xtolerance,y+framew/2-covertopw/2,framehookh]) cube([frameseparator+xtolerance*2,covertopw,thickness-framehookh]);
@@ -416,19 +430,23 @@ module scanadapter() {
       translate([length-clipx-clipdepth-clipxtolerance,y+framew/2-clipwidth/2-clipytolerance,cliph/2-0.01]) triangle(clipdepth+0.02,clipwidth+clipytolerance*2,cliph/2+0.02,0);
 
       // Side clip cut
-      for (clipxx=[filmholderx+framestart:framedistance:filmholderx+filmholderl]) {
-	for (clipx=[clipxx+sideclipstart:sideclipdistance:min(clipxx+sideclipstart+framedistance/2,sideclipend)]) {
-	  // right clip hole cut
-	  translate([clipx-sideclipxtolerance,y-sideclipy-sideclipspace-sideclipysink-0.01,framehookh]) cube([sideclipwidth+2*sideclipxtolerance,sideclipy+sideclipspace+sideclipysink+0.02,thickness-framehookh+0.02]);
-	  translate([clipx-sideclipxtolerance,y-sideclipy-sideclipspace-sideclipysink,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipy+sideclipspace+0.01,thickness+0.02]);
-	  translate([clipx-sideclipxtolerance,y-sideclipysink,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02]);
-	  translate([clipx-sideclipxtolerance,y-sideclipysink,sidecliph/2-0.01]) triangle(sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02,8);
+      for (clipxx=[filmholderx+framestart:framedistance:sideclipend]) {
+	// echo(clipxx,sideclipend,filmholderl);
+	for (clipx=[clipxx+sideclipstart:sideclipdistance:clipxx+sideclipstart+sideclipdistance*(sideclipsperframe-1)+1]) {
+	  if (clipx < sideclipend) {
+
+	    // right clip hole cut
+	    translate([clipx-sideclipxtolerance,y-sideclipy-sideclipspace-sideclipysink-0.01,framehookh]) cube([sideclipwidth+2*sideclipxtolerance,sideclipy+sideclipspace+sideclipysink+0.02,thickness-framehookh+0.02]);
+	    translate([clipx-sideclipxtolerance,y-sideclipy-sideclipspace-sideclipysink,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipy+sideclipspace+0.01,thickness+0.02]);
+	    translate([clipx-sideclipxtolerance,y-sideclipysink,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02]);
+	    translate([clipx-sideclipxtolerance,y-sideclipysink,sidecliph/2-0.01]) triangle(sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02,8);
 	
-	  // left clip hole
-	  translate([clipx+sideclipoffset-sideclipxtolerance,y+framew-0.01,framehookh]) cube([sideclipwidth+2*sideclipxtolerance,sideclipy+sideclipspace+sideclipysink+0.01,thickness-framehookh+0.02]);
-	  translate([clipx+sideclipoffset-sideclipxtolerance,y+framew+sideclipysink,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipy+sideclipspace+0.01,thickness+0.02]);
-	  translate([clipx+sideclipoffset-sideclipxtolerance,y+framew+sideclipysink-sideclipdepth,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02]);
-	  translate([clipx+sideclipoffset-sideclipxtolerance,y+framew+sideclipysink-sideclipdepth,sidecliph/2-0.01]) triangle(sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02,11);
+	    // left clip hole
+	    translate([clipx+sideclipoffset-sideclipxtolerance,y+framew-0.01,framehookh]) cube([sideclipwidth+2*sideclipxtolerance,sideclipy+sideclipspace+sideclipysink+0.01,thickness-framehookh+0.02]);
+	    translate([clipx+sideclipoffset-sideclipxtolerance,y+framew+sideclipysink,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipy+sideclipspace+0.01,thickness+0.02]);
+	    translate([clipx+sideclipoffset-sideclipxtolerance,y+framew+sideclipysink-sideclipdepth,-0.01]) cube([sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02]);
+	    translate([clipx+sideclipoffset-sideclipxtolerance,y+framew+sideclipysink-sideclipdepth,sidecliph/2-0.01]) triangle(sideclipwidth+2*sideclipxtolerance,sideclipdepth+0.01,sidecliph/2+0.02,11);
+	  }
 	}
       }
 
@@ -462,7 +480,7 @@ module scanadapter() {
   }
 
   // Frame separators
-  for (y=[filmholdery:filmholderoffset:width-filmholdery]) {
+  for (y=[filmholdery:filmholderoffset:width-filmholderoffset]) {
     if (frameseparators) {
       for (x=[filmholderx+framestart:framedistance:filmholderx+filmholderl-framedistance]) {
 	translate([x,y+filmwidenedy-cornerd/2,0]) cube([frameseparator,filmwidenedw+cornerd,framehookh]);
@@ -482,32 +500,23 @@ module scanadapter() {
 	}
       }
     }
-    
-    if (hooks) {
-      // Hooks
-      for (x=[filmholderx+framestart:framedistance:filmholderx+(starthooksonly?filmholderx+framestart:filmholderl)]) {
-	for (xx=[x-holewidth:holedistance:(x+framel > filmholderx + filmholderl) ? length - 2*holedistance : x + framel]) {
-	  translate([xx+holeoffset,y+holefromoutw,framehookh-(tappitypemale==1?0.01:hookcornerd/2)]) tappi(framehookx,holew,tappih+0.01,0,hookcornerd,tappitypemale,0);
-
-	  translate([xx+holeoffset,y+framew-holefromoutw-holew,framehookh-(tappitypemale==1?0.01:hookcornerd/2)]) tappi(framehookx,holew,tappih+0.01,0,hookcornerd,tappitypemale,0);
-	}
-      }
-    }
   }
 
-  for (y=[filmholdery:filmholderoffset:width-filmholdery]) {
+  for (y=[filmholdery:filmholderoffset:width-filmholderoffset]) {
     for (clipxx=[filmholderx+framestart:framedistance:filmholderx+filmholderl]) {
-      for (clipx=[clipxx+sideclipstart:sideclipdistance:min(clipxx+sideclipstart+framedistance/2,sideclipend)]) {
-	// Frame side supports
-	if (filmtype==46) {
-	  for (xx=[clipx,clipx+sideclipwidth-frameseparator]) {
-	    hull() {
-	      translate([xx,y-cornerd/2,framehookh-0.1]) cube([frameseparator,cornerd/2+framesidesupportwidening,0.1]);
-	      translate([xx,y-cornerd/2,framehookh/2]) cube([frameseparator,cornerd/2,framehookh/2]);
-	    }
-	    hull() {
-	      translate([xx+sideclipoffset,y+filmw-framesidesupportwidening,framehookh-0.1]) cube([frameseparator,cornerd/2+framesidesupportwidening,0.1]);
-	      translate([xx+sideclipoffset,y+filmw,framehookh/2]) cube([frameseparator,cornerd/2,min(coverh/2,framesidesupportwidening)]);
+      for (clipx=[clipxx+sideclipstart:sideclipdistance:clipxx+sideclipstart+sideclipdistance*(sideclipsperframe-1)+1]) {
+	if (clipx < sideclipend) {
+	  // Frame side supports
+	  if (filmtype==46) {
+	    for (xx=[clipx,clipx+sideclipwidth-frameseparator]) {
+	      hull() {
+		translate([xx,y-cornerd/2,framehookh-0.1]) cube([frameseparator,cornerd/2+framesidesupportwidening,0.1]);
+		translate([xx,y-cornerd/2,framehookh/2]) cube([frameseparator,cornerd/2,framehookh/2]);
+	      }
+	      hull() {
+		translate([xx+sideclipoffset,y+filmw-framesidesupportwidening,framehookh-0.1]) cube([frameseparator,cornerd/2+framesidesupportwidening,0.1]);
+		translate([xx+sideclipoffset,y+filmw,framehookh/2]) cube([frameseparator,cornerd/2,min(coverh/2,framesidesupportwidening)]);
+	      }
 	    }
 	  }
 	}
@@ -564,17 +573,7 @@ module scancover() {
 	translate([filmholderx-narrowing,y-narrowing+frameimagey,thickness+0.01]) cube([filmholderl+2*narrowing,frameimagew+2*narrowing,0.2]);
       }
 
-      if (hooks) {
-	for (x=[filmholderx+framestart:framedistance:filmholderx+filmholderl]) {
-	  for (xx=[x-holewidth:holedistance:(x+framel > filmholderx + filmholderl) ? length - 2*holedistance : x + framel]) {
-	    translate([xx+holeoffset-xhookholetolerance/2,y+holefromoutw-yhookholetolerance/2,framehookh]) tappi(framehookx+xhookholetolerance,tappiw+yhookholetolerance,tappih+tappiztolerance,0,hookcornerd,tappitypefemale,0);
-	  
-	    translate([xx+holeoffset-xhookholetolerance,y+framew-holefromoutw-tappiw-yhookholetolerance/2,framehookh]) tappi(framehookx+xhookholetolerance,tappiw+yhookholetolerance,tappih+tappiztolerance,0,hookcornerd,tappitypefemale,0);
-	  }
-	}
-      }
-
-      translate([textxposition,y+framew/2,thickness-textdepth+0.01])  rotate([0,0,-90]) linear_extrude(height=textdepth) text(str(versiontext," ",filmshrinktext), size=textsize-1, valign="bottom",halign="center",font="Liberation Sans:style=Bold");
+      translate([textxposition,y+framew/2,thickness-textdepth+0.01])  rotate([0,0,-90]) linear_extrude(height=textdepth) text(str(versiontext," ",filmshrinktext), size=filmtype==110?textsize/2:textsize-1, valign="bottom",halign="center",font="Liberation Sans:style=Bold");
     }
   }
 
@@ -586,9 +585,15 @@ module scancover() {
   translate([length-clipx-clipdepth,filmholdery+framew/2-clipwidth/2,0]) triangle(clipdepth,clipwidth,cliph/2,3);
   translate([length-clipx-clipdepth,filmholdery+framew/2-clipwidth/2,cliph/2]) triangle(clipdepth,clipwidth,cliph/2,0);
 
+  //color("blue") translate([filmholderx+framestart+frameseparator,filmholdery,0]) cube([framedistance-frameseparator,20,thickness]);
+  
   for (y=[filmholdery:filmholderoffset:filmholdery]) {
     for (clipxx=[filmholderx+framestart:framedistance:filmholderx+filmholderl]) {
-      for (clipx=[clipxx+sideclipstart:sideclipdistance:min(clipxx+sideclipstart+framedistance/2,sideclipend)]) {
+      //      echo("Frame x ",clipxx);
+      //      echo(clipxx+sideclipstart,sideclipdistance,"min",clipxx+sideclipstart+sideclipdistance,filmholderx+filmholderl-sideclipdistance);
+      //      echo(clipxx+sideclipstart,clipxx+sideclipstart+sideclipdistance);
+      for (clipx=[clipxx+sideclipstart:sideclipdistance:min(clipxx+sideclipstart+sideclipdistance,sideclipend)-1]) {
+	//	echo(clipxx,clipx);
 	// Right clip
 	translate([clipx,y-sideclipy-sideclipysink-sideclipytolerance,coverh]) cube([sideclipwidth,sideclipy+sideclipysink+sideclipytolerance+(framew/2-filmw/2)+filmedgecover,thickness-coverh]);
 	translate([clipx,y-sideclipy-sideclipytolerance-sideclipysink,0]) cube([sideclipwidth,sideclipy,thickness]);
@@ -624,10 +629,10 @@ if (print==0) {
     union() {
       scanadapter();
       scancover();
-	   //	   #color("red") filmstrip();
-	   translate([0,filmholderoffset,0]) scancover();
-      //#      translate([0,filmholderoffset,0]) color("red") filmstrip();
-      //#      translate([0,filmholderoffset*2,0]) color("red") filmstrip();
+      #color("red") filmstrip();
+      //#translate([0,filmholderoffset,0]) scancover();
+	   #translate([0,filmholderoffset,0]) filmstrip();
+      //      #translate([0,filmholderoffset*2,0]) color("red") filmstrip();
     }
 
     if (testcuts) {
@@ -647,7 +652,7 @@ if (print==1) {
  }
 
 if (print==2) {
-  for (y=[filmholdery:filmholderoffset:width-filmholdery]) {
+  for (y=[filmholdery:filmholderoffset:width-filmholderoffset]) {
     translate([0,y,thickness]) rotate([0,180,180]) scancover();
   }
  }
@@ -676,6 +681,7 @@ if (print==5) {
     antiwarpwall(0,-adapterw,0,length,width+adapterw+filmholderoffset+sideclipy+sideclipysink,thickness+2,1,0.8);
   }
   scanadapter();
+  //#translate([0,0,0]) filmstrip();
 
   translate([0,width+filmholdery + holdertotalw+1,thickness]) rotate([0,180,180]) scancover();
  }
