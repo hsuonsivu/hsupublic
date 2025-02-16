@@ -308,13 +308,14 @@ module axle(diameter,width,axledepthin,cutout) {
 }
 
 // diameter, width - Makes the hinge structure with axle direction in x axis
-// If cutout is 1, makes female cutout for axle
+// If cutout is 1, makes female cutout for axle but does not cut out axle itself
+// If cutout is 2, makes female cutout for axle, including cutting axle itself. Use this if parts are separate modules.
 // Hinge is centered at y, x and z axis
 module onehinge(diameter,width,axledepth,cutout,ytolerance,dtolerance) {
   if (cutout) {
     difference() {
       translate([0,0,0]) axle(diameter+dtolerance,width,axledepth+ytolerance,cutout);
-      translate([0,0,0]) axle(diameter,width,axledepth,cutout);
+      if (cutout==1) translate([0,0,0]) axle(diameter,width,axledepth,cutout);
     }
   } else {
         translate([0,0,0]) axle(diameter,width,axledepth,cutout);
@@ -382,12 +383,27 @@ module antiwarpwall(x,y,z,l,w,h,distanceoption,walloption) {
 module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
   $fn=(fn!="" || fn>0)?fn:30;
   height=heightin>0?heightin:0.01;
-  
+
+  //echo("diameter ",diameter," heightin ", heightin, " cornerd ", cornerd, " printable ", printable);
+  //  echo("diameter - cornerd/1.7 ", diameter-cornerd/1.7);
+  //echo("diameter/2 - cornerd/2 ", diameter/2-cornerd/2);
+
   hull() {
     if (printable) cylinder(d=diameter-cornerd/1.7,h=height/2);
-
-    translate([0,0,cornerd/2]) rotate_extrude() translate([diameter/2-cornerd/2,0,0]) circle(d=cornerd);
-    translate([0,0,height-cornerd/2]) rotate_extrude() translate([diameter/2-cornerd/2,0,0]) circle(d=cornerd);
+    
+    translate([0,0,cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
+      intersection() {
+	circle(d=cornerd);
+	translate([0,-diameter/2]) square([diameter,diameter]);
+      }
+    }
+    
+    translate([0,0,height-cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
+      intersection() {
+	circle(d=cornerd);
+	translate([0,-diameter/2]) square([diameter,diameter]);
+      }
+    }
   }
 }
 
