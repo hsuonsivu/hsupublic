@@ -1,0 +1,49 @@
+SOURCE=paperiteline.scad
+DEPENDS=hsu.scad Makefile.paperiteline
+ALL=paperitelinemost.stl paperitelineleft.stl paperitelineright.stl paperitelinecutter.stl
+IMAGES=paperiteline.jpg paperiteline.png
+OPTIONS=--enable textmetrics
+
+all: $(ALL)
+
+dist: paperiteline-full-distribution.zip paperiteline-source-distribution.zip
+
+paperiteline-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf paperiteline-distribution
+	rm -f paperiteline-distribution.zip
+	mkdir -p paperiteline-distribution
+	cp $(SOURCE) $(DEPENDS) paperiteline-distribution
+	zip -r $@ paperiteline-distribution
+	echo $@ built.      
+
+paperiteline-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf paperiteline-distribution
+	rm -f paperiteline-distribution.zip
+	mkdir -p paperiteline-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) paperiteline-distribution
+	zip -r $@ paperiteline-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+paperitelineleft.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPTIONS) -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+paperitelineright.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+paperitelinelockpin.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPTIONS) -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+paperitelinemost.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPTIONS) -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+paperitelinecutter.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPTIONS) -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+
