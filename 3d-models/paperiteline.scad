@@ -10,11 +10,11 @@ include <hsu.scad>
 // depth=y
 // width=z
 
-print=0; // 1=left, 2=right, 3=both, 4=cutter
+print=5; // 1=left, 2=right, 3=both, 4=cutter
 debug=0;
 
 $fn=90;
-versiontext="V3.4";
+versiontext="V3.5";
 font = "Liberation Sans";
 textdepth = 0.5;
 textsize=8;
@@ -133,14 +133,22 @@ module cutter() {
 
     sd=cutterld*(cutterattachw/cutterwidth);
     for (z=[0:cutterld*2:cutterwidth/2-cutterld]) {
+
+      widecut=cutterlength-cutterld/2;
+      narrowcut=cutteraxled+cutterld+sd/2+textsize+2;
+      
+      zfactor=narrowcut/widecut;
+      yfactor=cutteraxlel/cutterattachw;
+      factor=(cutterattachw/cutterwidth)*yfactor*1.4;
+      
       hull() {
-	translate([cutterupsupport-cutterheadthickness+cutterthickness-0.1,cutterlength-cutterld/2,z]) rotate([0,90,0]) cylinder(d=cutterld,h=cutterheadthickness+0.2);
-	translate([cutterupsupport-0.1,cutteraxled+cutterld+sd/2,z*(cutterattachw/cutterwidth)]) rotate([0,90,0]) cylinder(d=sd,h=cutterthickness+0.2);
+	translate([cutterupsupport-cutterheadthickness+cutterthickness-0.1,widecut,z]) rotate([0,90,0]) cylinder(d=cutterld,h=cutterheadthickness+0.2);
+	translate([cutterupsupport-0.1,narrowcut,z*factor]) rotate([0,90,0]) cylinder(d=sd,h=cutterthickness+0.2);
       }
 
       hull() {
-	translate([cutterupsupport-cutterheadthickness+cutterthickness-0.1,cutterlength-cutterld/2,-z]) rotate([0,90,0]) cylinder(d=cutterld,h=cutterheadthickness+0.2);
-	translate([cutterupsupport-0.1,cutteraxled+cutterld+sd/2,-z*(cutterattachw/cutterwidth)]) rotate([0,90,0]) cylinder(d=sd,h=cutterthickness+0.2);
+	translate([cutterupsupport-cutterheadthickness+cutterthickness-0.1,widecut,-z]) rotate([0,90,0]) cylinder(d=cutterld,h=cutterheadthickness+0.2);
+	translate([cutterupsupport-0.1,narrowcut,-z*factor]) rotate([0,90,0]) cylinder(d=sd,h=cutterthickness+0.2);
       }
     }
 
@@ -151,6 +159,8 @@ module cutter() {
 
     translate([cutteraxleoutd/2+wall,-cutteraxleoutd/2,-(cutterattachw-wall*2)/2+wall]) lighten(cutterattachw/2-wall*3,cutterupsupport-cutteraxleoutd/2-wall*2,cutterattachw-wall,0,5,maxbridge,"left-xplane");
     translate([cutteraxleoutd/2+wall,-cutteraxleoutd/2,wall]) lighten(cutterattachw/2-wall*3,cutterupsupport-cutteraxleoutd/2-wall*2,cutterattachw-wall,0,5,maxbridge,"left-xplane");
+
+    translate([cutterupsupport+textdepth-0.01,cutteraxled*2+cornerd+textsize/2,0]) rotate([180,90,0]) linear_extrude(height = textdepth) text(text = str(versiontext), font = font, size = textsize, valign="center", halign="center");
   }
 }
   
@@ -168,34 +178,28 @@ module holder() {
 
       hull() {
 	translate([backplatedepth/2,backplatedepth/2,0]) roundedcylinder(backplatedepth,holdersupportwidth,cornerd,1,$fn);
-	//translate([backplatedepth/2,backplatedepth/2,0]) cylinder(h=holdersupportwidth,d=backplatedepth);
 	translate([rollaxisheight,rollaxisdepth,0]) roundedcylinder(rolldiameterinside,holdersupportwidth,cornerd,1,$fn);
-	//translate([rollaxisheight,rollaxisdepth,0]) cylinder(h=holdersupportwidth,d=rolldiameterinside);
 	translate([backplateheight-backplatedepth/2,backplatedepth/2,0]) roundedcylinder(backplatedepth,holdersupportwidth,cornerd,1,$fn);
-	//translate([backplateheight-backplatedepth/2,backplatedepth/2,0]) cylinder(h=holdersupportwidth,d=backplatedepth);
       };
 
       translate([0,0,backplatewidth-holdersupportwidth])
 	hull() {
 	translate([backplatedepth/2,backplatedepth/2,0]) roundedcylinder(backplatedepth,holdersupportwidth,cornerd,1,$fn);
-	//translate([backplatedepth/2,backplatedepth/2,0]) cylinder(h=holdersupportwidth,d=backplatedepth);
 	translate([rollaxisheight,rollaxisdepth,0]) roundedcylinder(rolldiameterinside,holdersupportwidth,cornerd,1,$fn);
-	//translate([rollaxisheight,rollaxisdepth,0]) cylinder(h=holdersupportwidth,d=rolldiameterinside);
 	translate([backplateheight-backplatedepth/2,backplatedepth/2,0]) roundedcylinder(backplatedepth,holdersupportwidth,cornerd,1,$fn);
-	//translate([backplateheight-backplatedepth/2,backplatedepth/2,0]) cylinder(h=holdersupportwidth,d=backplatedepth);
       };
 
       translate([rollaxisheight,rollaxisdepth,0]) {
 	hull() {
 	  roundedcylinder(rolldiameterinside,holdersupportwidth+rollwidth-holdersupportwidth*2-rolltubew-wall,cornerd,1,$fn);
-	  //cylinder(h=rollwidth-holdersupportwidth*2-rolltubew-wall,d=rolldiameterinside);
 	  translate([0,0,holdersupportwidth+rollwidth-holdersupportwidth*2-rolltubew-wall]) roundedcylinder(rollborediameter,rolltubenarrowing,cornerd,1,$fn);
-	  //	  translate([0,0,holdersupportwidth+rollwidth-holdersupportwidth*2-rolltubew-wall]) cylinder(h=rolltubenarrowing,d=rollborediameter);
 	}
       }
     }
 
     translate([2,10-textdepth+0.01,holdersupportwidth+2]) rotate([-90,270,0]) linear_extrude(height = textdepth+0.02) text(text = str(versiontext), font = font, size = textsize, valign="baseline");
+    
+    translate([2,holdersupportwidth+2-textdepth+0.01,holdersupportwidth+rollwidth+textdepth-0.01]) rotate([0,180,0]) linear_extrude(height = textdepth) text(text = str(versiontext), font = font, size = textsize, valign="bottom", halign="right");
     
     translate([rollaxisheight,rollaxisdepth,-0.01]) {
       hull() {
@@ -251,7 +255,7 @@ module lockpin() {
   
   translate([lockpinl-lockpinhandleh/2,lockpinh-textdepth+0.01,lockpinw/2]) rotate([-90,270,0]) linear_extrude(height = textdepth) text(text = "Open", font = font, size = textsize, valign="center", halign="center");
 
-  translate([fingerlower,lockpinh-textdepth+0.01,lockpinw/2]) rotate([-90,180,0]) linear_extrude(height = textdepth) text(text = versiontext, font = font, size = max(textsize-1,lockpinw-1), valign="center", halign="center");
+  translate([fingerlower,lockpinh-textdepth+0.01,lockpinw/2]) rotate([-90,180,0]) linear_extrude(height = textdepth) text(text = versiontext, font = font, size = max(textsize-2,lockpinw-2), valign="center", halign="center");
   }
 }
 
