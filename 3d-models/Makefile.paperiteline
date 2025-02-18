@@ -1,6 +1,6 @@
 SOURCE=paperiteline.scad
 DEPENDS=hsu.scad Makefile.paperiteline
-ALL=paperitelinemost.stl paperitelineleft.stl paperitelineright.stl paperitelinecutter.stl
+ALL=paperitelinemost.stl paperitelineleft.stl paperitelineright.stl paperitelinecutter.stl paperitelinelockpin.stl
 IMAGES=paperiteline.jpg paperiteline.png
 OPTIONS=--enable textmetrics
 
