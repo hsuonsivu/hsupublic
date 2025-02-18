@@ -10,6 +10,39 @@ countersinkdiametermultiplier=2.4;
 
 function countersinkd(diameter) = diameter*countersinkdiametermultiplier;
 
+// Distance is distance between voids
+module cylindervoids(diameter1,diameter2,height,distancein,voidwin,strong) {
+  // This makes openscad slow, do for testing purposes, this can be disabled.
+  makestrong=(strong=="")?1:strong;
+
+  maxdiameter=max(diameter1,diameter2);
+  mindiameter=min(diameter1,diameter2);
+
+  voidw=voidwin?voidwin:0.01;
+  distance=distancein?distancein:0.8;
+  r=(diameter1>diameter2)?0:180;
+  hf=(diameter1>diameter2)?0:height;
+
+  $fn=0;
+  $fs=0.1;
+  $fa=20;
+  
+  if (makestrong) {
+    translate([0,0,hf]) rotate([r,0,0]) {
+      for (d=[distance*2:distance*2:mindiameter-distance*2]) {
+	h=height;
+	color("blue") translate([0,0,distance]) ring(d,0.03,h-distance*2,0);
+      }
+      if (maxdiameter>mindiameter) {
+	for (d=[mindiameter:distance*2:maxdiameter-distance*2]) {
+	  h=height*(1-((d + distance - mindiameter)/(maxdiameter-mindiameter)))-distance*2;
+	  color("red") translate([0,0,distance]) ring(d,0.03,h-distance*2,0);
+	}
+      }
+    }
+  }
+}
+
 module ruuvireika(height,diameter,countersink,strong,strongl) {
   makestrong=(strong=="")?1:strong;
   sl=(strongl=="")?height:strongl;
@@ -201,6 +234,7 @@ module ring(diameter,wall,height,printsupport) {
 	}
       }
     }
+    //    echo(diameter,wall,diameter-wall);
     translate([0,0,-0.1]) cylinder(d=diameter-wall*2,h=height+w+0.2);
     if (p==1) {
       translate([0,0,height-0.1]) cylinder(d2=diameter,d1=diameter-wall*2,h=wall+0.2);
