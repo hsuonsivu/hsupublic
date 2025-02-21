@@ -1,7 +1,30 @@
 SOURCE=filmscanframe.scad
-DEPENDS=hsu.scad
+DEPENDS=hsu.scad Makefile.filmscanframe
+IMAGES=filmscanframe35mm.png filmscanframe46mm.png filmscanframe110.png filmscanframe46mm.png 
+ALL=filmscanframetestversion110.stl filmscanframebase110.stl filmscanframecovers110.stl filmscanframebase35.stl filmscanframecovers35.stl filmscanframetestversion35.stl filmscanframebase46.stl filmscanframecovers46.stl filmscanframetestversion46.stl filmscanframebaseandcovers35.stl
 
-all: filmscanframetestversion110.stl filmscanframebase110.stl filmscanframecovers110.stl filmscanframebaseandcovers35.stl filmscanframebase35.stl filmscanframecovers35.stl filmscanframetestversion35.stl filmscanframebase46.stl filmscanframecovers46.stl filmscanframetestversion46.stl
+all: $(ALL)
+
+dist: filmscanframe.zip
+
+filmscanframe-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf filmscanframe-distribution
+	rm -f filmscanframe-distribution.zip
+	mkdir -p filmscanframe-distribution
+	cp $(SOURCE) $(DEPENDS) filmscanframe-distribution
+	zip -r $@ filmscanframe-distribution
+	echo $@ built.      
+
+filmscanframe-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf filmscanframe-distribution
+	rm -f filmscanframe-distribution.zip
+	mkdir -p filmscanframe-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) filmscanframe-distribution
+	zip -r $@ filmscanframe-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
 
 filmscanframebase46.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=1 -D filmtype=46 -D hooksoncover=0 -o $@ $(SOURCE)
