@@ -20,9 +20,10 @@ module lukituspala() {
   difference() {
     wsf=(w-cornerd)/w;
     hsf=(h-cornerd)/h;
+    lsf=(l-cornerd)/l;
     translate([0,0,-cornerd/2])
     minkowski() {
-      translate([0,0,cornerd]) scale([wsf,wsf,hsf]) intersection() {
+      translate([0,0,cornerd]) scale([lsf,wsf,hsf]) intersection() {
 	hull() {
 	  translate([diameter/2,0,-h]) cylinder(d=diameter,h=h*2,$fn=90);
 	  translate([l-diameter/2,0,-h]) cylinder(d=diameter,h=h*2,$fn=90);
