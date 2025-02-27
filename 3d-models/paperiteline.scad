@@ -15,7 +15,7 @@ debug=0;
 dodebug=print>0?0:debug;
 
 $fn=90;
-versiontext="V3.7";
+versiontext="V3.9";
 font = "Liberation Sans";
 textdepth = 0.5;
 textsize=8;
@@ -107,7 +107,7 @@ cutteraxlecylinderd=cutteraxled+6;
 cutteraxleheight=backplateheight-45;
 cutteraxledepth=backplatedepth+20;
 
-cutterslitw=rollwidth+2;
+cutterslitw=rollwidth+4;
 cutterwidth=cutterslitw+9;
 cutterthickness=2;
 cutterheadthickness=4;
@@ -122,6 +122,8 @@ cutteraxlesupportl=(rollwidth-cutteraxlel)/2-ztolerance;
 
 cutterld=cutteraxled;
 
+cutterheadcornerd=3;
+
 cutterupsupport=cutteraxled/2+40;
 
 module cutter() {
@@ -131,17 +133,28 @@ module cutter() {
 
       hull() {
 	translate([0,0,-cutterattachw/2]) cylinder(d=cutteraxled,h=cutterattachw);
-	translate([cutterupsupport,cutteraxled,-cutterattachw/2]) roundedbox(cutterthickness,cutteraxled,cutterattachw,cornerd); //cylinder(d=cutterthickness,h=cutterattachw);
+	translate([cutterupsupport,cutteraxled,-cutterattachw/2]) roundedbox(cutterthickness,cutteraxled,cutterattachw,cornerd);
       }
 
       hull() {
 	translate([cutterupsupport-wall,cutteraxled,-cutterattachw/2]) roundedbox(cutterthickness+wall,cornerd,cutterattachw,cornerd);
 	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cornerd);
       }
-      translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength,-cutterwidth/2]) roundedbox(cutterheadthickness,cutterbodyh,cutterwidth,cornerd);
+      hull() {
+	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cornerd);
+	translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength,-cutterwidth/2]) roundedbox(cutterheadthickness,cutterbodyh,cutterwidth,cutterheadcornerd);
+      }
     }
 
     translate([cutterupsupport-cutterheadthickness+cutterthickness-0.1,cutterlength+cutterbodyh/2-cutterslith/2,-cutterslitw/2]) cube([cutterheadthickness+0.2,cutterslith,cutterslitw]);
+    hull() {
+      translate([cutterupsupport-cutterheadthickness+cutterthickness-0.1,cutterlength+cutterbodyh/2-cutterslith/2-cutterheadthickness,-cutterslitw/2]) cube([0.1,cutterslith+cutterheadthickness+(cutterheadthickness-cutterthickness),cutterslitw]);
+      translate([cutterupsupport-cutterthickness-0.1,cutterlength+cutterbodyh/2-cutterslith/2,-cutterslitw/2]) cube([(cutterheadthickness-cutterthickness)+0.2,cutterslith,cutterslitw]);
+    }
+    hull() {
+      translate([cutterupsupport+1-0.1,cutterlength+cutterbodyh/2-cutterslith/2,-cutterslitw/2]) cube([1+0.1,cutterslith,cutterslitw]);
+      translate([cutterupsupport+cutterthickness,cutterlength+cutterbodyh/2-cutterslith/2,-cutterslitw/2]) cube([0.1,cutterslith+1,cutterslitw]);
+    }
 
     sd=cutterld*(cutterattachw/cutterwidth);
     for (z=[0:cutterld*2:cutterwidth/2-cutterld]) {
@@ -467,7 +480,7 @@ if (print==3 || print==4) {
  }
 
 if (print==5) {
-  shift=89;
+  shift=90;//89;
   difference() {
     translate([shift,-shift,0]) rotate([0,0,45]) translate([0,0,cutterupsupport+cutterheadthickness-cutterthickness]) rotate([0,90,0]) cutter();
 #    printareacube("ankermake");
