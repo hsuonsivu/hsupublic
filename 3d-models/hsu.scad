@@ -188,24 +188,32 @@ module lighten(w,h,thickness,margin,barw,maxbridge,direction) {
   else echo("ERROR missing or incorrect argument for lighten: ",direction);
 }
 
-module roundedbox(x,y,z,c) {
+module roundedbox(xsize,ysize,h,c,printableoption) {
   corner=(c > 0) ? c : 1;
-  //scd = ((x < 1 || y < 1 || z < 1) ? min(x,y,z) : corner);
-  scd = min(x,y,z,corner);
+  //scd = ((xsize < 1 || ysize < 1 || h < 1) ? min(xsize,ysize,h) : corner);
+  scd = min(xsize,ysize,h,corner);
   f=(print > 0) ? 90 : 30;
   
   hull() {
     translate([scd/2,scd/2,scd/2]) sphere(d=scd,$fn=f);
-    translate([scd/2,y-scd/2,scd/2]) sphere(d=scd,$fn=f);
-    translate([x-scd/2,scd/2,scd/2]) sphere(d=scd,$fn=f);
-    translate([x-scd/2,y-scd/2,scd/2]) sphere(d=scd,$fn=f);
-    translate([scd/2,scd/2,z-scd/2]) sphere(d=scd,$fn=f);
-    translate([scd/2,y-scd/2,z-scd/2]) sphere(d=scd,$fn=f);
-    translate([x-scd/2,scd/2,z-scd/2]) sphere(d=scd,$fn=f);
-    translate([x-scd/2,y-scd/2,z-scd/2]) sphere(d=scd,$fn=f);
+    translate([scd/2,ysize-scd/2,scd/2]) sphere(d=scd,$fn=f);
+    translate([xsize-scd/2,scd/2,scd/2]) sphere(d=scd,$fn=f);
+    translate([xsize-scd/2,ysize-scd/2,scd/2]) sphere(d=scd,$fn=f);
+    translate([scd/2,scd/2,h-scd/2]) sphere(d=scd,$fn=f);
+    translate([scd/2,ysize-scd/2,h-scd/2]) sphere(d=scd,$fn=f);
+    translate([xsize-scd/2,scd/2,h-scd/2]) sphere(d=scd,$fn=f);
+    translate([xsize-scd/2,ysize-scd/2,h-scd/2]) sphere(d=scd,$fn=f);
 
     // Sphere may generate slight rounding errors with smaller $fn values, so form actual cube in the center
-    translate([scd/2,scd/2,scd/2]) cube([x-scd,y-scd,z-scd]);
+    translate([scd/2,scd/2,scd/2]) cube([xsize-scd,ysize-scd,h-scd]);
+
+    if (printableoption) {
+      for (x=[0+scd/2,xsize-scd/2]) {
+	for (y=[0+scd/2,ysize-scd/2]) {
+	  translate([x,y,0]) cylinder(d=scd/2,h=0.01,$fn=f);
+	}
+      }
+    }
   }
 }
 
@@ -419,9 +427,8 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
   height=heightin>0?heightin:0.01;
 
   //echo("diameter ",diameter," heightin ", heightin, " cornerd ", cornerd, " printable ", printable);
-  //  echo("diameter - cornerd/1.7 ", diameter-cornerd/1.7);
-  //echo("diameter/2 - cornerd/2 ", diameter/2-cornerd/2);
-
+  // echo("diameter - cornerd/1.7 ", diameter-cornerd/1.7);
+  // echo("diameter/2 - cornerd/2 ", diameter/2-cornerd/2);
   hull() {
     if (printable) cylinder(d=diameter-cornerd/1.7,h=height/2);
     
@@ -442,6 +449,7 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
 }
 
 module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
+  //  echo("x ",x," y ", y," z ",z," dxy ",dxy,"dz", dzin," printable ",printable," fn ",fn);
   dz=dzin>0?dzin:0.01;
   $fn=(fn!="" || fn>0)?fn:30;
   translate([dxy/2,dxy/2,0]) minkowski(convexity=10) {
