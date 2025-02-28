@@ -111,4 +111,4 @@ module end_cap(cablehole) {
 rotate([0,-90,0])
 end_cap(0);
 translate([HEIGHT+2,0,0]) rotate([0,-90,0])
-#end_cap(1);
+end_cap(1);
