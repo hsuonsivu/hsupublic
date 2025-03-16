@@ -15,7 +15,7 @@ debug=0;
 dodebug=print>0?0:debug;
 
 $fn=90;
-versiontext="V3.9";
+versiontext="V3.10";
 font = "Liberation Sans";
 textdepth = 0.5;
 textsize=8;
@@ -127,6 +127,14 @@ cutterheadcornerd=3;
 cutterupsupport=cutteraxled/2+40;
 
 module cutter() {
+  sd=cutterld*(cutterattachw/cutterwidth);
+  widecut=cutterlength-cutterld/2;
+  narrowcut=cutteraxled+cutterld+sd/2+textsize+2;
+      
+  zfactor=narrowcut/widecut;
+  yfactor=cutteraxlel/cutterattachw;
+  factor=(cutterattachw/cutterwidth)*yfactor*1.4;
+  
   difference() {
     union() {
       translate([0,0,-cutteraxlel/2]) cylinder(d=cutteraxleoutd+2,h=cutteraxlel);
@@ -137,7 +145,7 @@ module cutter() {
       }
 
       hull() {
-	translate([cutterupsupport-wall,cutteraxled,-cutterattachw/2]) roundedbox(cutterthickness+wall,cornerd,cutterattachw,cornerd);
+	translate([cutterupsupport-wall,cutteraxled,-cutterattachw/2]) roundedbox(cutterthickness+wall,cutteraxled+cutterld,cutterattachw,cornerd);
 	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cornerd);
       }
       hull() {
@@ -156,16 +164,7 @@ module cutter() {
       translate([cutterupsupport+cutterthickness,cutterlength+cutterbodyh/2-cutterslith/2,-cutterslitw/2]) cube([0.1,cutterslith+1,cutterslitw]);
     }
 
-    sd=cutterld*(cutterattachw/cutterwidth);
     for (z=[0:cutterld*2:cutterwidth/2-cutterld]) {
-
-      widecut=cutterlength-cutterld/2;
-      narrowcut=cutteraxled+cutterld+sd/2+textsize+2;
-      
-      zfactor=narrowcut/widecut;
-      yfactor=cutteraxlel/cutterattachw;
-      factor=(cutterattachw/cutterwidth)*yfactor*1.4;
-      
       hull() {
 	translate([cutterupsupport-cutterheadthickness+cutterthickness-0.1,widecut,z]) rotate([0,90,0]) cylinder(d=cutterld,h=cutterheadthickness+0.2);
 	translate([cutterupsupport-0.1-wall,narrowcut,z*factor]) rotate([0,90,0]) cylinder(d=sd,h=cutterthickness+wall+0.2);
@@ -323,7 +322,7 @@ module lockpin() {
       }
     }
   
-  translate([lockpinhandleheight+lockpinhandleh/2,lockpinhandlethickness-textdepth+0.01,lockpinw/2]) rotate([-90,270,0]) linear_extrude(height = textdepth) text(text = "Open", font = font, size = textsize, valign="center", halign="center");
+  translate([lockpinhandleheight+lockpinhandleh/2,lockpinhandlethickness-textdepth+0.01,lockpinw/2]) rotate([-90,270,0]) linear_extrude(height = textdepth) text(text = "Open", font = font, size = textsize - 1, valign="center", halign="center");
 
   translate([fingerlower,lockpinh-textdepth+0.01,lockpinw/2]) rotate([-90,180,0]) linear_extrude(height = textdepth) text(text = versiontext, font = font, size = max(textsize-2,lockpinw-2), valign="center", halign="center");
   }
@@ -482,7 +481,12 @@ if (print==3 || print==4) {
 if (print==5) {
   shift=90;//89;
   difference() {
-    translate([shift,-shift,0]) rotate([0,0,45]) translate([0,0,cutterupsupport+cutterheadthickness-cutterthickness]) rotate([0,90,0]) cutter();
+    translate([shift,-shift,0]) rotate([0,0,45]) translate([0,0,cutterupsupport+cutterheadthickness-cutterthickness]) rotate([0,90,0]) {
+      intersection() {
+	cutter();
+	if (debug) cube([1000,1000,1000]);
+      }
+    }
 #    printareacube("ankermake");
   }
  }
