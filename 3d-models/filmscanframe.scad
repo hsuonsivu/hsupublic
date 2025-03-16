@@ -6,7 +6,7 @@
 
 use <hsu.scad>;
 
-filmtype=110; // 110 //35; //46; //35; // 35mm or 46
+filmtype=35;//110; // 110 //35; //46; //35; // 35mm or 46
 
 filmshrunksize=149;
 filmshouldbesize=150; // Observed on kodak film
@@ -20,6 +20,7 @@ tappitypemale=1; // 0 = rounded cube, 1 = circular
 tappitypefemale=1; // 0 = rounded cube, 1 = circular
 filmstrips=((debug>0) || (print==5))?1:(filmtype==110?7:((filmtype==35)?4:3));
 detachable_epson_bits=1;
+idsquares=1;
 testcuts=0; // Cutouts to reveal clip structures.
 adhesion=print>0?0:0; // Adds some structures to increase bed adhesion.
 tassusizelarge=10;
@@ -132,6 +133,15 @@ adapteraxledepth=2;
 adapteraxleheight=adapterh+adapteraxled/2+ztolerance;
 dtolerance=0.7;
 adapterattachyoffset=1;
+
+idsquareoffset=90;
+idsquarew=7.1;
+idsquareyoffset1=10.4;
+idsquareyoffset2=200;
+idsquareframew=25.1;
+idsquareframeyoffset1=idsquareyoffset1+idsquarew/2-idsquareframew/2;
+idsquareframeyoffset2=idsquareyoffset2+idsquarew/2-idsquareframew/2;
+idsquareframeoffset=idsquareoffset+idsquarew/2-idsquareframew/2;
 
 filmholderl=length-filmholderx*2;
 filmholdergap=8.4;//3.7;//4;
@@ -462,10 +472,17 @@ module scanadapter() {
       translate([-0.01,y,framehookh]) cube([length+0.02,framew,thickness-framehookh+0.1]);
     }
 
-      // Holes to save filament
+    // Holes to save filament
     for (y=[lightenholeystart]) {
       for (x=[lightenholexstart:lightenholestep:lightenholexend]) { //filmholderx+filmholderl-framedistance*2
 	translate([x,y,-0.1]) cube([lightenholex,lightenholey,thickness+0.2]);
+      }
+    }
+
+    // White squares possibly used for film scan frame identification? TODO
+    if (idsquares) {
+      for (y=[idsquareyoffset1,idsquareyoffset2]) {
+	translate([idsquareoffset,y,-0.01]) cube([idsquarew,idsquarew,thickness+0.02]);
       }
     }
 
@@ -477,6 +494,20 @@ module scanadapter() {
     translate([guidex+guidel/2,guidey+2+textsize/2,guideh-textdepth+0.01])  rotate([0,0,180]) linear_extrude(height=textdepth) text("Top", size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
     translate([guidex+guidel/2,guidey+guidew-2-textsize/2,guideh-textdepth+0.01])  rotate([0,0,180]) linear_extrude(height=textdepth) text(filmshrinktext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
     translate([adapteroffset+adapterl+1,lightenholeystart/2,thickness-textdepth+0.01])  rotate([0,0,180]) linear_extrude(height=textdepth) text(copyrighttext, size=copyrighttextsize, valign="center",halign="right",font="Liberation Sans:style=Bold");
+  }
+
+  // White squares possibly used for film scan frame identification? TODO
+
+  if (idsquares) {
+    difference() {
+      for (y=[idsquareframeyoffset1,idsquareframeyoffset2]) {
+	translate([idsquareframeoffset,y,0]) roundedbox(idsquareframew,idsquareframew,thickness,cornerd);
+      }
+    
+      for (y=[idsquareyoffset1,idsquareyoffset2]) {
+	translate([idsquareoffset,y,-0.01]) cube([idsquarew,idsquarew,thickness+0.02]);
+      }
+    }
   }
 
   // Frame separators
@@ -633,9 +664,9 @@ if (print==0) {
       scanadapter();
       scancover();
       #color("red") filmstrip();
-      //#translate([0,filmholderoffset,0]) scancover();
+      translate([0,filmholderoffset,0]) scancover();
 	   #translate([0,filmholderoffset,0]) filmstrip();
-      //      #translate([0,filmholderoffset*2,0]) color("red") filmstrip();
+      //#translate([0,filmholderoffset*2,0]) color("red") filmstrip();
     }
 
     if (testcuts) {
