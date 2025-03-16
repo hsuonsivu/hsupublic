@@ -4,9 +4,9 @@
 
 // width=x, depth=y
 final=1; // 0 for test print
-vertical=0; // vertical prints parts in vertical mode, which makes them more difficult to attach to each other, but can be printed in a smaller printer
-printerwidth=340;
-thickness=23;
+vertical=1; // vertical prints parts in vertical mode, which makes them more difficult to attach to each other, but can be printed in a smaller printer
+printerwidth=220;
+thickness=21;//23;
 flat=5;
 slopedepth=80;
 totaldepth=flat+slopedepth;
@@ -17,9 +17,10 @@ tolerance=0.3;
 $fn=90;
 connectorwidth=vertical?5:10;
 connectordepth=vertical?10:20;
+connectorendnarrowing=1;
 narrowing=0.75;
 connectorposition=(vertical?(thickness/2-connectorwidth/2)*0.6:(totaldepth/2-connectordepth/2)*0.75);
-maxwidth=960;
+maxwidth=295*3+9;//960;
 printparts=1; // Multiphase print if all do not fit into the print bed
 
 module male(x,y,h) {
@@ -92,7 +93,10 @@ module lista(t,l) {
     if (t=="center") {
       intersection() {
 	if (vertical) {
-	  translate([-connectorwidth+tolerance,totaldepth+tolerance-0.01,connectorposition+tolerance-0.01]) rotate([90,0,0]) male(connectorwidth+0.01,connectordepth-tolerance*2,totaldepth+tolerance);
+	  hull() {
+	    translate([-connectorwidth+connectorendnarrowing+tolerance,connectorendnarrowing,connectorposition+connectorendnarrowing+tolerance-0.01]) rotate([90,0,0]) male(connectorwidth-connectorendnarrowing,connectordepth-connectorendnarrowing*2-tolerance*2,connectorendnarrowing);
+	    translate([-connectorwidth+tolerance,totaldepth+tolerance,connectorposition+tolerance-0.01]) rotate([90,0,0]) male(connectorwidth,connectordepth-tolerance*2,totaldepth-connectorendnarrowing*2+tolerance);
+	  }
 	} else {
 	  translate([-connectorwidth+tolerance,connectorposition+tolerance,0]) male(connectorwidth+0.01,connectordepth-tolerance*2,thickness);
 	}
@@ -107,7 +111,11 @@ module lista(t,l) {
     if (t=="right") {
       intersection() {
 	if (vertical) {
-	  translate([-connectorwidth+tolerance,totaldepth+tolerance-0.01,connectorposition+tolerance-0.01]) rotate([90,0,0]) male(connectorwidth+0.01,connectordepth-tolerance*2,totaldepth+tolerance);
+	  //translate([-connectorwidth+tolerance,totaldepth+tolerance,connectorposition+tolerance-0.01]) rotate([90,0,0]) male(connectorwidth,connectordepth-tolerance*2,totaldepth+tolerance);
+	  hull() {
+	    translate([-connectorwidth+connectorendnarrowing+tolerance,connectorendnarrowing,connectorposition+connectorendnarrowing+tolerance-0.01]) rotate([90,0,0]) male(connectorwidth-connectorendnarrowing,connectordepth-connectorendnarrowing*2-tolerance*2,connectorendnarrowing);
+	    translate([-connectorwidth+tolerance,totaldepth+tolerance,connectorposition+tolerance-0.01]) rotate([90,0,0]) male(connectorwidth,connectordepth-tolerance*2,totaldepth-connectorendnarrowing*2+tolerance);
+	  }
 	} else {
 	  translate([-connectorwidth+tolerance,connectorposition+tolerance,0]) male(connectorwidth+0.01,connectordepth-tolerance*2,thickness);
 	}
@@ -124,7 +132,7 @@ module lista(t,l) {
 
 // 3 pieces, 33, 30, 33
 
-if (final) {
+if (final) rotate([0,0,vertical?90:0]) {
   i=0;
 
   sections=floor(maxwidth/printerwidth);
