@@ -25,11 +25,17 @@ bedz=249;
 
 //texts=["SCI-FI", "BIO", ""];
 //texts=["NOVEL", "COMICS", "HISTORY", "LAW", "SEAFARING", "AVIATION", "PERIODICALS", ""];
-texts=["BUSINESS", "SOCIETY", "SELF IMPROVEMENT","TECHNOLOGY", ""];
+//texts=["BUSINESS", "SOCIETY", "SELF IMPROVEMENT","TECHNOLOGY", ""];
 //texts=["DICTIONARY", "CS", "TRAVEL", "DATABOOK", "PERIODICALS", "HSU", "ARCHITECTURE", "COOKING", "THESIS",""];
+//texts=["AUTOMOTIVE", "MATH", "COMPUTING HISTORY", "ART", "ELECTRONICS", "NATURE", "PHYSICS", "KNOWLEDGE", ""];
+//texts=["LANGUAGES", "CHEMISTRY", "COMPUTER SCIENCE", "COMPANY HISTORY", "POETRY", ""];
+//texts=["COMMUNICATIONS", "HOBBY", "HISTORICAL SCIENCE", "OUT OF COPYRIGHT", ""];
+//texts=["DESIGN", "CONSTRUCTION", "APPAREL", ""];
+//texts=["OUTOKUMPU", "HISTORY OF FINLAND", "MARIMEKKO", "WAR", ""];
+texts=["KIRJAT", "VAATTEET", "HP", "Processor", "SCHOOL BOOKS", "CHILDREN / TEEN", ""];
 
 module shelflabel(t,width) {
-  echo(width);
+  //echo(width);
   difference() {
     union() {
       hull() {
@@ -76,17 +82,20 @@ module shelflabel(t,width) {
   }
 }
 
-module printlabels(x,y,i) {
-  echo(x,y,texts[i]);
+module printlabels(x,y,i,previousy,previouswidth) {
+  //echo(x,y,texts[i],previousy,previouswidth);
   if (texts[i] != "") {
     tm=textmetrics(text=texts[i],font="Liberation Sans:style=Bold",size=textsize,valign="top",halign="center");
     width=tm.size[0]+margin*2;
+
+    // If need to add new line, center
+    //newxshift=(x+width+arrowwidth>bedx)?(x+width+arrowwidth)/2:x+xshift;
     newy=(x+width+arrowwidth>bedx)?y+labelheight+1:y;
     newx=(x+width+arrowwidth>bedx)?0:x;
+    printlabels(newx+width+arrowwidth+1,newy,i+1,y,x>0?1+width:width);
     translate([newx,newy,0]) shelflabel(texts[i],width);
-    printlabels(newx+width+arrowwidth+1,newy,i+1);
   }
 }
 
-//rotate([0,0,00]) printlabels(0,0,0);
-rotate([0,0,0]) printlabels(0,0,0);
+//rotate([0,0,00]) printlabels(0,0,0,0,0);
+rotate([0,0,0]) printlabels(0,0,0,0,0);
