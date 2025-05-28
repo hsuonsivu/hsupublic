@@ -31,12 +31,12 @@ module cylindervoids(diameter1,diameter2,height,distancein,voidwin,strong) {
     translate([0,0,hf]) rotate([r,0,0]) {
       for (d=[distance*2:distance*2:mindiameter-distance*2]) {
 	h=height;
-	color("blue") translate([0,0,distance]) ring(d,0.03,h-distance*2,0);
+	translate([0,0,distance]) ring(d,0.03,h-distance*2,0);
       }
       if (maxdiameter>mindiameter) {
 	for (d=[mindiameter:distance*2:maxdiameter-distance*2]) {
 	  h=height*(1-((d + distance - mindiameter)/(maxdiameter-mindiameter)))-distance*2;
-	  color("red") translate([0,0,distance]) ring(d,0.03,h-distance*2,0);
+	  translate([0,0,distance]) ring(d,0.03,h-distance*2,0);
 	}
       }
     }
