@@ -4,7 +4,7 @@
 
 // width=x, depth=y
 final=1; // 0 for test print
-vertical=1; // vertical prints parts in vertical mode, which makes them more difficult to attach to each other, but can be printed in a smaller printer
+vertical=0; // vertical prints parts in vertical mode, which makes them more difficult to attach to each other, but can be printed in a smaller printer
 printerwidth=220;
 thickness=21;//23;
 flat=5;
@@ -21,7 +21,7 @@ connectorendnarrowing=1;
 narrowing=0.75;
 connectorposition=(vertical?(thickness/2-connectorwidth/2)*0.6:(totaldepth/2-connectordepth/2)*0.75);
 maxwidth=295*3+9;//960;
-printparts=1; // Multiphase print if all do not fit into the print bed
+printparts=2; // Multiphase print if all do not fit into the print bed
 
 module male(x,y,h) {
   linear_extrude(height=h) {
@@ -98,7 +98,11 @@ module lista(t,l) {
 	    translate([-connectorwidth+tolerance,totaldepth+tolerance,connectorposition+tolerance-0.01]) rotate([90,0,0]) male(connectorwidth,connectordepth-tolerance*2,totaldepth-connectorendnarrowing*2+tolerance);
 	  }
 	} else {
-	  translate([-connectorwidth+tolerance,connectorposition+tolerance,0]) male(connectorwidth+0.01,connectordepth-tolerance*2,thickness);
+	  hull() {
+	    translate([-connectorwidth+tolerance,connectorposition+tolerance,connectorendnarrowing*2]) male(connectorwidth+0.01,connectordepth-tolerance*2,thickness);
+	    translate([-connectorwidth+connectorendnarrowing+tolerance,connectorposition+connectorendnarrowing+tolerance,0]) male(connectorwidth-tolerance*2,connectordepth-connectorendnarrowing*2-tolerance*2,thickness);
+	  }
+	  //	  translate([-connectorwidth+tolerance,connectorposition+tolerance,0]) male(connectorwidth+0.01,connectordepth-tolerance*2,thickness);
 	}
 	
 	translate([-connectorwidth,totaldepth,0]) rotate([0,0,-90]) union() {
@@ -117,7 +121,10 @@ module lista(t,l) {
 	    translate([-connectorwidth+tolerance,totaldepth+tolerance,connectorposition+tolerance-0.01]) rotate([90,0,0]) male(connectorwidth,connectordepth-tolerance*2,totaldepth-connectorendnarrowing*2+tolerance);
 	  }
 	} else {
-	  translate([-connectorwidth+tolerance,connectorposition+tolerance,0]) male(connectorwidth+0.01,connectordepth-tolerance*2,thickness);
+	  hull() {
+	    translate([-connectorwidth+tolerance,connectorposition+tolerance,connectorendnarrowing*2]) male(connectorwidth+0.01,connectordepth-tolerance*2,thickness);
+	    translate([-connectorwidth+connectorendnarrowing+tolerance,connectorposition+connectorendnarrowing+tolerance,0]) male(connectorwidth-tolerance*2,connectordepth-connectorendnarrowing*2-tolerance*2,thickness);
+	  }
 	}
 	
 	translate([-connectorwidth,totaldepth,0]) rotate([0,0,-90]) union() {
@@ -163,8 +170,8 @@ if (final) rotate([0,0,vertical?90:0]) {
       lista("left",sectionwidth);
     }
     if (vertical) {
-	translate([0,(thickness+1)*1,0]) rotate([90,0,0]) lista("right",sectionwidth);
-      } else {
+      translate([0,(thickness+1)*1,0]) rotate([90,0,0]) lista("right",sectionwidth);
+    } else {
       translate([0,(totaldepth+1)*1,0]) lista("right",sectionwidth);
     }
   }
@@ -179,7 +186,7 @@ if (final) rotate([0,0,vertical?90:0]) {
       }
     }
   }
-} else {
+	   } else {
   if (vertical) {
     rotate([90,0,0]) lista("right",10);
   } else {
