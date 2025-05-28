@@ -4,7 +4,7 @@
 
 include <hsu.scad>
 
-print=4;
+print=4; // 0=cupholder full, 1=both cupholder parts, 2=cupholder backplate, 3=cupholder front, 4=headphone hanger, 5=test
 debug=1;
 
 strong=(print>0)?1:0;
@@ -35,7 +35,7 @@ cupcutoffsethigh=-45;
 cupcornerd=3;
 
 handlebard=31;
-handlebarcurved=150;//160;
+handlebarcurved=140;//160;
 handlebarstraight=40+50+5;
 headphonehangend=thinwall*2+7;
 headphonehangendd=handlebard+headphonehangend;
@@ -319,6 +319,19 @@ module handlebarform(w) {
     translate([handlebarcurved/2-handlebard/2-screwholed*3/2,0,(handlebard/2+thinwall)-1-4-0.01]) rotate([180,0,0]) ruuvireika(screwlength,screwholed,1);
     translate([handlebarcurved/2+headphonehangw-screwholed*3/2,0,-headphonehangendd/2+screwlength-0.01]) rotate([180,0,0]) ruuvireika(screwlength,screwholed,1);
   }
+
+  // Lower screw
+  // Math for this is broken, but I am too lazy to fit it right now
+  if (w) {
+    rotate([0,0,20-70+9]) hull() {
+      translate([handlebarcurved/2+handlebard/2+screwholed*3/2,0,-diameter/2]) cylinder(h=diameter,d=screwholed*3);
+      translate([handlebarcurved/2+screwholed*3/2,0,-diameter/2]) cylinder(h=diameter,d=screwholed*3);
+    }
+  } else {
+    rotate([0,0,20-70+9]) {
+      translate([handlebarcurved/2+handlebard/2+screwholed*3/2,0,(handlebard/2+thinwall)-1-4-0.01]) rotate([180,0,0]) ruuvireika(screwlength,screwholed,1);
+    }
+  }
 }
 
 module handlebar() {
@@ -329,7 +342,7 @@ module handlebar() {
 }
 
 module headphonehanger() {
-  xmove=29;//10+45+84+screwholed*3/2/2;
+  xmove=26;//10+45+84+screwholed*3/2/2;
   ymove=9;
   yoffset=14;
   r=0; //12.5;
