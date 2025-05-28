@@ -15,7 +15,7 @@ debug=0;
 dodebug=print>0?0:debug;
 
 $fn=90;
-versiontext="V3.10";
+versiontext="V3.11";
 font = "Liberation Sans";
 textdepth = 0.5;
 textsize=8;
@@ -202,14 +202,6 @@ module holder() {
 	roundedbox(backplateheight,backplatedepth,backplatewidth,cornerd);
 
 	// Lightening holes
-	if (0) translate([textsize,-0.1,holdersupportwidth]) {
-	  intersection() {
-	    w=screwrecessheight-screwrecessdiameter/2-textsize;
-	    translate([-w+maxbridge,0,0]) lighten(w*2-maxbridge,rollwidth-fingerwidth,backplatedepth+0.2,7,5,maxbridge,"up");
-	    cube([screwrecessheight-screwrecessdiameter/2-textsize,backplatedepth+0.2,rollwidth-fingerwidth]);
-	  }
-	}
-
 	hull() {
 	  translate([backplatedepth/2+rolldiameterinside+(rolldiameterinside-rollborewidth),backplatedepth+0.01,backplatedepth*2]) rotate([90,0,0]) cylinder(h=backplatedepth+0.02,d=backplatedepth);
 	  translate([backplateheight*0.7-backplatedepth/2,backplatedepth+0.01,backplatedepth*2]) rotate([90,0,0]) cylinder(h=backplatedepth+0.02,d=backplatedepth);
@@ -219,9 +211,6 @@ module holder() {
 
 	  translate([backplateheight*0.5-backplatedepth/2-maxbridge/2,-0.01,backplatedepth*2+rollwidth-backplatedepth*2.5-1]) cube([maxbridge,backplatedepth+0.02,1]);// rotate([90,0,0]) cylinder(h=backplatedepth+0.02,d=backplatedepth);
 	}
-	
-	//translate([textsize,-0.1,holdersupportwidth]) lighten(screwrecessheight-screwrecessdiameter/2-textsize,rollwidth-fingerwidth,backplatedepth+0.2,7,5,maxbridge,"up");
-	//translate([screwrecessheight-screwrecessdiameter/2+2,-0.1,screwrecessleft+screwrecessdiameter/2]) lighten(screwrecessdiameter,screwdistance-screwrecessdiameter,holdersupportwidth+0.2,3,5,maxbridge,"up");
       }
 
       hull() {
@@ -260,7 +249,7 @@ module holder() {
 
     translate([2,10-textdepth+0.01,holdersupportwidth+2]) rotate([-90,270,0]) linear_extrude(height = textdepth+0.02) text(text = str(versiontext), font = font, size = textsize, valign="baseline");
     
-    translate([2,holdersupportwidth+2-textdepth+0.01,holdersupportwidth+rollwidth+textdepth-0.01]) rotate([0,180,0]) linear_extrude(height = textdepth) text(text = str(versiontext), font = font, size = textsize, valign="bottom", halign="right");
+    translate([2,holdersupportwidth+2-textdepth+0.01,holdersupportwidth+rollwidth+textdepth-0.01]) rotate([0,180,-90]) linear_extrude(height = textdepth) text(text = str(versiontext), font = font, size = textsize, valign="bottom", halign="left");
     
     translate([rollaxisheight,rollaxisdepth,-0.01]) {
       hull() {
@@ -276,25 +265,15 @@ module holder() {
     translate([screwrecessheight,-0.01,screwrecessright]) rotate([-90,0,0]) cylinder(h=backplatedepth+1,d=screwholediameter);
 
     // Lightening holes in roll supports
-    hull() {
-      translate([backplatedepth/2+rolldiameterinside+(rolldiameterinside-rollborewidth),backplatedepth/2+backplatedepth,-0.01]) cylinder(h=holdersupportwidth+0.02,d=backplatedepth);
-      translate([backplatedepth/2+rolldiameterinside+(rolldiameterinside-rollborewidth),rollaxisdepth-rolldiameterinside,-0.01]) cylinder(h=holdersupportwidth+0.02,d=backplatedepth);
-      translate([backplateheight*0.7-backplatedepth/2,backplatedepth/2+backplatedepth,-0.01]) cylinder(h=holdersupportwidth+0.02,d=backplatedepth);
-    }
-
-    hull() {
-      translate([backplatedepth/2+rolldiameterinside,backplatedepth/2+backplatedepth,rollwidth+backplatedepth-0.01]) cylinder(h=holdersupportwidth+0.02,d=backplatedepth);
-      translate([backplatedepth/2+rolldiameterinside,rollaxisdepth-rolldiameterinside,rollwidth+backplatedepth-0.01]) cylinder(h=holdersupportwidth+0.02,d=backplatedepth);
-      translate([backplateheight*0.7-backplatedepth/2,backplatedepth/2+backplatedepth,rollwidth+backplatedepth-0.01]) cylinder(h=holdersupportwidth+0.02,d=backplatedepth);
+    for (z=[0,rollwidth+backplatedepth]) {
+      hull() {
+	translate([backplatedepth/2+rolldiameterinside+(rolldiameterinside-rollborewidth),backplatedepth/2+backplatedepth,z-0.1]) cylinder(h=holdersupportwidth+0.2,d=backplatedepth);
+	translate([backplatedepth/2+rolldiameterinside+(rolldiameterinside-rollborewidth),rollaxisdepth-rolldiameterinside/2-backplatedepth/2,z-0.1]) cylinder(h=holdersupportwidth+0.2,d=backplatedepth);
+	translate([backplateheight*0.7,backplatedepth/2+backplatedepth,z-0.1]) cylinder(h=holdersupportwidth+0.2,d=backplatedepth);
+      }
     }
 
     translate([cutteraxleheight,cutteraxledepth,0]) cylindervoids(cutteraxleind,cutteraxleind,holdersupportwidth+cutteraxlesupportl+cutteraxlel-cutteraxleind/3-10,0,0,1);
-  }
-
-  if (0) hull() {
-    translate([cutteraxleheight,cutteraxledepth,holdersupportwidth+cutteraxlesupportl-backplatedepth/2-0.1]) sphere(d=backplatedepth);
-    translate([cutteraxleheight,cutteraxledepth,holdersupportwidth+cutteraxlesupportl/2-cutteraxleoutd/2-0.1]) sphere(d=backplatedepth);
-    translate([backplateheight-cutteraxleoutd/2,backplatedepth/2,holdersupportwidth+cutteraxlesupportl-cutteraxleoutd/2-0.1]) sphere(d=backplatedepth);
   }
 }
 
@@ -394,8 +373,6 @@ module right() {
       hull() {
 	translate([cutteraxleheight,cutteraxledepth,holdersupportwidth+rollwidth-cutteraxlesupportl-0.1]) cylinder(d=backplatedepth,h=0.1);
 	translate([cutteraxleheight,cutteraxledepth,holdersupportwidth+rollwidth-0.1]) sphere(d=backplatedepth);
-	//    translate([cutteraxleheight,backplatedepth+backplatedepth/2+ytolerance,holdersupportwidth+rollwidth+holdersupportwidth/2]) sphere(d=holdersupportwidth);
-
 	translate([fingerupper+fingerheight/2-cornerd,backplatedepth-0.01,holdersupportwidth+rollwidth-fingerwidth+cornerd]) roundedbox(fingerheight/2,0.01,fingerwidth,cornerd);
       }
   
