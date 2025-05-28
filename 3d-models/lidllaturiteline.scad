@@ -6,12 +6,13 @@ include <hsu.scad>
 
 $fn=60;
 
-print=0;
+print=1;
 teslamodels=1;
+abs=1;
 
 strong=(print>0)?1:0;
 
-versiontext=str("V1.2",teslamodels?"S":"");;
+versiontext=str("V1.3",teslamodels?"S":"");;
 textdepth=0.8;
 textsize=8;
 
@@ -237,5 +238,10 @@ if (print==1) {
 	translate([0,-baselift,0]) cube([width/2,height+baselift,baselift-0.01]);
       }
     }
+  }
+
+  if (abs) {
+    //antiwarpwall(x,y,z,l,w,h,distanceoption,walloption);
+    antiwarpwall(-screwd*3/2-1,-thickness/2*cos(angle),0,width+screwd*3+2,thickness/2*cos(angle)+height*cos(angle)+screwd*3/2,(height+baselift)*sin(angle)+(thickness+baselift)*cos(angle)+5);
   }
  }
