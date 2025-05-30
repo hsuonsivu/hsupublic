@@ -207,10 +207,34 @@ module roundedbox(xsize,ysize,h,c,printableoption) {
     // Sphere may generate slight rounding errors with smaller $fn values, so form actual cube in the center
     translate([scd/2,scd/2,scd/2]) cube([xsize-scd,ysize-scd,h-scd]);
 
-    if (printableoption) {
+    if (printableoption==1 || printableoption==3) {
       for (x=[0+scd/2,xsize-scd/2]) {
 	for (y=[0+scd/2,ysize-scd/2]) {
 	  translate([x,y,0]) cylinder(d=scd/2,h=0.01,$fn=f);
+	}
+      }
+    }
+
+    if (printableoption==2 || printableoption==3) {
+      for (x=[0+scd/2,xsize-scd/2]) {
+	for (y=[0+scd/2,ysize-scd/2]) {
+	  translate([x,y,h-0.01]) cylinder(d=scd/2,h=0.01,$fn=f);
+	}
+      }
+    }
+
+    if (printableoption==4 || printableoption==6) {
+      for (x=[0+scd/2,xsize-scd/2]) {
+	for (z=[0+scd/2,h-scd/2-0.01]) {
+	  translate([x,0,z]) rotate([-90,0,0]) cylinder(d=scd/2,h=0.01,$fn=f);
+	}
+      }
+    }
+
+    if (printableoption==5 || printableoption==6) {
+      for (y=[0+scd/2,ysize-scd/2]) {
+	for (z=[0+scd/2,h-scd/2-0.01]) {
+	  translate([0,y,z]) rotate([0,-90,0]) cylinder(d=scd/2,h=0.01,$fn=f);
 	}
       }
     }
@@ -421,6 +445,8 @@ module antiwarpwall(x,y,z,l,w,h,distanceoption,walloption) {
 
 // Rounded box with different roudings in xy and z directions. If printable is 1, bottom is set to max 45 degree angle.
 // height must be non-zero, if 0, it will become 0.01..
+// If printable is 2, top is made printable (to allow printing upside down
+// If printable is 3, both ends of cylinder are made printable.
 
 module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
   $fn=(fn!="" || fn>0)?fn:30;
@@ -430,7 +456,8 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
   // echo("diameter - cornerd/1.7 ", diameter-cornerd/1.7);
   // echo("diameter/2 - cornerd/2 ", diameter/2-cornerd/2);
   hull() {
-    if (printable) cylinder(d=diameter-cornerd/1.7,h=height/2);
+    if (printable==1 || printable==3) cylinder(d=diameter-cornerd/1.7,h=height/2);
+    if (printable==2 || printable==3) translate([0,0,height/2]) cylinder(d=diameter-cornerd/1.7,h=height/2);
     
     translate([0,0,cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
       intersection() {
