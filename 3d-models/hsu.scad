@@ -266,7 +266,6 @@ module ring(diameter,wall,height,printsupport) {
 	}
       }
     }
-    //    echo(diameter,wall,diameter-wall);
     translate([0,0,-0.1]) cylinder(d=diameter-wall*2,h=height+w+0.2);
     if (p==1) {
       translate([0,0,height-0.1]) cylinder(d2=diameter,d1=diameter-wall*2,h=wall+0.2);
@@ -452,9 +451,6 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
   $fn=(fn!="" || fn>0)?fn:30;
   height=heightin>0?heightin:0.01;
 
-  //echo("diameter ",diameter," heightin ", heightin, " cornerd ", cornerd, " printable ", printable);
-  // echo("diameter - cornerd/1.7 ", diameter-cornerd/1.7);
-  // echo("diameter/2 - cornerd/2 ", diameter/2-cornerd/2);
   hull() {
     if (printable==1 || printable==3) cylinder(d=diameter-cornerd/1.7,h=height/2);
     if (printable==2 || printable==3) translate([0,0,height/2]) cylinder(d=diameter-cornerd/1.7,h=height/2);
@@ -476,7 +472,6 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
 }
 
 module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
-  //  echo("x ",x," y ", y," z ",z," dxy ",dxy,"dz", dzin," printable ",printable," fn ",fn);
   dz=dzin>0?dzin:0.01;
   $fn=(fn!="" || fn>0)?fn:30;
   translate([dxy/2,dxy/2,0]) minkowski(convexity=10) {
@@ -485,3 +480,66 @@ module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
   }
 }
 
+module supportbox(xsize,ysize,height,printable) {
+  // Corners
+  for (z=[0,height-0.2]) {
+    if (xsize >= ysize) translate([-0.2,-0.2,z]) cube([0.8,0.4,0.2]);
+    if (xsize < ysize) translate([-0.2,-0.2,z]) cube([0.4,0.8,0.2]);
+    if (xsize >= ysize) translate([-0.2,ysize-0.2,z]) cube([0.8,0.4,0.2]);
+    if (xsize < ysize) translate([-0.2,ysize-0.2-0.4,z]) cube([0.4,0.8,0.2]);
+    if (xsize >= ysize) translate([xsize-0.2-0.4,ysize-0.2,z]) cube([0.8,0.4,0.2]);
+    if (xsize < ysize) translate([xsize-0.2,ysize-0.2-0.4,z]) cube([0.4,0.8,0.2]);
+    if (xsize >= ysize) translate([xsize-0.2-0.40,0,z]) cube([0.8,0.4,0.2]);
+    if (xsize < ysize)translate([xsize-0.2,0,z]) cube([0.4,0.8,0.2]);
+    
+    xsteps=floor(xsize/10);
+    if (xsteps > 0) {
+      xstep=xsize/xsteps;
+      for (x=[xstep:xstep:xsize-xstep]) {
+	translate([x-0.2,-0.2,z]) cube([0.4,0.4,0.2]);
+	translate([x-0.2,ysize-0.2,z]) cube([0.4,0.4,0.2]);
+      }
+    }
+
+    ysteps=floor(ysize/10);
+    if (ysteps > 0) {
+      ystep=ysize/ysteps;
+      for (y=[ystep:ystep:ysize-ystep]) {
+	translate([-0.2,y-0.2,z]) cube([0.4,0.4,0.2]);
+	translate([ysize-0.2,y-0.2,z]) cube([0.4,0.4,0.2]);
+      }
+    }
+  }
+
+  z=printable?0:0.2;
+  h=printable?height-0.2:height-0.4;
+  translate([-0.2,-0.2,z]) cube([xsize+0.4,0.4,h]);
+  translate([-0.2,-0.2,z]) cube([0.4,ysize+0.4,h]);
+  translate([xsize-0.2,-0.2,z]) cube([0.4,ysize+0.4,h]);
+  translate([-0.2,ysize-0.2,z]) cube([xsize+0.4,0.4,h]);
+}
+
+module flatspring(l,w,h,width,coils,cornerend) {
+  coilstep=cornerend?l/(coils-0.5):l/coils;
+  d=(coilstep+width*2)/2;
+  $fn=30;
+
+  intersection() {
+    for (c=[0:1:coils]) {
+      intersection() {
+	translate([d/2,c*(d*2-width*2),0]) ring(d,width,h);
+	translate([0,c*(d*2-width*2)-d/2,0]) cube([d/2,d,h]);
+      }
+      intersection() {
+	translate([d/2+w-d,c*(d*2-width*2)+d-width,0]) ring(d,width,h);
+	translate([d/2+w-d,c*(d*2-width*2)+d/2-width,0]) cube([d/2,d,h]);
+      }
+      translate([d/2,c*(d*2-width*2)+d/2-width,0]) cube([w-d,width,h]);
+      if (c) {
+	translate([d/2,c*(d*2-width*2)-d/2,0]) cube([w-d,width,h]);
+      }
+    }
+
+    cube([w,l,h]);
+  }
+}
