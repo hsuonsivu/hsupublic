@@ -1,0 +1,48 @@
+SOURCE=spiceblock.scad
+DEPENDS=hsu.scad Makefile.spiceblock
+IMAGES=
+ALL=spiceblockwide.stl spiceblockmedium.stl spiceblocknarrow.stl spiceblockrest.stl spiceblockwideandmedium.stl
+
+all: $(ALL)
+
+dist: spiceblock.zip
+
+spiceblock-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf spiceblock-distribution
+	rm -f spiceblock-distribution.zip
+	mkdir -p spiceblock-distribution
+	cp $(SOURCE) $(DEPENDS) spiceblock-distribution
+	zip -r $@ spiceblock-distribution
+	echo $@ built.      
+
+spiceblock-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf spiceblock-distribution
+	rm -f spiceblock-distribution.zip
+	mkdir -p spiceblock-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) spiceblock-distribution
+	zip -r $@ spiceblock-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+spiceblockwide.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+spiceblockmedium.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+spiceblocknarrow.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+spiceblockrest.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+spiceblockwideandmedium.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=6 -o $@ $(SOURCE)
+	echo $@ built.
+
