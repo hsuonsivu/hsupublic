@@ -1,0 +1,45 @@
+SOURCE=ryobiadapter.scad
+DEPENDS=hsu.scad Makefile.ryobiadapter
+IMAGES=
+ALL=ryobiadapterryobi.stl ryobiadapterparkside.stl ryobiadapterclips.stl ryobiadapterall.stl 
+
+all: $(ALL)
+
+dist: ryobiadapter.zip
+
+ryobiadapter-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf ryobiadapter-distribution
+	rm -f ryobiadapter-distribution.zip
+	mkdir -p ryobiadapter-distribution
+	cp $(SOURCE) $(DEPENDS) ryobiadapter-distribution
+	zip -r $@ ryobiadapter-distribution
+	echo $@ built.      
+
+ryobiadapter-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf ryobiadapter-distribution
+	rm -f ryobiadapter-distribution.zip
+	mkdir -p ryobiadapter-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) ryobiadapter-distribution
+	zip -r $@ ryobiadapter-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+ryobiadapterryobi.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+ryobiadapterparkside.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+ryobiadapterclips.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+ryobiadapterall.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+
