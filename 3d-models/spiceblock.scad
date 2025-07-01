@@ -52,7 +52,7 @@ module spiceblock(w,n) {
     difference() {
       roundedbox(totalw,depth,height,outcornerd,1);
       for (x=[start:w+sidewall:totalw-1]) {
-	translate([x,wall,wall]) roundedbox(w,depth-wall*2,height+incornerd,incornerd,0);
+	translate([x,endwall,endwall]) roundedbox(w,depth-endwall*2,height+incornerd,incornerd,0);
       }
 
       difference() {
