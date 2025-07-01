@@ -4,7 +4,8 @@
 
 include <hsu.scad>
 
-print=0;
+print=1;
+abs=1;
 
 $fn=90;
 
@@ -104,7 +105,7 @@ module bottleholder() {
 
       hull() {
 	translate([drinkcenter,0,screw1h-screw1l/2]) rotate([0,90,0]) cylinder(d=frontcutd,h=cand+dtolerance+wall);
-	translate([drinkcenter,0,bottleholderh]) rotate([0,90,0]) cylinder(d=frontcutd,h=cand+dtolerance+wall);
+	translate([drinkcenter,0,bottleholderh-frontcutd-wall]) rotate([0,90,0]) cylinder(d=frontcutd,h=cand+dtolerance+wall);
       }
 
       hull() {
@@ -146,6 +147,15 @@ if (print==0) {
   }
  }
 
+module testing() {
+  render() bottleholder();
+  echo("bbox X is ",$xmin,$xmax);
+  echo("bbox Y is ",$ymin,$ymax);
+  echo("bbox Z is ",$zmin,$zmax);
+}
+
 if (print==1) {
   bottleholder();
+  w=cand+dtolerance+wall*2;
+  antiwarpwall(-bicyclebarw/2,-w/2,0,bicyclebarw/2+drinkcenter+w/2,w,bodyattachh);
  }
