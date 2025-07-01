@@ -489,8 +489,8 @@ module supportbox(xsize,ysize,height,printable) {
     if (xsize < ysize) translate([-0.2,ysize-0.2-0.4,z]) cube([0.4,0.8,0.2]);
     if (xsize >= ysize) translate([xsize-0.2-0.4,ysize-0.2,z]) cube([0.8,0.4,0.2]);
     if (xsize < ysize) translate([xsize-0.2,ysize-0.2-0.4,z]) cube([0.4,0.8,0.2]);
-    if (xsize >= ysize) translate([xsize-0.2-0.40,0,z]) cube([0.8,0.4,0.2]);
-    if (xsize < ysize)translate([xsize-0.2,0,z]) cube([0.4,0.8,0.2]);
+    if (xsize >= ysize) translate([xsize-0.2-0.4,-0.2,z]) cube([0.8,0.4,0.2]);
+    if (xsize < ysize)translate([xsize-0.2,-0.2,z]) cube([0.4,0.8,0.2]);
     
     xsteps=floor(xsize/10);
     if (xsteps > 0) {
