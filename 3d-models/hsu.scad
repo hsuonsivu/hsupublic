@@ -103,7 +103,7 @@ module triangle(x,y,z,mode) {
     translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,y],[z,y],[z,0]]);
   } else if (mode==12) {
     translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[x/2,z],[x,0]]);
-  } else if (mode==13) {
+  } else if (mode==13) { //
     translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,z/2]]);
   } else if (mode==14) {
     translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[x/2,z],[x,0]]);
@@ -119,7 +119,7 @@ module triangle(x,y,z,mode) {
     translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,x],[y,x],[y/2,0]]);
   } else if (mode==20) {
     translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[z/2,y],[z,0]]);
-  } else if (mode==21) {
+  } else if (mode==21) { //
     translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[0,y],[z,y/2]]);
   } else if (mode==22) {
     translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,y/2],[z,y],[z,0]]);
@@ -253,22 +253,25 @@ module tassu(direction,size) {
   }
 }
 
-module ring(diameter,wall,height,printsupport) {
+module ring(diameter,wall,height,printsupport,fnin) {
+  //  echo(diameter,wall,height,printsupport,fnin);
+  //fn=(!fnin || fnin!="" || fnin==0 || fnin<7)?30:fnin;
+  fn=(is_undef(fnin) || fnin=="")?30:fnin;
   p=(printsupport=="")?0:printsupport;
   w=(p)?wall:0;
   difference() {
     union() {
       hull() {
-	cylinder(d=diameter,h=height+(p==1?wall:0));
+	cylinder(d=diameter,h=height+(p==1?wall:0),$fn=fn);
 	if (p==2) {
-	  translate([0,0,height]) cylinder(d1=diameter,d2=diameter-wall*2,h=wall);
+	  translate([0,0,height]) cylinder(d1=diameter,d2=diameter-wall*2,h=wall,$fn=fn);
 	  //	  translate([0,0,height]) cylinder(
 	}
       }
     }
-    translate([0,0,-0.1]) cylinder(d=diameter-wall*2,h=height+w+0.2);
+    translate([0,0,-0.1]) cylinder(d=diameter-wall*2,h=height+w+0.2,$fn=fn);
     if (p==1) {
-      translate([0,0,height-0.1]) cylinder(d2=diameter,d1=diameter-wall*2,h=wall+0.2);
+      translate([0,0,height-0.1]) cylinder(d2=diameter,d1=diameter-wall*2,h=wall+0.2,$fn=fn);
     }
   }
 }
@@ -448,7 +451,7 @@ module antiwarpwall(x,y,z,l,w,h,distanceoption,walloption) {
 // If printable is 3, both ends of cylinder are made printable.
 
 module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
-  $fn=(fn!="" || fn>0)?fn:30;
+  $fn=(fn!="" || fn==0 || fn>6)?fn:30;
   height=heightin>0?heightin:0.01;
 
   hull() {
@@ -480,7 +483,7 @@ module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
   }
 }
 
-module supportbox(xsize,ysize,height,printable) {
+module supportbox(xsize,ysize,height,onbed) {
   // Corners
   for (z=[0,height-0.2]) {
     if (xsize >= ysize) translate([-0.2,-0.2,z]) cube([0.8,0.4,0.2]);
@@ -511,13 +514,74 @@ module supportbox(xsize,ysize,height,printable) {
     }
   }
 
-  z=printable?0:0.2;
-  h=printable?height-0.2:height-0.4;
+  z=onbed?0:0.2;
+  h=onbed?height-0.2:height-0.4;
   translate([-0.2,-0.2,z]) cube([xsize+0.4,0.4,h]);
   translate([-0.2,-0.2,z]) cube([0.4,ysize+0.4,h]);
   translate([xsize-0.2,-0.2,z]) cube([0.4,ysize+0.4,h]);
   translate([-0.2,ysize-0.2,z]) cube([xsize+0.4,0.4,h]);
 }
+
+module supportline(l,w,hin,layerh,onbed) {
+  sl=0.8;
+  steps=floor(l/8)+1;
+  step=(l-sl)/steps;
+  height=(onbed==1?0:0.2);
+  h=(onbed>0?hin-0.2:hin-0.4);
+
+  //  echo(l,w,hin,layerh,onbed, " calculated ",sl,steps,step,height,h);
+  //translate([0,0,0]) cube([5,5,hin]);
+  
+  // Full line
+  translate([0,-w/2,height]) cube([l,w,h]);
+
+  // Supports
+  for (x=[0:step:l]) {
+    translate([x,-w/2,0]) cube([sl,w,hin]);
+  }
+}
+
+// onbed=1 attach to bed at z=0, onbed=2 attach to bed at heightin
+module supportcylinder(diameterin,hin,onbed,fnin) {
+  fn=(is_undef(fnin) || fnin=="")?30:fnin;
+  //echo("diameter ", diameterin, " hin ",hin," onbed ",onbed," fnin ", fnin, " fn ",fn);
+  height=(onbed==1?0:0.2);
+  w=0.4; // THIS SHOULD BE TUNABLE, width of line
+  maxbridge=10;
+  margin=0.6;
+  diameter=diameterin-margin*2;
+  
+  dsteps=floor(diameter/maxbridge);
+  dstep=(dsteps > 0)?diameter/dsteps:diameter;
+
+  h=(onbed>0)?hin-0.2:hin-0.4;
+  
+  for (d=[0:dstep:diameter]) {
+    asteps=(is_undef(fnin)?floor(2*3.14159*(d)/maxbridge):fn);
+    astep=360/fn;
+    //echo("d ",d," asteps ",asteps," astep ",astep," 360/asteps ",360/asteps," fn ",fn, " h ", h);
+
+    if (d==0) {
+      for (a=[0:90:359]) {
+	rotate([0,0,a]) translate([-dstep/2+w,0,0]) supportline(dstep/2-w,w,hin,0.2,onbed);
+      }
+    } else {
+      for (a=[0:360/asteps:359]) {
+	translate([0,0,height]) ring(d-0.2,0.4,h,0,asteps);
+
+	rotate([0,0,a]) {
+	  intersection() {
+	    translate([0,0,0]) ring(d-0.2,0.4,hin,0,asteps);
+	    translate([d/2-w*2,-w*2,0]) cube([w*2,w*4,hin]);
+	  }
+	  
+	  if (d<diameter) translate([d/2-w/2,0,0]) supportline(dstep/2,w,hin,0.2,onbed);
+	}
+      }
+    }
+  }
+}
+
 
 module flatspring(l,w,h,width,coils,cornerend) {
   coilstep=cornerend?l/(coils-0.5):l/coils;
