@@ -1,0 +1,45 @@
+SOURCE=peppermill.scad
+DEPENDS=hsu.scad Makefile.peppermill
+IMAGES=
+ALL=peppermillbody.stl peppermillbase.stl peppermillknob.stl peppermillall.stl 
+OPENSCADOPTIONS=--backend=manifold
+
+all: $(ALL)
+
+dist: peppermill.zip
+
+peppermill-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf peppermill-distribution
+	rm -f peppermill-distribution.zip
+	mkdir -p peppermill-distribution
+	cp $(SOURCE) $(DEPENDS) peppermill-distribution
+	zip -r $@ peppermill-distribution
+	echo $@ built.      
+
+peppermill-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf peppermill-distribution
+	rm -f peppermill-distribution.zip
+	mkdir -p peppermill-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) peppermill-distribution
+	zip -r $@ peppermill-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+peppermillbody.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+peppermillbase.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+peppermillknob.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+peppermillall.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
