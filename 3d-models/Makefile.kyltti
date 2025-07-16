@@ -1,0 +1,37 @@
+SOURCE=kyltti.scad
+DEPENDS=hsu.scad Makefile.kyltti
+ALL=kyltti.stl kylttibase.stl
+IMAGES=kyltti.jpg kyltti.png
+OPTIONS=--enable textmetrics
+
+all: $(ALL)
+
+dist: kyltti-full-distribution.zip kyltti-source-distribution.zip
+
+kyltti-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf kyltti-distribution
+	rm -f kyltti-distribution.zip
+	mkdir -p kyltti-distribution
+	cp $(SOURCE) $(DEPENDS) kyltti-distribution
+	zip -r $@ kyltti-distribution
+	echo $@ built.      
+
+kyltti-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf kyltti-distribution
+	rm -f kyltti-distribution.zip
+	mkdir -p kyltti-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) kyltti-distribution
+	zip -r $@ kyltti-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+kyltti.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPTIONS) -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+kylttibase.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
