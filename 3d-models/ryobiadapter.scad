@@ -5,22 +5,23 @@
 include <hsu.scad>
 
 // 0=full model, 1=ryobi interface, 2=parkside interface, 3=clips, 4=print all, 5=electrical inside body, 6=bottom part of parkside,
-// 7=protection circuit board (for debugging) 8=test print
-print=0;
+// 7=protection circuit board (for debugging) 8=test print, 9=template models for upper copper plate contact
+print=4;
 debug=0;
 
 forcedebug=0;
-showcontacts=0;
+showcontacts=1;
 
 // This will set ryobi connector to use copper plate contacts instead of basic blade contacts
+// Note: select only one of these. Parkside interface is always with crimp contacts.
 upperbladecrimpcontacts=0;
-upperbladecontacts=11;
+upperbladecontacts=1;
 
 //debugon=1;
 debugon=(print==0||forcedebug)?debug:0;
 support=(print==0)?0:1;
 
-versiontext=str("V1.8");
+versiontext=str("V1.9");
 
 maxbridge=10;
 cornerd=1.5;
@@ -617,7 +618,11 @@ module ryobicut(tolerance,downextension,noupper) {
 	cylinder(d=ryobid-wall*2-tolerance*2,h=lowerh+0.01-tolerance,$fn=90);
 	translate([-ryobidl,0,0]) cylinder(d=ryobid-wall*2-tolerance*2,h=lowerh+0.01-tolerance,$fn=90);
       }
-      translate([ryobid/2-ryobil+wall+tolerance,-ryobid/2+wall+tolerance,0]) cube([ryobil-wall*2-tolerance*2,ryobid-wall*2-tolerance*2,lowerh-0.01]);
+      // translate([ryobid/2-ryobil+wall+tolerance,-ryobid/2+wall+tolerance,0]) cube([ryobil-wall*2-tolerance*2,ryobid-wall*2-tolerance*2,lowerh-0.01]);
+      hull() {
+	translate([ryobid/2-ryobil+wall+tolerance,-ryobid/2+wall+tolerance,0]) cube([ryobil-wall*2-tolerance*2,ryobid-wall*2-tolerance*2,0.01]);
+	translate([ryobid/2-ryobil+wall*2+tolerance,-ryobid/2+wall+tolerance,lowerh-0.02]) cube([ryobil-wall*2-tolerance*2,ryobid-wall*2-tolerance*2,0.01]);
+      }
     }
   }
 
@@ -661,13 +666,17 @@ module femalecontact() {
 }
 
 module showcontacts() {
-  if (showcontacts) {
+# if (showcontacts) {
     // Parkside contacts
-    if (upperbladecrimpcontact) {
-      #for (m=[0,1]) mirror([0,m,0]) translate([contactx,contactsw/2,contactz]) translate([0,0,contactbladew]) rotate([180,0,0]) contact();
+    if (upperbladecrimpcontacts) {
+      for (m=[0,1]) mirror([0,m,0]) translate([contactx,contactsw/2,contactz]) translate([0,0,contactbladew]) rotate([180,0,0]) contact();
     }
+    if (upperbladecontacts) {
+      for (m=[0,1]) mirror([0,m,0]) bladecontact(0,0,1); // contact();
+    }
+    
     // Ryobi contacts
-    #for (m=[0,1]) mirror([0,m,0]) translate([sidecontactx+sidecontactw/2-contactbladew/2,-ryobid/2+uppercontactoffset,ryobitotalh-sidecontacth+contactbladel+0.01]) rotate([0,90,0]) contact();
+    #    for (m=[0,1]) mirror([0,m,0]) translate([contactx-0.1,contactsw/2-contactsw,contactz]) rotate([180,180,180]) contact();
   }
 }
 
@@ -713,8 +722,8 @@ module ryobibaseinsideform(w,t) {
   }
 }
 
-module bladecontact(t,onlyfemalecontact) {
-  a=180-sidebladea;
+module bladecontact(t,onlyfemalecontact,form) {
+  a=(form==2)?180:(180-sidebladea);
   if (!onlyfemalecontact) {
     translate([sidecontactx+sidecontactw/2-sidebladew/2-t,ryobid/2-sidebladedepth-t,sidebladeheight]) cube([sidebladew+t*2,sidebladethickness+t*2,sidebladeh]);
     hull() {
@@ -727,8 +736,10 @@ module bladecontact(t,onlyfemalecontact) {
 
   translate([sidecontactx+sidecontactw/2-sidebladew/2,ryobid/2-sidebladedepth+sidebladethickness,sidebladeheight]) rotate([a,0,0]) {
     translate([-t,-t,sidebladelh-femalecontactbladel-femalecontactbladeh]) cube([sidebladelw+t*2,sidebladethickness+t*2,sidebladelh-femalecontactbladel-sidebladelw]);
-    translate([sidebladelw/2-femalecontactbladew/2-t,sidebladethickness/2-femalecontactbladeh+femalecontactbladethickness/2-t,sidebladelh-femalecontactbladel]) cube([femalecontactbladew+t*2,femalecontacttotalbladeh+t*2,femalecontactbladel]);
-    translate([sidebladelw/2,sidebladethickness/2,sidebladelh]) cylinder(d=femalecontactd+t,h=femalecontactl-femalecontactbladel);
+    if (form<1) {
+      translate([sidebladelw/2-femalecontactbladew/2-t,sidebladethickness/2-femalecontactbladeh+femalecontactbladethickness/2-t,sidebladelh-femalecontactbladel]) cube([femalecontactbladew+t*2,femalecontacttotalbladeh+t*2,femalecontactbladel]);
+      translate([sidebladelw/2,sidebladethickness/2,sidebladelh]) cylinder(d=femalecontactd+t,h=femalecontactl-femalecontactbladel);
+    }
   }
   
   //echo("sideblade width ",(ryobid/2-sidebladedepth+sidebladethickness)*2);
@@ -755,7 +766,7 @@ module topcontactholecut() {
       }
 
       if (upperbladecontacts) {
-	bladecontact(0);
+	bladecontact(0,0,0);
       }
     }
 }
@@ -805,18 +816,17 @@ module ryobielectronicsplug() {
 	  }
 	}
 
-	if (upperbladecontacts) bladecontact(xtolerance,0);
+	if (upperbladecontacts) bladecontact(xtolerance,0,0);
 	
-	hull() { //sidecontactdepth+xtolerance+dtolerance/2+contactoffset
+	hull() {
 	  if (upperbladecrimpcontacts) {
 	    translate([sidecontactx+sidecontactw/2,-ryobid/2+uppercontactoffset+contactoffset+wall/2+dtolerance,ryobitotalh-sidecontacth-contactl+contactbladel-ryobicontacttopshift]) cylinder(d=contacth+dtolerance,h=0.1,$fn=30);
-	    //translate([sidecontactx+sidecontactw/2,-ryobicontactsw/2+contacth/2+contactbladeh/2,ryobitotalh-sidecontacth-contactbladel]) cylinder(d=contacth+dtolerance,h=0.1,$fn=30);
 	  }
 	  if (upperbladecontacts) {
-	    bladecontact(xtolerance,1);
+	    bladecontact(xtolerance,1,0);
 	  }
 	      
-	    ryobiinsideform(wall,dtolerance);
+	  ryobiinsideform(wall,dtolerance);
 	}
       }
 
@@ -891,13 +901,15 @@ module ryobiadapter() {
     
     // Cut the opening for back contact
     translate([ryobiconnectorx-0.1,-backcontactw/2,ryobitotalh-backcontacth]) cube([backcontactdepth+0.1,backcontactw,backcontacth]);
-    translate([ryobiconnectorx-0.1,-backcontactw/2,ryobitotalh-backcontacth]) cube([backcontactdepth+wall*2+0.1,backcontactw,contactopening]);
-    translate([ryobiconnectorx-0.1,-backcontactw/2,ryobitotalh-backcontacth+contactopening-0.01]) triangle(ryobid/2,backcontactw,backcontactw/2,22);
+    if (0) {
+      translate([ryobiconnectorx-0.1,-backcontactw/2,ryobitotalh-backcontacth]) cube([backcontactdepth+wall*2+0.1,backcontactw,contactopening]);
+      translate([ryobiconnectorx-0.1,-backcontactw/2,ryobitotalh-backcontacth+contactopening-0.01]) triangle(ryobid/2,backcontactw,backcontactw/2,22);
+    }
 
     // Cut openings for side contacts
     sidecontactcuts(xtolerance);
 
-    if (upperbladecontacts) for (m=[0,1]) mirror([0,m,0]) bladecontact(xtolerance,0);
+    if (upperbladecontacts) for (m=[0,1]) mirror([0,m,0]) bladecontact(xtolerance,0,0);
 	
     // Add texts
     translate([sidecontactx+sidecontactw/2,ryobid/2-sidecontactdepth-textsize/1.7,ryobih+ryobibaseh-textdepth+0.01]) rotate([0,0,90]) linear_extrude(textdepth) text("-",halign="center",valign="center");
@@ -966,15 +978,14 @@ module parksideadapterbody() {
 	  }
 
 	  for (m=[0,1]) mirror([0,m,0]) {
-	      //    translate([screwshortxfront,screwshorty,parksideheight+cornerd/2]) cylinder(d=screwshortheadd+wall*2,h=parksideh-cornerd);
 	      hull() {
-		translate([screwshortxfront,screwshorty,parksideheight+cornerd/2]) cylinder(d=nutd+wall*2,h=nuth+cornerd);
-		translate([screwshortxfront,screwshorty,parksideheight+screwd]) cylinder(d=screwd+wall*2,h=nuth+nutd/screwd);
+		translate([screwshortxfront,screwshorty,parksideheight+cornerd/2]) cylinder(d=nutd+wall*2,h=nuth+cornerd,$fn=60);
+		translate([screwshortxfront,screwshorty,parksideheight+screwd]) cylinder(d=screwd+wall*2,h=nuth+nutd/screwd,$fn=60);
 	      }
-	      translate([screwshortxfront,screwshorty,parksideheight+cornerd/2]) cylinder(d=screwd+wall*2,h=parksideh-cornerd);
+	      translate([screwshortxfront,screwshorty,parksideheight+cornerd/2]) cylinder(d=screwd+wall*2,h=parksideh-cornerd,$fn=60);
 	      hull() {
-		translate([screwshortxfront,screwshorty,-screwshortheadspaceh-wall+cornerd/2]) cylinder(d=screwshortheadd+wall*2,h=screwshortheadspaceh+wall-cornerd);
-		translate([screwshortxfront,screwshorty,-screwshortheadspaceh-screwd]) cylinder(d=screwd+wall*2,h=screwd);
+		translate([screwshortxfront,screwshorty,-screwshortheadspaceh-wall+cornerd/2]) cylinder(d=screwshortheadd+wall*2,h=screwshortheadspaceh+wall-cornerd,$fn=60);
+		translate([screwshortxfront,screwshorty,-screwshortheadspaceh-screwd]) cylinder(d=screwd+wall*2,h=screwd,$fn=60);
 	      }
 	    }
 	}
@@ -1125,7 +1136,7 @@ if (print==0) {
     union() {
       ryobiadapter();
       difference() {
-	//	ryobielectronicsplug();
+	ryobielectronicsplug();
 	showcontacts();
       }
       
@@ -1151,7 +1162,7 @@ if (print==1 || print==4) {
       intersection() {
 	union() {
 	  ryobiadapter();
-	  showcontacts();
+	  //showcontacts();
 	}
 
 	if (forcedebug) translate([-200,-100,-100]) cube([194,100,200]);
@@ -1181,7 +1192,7 @@ if (print==5 || print==4) {
 	ryobielectronicsplug();
 	if (debugon) translate([-7,-100,-100]) cube([194,100,200]);
       }
-      showcontacts();
+      //showcontacts();
     }
   }
  }
@@ -1194,3 +1205,12 @@ if (print==7) {
   protectionboard();
  }
 
+
+if (print==9 || print==4) {
+  if (upperbladecontacts) {
+    translate([31.5,parksidew/2+ryobibased/2+6.5,ryobid/2-sidebladedepth+dtolerance/2+xtolerance]) {
+      rotate([0,-90,6]) bladecontact(0,0,1);
+      translate([0,-ryobid/2-sidebladedepth+11,-ryobid/2-sidebladedepth+dtolerance/2+xtolerance-sidebladelw+sidebladethickness]) rotate([90,0,-90]) bladecontact(0,0,2);
+    }
+  }
+}
