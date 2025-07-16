@@ -1,7 +1,7 @@
 SOURCE=ryobiadapter.scad
 DEPENDS=hsu.scad Makefile.ryobiadapter
 IMAGES=
-ALL=ryobiadapterryobi.stl ryobiadapterparkside.stl ryobiadapterclips.stl ryobiadapterall.stl ryobiadapterelectrical.stl ryobiadapterbottom.stl ryobiadaptertest.stl
+ALL=ryobiadapterryobi.stl ryobiadapterparkside.stl ryobiadapterclips.stl ryobiadapterall.stl ryobiadapterelectrical.stl ryobiadapterbottom.stl ryobiadaptertest.stl ryobiadaptercontacttemplates.stl
 OPENSCADOPTIONS=--backend=manifold
 
 all: $(ALL)
@@ -55,4 +55,6 @@ ryobiadaptertest.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D print=8 -o $@ $(SOURCE)
 	echo $@ built.
 
-
+ryobiadaptercontacttemplates.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=9 -o $@ $(SOURCE)
+	echo $@ built.
