@@ -1,0 +1,44 @@
+SOURCE=filamentholderwide.scad
+DEPENDS=hsu.scad Makefile.filamentholderwide
+IMAGES=filamentholderwide35mm.png filamentholderwide46mm.png filamentholderwide110.png filamentholderwide46mm.png 
+ALL=filamentholderwideleft.stl filamentholderwideright.stl filamentholderwidebody.stl filamentholderwidelockpin.stl
+
+all: $(ALL)
+
+dist: filamentholderwide.zip
+
+filamentholderwide-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf filamentholderwide-distribution
+	rm -f filamentholderwide-distribution.zip
+	mkdir -p filamentholderwide-distribution
+	cp $(SOURCE) $(DEPENDS) filamentholderwide-distribution
+	zip -r $@ filamentholderwide-distribution
+	echo $@ built.      
+
+filamentholderwide-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf filamentholderwide-distribution
+	rm -f filamentholderwide-distribution.zip
+	mkdir -p filamentholderwide-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) filamentholderwide-distribution
+	zip -r $@ filamentholderwide-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+filamentholderwideleft.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+filamentholderwideright.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+filamentholderwidebody.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+filamentholderwidelockpin.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
