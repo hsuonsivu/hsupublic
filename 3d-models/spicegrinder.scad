@@ -86,7 +86,7 @@ echo("middleheight ",middleheight," topheight ",topheight," kaulanarrowheight ",
 
 baseheight=-wall-ztolerance;
 
-versiontext=str("V1.4");
+versiontext=str("V1.5");
 textsize=7;
 textdepth=0.7;
 textfont="Liberation Sans:style=Bold";
@@ -321,8 +321,10 @@ module millrotor() {
 	    translate([-screwl/2-middled/4,y,middleheight]) rotate([0,90,0]) cylinder(d=screwd,h=screwl+middled/2);
 	    translate([-screwl/2-middled/4,y-screwd/4,middleheight]) cube([screwl+middled/2,screwd/2,screwd/2]);
 	  }
+
+	  translate([-screwl/2,y,middleheight]) rotate([0,90,0]) cylinder(d=nutd/cos(180/6),h=nuth,$fn=6); //;screwheadh);
 	  hull() {
-	    translate([-screwl/2-middled/4,y,middleheight]) rotate([0,90,0]) cylinder(d=nutd/cos(180/6),h=middled/4+nuth,$fn=6); //;screwheadh);
+	    translate([-screwl/2-middled/4,y,middleheight]) rotate([0,90,0]) cylinder(d=nutd/cos(180/6),h=middled/4+0.01,$fn=6); //;screwheadh);
 	    translate([-screwl/2-middled/4-middled/2,y,middleheight+middled/2]) rotate([0,90,0]) cylinder(d=nutd/cos(180/6),h=middled/4+nuth,$fn=6); //;screwheadh);
 	  }
 	  hull() {
