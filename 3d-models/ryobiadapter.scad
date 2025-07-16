@@ -981,11 +981,16 @@ module parksideadapterbody() {
 	      hull() {
 		translate([screwshortxfront,screwshorty,parksideheight+cornerd/2]) cylinder(d=nutd+wall*2,h=nuth+cornerd,$fn=60);
 		translate([screwshortxfront,screwshorty,parksideheight+screwd]) cylinder(d=screwd+wall*2,h=nuth+nutd/screwd,$fn=60);
+		translate([pcx+pcl+frontscrewl+wall-cornerd/2,parksidew/2-cornerd/2,parksideheight+cornerd/2]) cylinder(d=1,h=nuth+cornerd,$fn=60);
 	      }
-	      translate([screwshortxfront,screwshorty,parksideheight+cornerd/2]) cylinder(d=screwd+wall*2,h=parksideh-cornerd,$fn=60);
+	      hull() {
+		translate([screwshortxfront,screwshorty,parksideheight+cornerd/2]) cylinder(d=screwd+wall*2,h=parksideh-cornerd,$fn=60);
+		translate([pcx+pcl+frontscrewl+wall-cornerd/2,parksidew/2-cornerd/2,parksideheight+cornerd/2]) cylinder(d=1,h=parksideh-cornerd,$fn=60);
+	      }
 	      hull() {
 		translate([screwshortxfront,screwshorty,-screwshortheadspaceh-wall+cornerd/2]) cylinder(d=screwshortheadd+wall*2,h=screwshortheadspaceh+wall-cornerd,$fn=60);
 		translate([screwshortxfront,screwshorty,-screwshortheadspaceh-screwd]) cylinder(d=screwd+wall*2,h=screwd,$fn=60);
+		translate([pcx+pcl+frontscrewl+wall-cornerd/2,parksidew/2-cornerd/2,-screwshortheadspaceh-screwd+cornerd/2]) cylinder(d=1,h=nuth+cornerd,$fn=60);
 	      }
 	    }
 	}
