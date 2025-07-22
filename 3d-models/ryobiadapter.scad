@@ -6,7 +6,7 @@ include <hsu.scad>
 
 // 0=full model, 1=ryobi interface, 2=parkside interface, 3=clips, 4=print all, 5=electrical inside body, 6=bottom part of parkside,
 // 7=protection circuit board (for debugging) 8=test print, 9=template models for upper copper plate contact
-print=4;
+print=0;
 debug=0;
 
 forcedebug=0;
