@@ -9,19 +9,17 @@ $fn=60;
 
 // 1=body, 2=bottom, 3=knob, 4=all;
 
-print=0;
+print=1;
 
 abs=0;
 
 debug=1;
 
-knobangle=(print>0?0:180); // 180
+knobangle=(print>0?0:0); // 180
 
 dtolerance=0.5;
 axledtolerance=0.3;
 axletolerance=0.25;
-bearingaxledtolerance=0.8;
-bearingaxletolerance=0.5;
 xtolerance=0.3;
 ytolerance=0.3;
 ztolerance=0.3;
@@ -33,7 +31,7 @@ screwd=4.4; // M5
 screwheadd=8.5; //8.6; // Round head
 screwheadh=3.1;
 screwheadspaceh=6;
-screwl=23.15;
+screwl=23; // 23.15;
 nutd=7;
 nuth=2.3;
 
@@ -41,7 +39,7 @@ upperadjust=2;
 
 uppermaxd=49.6; // 49.3;
 uppermind=47.2; //46.5;
-upperh=18.5; //19.70;
+upperh=18; //19.70;
 uppernotchd=12; // estimate
 uppernotches=15;
 upperfingerholes=4;
@@ -82,11 +80,11 @@ totalheight=136.4; // 137.6; // Does not include cap
 bottomd=140;
 bottomraise=3.38;
 
-echo("middleheight ",middleheight," topheight ",topheight," kaulanarrowheight ", kaulanarrowheight, " kaulaheight ",kaulaheight," upperheight ",upperheight);
+//echo("middleheight ",middleheight," topheight ",topheight," kaulanarrowheight ", kaulanarrowheight, " kaulaheight ",kaulaheight," upperheight ",upperheight);
 
 baseheight=-wall-ztolerance;
 
-versiontext=str("V1.5");
+versiontext=str("V1.6");
 textsize=7;
 textdepth=0.7;
 textfont="Liberation Sans:style=Bold";
@@ -114,13 +112,17 @@ knobspringa=10;
 knobspringcut=1;
 knobspringh=6.5;
 
+bearingaxledtolerance=0.9;
+bearingaxletolerance=0.55;
 bearings=8;
-bearingaxled=6;
+bearingaxled=8;
 bearingdepth=1.5;
 bearingl=5;
-bearingspace=0.5;
+bearingspace=0.2;//0.5;
 bearingsink=bearingaxletolerance/2+dtolerance/2;
 totalbearingh=bearingdepth+bearingl+bearingdepth;
+bearinglowopenw=2.6;
+bearingaxlelowextrad=bearingaxled/2+bearingaxletolerance+bearingaxledtolerance+0.55;
 
 handleh=topheight+toph-middleheight-totalbearingh;
 handleheight=middleheight+totalbearingh;
@@ -130,8 +132,10 @@ knobclipsink=0.6+axledtolerance/2; //1.3;
 knobclipheight=baseheight+knobaxled/2+0.7;//+knobclipd/2;
 knobclipyoffset=knobaxled/2+5+knobclipd/2;
 knobcliptolerance=0.3;
+knobsupporty=-knobaxled/2-knobclipyoffset;
+knobsupportw=knobaxled+cornerd/2+knobstopperh+dtolerance/2+knobclipyoffset;
 
-echo("totalheight ", totalheight, " upperheight + upperh ",upperheight+upperh);
+//echo("totalheight ", totalheight, " upperheight + upperh ",upperheight+upperh);
 
 module millbody() {
   difference() {
@@ -210,12 +214,14 @@ module millhandle() {
       }
     }
 
-    for (a=[0:360/bearings:359]) {
-      rotate([0,0,a]) translate([topd/2+bearingaxled/2-bearingsink,0,handleheight+bearingl/2+bearingdepth]) rotate([90,0,0]) hull() onehinge(bearingaxled,bearingl,bearingdepth,2,bearingaxletolerance,bearingaxledtolerance);
-      hull() {
-	rotate([0,0,a]) translate([topd/2+bearingaxled/2-bearingsink,0,handleheight+bearingdepth]) cylinder(d=bearingaxled+bearingaxledtolerance,h=bearingl);
-	rotate([0,0,a]) translate([topd/2+bearingaxled/2-bearingsink,0,handleheight+bearingdepth+bearingspace]) cylinder(d=bearingaxled+bearingspace*2+bearingaxledtolerance,h=bearingl-bearingspace*2);
-      }
+    for (a=[0:360/bearings:359]) rotate([0,0,a]) {
+	translate([topd/2+bearingaxled/2-bearingsink,0,handleheight+bearingl/2+bearingdepth]) rotate([90,0,0]) hull() onehinge(bearingaxled,bearingl,bearingdepth,2,bearingaxletolerance,bearingaxledtolerance);
+	hull() {
+	  translate([topd/2+bearingaxled/2-bearingsink,0,handleheight+bearingdepth]) cylinder(d=bearingaxled+bearingaxledtolerance,h=bearingl);
+	  translate([topd/2+bearingaxled/2-bearingsink,0,handleheight+bearingdepth+bearingspace]) cylinder(d=bearingaxled+bearingspace*2+bearingaxledtolerance,h=bearingl-bearingspace*2);
+	}
+	translate([topd/2+bearingaxled/2-bearingsink,0,handleheight-0.01]) cylinder(d=bearingaxlelowextrad,h=bearingdepth);
+	translate([topd/2,-bearinglowopenw/2,handleheight-0.01]) cube([bearingaxled/2-bearingsink,bearinglowopenw,bearingdepth]);
     }
   }
 
@@ -226,9 +232,9 @@ module millhandle() {
 
 rotormiddlethickness=max(topd-middled-wall,wall);
 
-module knobaxleandclip(cutout) {
+module knobaxleandclip(cutout,angle) {
   translate([knobdistance,0,baseheight+knobaxleheight]) rotate([0,0,90]) onehinge(knobaxled,knobshaftd,knobaxledepth,cutout?2:0,axletolerance,axledtolerance);
-  translate([0,0,baseheight+knobaxleheight]) rotate([cutout?180:knobangle,0,0]) {
+  translate([0,0,baseheight+knobaxleheight]) rotate([angle,0,0]) {
     for (x=[-knobshaftd/2-knobclipsink+knobclipd/2,knobshaftd/2+knobclipsink-knobclipd/2]) {
       translate([knobdistance+x,-knobclipyoffset,knobclipheight]) sphere(d=knobclipd+(cutout?dtolerance:0));
     }
@@ -253,11 +259,13 @@ module millrotor() {
 	      }
 	      hull() {
 		translate([0,0,baseheight]) roundedcylinder(lowd+dtolerance+wall*2,lowstraighth+ztolerance+wall,cornerd,1,90); //ring(lowd+dtolerance+wall*2,wall,lowstraighth,0,90);
-		translate([knobdistance-knobshaftd/2-dtolerance/2-knobsupportwall,-knobaxled/2-knobsupportwall,baseheight]) roundedbox(knobsupportwall,knobaxled+knobsupportwall+cornerd/2+knobstopperh,knobsupporth,cornerd,1);
+		//translate([knobdistance-knobshaftd/2-dtolerance/2-knobsupportwall,-knobaxled/2-knobsupportwall,baseheight]) roundedbox(knobsupportwall,knobaxled+knobsupportwall+cornerd/2+knobstopperh,knobsupporth,cornerd,1);
+		translate([knobdistance-knobshaftd/2-dtolerance/2-knobsupportwall,knobsupporty,baseheight]) roundedbox(knobsupportwall,knobsupportw,knobsupporth,cornerd,1);
 	      }
 	    }
 
-	    knobaxleandclip(1);
+	    knobaxleandclip(1,180);
+	    knobaxleandclip(1,0);
 	  }
 
 	  // Knob rotating shaft
@@ -285,23 +293,18 @@ module millrotor() {
 	    }
 	  }
 
-	  knobaxleandclip(0);
+	  knobaxleandclip(0,knobangle);
 
 	  // Knob axle support
 
 	  // Sides
 	  difference() {
 	    for (x=[-knobshaftd/2-dtolerance/2-knobsupportwall,knobshaftd/2+dtolerance/2]) {
-	      translate([knobdistance+x,-knobaxled/2-knobsupportwall,baseheight]) roundedbox(knobsupportwall,knobaxled+knobsupportwall+cornerd/2+knobstopperh+dtolerance/2,knobsupporth,cornerd,1);
+	      translate([knobdistance+x,knobsupporty,baseheight]) roundedbox(knobsupportwall,knobsupportw,knobsupporth,cornerd,1);
 	    }
 
-	    if (0) {
-	      translate([knobdistance,0,baseheight+knobaxleheight]) rotate([0,0,90]) onehinge(knobaxled,knobshaftd,knobaxledepth,2,axletolerance,axledtolerance);
-	      for (x=[-knobshaftd/2-knobclipsink+knobclipd/2,knobshaftd/2+knobclipsink-knobclipd/2]) {
-		translate([knobdistance+x,0,knobclipheight]) sphere(d=knobclipd+dtolerance);
-	      }
-	    }
-	    knobaxleandclip(1);
+	    knobaxleandclip(1,180);
+	    knobaxleandclip(1,0);
 	  }
 
 	  // Stopper counter face
@@ -398,8 +401,9 @@ if (print==0) {
       millrotor();
       translate([knobdistance,0,baseheight+knobaxleheight]) rotate([knobangle,0,0]) knob();
     }
-  
-    if (debug) translate([-100,knobclipyoffset,-100]) cube([200,200,300]);
+    
+    // if (debug) translate([-100,knobclipyoffset,-100]) cube([200,200,300]);
+    if (debug) translate([-100,0,-100]) cube([200,200,300]);
   }
  }
 
