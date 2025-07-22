@@ -12,14 +12,15 @@
 // +Side walls are thin and have broken once, add strengtening to the edges.
 include <hsu.scad>
 
-print=0; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model, spring test
+print=0; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model, 5=spring test, 6=spring
 
 adhesion=1; // Additional bits to allow using skirt when printing.
 
+flatspring=1;
 withlonghandle=1;
-plungerdown=0;
+plungerdown=print==0?1:0;
 
-debug=0;
+debug=print==0?1:0;
 
 $fn=120;
 
@@ -31,10 +32,11 @@ testslreduction=(print==4)?50:0;
 length=228-testlreduction;
 height=75-testhreduction; // 125;
 
-versiontextb=str("v1.9",(print==4)?"D":"");;
+versiontext="v1.10"; // str("v1.10",(print==4)?"D":"");;
 
 textsize=(print==4)?4:7;
-textdepth=1;
+smalltextsize=3;
+textdepth=0.7;
 
 wall=2.0;
 strengthd=3.2;//2.5;
@@ -45,13 +47,13 @@ bottoml=160-testlreduction;
 fingerl=70;
 fingerw=9;
 fingers=(print==4)?4:9;
-fingerh=5; //3*1.5;
+fingerh=6; //3*1.5;
 fingerdistance=15.5;// width/fingers; // This should be diameter of a full grown blueberry, need to test
 width=fingerdistance*fingers; //140;
 fingerendh=8;
 fingertoph=height-10;
 fingertopl=topl+20;
-fingerstart=bottoml-20;
+fingerstart=bottoml-8;
 fingernarrowl=6;
 
 storageh=5;
@@ -101,7 +103,7 @@ plungeclipd=3.5;
 plungeclipnotchd=2.5; // to allow unclipping
 plungeclipl=1.5;
 plungeclipw=clipslided/3;
-plungecliph=25;
+plungecliph=25-2;
 plungeclipfingerd=12;
 plungecliptopadjust=2; // More space to place notch
 plungecliptopadjusth=plungecliph-20;
@@ -112,29 +114,36 @@ plungeclipshelfw=plungeclipw+3*wall+0.01;//clipslided;
 longhandlel=500;
 longhandled=handled;
 
-plungespringw=9;
 plungespringcut=0.5;
 plungespringdepth=plungerd/2-3.5;
 plungespringbaseh=plungespringdepth;
 plungespringbaseheight=clipslided;
 plungerheight=clippullh+clipplungerzmovement+ztolerance;
-plungespringspaceh=plungerh-plungespringbaseh-clipslided*2-4;
 plungerzposition=plungerheight+plungerz;
 plungespringsteps=7;
 plungespringsteph=2;
 plungespringendh=4;
 
-plungespringthickness=2.8;
+plungespringthickness=flatspring?1.5:2.8;
 plungespringplatethickness=2;
-plungespringd=13; // spring diameter
+
+plungespringsupportw=9; // Round spring
+plungespringw=11; // Flat spring
+plungespringl=11; // Flat spring
+plungespringspacew=plungespringw+1; // Flat spring
+plungespringspacel=plungespringl+1; // Flat spring
+plungespringd=13; // Round spring diameter
 plungespringspaced=plungespringd+1;
-plungespringxoffset=plungerd/3/2-1;
-plungespringcenteringxoffset=plungespringxoffset+2;
-plungespringcenteringh=3;
-plungespringcenteringd=4;
+
+plungespringtension=1.5; // Spring is printed slightly longer to pretension it
+plungespringxoffset=flatspring?plungerd/3/2-2.5:plungerd/3/2-1;
+plungespringcenteringxoffset=plungespringxoffset;
+plungespringcenteringh=2.5; // 3;
+plungespringcenteringd=6;
 plungespringbottomheight=plungerangledh-11+ztolerance; // Spring starts here relative to plunger start
-plungespringtopheight=plungerh-plungecliph-2; // spring ends here
-plungespringh=plungespringtopheight-plungespringbottomheight;
+plungespringtopheight=plungerh-25-2; // spring ends here
+plungespringh=plungespringtopheight-plungespringbottomheight-ztolerance*2;
+plungespringspaceh=plungespringtopheight-plungespringbottomheight;
 plungespringstep=plungespringh/plungespringsteps;
 plungespringstopperh=plungespringbaseh*1.9;
 
@@ -150,13 +159,14 @@ backopening=axlefrombottom+4.5;
 backcornersupport=10;
 //hinged=axledlargeout-axledtolerance;
 handlelowh=clippullh+clipplungerzmovement+3+handled-plungespringbaseh*2+wall;
+
 plungespringheight=handlelowh-wall; //clipslided+clipplungerzmovement; // From start of the plunger
 
 slitd=fingerdistance-fingerw;
 slitstart=backopening+axleoutd+wall;
 slitl=storagel-storageh-1-slitstart-slitd/2-2;
   
-versiontext=str("piikki ",fingerw,"  rako ",fingerdistance-fingerw,"  ",versiontextb);
+//versiontext=str("piikki ",fingerw,"  rako ",fingerdistance-fingerw,"  ",versiontextb);
 
 module axletappi(r) {
   hull() {
@@ -185,32 +195,49 @@ module plunger() {
       }
     }
 
+    translate([-plungespringcenteringxoffset,0,plungespringtopheight-0.01]) cylinder(h=plungespringcenteringh/2+0.01,d2=plungespringcenteringd/3,d1=plungespringcenteringd*1.5,$fn=90);
+    translate([-plungespringcenteringxoffset,0,plungespringtopheight+ztolerance]) cylinder(h=plungespringcenteringh+0.01,d2=plungespringcenteringd/3+xtolerance,d1=plungespringcenteringd+xtolerance,$fn=90);
+      
     // Spring support cut
     union() {
-      hull() {
-	translate([-plungerd/2-0.01,-plungespringw/2-plungespringcut,-0.01]) cube([plungespringdepth+plungespringcut+0.02,plungespringw+plungespringcut*2,plungespringbottomheight+plungespringbaseh*2+0.02]);
-	translate([-plungespringxoffset,0,-0.01]) cylinder(d=plungespringw+xtolerance,h=plungespringbottomheight+plungespringbaseh*2);
+      if (flatspring) {
+	//	  translate([-plungerd/2-0.01,-plungespringspacew/2-plungespringcut,-0.01]) cube([plungespringdepth+plungespringcut+0.02,plungespringw+plungespringcut*2,plungespringbottomheight+plungespringbaseh*2+0.02]);
+	  translate([-plungerd/2-0.01,-plungespringsupportw/2-plungespringcut,-0.01]) cube([plungespringdepth+plungespringcut+0.02,plungespringsupportw+plungespringcut*2,plungespringbottomheight+plungespringbaseh*2+0.02]);
+      } else {
+	hull() {
+	  translate([-plungerd/2-0.01,-plungespringsupportw/2-plungespringcut,-0.01]) cube([plungespringdepth+plungespringcut+0.02,plungespringsupportw+plungespringcut*2,plungespringbottomheight+plungespringbaseh*2+0.02]);
+	  translate([-plungespringxoffset,0,-0.01]) cylinder(d=plungespringsupportw+xtolerance,h=plungespringbottomheight+plungespringbaseh*2);
+	}
       }
-     hull() {
-	translate([-plungespringxoffset,0,plungespringbottomheight-4-0.01]) cylinder(d2=plungespringspaced,d1=plungespringw+xtolerance,h=4+0.02,$fn=90);
+
+      hull() {
+	if (flatspring) {
+	  translate([-plungespringxoffset-plungespringspacel/2,-plungespringspacew/2,-0.01]) cube([plungespringspacel,plungespringspacew,plungespringbottomheight+plungespringbaseh*2+0.02]);
+	} else {
+	  translate([-plungespringxoffset,0,plungespringbottomheight-4-0.01]) cylinder(d2=plungespringspaced,d1=plungespringsupportw+xtolerance,h=4+0.02,$fn=90);
+	}
       }
     }
 
-   // Round spring space inside the plunger
-   translate([-plungespringxoffset,0,plungespringbottomheight-0.01]) cylinder(d=plungespringspaced,h=plungespringh+0.02,$fn=90);
+    if (flatspring) {
+      translate([-plungespringxoffset-plungespringspacel/2,-plungespringspacew/2,plungespringbottomheight-0.01]) cube([plungespringspacel,plungespringspacew,plungespringspaceh+0.02]);
+    } else {
+      // Round spring space inside the plunger
+      translate([-plungespringxoffset,0,plungespringbottomheight-0.01]) cylinder(d=plungespringspaced,h=plungespringspaceh+0.02,$fn=90);
+    }
     
     // text cut
-    tlx=len(versiontextb)*(textsize-1);
+    tlx=len(versiontext)*(textsize-1);
     tl=(print==4)?tlx/2:tlx;
     
    hull() {
       translate([plungerd-0.01,-plungerd/2,plungerangledh+ztolerance+4-plungerd*2/3]) cube([0.02,plungerd,tl]);
       translate([plungerd/3,-plungerd/2,plungerangledh+ztolerance+4]) cube([plungerd/3,plungerd,tl]);
     }
-    translate([plungerd/3-textdepth+0.01,0,plungerangledh+ztolerance+4+tl/2]) rotate([0,90,0]) linear_extrude(height=textdepth) text(versiontextb,font="Liberation Sans:style=Bold",size=((print==4)?textsize/2:textsize),halign="center", valign="center");
+    translate([plungerd/3-textdepth+0.01,0,plungerangledh+ztolerance+4+tl/2]) rotate([0,90,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=((print==4)?textsize/2:textsize),halign="center", valign="center");
 
     // Create angled bottom
-    translate([-plungerd/2,-plungerd/2,-0.02]) triangle(plungerd+0.01,plungerd,plungerangledh+0.02,0);
+    translate([-plungerd/2,-plungerd/2-0.1,-0.02]) triangle(plungerd+0.01,plungerd+0.2,plungerangledh+0.02,0);
 
     // Cut off sharp edges
     translate([-plungerd/2,-plungerd/2,-0.02]) cube([plungerd+0.01,plungerd,5]);
@@ -226,26 +253,28 @@ module plunger() {
       translate([-plungerd/2+plungeclipdepth-plungeclipnotchd+plungecliptopadjust,-plungeclipw/2+plungeclipcut-0.1,plungerh]) rotate([-90,0,0]) cylinder(d=plungeclipnotchd,h=plungeclipw-2*plungeclipcut+0.2,$fn=6);
     }
   }
+}
 
-  // Spring
-  translate([-plungespringxoffset,0,plungespringbottomheight+ztolerance+plungespringh+plungespringthickness/2]) rotate([180,0,0]) spring(plungespringh+ztolerance+plungerz+1,plungespringd,plungespringplatethickness,plungespringthickness);
+module plungespring(tension) {
+  difference() {
+    union() {
+      // Spring
+      if (flatspring) {
+	translate([-plungespringxoffset-plungespringl/2,-plungespringw/2,plungespringbottomheight+ztolerance-plungerz]) roundedbox(plungespringl,plungespringw,wall,cornerd);
+	translate([-plungespringxoffset-plungespringl/2,plungespringw/2,plungespringbottomheight+ztolerance-plungerz]) scale([1,1,(plungespringh+plungerz+tension)/plungespringh]) rotate([90,0,0]) flatspring(plungespringh,plungespringl,plungespringw,1,12,1);
+	translate([-plungespringxoffset-plungespringl/2,-plungespringw/2,plungespringtopheight-wall-ztolerance+tension]) roundedbox(plungespringl,plungespringw,wall,cornerd);
+	// Bottom orient
+	translate([-plungespringcenteringxoffset,0,plungespringbottomheight-plungerz-plungespringcenteringh+0.01]) cylinder(h=plungespringcenteringh+ztolerance+0.01,d1=plungespringcenteringd/3,d2=plungespringcenteringd,$fn=60);
+      } else {
+	translate([-plungespringxoffset,0,plungespringbottomheight+ztolerance]) scale([1,1,(plungespringh+tension)/plungespringh]) spring(plungespringh,plungespringd,plungespringplatethickness,plungespringthickness);
+      }
 
-translate([-plungespringcenteringxoffset,0,plungespringbottomheight-plungespringcenteringh+ztolerance-plungerz]) cylinder(h=plungespringcenteringh+ztolerance+0.01,d1=plungespringcenteringd/3,d2=plungespringcenteringd,$fn=60);
-  
-  if (0)  translate([-plungespringdepth+wall,-plungespringw/2,clipslided+plungespringbaseh*2+ztolerance-plungespringendh+ztolerance-plungerz]) roundedbox(plungespringthickness,plungespringw,plungespringendh+plungespringthickness,1);
-  
-  if (0)  for (i=[0:1:plungespringsteps]) {
-    z=plungespringbaseh*2+ztolerance*2-plungerz+i*plungespringstep;
-
-    hull() {
-      translate([-plungespringdepth+wall,-plungespringw/2,z]) roundedbox(plungespringthickness,plungespringw,plungespringthickness,plungespringthickness);
-      translate([-xtolerance-plungespringthickness-plungespringcompress,-plungespringw/2,z+plungespringstep/2]) roundedbox(plungespringthickness,plungespringw,plungespringthickness,plungespringthickness);
+      // Top orient
+      translate([-plungespringcenteringxoffset,0,plungespringbottomheight+ztolerance+plungespringh+tension-0.01]) cylinder(h=plungespringcenteringh+ztolerance+0.01,d2=plungespringcenteringd/3,d1=plungespringcenteringd,$fn=60);
     }
 
-    hull() {
-      translate([-xtolerance-plungespringthickness-plungespringcompress,-plungespringw/2,z+plungespringstep/2]) roundedbox(plungespringthickness,plungespringw,plungespringthickness,plungespringthickness);
-      translate([-plungespringdepth+wall,-plungespringw/2,z+plungespringstep]) roundedbox(plungespringthickness,plungespringw,plungespringthickness,plungespringthickness);
-    }
+    translate([-plungespringxoffset-plungespringl/2,plungespringw/2-smalltextsize-0.7,plungespringtopheight-ztolerance+tension+0.01]) cube([plungespringl,plungespringw/2-(plungespringw/2-smalltextsize-0.7),wall]);
+    translate([-plungespringxoffset,plungespringw/2-0.5,plungespringtopheight-wall-ztolerance+tension-textdepth+wall+0.01]) linear_extrude(height=textdepth+0.01) text(versiontext,font="Liberation Sans:style=Bold",size=smalltextsize,halign="center", valign="top");
   }
 }
 
@@ -467,17 +496,23 @@ module berrypicker() {
       }
 
       // plunger counter shape
-      hull() {
-	difference() {
-	  translate([height+handlex+plungerx,width/2,clippullh-0.1]) cylinder(h=plungerangledh+clipplungerzmovement+0.1,d=clipslided);
-	  translate([height+handlex+plungerx-clipslided/2,width/2-clipslided/2,clippullh+clipplungerzmovement]) triangle(clipslided+0.01,clipslided,plungerangledh+0.01,1);
-	}
-	intersection() {
-	  translate([-plungercountersupportheight/2,0,-plungercountersupportheight+clipplungerzmovement]) difference() {
-	    translate([height+handlex+plungerx,width/2,clippullh-0.1]) cylinder(h=plungerangledh+0.1,d=clipslided);
-	    translate([height+handlex+plungerx-clipslided/2,width/2-clipslided/2,clippullh]) triangle(clipslided+0.01,clipslided,plungerangledh+0.01,1);
+      difference() {
+	hull() {
+	  difference() {
+	    translate([height+handlex+plungerx,width/2,clippullh-0.1]) cylinder(h=plungerangledh+clipplungerzmovement+0.1,d=clipslided);
+	    translate([height+handlex+plungerx-clipslided/2,width/2-clipslided/2,clippullh+clipplungerzmovement]) triangle(clipslided+0.01,clipslided,plungerangledh+0.01,1);
 	  }
-	  translate([height,width/2-handled/2,clippullh]) cube([handlex+handled,handled,plungerh]);
+	  intersection() {
+	    translate([-plungercountersupportheight/2,0,-plungercountersupportheight+clipplungerzmovement]) difference() {
+	      translate([height+handlex+plungerx,width/2,clippullh-0.1]) cylinder(h=plungerangledh+0.1,d=clipslided);
+	      translate([height+handlex+plungerx-clipslided/2,width/2-clipslided/2,clippullh]) triangle(clipslided+0.01,clipslided,plungerangledh+0.01,1);
+	    }
+	    translate([height,width/2-handled/2,clippullh]) cube([handlex+handled,handled,plungerh]);
+	  }
+	}
+
+	if (flatspring) {
+	  translate([height+handlex+plungerx-clipslided/2,width/2-plungespringspacew/2,clippullh+plungerangledh-clipplungerzmovement-ztolerance]) cube([clipslided+xtolerance*2+0.01,plungespringspacew,clipplungerzmovement+wall+0.01]);
 	}
       }
 
@@ -587,15 +622,21 @@ module berrypicker() {
   difference() {
     union() {
       // Spring stopper
-      difference() {
-	hull() {
-	  translate([height+handlex-plungerd/2-wall/2,width/2-plungespringw/2,plungerheight+plungespringbottomheight-plungespringstopperh]) triangle(plungespringdepth+wall/2,plungespringw,plungespringstopperh,1);
-	  translate([height+handlex-plungerd/2-wall/2+plungespringdepth+wall/2,width/2,plungerheight+plungespringbottomheight-1]) cylinder(d=plungespringw,h=1);
-	}
+      if (flatspring) {
+	difference() {
+	  hull() {
+	    translate([height+handlex-plungerd/2-wall/2+cutw,width/2-plungespringsupportw/2,plungerheight+plungespringbottomheight-plungespringstopperh]) triangle(plungespringdepth+wall/2,plungespringsupportw,plungespringstopperh,1);
+	    translate([height+handlex-plungespringxoffset-plungespringl/2,width/2-plungespringsupportw/2,plungerheight+plungespringbottomheight-wall/2]) roundedbox(plungespringl,plungespringsupportw,wall/2,cornerd);
+	  }
 
-	translate([height+handlex-plungespringcenteringxoffset,width/2,plungerheight+plungespringbottomheight-plungespringcenteringh/2]) cylinder(h=plungespringcenteringh/2+0.01,d1=plungespringcenteringd/3,d2=plungespringcenteringd*1.5,$fn=90);
-	translate([height+handlex-plungespringcenteringxoffset,width/2,plungerheight+plungespringbottomheight-plungespringcenteringh]) cylinder(h=plungespringcenteringh+0.01,d1=plungespringcenteringd/3+xtolerance,d2=plungespringcenteringd+xtolerance,$fn=90);
-      
+	  translate([height+handlex-plungespringcenteringxoffset,width/2,plungerheight+plungespringbottomheight-plungespringcenteringh/2+0.01]) cylinder(h=plungespringcenteringh/2+0.01,d1=plungespringcenteringd/3,d2=plungespringcenteringd*1.5,$fn=90);
+	  translate([height+handlex-plungespringcenteringxoffset,width/2,plungerheight+plungespringbottomheight-plungespringcenteringh-ztolerance]) cylinder(h=plungespringcenteringh+0.01,d1=plungespringcenteringd/3+xtolerance,d2=plungespringcenteringd+xtolerance,$fn=90);
+	}
+      } else {
+	hull() {
+	  translate([height+handlex-plungerd/2-wall/2+cutw,width/2-plungespringsupportw/2,plungerheight+plungespringbottomheight-plungespringstopperh]) triangle(plungespringdepth+wall/2,plungespringsupportw,plungespringstopperh,1);
+	  translate([height+handlex-plungerd/2-wall/2+plungespringdepth+wall/2,width/2,plungerheight+plungespringbottomheight-1]) cylinder(d=plungespringsupportw,h=1);
+	}
       }
     
       difference() {
@@ -684,11 +725,11 @@ module berrypicker() {
     intersection() {
       union() {
 	for (y=[0:fingerdistance:width]) {
-	  hull() {
+	  translate([0,0,-preventerh]) hull() {
 	    translate([0,y-fingerw/2,fingerstart]) roundedbox(wall,fingerw,bottoml-fingerstart,cornerd);
-	    translate([0,y-fingerw/2,bottoml+cornerd]) roundedbox(fingerh,fingerw,wall,cornerd);
+	    translate([0,y-fingerw/2,bottoml]) roundedbox(fingerh,fingerw,wall,cornerd);
 	  }
-	  translate([0,y-fingerw/2,bottoml]) roundedbox(fingerh,fingerw,topl-bottoml+cornerd,cornerd);
+	  translate([0,y-fingerw/2,bottoml-preventerh]) roundedbox(fingerh,fingerw,topl-bottoml+preventerh+cornerd,cornerd);
 	  hull() {
 	    translate([0,y-fingerw/2,topl]) roundedbox(fingerh,fingerw,wall,cornerd);
 	    translate([fingerendh,y-fingerw/2,length-fingernarrowl]) roundedbox(fingerh,fingerw,wall,cornerd);
@@ -704,6 +745,7 @@ module berrypicker() {
 
 intersection() {
   if (debug) translate([-20,0,0]) cube([height+80,width/2,length+1]);
+  //if (debug) translate([-20,0,0]) cube([height+60,width/2+20,length+1]);
   if (print==4 && debug) translate([-storageh-10,0,0]) cube([height+90,width+plungerd+20,topl]);
 
   union() {
@@ -713,8 +755,13 @@ intersection() {
 
     if (print==0) {
       translate([height+handlex,width/2,plungerzposition]) plunger();
+      translate([height+handlex,width/2,plungerzposition]) plungespring(0);
     }
-  
+
+    if (print==3 || print==6) {
+      translate([-storageh-plungespringl/2+1,width+0.5,plungespringw/2]) rotate([90,0,0]) plungespring(plungespringtension);
+    }
+    
     if (print==2 || print==3 || print==4) {
       if (adhesion) {
 	zz=floor((plungerh-plungerd)/10)*10-9;
@@ -745,3 +792,5 @@ if (print==5) {
     }
   }
  }
+
+//#    translate([-20,0,plungespringspaceh]) rotate([180,0,0]) scale([1,1,plungespringspaceh/plungespringh]) spring(plungespringh,plungespringd,plungespringplatethickness,plungespringthickness);
