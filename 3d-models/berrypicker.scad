@@ -17,7 +17,7 @@ print=0; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model,
 adhesion=1; // Additional bits to allow using skirt when printing.
 
 flatspring=1;
-plungerdown=print==0?1:0;
+plungerdown=print==0?0:0;
 
 debug=print==0?1:0;
 
@@ -45,15 +45,17 @@ bottoml=160-testlreduction;
 
 fingerl=70;
 fingerw=9;
-fingers=(print==4)?4:9;
+fingers=(print==4)?4:8;
 fingerh=6; //3*1.5;
 fingerdistance=15.5;// width/fingers; // This should be diameter of a full grown blueberry, need to test
 width=fingerdistance*fingers; //140;
-fingerendh=8;
+fingerendheight=8;
 fingertoph=height-10;
 fingertopl=topl+20;
 fingerstart=bottoml-8;
 fingernarrowl=6;
+fingercuth=0.1;
+fingercutw=fingerw-5;
 
 preventerh=25;
 preventers=(floor(fingers/4)*2);
@@ -166,6 +168,8 @@ plungespringheight=handlelowh-wall; //clipslided+clipplungerzmovement; // From s
 slitd=fingerdistance-fingerw;
 slitstart=backopening+axleoutd+wall;
 slitl=storagel-1-slitstart-slitd/2-2;
+slitsw=width-fingerw;
+slitwall=3;
   
 //versiontext=str("piikki ",fingerw,"  rako ",fingerdistance-fingerw,"  ",versiontextb);
 
@@ -286,7 +290,7 @@ module sideform() {
   hull() {
     translate([lcornerd/2,width/2-wall/2,0]) cylinder(d=lcornerd,h=topl+wall-cornerd/2);
     translate([height-lcornerd/2,width/2-wall/2,0]) cylinder(d=lcornerd,h=topl-cornerd/2);
-    translate([fingerendh+fingerh-wall/2,width/2-wall,length]) roundedbox(wall,wall,wall,cornerd);
+    translate([fingerendheight+fingerh-wall/2,width/2-wall,length]) roundedbox(wall,wall,wall,cornerd);
     translate([fingertoph,width/2-wall,fingertopl]) roundedbox(wall,wall,wall,cornerd);
     intersection() {
       finger(width/2);
@@ -299,9 +303,8 @@ module sideformcut() {
   hull() {
     translate([lcornerd/2,width/2-wall/2,wall]) cylinder(d=lcornerd-wall*2,h=topl-wall-cornerd/2);
     translate([height-lcornerd/2,width/2-wall/2,wall]) cylinder(d=lcornerd-wall*2,h=topl-wall*2-cornerd/2);
-    translate([fingerendh+fingerh-wall/2-wall,width/2-wall-wall,length-wall]) roundedbox(wall,wall,wall,cornerd);
+    translate([fingerendheight+fingerh-wall/2-wall,width/2-wall-wall,length-wall]) roundedbox(wall,wall,wall,cornerd);
     translate([fingertoph-wall,width/2-wall-wall,fingertopl-wall]) roundedbox(wall,wall,wall,cornerd);
-    //finger(width/2);
   }
 }
 
@@ -312,29 +315,8 @@ module sides() {
 	  intersection() {
 	    difference() {
 	      sideform();
-	      if (0) union() {
-		hull() {
-		  translate([lcornerd/2,width/2-wall/2,0]) cylinder(d=lcornerd,h=topl+wall-cornerd/2);
-		  translate([height-lcornerd/2,width/2-wall/2,0]) cylinder(d=lcornerd,h=topl-cornerd/2);
-		  translate([fingerendh+fingerh-wall/2,width/2-wall,length]) roundedbox(wall,wall,wall,cornerd);
-		  translate([fingertoph,width/2-wall,fingertopl]) roundedbox(wall,wall,wall,cornerd);
-		  intersection() {
-		    finger(width/2);
-		    translate([0,width/2-wall,0]) cube([height,wall,length]);
-		  }
-		}
-	      }
 
 	      sideformcut();
-	      if (0) union() {
-		hull() {
-		  translate([lcornerd/2,width/2-wall/2,wall]) cylinder(d=lcornerd-wall*2,h=topl-wall-cornerd/2);
-		  translate([height-lcornerd/2,width/2-wall/2,wall]) cylinder(d=lcornerd-wall*2,h=topl-wall*2-cornerd/2);
-		  translate([fingerendh+fingerh-wall/2-wall,width/2-wall-wall,length-wall]) roundedbox(wall,wall,wall,cornerd);
-		  translate([fingertoph-wall,width/2-wall-wall,fingertopl-wall]) roundedbox(wall,wall,wall,cornerd);
-		  //finger(width/2);
-		}
-	      }
 	    }
 	    translate([0,width/2-wall,0]) cube([height,wall+lcornerd/2,length+wall+cornerd/2]);
 	  }
@@ -373,15 +355,35 @@ module sides() {
 }
 
 module finger(y) {
-  translate([0,0,-preventerh]) hull() {
-    translate([0,y-fingerw/2,fingerstart]) roundedbox(wall,fingerw,bottoml-fingerstart,fingercornerd);
-    translate([0,y-fingerw/2,bottoml]) roundedbox(fingerh,fingerw,fingercornerd,fingercornerd);
+  difference() {
+    union() {
+      translate([0,0,-preventerh]) hull() {
+	translate([0,y-fingerw/2,fingerstart]) roundedbox(wall,fingerw,bottoml-fingerstart,fingercornerd);
+	translate([0,y-fingerw/2,bottoml]) roundedbox(fingerh,fingerw,fingercornerd,fingercornerd);
+      }
+      translate([0,y-fingerw/2,bottoml-preventerh]) roundedbox(fingerh,fingerw,topl-bottoml+preventerh+fingercornerd,fingercornerd);
+      hull() {
+	translate([0,y-fingerw/2,topl]) roundedbox(fingerh,fingerw,fingercornerd,fingercornerd);
+	translate([fingerendheight,y-fingerw/2,length-fingernarrowl]) roundedbox(fingerh,fingerw,fingercornerd,fingercornerd);
+	translate([fingerendheight+fingerh-wall/2,y,length]) sphere(wall);
+      }
+    }
   }
-  translate([0,y-fingerw/2,bottoml-preventerh]) roundedbox(fingerh,fingerw,topl-bottoml+preventerh+fingercornerd,fingercornerd);
-  hull() {
-    translate([0,y-fingerw/2,topl]) roundedbox(fingerh,fingerw,fingercornerd,fingercornerd);
-    translate([fingerendh,y-fingerw/2,length-fingernarrowl]) roundedbox(fingerh,fingerw,fingercornerd,fingercornerd);
-    translate([fingerendh+fingerh-wall/2,y,length]) sphere(wall);
+}
+
+module fingercut(y) {
+  for (x=[-fingerh/5,fingerh/5]) {
+    difference() {
+      union() {
+	translate([x+fingerh/2-fingercuth/2,y-fingercutw/2,bottoml-preventerh+fingercornerd/2]) cube([fingercuth,fingercutw,topl-bottoml+preventerh]);
+	hull() {
+	  l=length-fingernarrowl;
+	  h=fingercuth*(l-fingerendheight)/l;
+	  translate([x+fingerh/2-h/2,y-fingercutw/2,topl+fingercornerd/2]) cube([h,fingercutw,0.01]);
+	  translate([x+fingerendheight+fingerh/2-h/2,y-fingercutw/2,l+fingercornerd/2]) cube([h,fingercutw,0.01]);
+	}
+      }
+    }
   }
 }
 
@@ -391,9 +393,30 @@ module berrypicker() {
     // Bottom
     union() {
       difference() {
-	translate([0,-width/2,0]) roundedbox(wall,width,bottoml,cornerd);
+	union() {
+	  translate([0,-width/2,0]) roundedbox(wall,width,bottoml,cornerd);
+	  hull() {
+	    translate([0,-width/2,slitstart-slitd]) roundedbox(wall,width,slitl+slitd*2.5,cornerd);
+	    translate([0,-slitsw/2,slitstart-slitd/2]) roundedbox(slitwall,slitsw,slitl+slitd*1.5,cornerd);
+	  }
+
+	  // fingers
+	  if (print!=4) {
+	    intersection() {
+	      union() {
+		for (y=[-width/2:fingerdistance:width/2]) {
+		  finger(y);
+		}
+	      }
+	      
+	      hull() for (m=[0,1]) mirror([0,m,0]) sideform();
+	      //translate([0,-width/2,0]) cube([height,width,length+cornerd+wall]);
+	    }
+	  }
+	}
+
 	// Cutouts for hinges
-	for (m=[0,1]) mirror([0,m,0]) {
+	for (m=[0,0]) mirror([0,m,0]) {
 	    y=-width/2+wall; // ,width-wall-ytolerance-hingew-ytolerance]) {
 	    translate([-0.1,y,-0.01]) cube([wall+0.2,ytolerance+hingew+ytolerance,axleh+axleoutd/2+axleh-axleoutd/2+2]);
 	  }
@@ -404,8 +427,8 @@ module berrypicker() {
 	// Openings for leaves and other trash
 	for (y=[-width/2+fingerw/2:fingerdistance:width/2-slitd]) {
 	  hull() {
-	    translate([-0.1,y+slitd/2,slitstart+slitd/2]) rotate([0,90,0]) cylinder(h=wall+0.2,d=slitd);
-	    translate([-0.1,y+slitd/2,slitstart+slitl]) rotate([0,90,0]) cylinder(h=wall+0.2,d=slitd);
+	    translate([-0.1,y+slitd/2,slitstart+slitd/2]) rotate([0,90,0]) cylinder(h=slitwall+0.2,d=slitd);
+	    translate([-0.1,y+slitd/2,slitstart+slitl]) rotate([0,90,0]) cylinder(h=slitwall+0.2,d=slitd);
 	  }
 	}
       }
@@ -420,7 +443,6 @@ module berrypicker() {
 
 	  for (m=[0,1]) mirror([0,m,0]) {
 	      for (y=[0:preventerdistance:width/2+lcornerd/2]) {
-		echo(y);
 		ymax=(y+preventerdistance+wall/2>=width/2+lcornerd/2?-wall:0);
 		hull() {
 		  translate([wall/2,y,storagel+wall/2]) sphere(d=wall);
@@ -477,16 +499,12 @@ module berrypicker() {
 	  }
       }
 
-      if (0)       hull() {
-	translate([0,-width/2+wall+hingew+2*ytolerance,backopening+axleoutd]) roundedbox(wall,width-2*wall-4*ytolerance-2*hingew,wall,cornerd);
-	translate([backopening+wall+0.5*xtolerance,-width/2+wall+hingew+2*ytolerance,wall]) roundedbox(wall,width-2*wall-4*ytolerance-2*hingew,0.2,cornerd);
-	translate([backopening-0.5*xtolerance,-width/2+wall+hingew+2*ytolerance,0]) roundedbox(wall,width-2*wall-4*ytolerance-2*hingew,0.2,cornerd);
-	translate([axlefrombottom,-width/2+wall+hingew+2*ytolerance,axleh]) rotate([-90,0,0]) cylinder(d=axleoutd,h=width-2*wall-4*ytolerance-2*hingew,$fn=90);
-	translate([axleoutd/2,-width/2+wall+hingew+2*ytolerance,axleoutd/2]) rotate([-90,0,0]) cylinder(d=axleoutd,h=width-2*wall-4*ytolerance-2*hingew,$fn=90);
-      }
-
       // sides
       sides();
+    }
+
+    for (y=[-width/2:fingerdistance:width/2]) {
+      fingercut(y);
     }
 
     // Axle hole inside
@@ -786,19 +804,6 @@ module berrypicker() {
     translate([height+handlex-handled/2-xtolerance-plungeclipd,-plungeclipw/2-plungeclipcut/2*2,handlel+clipslided-plungeclipd*2]) cube([handlex,plungeclipw+plungeclipcut*2,plungeclipd*2]);
     translate([height+handlex-handled/2-xtolerance+plungeclipshelfdepth,-plungeclipw/2-plungeclipcut/2*2,handlel+clipslided-plungeclipd*2]) cube([handlex,plungeclipw+plungeclipcut*2,topl]);
   }
-
-  // fingers
-  if (print!=4) {
-    intersection() {
-      union() {
-	for (y=[-width/2:fingerdistance:width/2]) {
-	  finger(y);
-	}
-      }
-
-      translate([0,-width/2,0]) cube([height,width,length+cornerd+wall]);
-    }
-  }
 }
 
 intersection() {
@@ -832,7 +837,7 @@ intersection() {
     }
     
     if (print==2 || print==3 || print==4) {
-      translate([height+wall+plungerd/2-1,-plungerd-1,0]) {
+      translate([height+wall+plungerd/2-1,-plungerd-wall+lcornerd/2-wall+0.5,0]) {
 	if (adhesion) {
 	  zz=floor((plungerh-plungerd)/10)*10-9;
 	  translate([-0.4,width/2+1-zz/3.5,0]) triangle(0.8,zz/3.5-0.5+0.01,zz,11);
