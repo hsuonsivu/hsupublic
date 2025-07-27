@@ -106,7 +106,7 @@ module triangle(x,y,z,mode) {
   } else if (mode==13) { //
     translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,z/2]]);
   } else if (mode==14) {
-    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[x/2,z],[x,0]]);
+    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,z/2],[x,z],[x,0]]);
   } else if (mode==15) {
     translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,z],[x,z],[x/2,0]]);
   } else if (mode==16) {
@@ -114,7 +114,7 @@ module triangle(x,y,z,mode) {
   } else if (mode==17) {
     translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[0,x],[y,x/2]]);
   } else if (mode==18) {
-    translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,y/2],[y,x],[y,0]]);
+    translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,x/2],[y,x],[y,0]]);
   } else if (mode==19) {
     translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,x],[y,x],[y/2,0]]);
   } else if (mode==20) {
@@ -128,12 +128,139 @@ module triangle(x,y,z,mode) {
   }
 }
 
+module newtriangle(x,y,z,mode) {
+}
+
+module roundedtriangle(x,y,z,mode,cornerd) {
+  c=min(x,y,z,cornerd?cornerd:0);
+
+  minkowski() {
+    if (c>0) sphere(d=c,$fn=30);
+    adjust=c>0?(1/sqrt(c)):0;//1/sqrt(c/2*c/2+c/2*c/2);
+    union() { //translate([c/2,c/2,c/2]) scale([(x-c)/x,(y-c)/y,(z-c)/z]) { // scale([(x-c)/x,(y-c)/y,(z-c)/z]) {
+	if (mode==0) {
+	  difference() {
+	    if (0) {
+	      xc=sqrt(c*c+c*c); //1/sqrt(c);
+	      yc=sqrt(c*c+c*c); //1/sqrt(c);
+	    }
+	    xc=(x-c)/x;
+	    yc=(y-c)/y;
+	    zc=(z-c)/z;
+	    
+	    //translate([c/2+xc/2,y-c/2,c/2]) rotate([90,0,0]) linear_extrude(height=y-yc) polygon(points=[[0,0],[x-c-xc/2,z-c-zc/2],[x-c-yc/2,0]]);
+	    xx=(x-c)*z/x;
+	    zz=(z-c)*x/z;
+	    echo("xx ",xx, " zz ",zz);
+	    translate([c/2,y-c/2,c/2]) rotate([90,0,0]) linear_extrude(height=y-c) polygon(points=[[0,0],[x-c,z-c],[x-c,0]]);
+	    if (0) hull() {
+	    translate([0,0,0]) cube([xc/2,y,zc/2]);
+	    translate([x-xc/2,0,z-zc/2]) cube([xc/2,y,zc/2]);
+	    }
+	  }
+	} else if (mode==1) {
+	  translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,z]]);
+	} else if (mode==2) {
+	  //xx=(x-c)*z/x;
+	  //zz=(z-c)*x/z;
+	  //zz=sqrt(c*c/(1+(x/z)*(x/z)));
+	  //xx=zz*(x/z);
+	  //echo(x,xx,z,zz,x/z,xx/zz);
+	  //echo(sqrt(xx*xx+zz*zz)*z/x);
+	  //translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,0]]);
+	  a=atan2(x,z); echo(x,z,a);
+
+	  echo("a, cos ",a, cos(a)," sin ",sin(a), " tan ", tan(a));
+	  
+	  xc=sin(a)*c;
+	  zc=cos(a)*c;
+
+	  echo("c, c/2 ",c,c/2," xc ",xc," zc ",zc,sqrt(xc*xc+zc*zc));
+	  //translate([c/2,y-c/2,c/2]) rotate([90,0,0]) linear_extrude(height=y-c) polygon(points=[[0,0],[0,z-c-zc],[x-c-xc,0]]);
+	  //translate([c/2,y-c/2,c/2]) rotate([90,0,0]) linear_extrude(height=y-c) polygon(points=[[0,0],[0,z-c],[x-c/2,0]]);
+	  r=sqrt((x-c)*(x-c)+(z-c)*(z-c));
+	  //echo(" r ",r," R ",sqrt(x*x+z*z));
+	  //translate([r*cos(a),r*sin(a),0]) cube([1,1,1]);
+	  x1=-(c/2)*tan(a);
+	  x2=-sqrt(tan(a)*c/2*tan(a)*c/2+c/2*c/2);  //-c/2*sin(a);
+	  x3=0; //-c/2*sin(a);
+	  xd=x1+x2+x3;
+	  echo ("x, x1,x2,x3,xd,x+xd ",x, x1,x2,x3,xd,x+xd);
+	  z1=-(c/2)*tan(90-a);
+	  z2=-sqrt(tan(90-a)*c/2*tan(90-a)*c/2+c/2*c/2);  //-c/2*sin(a);
+	  z3=0; //-c/2*sin(a);
+	  zd=z1+z2+z3;
+	  echo ("z, z1,z2,z3,zd,z+zd ",z, z1,z2,z3,zd,z+zd);
+	  translate([c/2,y-c/2,c/2]) rotate([90,0,0]) linear_extrude(height=y-c) polygon(points=[[0,0],[0,z+zd-c/2],[x+xd-c/2,0]]);
+	  //translate([c/2,c/2,c/2]) cube([x-c-xc,y-c,z-c-zc]);
+	  //	   translate([c/2,c/2,c/2]) cube([xx-c,y-c,zz-c]);
+	} else if (mode==3) {
+	  translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,z],[x,z],[x,0]]);
+	} else if (mode==4) {
+	  translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[y,x],[y,0]]);
+	} else if (mode==5) {
+	  translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[0,x],[y,x]]);
+	} else if (mode==6) {
+	  translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[0,x],[y,0]]);
+	} else if (mode==7) {
+	  translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,x],[y,x],[y,0]]);
+	} else if (mode==8) {
+	  translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[z,y],[z,0]]);
+	} else if (mode==9) {
+	  translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[0,y],[z,y]]);
+	} else if (mode==10) {
+	  translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[0,y],[z,0]]);
+	} else if (mode==11) {
+	  translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,y],[z,y],[z,0]]);
+	} else if (mode==12) {
+	  translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[x/2,z],[x,0]]);
+	} else if (mode==13) { //
+	  translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,z/2]]);
+	} else if (mode==14) {
+	  translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[x/2,z],[x,0]]);
+	} else if (mode==15) {
+	  translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,z],[x,z],[x/2,0]]);
+	} else if (mode==16) {
+	  translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[y/2,x],[y,0]]);
+	} else if (mode==17) {
+	  translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,0],[0,x],[y,x/2]]);
+	} else if (mode==18) {
+	  translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,y/2],[y,x],[y,0]]);
+	} else if (mode==19) {
+	  translate([x,0,0]) rotate([0,0,90]) linear_extrude(height=z) polygon(points=[[0,x],[y,x],[y/2,0]]);
+	} else if (mode==20) {
+	  translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[z/2,y],[z,0]]);
+	} else if (mode==21) { //
+	  translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,0],[0,y],[z,y/2]]);
+	} else if (mode==22) {
+	  translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,y/2],[z,y],[z,0]]);
+	} else if (mode==23) {
+	  translate([0,0,z]) rotate([0,90,0]) linear_extrude(height=x) polygon(points=[[0,y],[z,y],[z/2,0]]);
+	}
+      }
+  }
+}
+
 module triangletest() {
+  textsize=3;
+  textdepth=0.8;
+
+  x=2;
+  y=4;
+  z=6;
+  
   for (i=[0:1:23]) {
     colorselect=floor(i/4) % 4;
     color([colorselect%4==0?1:0,floor((colorselect+1)/4)==0?1:0,floor((colorselect+2)/4)==0?1:0]) {
-      translate([0,i*6,0]) triangle(4,4,4,i);
-      translate([5+textsize,i*6,0]) rotate([0,0,90]) text(text=str(i),size=textsize);
+      translate([0,i*6,0]) triangle(x,y,z,i);
+      translate([5+textsize,i*6,0]) rotate([0,0,90]) linear_extrude(textdepth) text(text=str(i),size=textsize);
+    }
+  }
+
+  for (i=[0:1:23]) {
+    colorselect=floor(i/4) % 4;
+    color([colorselect%4==0?1:0,floor((colorselect+1)/4)==0?1:0,floor((colorselect+2)/4)==0?1:0]) {
+      translate([-x-1,i*6,0]) roundedtriangle(x,y,z,i,1);
     }
   }
 }
@@ -192,7 +319,8 @@ module roundedbox(xsize,ysize,h,c,printableoption) {
   corner=(c > 0) ? c : 1;
   //scd = ((xsize < 1 || ysize < 1 || h < 1) ? min(xsize,ysize,h) : corner);
   scd = min(xsize,ysize,h,corner);
-  f=(print > 0) ? 90 : 30;
+  //f=(print > 0) ? 90 : 30;
+  f=90; // (print > 0) ? 90 : 30;
   
   hull() {
     translate([scd/2,scd/2,scd/2]) sphere(d=scd,$fn=f);
