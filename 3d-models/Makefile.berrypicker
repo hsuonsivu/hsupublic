@@ -2,7 +2,7 @@ SOURCE=berrypicker.scad
 DEPENDS=hsu.scad Makefile.berrypicker
 OPENSCADOPTIONS=--backend=manifold
 
-all: berrypickerbody.stl berrypickerplunger.stl berrypickertest.stl berrypickerallparts.stl springtest.stl berrypickerspring.stl
+all: berrypickerbody.stl berrypickerplunger.stl berrypickertest.stl berrypickerallparts.stl berrypickerhingetest.stl berrypickerspring.stl berrypickerlocktest.stl
 
 berrypickerbody.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
@@ -20,11 +20,16 @@ berrypickertest.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D print=4 -o $@ $(SOURCE)
 	echo $@ built.
 
-springtest.stl: $(SOURCE) $(DEPENDS)
+berrypickerhingetest.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D print=5 -o $@ $(SOURCE)
 	echo $@ built.
 
 berrypickerspring.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D print=6 -o $@ $(SOURCE)
 	echo $@ built.
+
+berrypickerlocktest.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=7 -o $@ $(SOURCE)
+	echo $@ built.
+
 
