@@ -191,6 +191,8 @@ well. Use PLA.
 
 ### paperiteline.scad
 
+### Makefile.paperiteline
+
 Holder for paper towel rolls. Left and right parts can be printed at
 the same time if your printer is large enough. Left and right parts
 lock into each other, but currently the mechanism leaves room for
@@ -526,7 +528,7 @@ and there are no strings etc which would show in the final scan.
 
 There are multiple options in the beginning of the file for debugging.
 
-The frame supports 35mm (135), 46mm (127), 16mm (110) films (use
+The frame supports 35mm (135), 46mm (127), 16mm (110), and 912 films (use
 Makefile to generate frames for difference formats).
 
 Frame separators are used to flatten the film as negatives are often
@@ -667,8 +669,10 @@ switching filament during printing.
 
 ### hsu.scad
 
+### hsutest.scad
+
 Collected some modules or functions into a library to use in my
-models.
+models. hsutest is a test file for some functions in the library.
 
 Modules
 
@@ -696,7 +700,34 @@ compressing. You need cylinder around the spring to avoid it bending
 easily, and 3D printed springs are generally not very reliable. The
 spring can be printed vertically and needs no supports. It takes
 height, diameter, end plate thickness, spring thickness. In particular
-spring thickness is very material specific.
+spring thickness is very material specific. See flatspring for mode
+durable design.
+
+onehinge creates a hinge to make hinged structures such as opening
+boxes with hinged covers. This is intended for hinges which become
+permanent part of the model and are printed in-place.
+
+printareacube creates a box for the printer's print area to test if
+you print is going to fit. You need manually to adjust the model
+inside the cube. Use difference and # in openscad so you can leave it
+in the model.
+
+antiwarpwall makes a heat cage to be used with ABS and other materials
+which tend to warp and you do not have a enclosure for your
+printer. It is intended to be used with brim, so there is a tiny hole
+to allow outside brim only option in the slicer.
+
+roundedcylinder makes a cylinder with rounded corners
+
+roundedboxxyz makes a box with rounded corners with different roundings for xy and z directions.
+
+supportbox makes a box support structure for parts if you do
+not want to use slicer's supports.
+
+supportcylinder makes a round support structure for parts if you do
+
+flatspring makes a flat, more durable spring, which can be printed
+sideways to make layers in strong direction.
 
 ### lattialista.scad
 
@@ -728,13 +759,16 @@ check that your print settings have "Hole Horizontal Expasion" set to
 0.0, otherwise the slicer will expand the voids and reverse the effect
 by making the print weaker.
 
+The model also includes hanger for headphones.
+
 Screws to attach the cupholder is 3.5mm diameter, 30mm long.
 
 set print=1 to print the parts.
 
 No supports are needed.
 
-![tunturie460cupholder in scad.](tunturie460cupholder.png)
+![tunturi e460 cupholder in scad.](tunturie460cupholder.png)
+![tunturi e460 headphone hanger in scad.](tunturie460cupholderheadphonehanger.png)
 
 #### towerkansi.scad
 
@@ -800,7 +834,12 @@ beginning of the file.  You need a large printer..
 
 Picker tool for bilberries (In Finnish mustikka). Latest version has
 opening bottom mechanism so you can empty the berries to a bucket
-easily.  
+easily. The model has two springs, one intergrated, one printed
+separately, so provide lock mechanism return. No supports needed,
+other than built-in support for tall plunger to allow printing with bed
+slingers.
+
+Don't forget close the bottom after emptying berries!
 
 ![berrypicker in scad.](berrypicker.png)
 
@@ -820,7 +859,7 @@ drops through slits.
 
 ### Makefile.utensilbox
 
-Simple utensil boxes which can be stacked. Size and number of slots can be tuned to fit a specific furniture.
+Simple utensil boxes which can be stacked. Size and number of slots can be tuned to fit a specific furniture. No supports needed, you need to press out the lifting holes after printing.
 
 ![Top box in scad.](utensilboxtop.png)
 ![Lower box with 2 slots in scad.](utensilbox2slot.png)
@@ -1026,9 +1065,13 @@ making funnel larger would increase resolution.
 
 ### bicyclebottleholder.scad
 
-My bicycle bottle holder disintegrated, this is a replacement.
+My bicycle bottle holder disintegrated, this is a
+replacement. Attachment is designed for my bicycle, brand Sarda (not
+expensive one).
 
-No supports are needed to print.
+No supports are needed to print. 
+
+![Bicycle bottleholder in Openscad.](bicyclebottleholder.png)
 
 ### suihkupaa.scad
 
@@ -1053,8 +1096,155 @@ Mailbox sign designed for Orthex mailbox
 (https://www.tokmanni.fi/postilaatikko-valikansi-harmaa-6411760556135).
 The model includes locking pin to keep the sign in place.
 
-Change "texts" and "textsizes", and possibly adjust width if necessary.
+Change "texts" and "textsizes", and possibly adjust width if necessary. No supports needed.
 
 ![postilaatikkokyltti in Openscad.](postilaatikkokyltti1.png)
 ![postilaatikkokyltti, backside in Openscad.](postilaatikkokyltti2.png)
+
+### tolpanhattu.scad
+
+Mailbox top to protect it from rainwater. No supports needed.
+
+### sivellinteline.scad
+
+Holder for paint brushes. No supports needed.
+
+### pikkupoyta.scad
+
+### Makefile.pikkupoyta
+
+Tiny table with folding legs. I do not know what this was for other than use for something related to fingernails. No supports needed.
+
+### cpap-ppe-adapter.scad
+
+I tested PPE mask with CPAP device. This is very specific to the mask
+as CPAP devices use one port, PPE masks have separate in and out
+ports, so this kombines the ports. It kind of works, but not very well. No supports needed.
+
+### saunasuoja.scad
+
+We had problems with people tuning sauna temperature without
+authorization, so we needed to protect the sauna thermostat.
+
+### ankermakeenclosure
+
+### Makefile.ankermakeenclosure
+
+Unfinished heat cover for ankermake 3D printer. No supports needed.
+
+### lival-varaosa.scad
+
+Spare part for lival desk lamp.
+
+### powerstrip.scad
+
+Model for powerstrip to be used for holders. This is from Tero Kivinen.
+
+### mousetrap.scad
+
+### Makefile.mousetrap
+
+Mousetrap with creeping featurism.  Multiple parts. Needs accurate
+printer. No supports needed.
+
+![Mouse trap in Openscad.](mousetrap.png)
+
+### ankermaketopbox.scad
+
+A box for ankermake 3D printer, mostly for having a label for material
+type, and holder for tweezers. No supports needed. Labels can be
+printed with two materias for bettery text visibility.
+
+### powerstrip2.scad
+
+Adapted from Tero Kivinen's model, a different type of power strip.
+
+### kyltti.scad
+
+Angled label for table. Text plate can be printed with two materials to improve visibility. No supports needed.
+
+### lidldiffusor.scad
+
+Lidl led desk lamp has very brigth leds, so I needed a diffusor to
+ease strain on my eyes and reduce shade effects. No supports needed.
+
+### filamentroll centering.scad
+
+Center support for a broken filament roll. No supports needed.
+
+### kangaspuuosat.scad
+
+Spare parts for a loom. No supports needed.
+
+### polecover.scad
+
+cover for end of metal square tube. No supports needed.
+
+![Pole cover in scad.](polecover.png)
+
+### power-strip-attachment.scad
+
+Attach power strips to your wall etc. No supports needed.
+
+![Power strip attachment in scad.](power-strip-attachment.png)
+
+### vedonpoistaja.scad
+
+Strain relief part. No supports needed.
+
+### filamentholderwide.scad
+
+### Makefile.filamentholderwide
+
+Holder for wide filament rolls. Adapted from paperiteline.scad. No supports needed.
+
+![Wide filament holder in Openscad.](filamentholderwide.png)
+
+### polarbeltclip.scad
+
+spare for polar belt for pulse measurement. There are multiple
+versions of this belt clips, this only supports one of them. No supports needed.
+
+![Polar belt clip in Openscad.](polarbeltclip.png)
+
+### kivinen-57.scad
+
+Birthday cake decoration. Adapted from uses Porygon.scad library found
+from Internet. No supports needed.
+
+### spiceblock.scad
+
+Boxes to store spices. No supports needed.
+
+![Spice boxes in Openscad.](spiceblock.png)
+
+### ryobiadapter.scad
+
+### Makefile.ryobiadapter.scad
+
+Adapter to use cheap Lidl parkside batteries with ryobi and homelite
+18V devices. Lidl batteries are less than half the price, but have no
+undervoltage protection. This uses xh-m609 voltage protection circuit
+to prevent battery damage due to undervoltage. This must not be used
+for charging, so use original Lidl charger to charge
+batteries. xh-m609 buttons are accessible through buttons in the case
+and display is visible through opening. This neeeds M4x20 and M4x30
+screws, latter with countersink, as those I happened to have.
+
+It needs copper plate contacts for the ryobi interface. 1.5mm copper
+plate can be cut easily to shapes, models are provided, and crimp
+connectors for other cabling, 6mm. Use 2.5mm cables.
+
+![ryobiadapter from bottom in Openscad.](ryobiadapter-bottom.png)
+![ryobiadapter from top in Openscad.](ryobiadapeter-top.png)
+
+### type2.scad
+
+Type 2 EV charger cable holder. The cable can be looped around
+it. Also includes model for plug, but that is only used for testing
+the model.
+
+![type2 plug while inserting in Openscad.](type2-plug-while-inserting.png)
+![type2 plug while in place in Openscad.](type2-plug-while-in-place.png)
+![type2 holder in Openscad.](type2-holder.png)
 
