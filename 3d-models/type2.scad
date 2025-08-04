@@ -4,7 +4,7 @@
 
 include <hsu.scad>
 
-print=1;
+print=0;
 debug=print==0?1:0;
 $fn=90;
 

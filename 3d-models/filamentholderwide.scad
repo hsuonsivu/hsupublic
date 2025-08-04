@@ -10,7 +10,7 @@ include <hsu.scad>
 // depth=y
 // width=z
 
-print=4; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
+print=0; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
 debug=0;
 dodebug=print>0?0:debug;
 

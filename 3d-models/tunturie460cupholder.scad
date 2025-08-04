@@ -4,7 +4,7 @@
 
 include <hsu.scad>
 
-print=4; // 0=cupholder full, 1=both cupholder parts, 2=cupholder backplate, 3=cupholder front, 4=headphone hanger, 5=test
+print=0; // 0=cupholder full, 1=both cupholder parts, 2=cupholder backplate, 3=cupholder front, 4=headphone hanger, 5=test
 debug=1;
 
 strong=(print>0)?1:0;

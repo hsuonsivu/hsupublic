@@ -1142,11 +1142,11 @@ module box() {
 if (print==0) {
   intersection() {
     union() {
-      #mechanics(angle,lockangle);
-      //mousestorage();
-      //door();
-      //   storagecover();
-       cover();
+      mechanics(angle,lockangle);
+      mousestorage();
+      door();
+      #storagecover();
+      #cover();
     }
     //if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
     //if (debug) translate([boxx,-swingtunnelw/2-swingtunnelw-50,boxh-wall*15]) cube([590,swingtunnelw*2+midwallw+50,100]);//axleheight+1

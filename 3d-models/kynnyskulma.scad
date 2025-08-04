@@ -6,7 +6,7 @@
 final=1; // 0 for test print
 vertical=0; // vertical prints parts in vertical mode, which makes them more difficult to attach to each other, but can be printed in a smaller printer
 printerwidth=220;
-thickness=21;//23;
+thickness=17; // 21;//23;
 flat=5;
 slopedepth=80;
 totaldepth=flat+slopedepth;
@@ -21,7 +21,7 @@ connectorendnarrowing=1;
 narrowing=0.75;
 connectorposition=(vertical?(thickness/2-connectorwidth/2)*0.6:(totaldepth/2-connectordepth/2)*0.75);
 maxwidth=295*3+9;//960;
-printparts=2; // Multiphase print if all do not fit into the print bed
+printparts=1; // Multiphase print if all do not fit into the print bed
 
 module male(x,y,h) {
   linear_extrude(height=h) {
