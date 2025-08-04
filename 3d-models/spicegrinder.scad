@@ -9,7 +9,7 @@ $fn=60;
 
 // 1=body, 2=bottom, 3=knob, 4=all;
 
-print=1;
+print=0;
 
 abs=0;
 
@@ -104,7 +104,10 @@ knobaxled=7;
 knobaxleheight=1+knobaxled/2; // From base
 knobaxledepth=2;
 knobsupportwall=4;
+knobsupportoutwall=7;
+knobsupportwallcut=0.1;
 knobsupporth=15;// knobaxleheight+knobaxled/2+knobsupportwall;
+knobsupportwallh=knobsupporth-1.5*wall;
 knobstopperh=knobsupporth-cornerd; // knobheight-cornerd;
 knobstoppermovingh=knobstopperh-knobaxleheight;
 knobspringin=1;
@@ -299,10 +302,15 @@ module millrotor() {
 
 	  // Sides
 	  difference() {
-	    for (x=[-knobshaftd/2-dtolerance/2-knobsupportwall,knobshaftd/2+dtolerance/2]) {
-	      translate([knobdistance+x,knobsupporty,baseheight]) roundedbox(knobsupportwall,knobsupportw,knobsupporth,cornerd,1);
+	    union() {
+	      translate([knobdistance-knobshaftd/2-dtolerance/2-knobsupportwall,knobsupporty,baseheight]) roundedbox(knobsupportwall,knobsupportw+dtolerance/2,knobsupporth,cornerd,1);
+	      translate([knobdistance+knobshaftd/2+dtolerance/2,knobsupporty,baseheight]) roundedbox(knobsupportoutwall,knobsupportw+dtolerance/2,knobsupporth,cornerd,1);
 	    }
 
+	    for (x=[knobdistance+knobshaftd/2+dtolerance+wall+xtolerance:wall:knobdistance+knobshaftd/2+dtolerance/2+knobsupportoutwall-wall]) {
+	      translate([x,knobsupporty+wall,baseheight+knobsupporth/2-knobsupportwallh/2]) cube([knobsupportwallcut,knobsupportw-wall*2,knobsupportwallh]);
+	    }
+	    
 	    knobaxleandclip(1,180);
 	    knobaxleandclip(1,0);
 	  }
@@ -358,7 +366,7 @@ module millrotor() {
       }
     }
 
-    translate([knobdistance+knobshaftd/2+dtolerance/2+knobsupportwall-textdepth+0.01,-knobaxled/2-knobsupportwall+(knobaxled+knobsupportwall+cornerd/2+knobstopperh)/2,baseheight+knobsupporth/2]) rotate([90,0,90]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
+    translate([knobdistance+knobshaftd/2+dtolerance/2+knobsupportoutwall-textdepth+0.01,-knobaxled/2-knobsupportoutwall+(knobaxled+knobsupportwall+cornerd/2+knobstopperh)/2,baseheight+knobsupporth/2]) rotate([90,0,90]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
 
     translate([0,0,middleheight-0.1]) cylinder(d=middled+dtolerance,h=middleh);
 
@@ -411,6 +419,8 @@ if (print==1 || print==4) {
   translate([0,0,-handleheight]) millhandle();
  }
 
+rotorx=lowd/2+wall+(lowd+dtolerance+wall)/2+bearingspace+bearingaxled;
+
 if (print==2 || print==4) {
   rotorx=lowd/2+wall+(lowd+dtolerance+wall)/2+bearingspace+bearingaxled;
   translate([rotorx+0.5,0,-baseheight]) intersection() {
@@ -431,3 +441,9 @@ if (print==4) {
   if (abs) antiwarpwall(-27,-32,95,144,64,95);
  }
 
+if (print==5) {
+  translate([rotorx+1,0,-baseheight]) intersection() {
+    millrotor();
+    translate([0,-200,-200]) cube([200,400,400]);
+  }
+ }
