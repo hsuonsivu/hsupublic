@@ -30,7 +30,7 @@ knobd=20+wall*2;
 knobshaftd=13+dtolerance;
 knobshafth=knobh+0.1;
 
-knobshaftbottomd=13.2;
+knobshaftbottomd=13.2+dtolerance;
 knobshaftbottomh=2.5; //knobshaftbottomheight+3.5;
 knobshaftbottomheight=0;
 
@@ -42,17 +42,18 @@ knobshaftnarrowh=1;
 knobshaftnarrowheight=knobshaftnarrowingheight+knobshaftnarrowh;
 
 knobshafttopheight=knobshaftnarrowheight+knobshaftnarrowh;
+echo(knobshafttopheight);
 knobshafttoph=14.5;//knobh-wall-knobshafttopheight;
 
 knobshaftnarrowing=3.5; // What is this? Same as narrowheight?
 
   
 knobspringin=1;
-knobspringa=10;
+knobspringa=6;
 knobspringh=12;
 
 knobspringcutd=19+2;
-knobspringcut=2; //(knobshaftd-knobshaftnarrowd)/2;
+knobspringcut=3; //(knobshaftd-knobshaftnarrowd)/2;
 
 module knob() {
   difference() {
@@ -63,7 +64,7 @@ module knob() {
     // Cutout
     hull() {
       translate([0,0,knobshaftbottomheight-0.01]) cylinder(d=knobshaftbottomd,h=knobshaftbottomh+0.01);
-      translate([0,0,knobshaftnarrowingheight]) cylinder(d1=knobshaftd,d2=knobshaftnarrowd,h=knobshaftnarrowingh);
+      translate([0,0,knobshaftnarrowingheight]) cylinder(d1=knobshaftbottomd,d2=knobshaftnarrowd,h=knobshaftnarrowingh);
     }
     translate([0,0,knobshaftnarrowheight]) cylinder(d=knobshaftnarrowd,h=knobshaftnarrowh);
 
@@ -75,7 +76,7 @@ module knob() {
       }
     }
 
-    translate([0,0,-0.1]) ring(knobspringcutd,knobspringcut,knobspringh,1,90);
+    translate([0,0,-0.1]) ring(knobspringcutd,(knobshaftd-knobshaftnarrowd)/2,knobspringh,1,90);
     
     for (a=[0:360/knobspringa:359]) {
       rotate([0,0,a]) translate([0.-0.1,-knobspringcut/2,-0.1]) {
@@ -86,7 +87,7 @@ module knob() {
       }
     }
 
-    translate([0,0,knobshaftnarrowheight+knobh-textdepth+0.01]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="center",halign="center");
+    translate([0,0,knobh-textdepth+0.01]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="center",halign="center");
 
   }
 
