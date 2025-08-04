@@ -5,7 +5,7 @@
 include <hsu.scad>
 
 print=1;
-abs=1;
+abs=0;
 
 $fn=90;
 
@@ -157,5 +157,5 @@ module testing() {
 if (print==1) {
   bottleholder();
   w=cand+dtolerance+wall*2;
-  antiwarpwall(-bicyclebarw/2,-w/2,0,bicyclebarw/2+drinkcenter+w/2,w,bodyattachh);
+  if (abs) antiwarpwall(-bicyclebarw/2,-w/2,0,bicyclebarw/2+drinkcenter+w/2,w,bodyattachh);
  }
