@@ -12,7 +12,7 @@
 // +Side walls are thin and have broken once, add strengtening to the edges.
 include <hsu.scad>
 
-print=3; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model, 5=hinge test, 6=spring, 7 lock test
+print=0; // 0=full model, 1=body, 2=plunger, 3=all parts, 4=smaller debug model, 5=hinge test, 6=spring, 7 lock test
 
 adhesion=1; // Additional bits to allow using skirt when printing.
 

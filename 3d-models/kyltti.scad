@@ -4,7 +4,7 @@
 
 include <hsu.scad>
 
-print=2;
+print=0;
 debug=0;
 
 tekstit=["Baari toimii nyyttikestiperiaatteella. ",
