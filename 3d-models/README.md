@@ -199,6 +199,9 @@ lock into each other, but currently the mechanism leaves room for
 improvement. Slight push releases the "fingers" holding the right
 side.
 
+Update: now locks with a pin, so changing the roll is easier and
+safer.
+
 ![Image of the paper roll holder installed](paperiteline.jpg)
 
 ### plantsupport.scad
@@ -412,7 +415,8 @@ iPad. Needs 5 20mm 3.5mm screws (countersink). Use
 Makefile.tunturie460holder to generate all needed parts with
 openscad. One of the parts is for testing screw if you want to change
 screw type, no other use. Top clip should be printed with flexible
-material, such as TPU.
+material, such as TPU. The angle of the pad is tunable, though this
+has not been fully tested for large angles.
 
 If "strong" option is enabled, the model will trick slicer to generate
 100% fill around the screwholes, making them stronger. This is useful
@@ -615,15 +619,20 @@ If you need to warm up the battery for a trip:
 
 - Turn on the leafbatteryfan.
 
-- Lock the the doors using the door lock button while sitting inside
-doors closed, exit the car, and use mechanical key to lock the driver
-door. This may require changing settings of the door locking using
-Leafspy or similar. If the settings are default, the only way to lock
-all doors from outside while the car is on is to make sure you have
-the key with you, leave the driver window open, lock the doors usign
-lock button through window, press auto window up button, and lock the
-driver door with mechanical key. My auto window up does not work
-reliably.
+- Method 1: Lock the the doors using the door lock button while
+  sitting inside doors closed, exit the car, and use mechanical key to
+  lock the driver door. This may require changing settings of the door
+  locking using Leafspy or similar. If the settings are default, the
+  only way to lock all doors from outside while the car is on is to
+  make sure you have the key with you, leave the driver window open,
+  lock the doors usign lock button through window, press auto window
+  up button, and lock the driver door with mechanical key. My auto
+  window up does not work reliably.
+
+- Method 2: If you have Leafspy app (strongly recommended), you can
+  set option to turn the locking for driver door only, thus allowing
+  locking all other doors, then exit the car and close the driver door
+  with mechanical key.
 
 If the car is in a garage at around 15 C, the fan seems to be able to
 heat up the battery to 24-28 degrees within 12-24 hours, if cabin
@@ -643,7 +652,8 @@ power feed.
 The connector box is for connectors and power switch. I used random
 parts of my parts bin on a small proto board.
 
-No supports are needed to print. Use Makefile.leafbatteryfan to create all parts.
+No supports are needed to print. Use Makefile.leafbatteryfan to create
+all parts.
 
 ![leafbatteryfan case in scad.](leafbatteryfan.png)
 ![leafbatteryfan all parts needed.](leafbatteryfanallparts.jpg)
@@ -1119,7 +1129,7 @@ Tiny table with folding legs. I do not know what this was for other than use for
 
 I tested PPE mask with CPAP device. This is very specific to the mask
 as CPAP devices use one port, PPE masks have separate in and out
-ports, so this kombines the ports. It kind of works, but not very well. No supports needed.
+ports, so this combines the ports. It kind of works, but not very well. No supports needed.
 
 ### saunasuoja.scad
 
@@ -1209,7 +1219,7 @@ versions of this belt clips, this only supports one of them. No supports needed.
 
 ### kivinen-57.scad
 
-Birthday cake decoration. Adapted from uses Porygon.scad library found
+Birthday cake decoration. Uses Porygon.scad library found
 from Internet. No supports needed.
 
 ### spiceblock.scad
@@ -1236,7 +1246,7 @@ plate can be cut easily to shapes, models are provided, and crimp
 connectors for other cabling, 6mm. Use 2.5mm cables.
 
 ![ryobiadapter from bottom in Openscad.](ryobiadapter-bottom.png)
-![ryobiadapter from top in Openscad.](ryobiadapeter-top.png)
+![ryobiadapter from top in Openscad.](ryobiadapter-top.png)
 
 ### type2.scad
 
@@ -1245,6 +1255,6 @@ it. Also includes model for plug, but that is only used for testing
 the model.
 
 ![type2 plug while inserting in Openscad.](type2-plug-while-inserting.png)
-![type2 plug while in place in Openscad.](type2-plug-while-in-place.png)
+![type2 plug when in place in Openscad.](type2-plug-when-in-place.png)
 ![type2 holder in Openscad.](type2-holder.png)
 
