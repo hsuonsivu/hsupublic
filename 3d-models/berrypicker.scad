@@ -30,12 +30,12 @@ testwreduction=(print==4)?50:0;
 testlreduction=(print==4)?0:0; // testlreduction=(print==4)?58:0;
 testslreduction=(print==4)?50:0;
 
-angle=(print==0 || print==5)?15.5:0; // 194.2
+angle=(print==0 || print==5)?90.5:0; // 194.2
 
 length=228-testlreduction;
 height=75-testhreduction; // 125;
 
-versiontext="v1.16"; // str("v1.10",(print==4)?"D":"");;
+versiontext="v1.18"; // str("v1.10",(print==4)?"D":"");;
 
 textsize=(print==4)?4:7;
 smalltextsize=3;
@@ -65,6 +65,7 @@ fingercutw=fingerw-5;
 preventerh=25;
 preventers=(floor(fingers/4)*2);
 preventerdistance=width/preventers;
+preventerwall=1.6;
 
 storagel=176-2*preventerh-preventerdistance-testslreduction;
 
@@ -442,43 +443,46 @@ module berrypicker() {
 	  }
 
 	  for (m=[0,1]) mirror([0,m,0]) {
-	      for (y=[0:preventerdistance:width/2+lcornerd/2]) {
-		ymax=(y+preventerdistance+wall/2>=width/2+lcornerd/2?-wall:0);
-		hull() {
-		  translate([wall/2,y,storagel+wall/2]) sphere(d=wall);
-		  translate([wall/2,y,storagel+preventerh*2+wall/2]) sphere(d=wall);
-		  translate([preventerh+wall/2,y,storagel+preventerh+wall]) sphere(d=wall);
+	      for (y=[0:preventerdistance:width/2-preventerdistance]) { // +lcornerd/2
+		// Vertical supports
+		if (y < width/2) {
+		  hull() {
+		    translate([preventerwall/2,y,storagel+preventerwall/2]) sphere(d=preventerwall,$fn=30);
+		    translate([preventerwall/2,y,storagel+preventerh*2+preventerwall/2]) sphere(d=preventerwall,$fn=30);
+		    translate([preventerh+preventerwall/2,y,storagel+preventerh+preventerwall]) sphere(d=preventerwall,$fn=30);
+		  }
 		}
+		hadjust=(y<width/2-preventerdistance)?0:preventerdistance;
+	        // Rigth plates
 		hull() {
-		  translate([wall/2,y,storagel+preventerh*2+wall/2]) sphere(d=wall);
-		  translate([preventerh+wall/2,y,storagel+preventerh+wall]) sphere(d=wall);
-		  translate([wall/2,y+preventerdistance/2,storagel+preventerh*2+preventerdistance/2]) sphere(d=wall);
-		  translate([preventerh+wall/2,y+preventerdistance/2,storagel+preventerh+preventerdistance/2+wall]) sphere(d=wall);
+		  translate([preventerwall/2,y,storagel+preventerh*2+preventerwall/2]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerh+preventerwall/2,y,storagel+preventerh+preventerwall]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerwall/2,y+preventerdistance/2,storagel+preventerh*2+preventerdistance/2]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerh+preventerwall/2,y+preventerdistance/2,storagel+preventerh+preventerdistance/2+preventerwall]) sphere(d=preventerwall,$fn=30);
 		}
+		// Left plates
 		hull() {
-		  translate([wall/2,y+preventerdistance+ymax,storagel+preventerh*2+wall/2]) sphere(d=wall);
-		  translate([preventerh+wall/2,y+preventerdistance+ymax,storagel+preventerh+wall]) sphere(d=wall);
-		  translate([wall/2,y+preventerdistance/2,storagel+preventerh*2+preventerdistance/2]) sphere(d=wall);
-		  translate([preventerh+wall/2,y+preventerdistance/2,storagel+preventerh+preventerdistance/2+wall]) sphere(d=wall);
+		  translate([preventerwall/2,y*2+preventerdistance,storagel+preventerh*2-hadjust+preventerwall/2]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerh+preventerwall/2,y*2+preventerdistance,storagel+preventerh-hadjust+preventerwall]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerwall/2,y+preventerdistance/2,storagel+preventerh*2+preventerdistance/2]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerh+preventerwall/2,y+preventerdistance/2,storagel+preventerh+preventerdistance/2+preventerwall]) sphere(d=preventerwall,$fn=30);
 		}
 
 		// Prevents berries from getting stuck in tight corners
-		yymax=(y+preventerdistance+wall/2>=width/2?-wall:0);
-	  
 		hull() {
-		  translate([wall/2+preventerdistance/2,y+preventerdistance/2,storagel+preventerh*2+wall/2]) sphere(d=wall);
-		  translate([wall/2,y,storagel+preventerh*1.4+wall/2]) sphere(d=wall);
-		  translate([wall/2,y+preventerdistance+yymax,storagel+preventerh*1.4+wall/2]) sphere(d=wall);
+		  translate([preventerwall/2+preventerdistance/2,y+preventerdistance/2,storagel+preventerh*2+preventerwall/2]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerwall/2,y,storagel+preventerh*1.4+preventerwall/2]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerwall/2,y+preventerdistance,storagel+preventerh*1.4+preventerwall/2]) sphere(d=preventerwall,$fn=30);
 		}
 		hull() {
-		  translate([wall/2+preventerdistance/2,y+preventerdistance/2,storagel+preventerh*2+wall/2]) sphere(d=wall);
-		  translate([wall/2,y,storagel+preventerh*1.4+wall/2]) sphere(d=wall);
-		  translate([wall/2+preventerdistance/4,y,storagel+preventerh*2-preventerdistance/4+wall/2]) sphere(d=wall);
+		  translate([preventerwall/2+preventerdistance/2,y+preventerdistance/2,storagel+preventerh*2+preventerwall/2]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerwall/2+preventerdistance/3,y,storagel+preventerh*2-preventerdistance/3+preventerwall/2]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerwall/2,y,storagel+preventerh*1.4+preventerwall/2]) sphere(d=preventerwall,$fn=30);
 		}
 		hull() {
-		  translate([wall/2+preventerdistance/2,y+preventerdistance/2,storagel+preventerh*2+wall/2]) sphere(d=wall);
-		  translate([wall/2,y+yymax+preventerdistance,storagel+preventerh*1.4+wall/2]) sphere(d=wall);
-		  translate([wall/2+preventerdistance/4,y+yymax+preventerdistance,storagel+preventerh*2-preventerdistance/4+wall/2]) sphere(d=wall);
+		  translate([preventerwall/2+preventerdistance/2,y+preventerdistance/2,storagel+preventerh*2+preventerwall/2]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerwall/2+preventerdistance/3,y*2+preventerdistance,storagel+preventerh*2-preventerdistance/3-hadjust+preventerwall/2]) sphere(d=preventerwall,$fn=30);
+		  translate([preventerwall/2,y+preventerdistance,storagel+preventerh*1.4+preventerwall/2]) sphere(d=preventerwall,$fn=30);
 		}
 	      }
 	    }
@@ -815,7 +819,8 @@ module berrypicker() {
 
 intersection() {
   //if (debug) translate([-20,-width/2-lcornerd/2,-100]) cube([25,lcornerd/2+20,length+3+100]);
-  if (debug) translate([-20,-width/2-lcornerd/2,-100]) cube([height+80,lcornerd/2+width/2,length+3+100]);
+  //if (debug) translate([-20,-width/2-lcornerd/2,-100]) cube([height+80,lcornerd/2+width/2,length+3+100]);
+  //if (debug) translate([20,-width/2-lcornerd/2,-100]) cube([30,lcornerd/2+width/2,length+3+100]);
   //  if (debug) translate([-20,-width/2-lcornerd,0]) cube([height+80,width/2+lcornerd,length+3]);
   //if (debug) translate([0,-width/2-lcornerd,0]) cube([axlefrombottom+60,200,length+1]);
   //if (print==4 && debug) translate([-10,-width/2-lcornerd/2,0]) cube([height+100,width/2+lcornerd/2+plungerd+20,topl]);
