@@ -113,6 +113,7 @@ the centre console. Tesla Model S needs narrow legs. For tesla model S
 you need 4 3.5mm 19mm(wood) screws to attach the lower parts of the legs.
 
 ![Image of charger base for Lidl dual wireless phone charger](lidllaturiteline.jpg)
+![Image of charger base for Lidl dual wireless phone charger, Tesla version](lidllaturiteline-tesla.jpg)
 ![Second image of charger base for Lidl dual wireless phone charger](lidllaturiteline2.jpg)
 
 ### kasvikyltit.scad
@@ -138,6 +139,7 @@ ground. The birds left those in place, but sample is too small to make
 any definitive conclusions.
 
 ![Veggie Labels in openscad](kasvikyltit-openscad.png)
+![Veggie Labels](kasvikyltit.jpg)
 
 ### nimikyltit.scad
 
@@ -1050,7 +1052,8 @@ Makefile will make all parts. These include:
   very well and it is overkill anyway, so this is not printed by
   default. Tiny magnets are difficult to handle as dropping them will
   almost certainly lead into lost magnet stuck to a metal table leg
-  somewhere. This part requires accurate printer.
+  somewhere. This part requires accurate printer. This should be
+  considered work-in-progress.
 
 - rainmeterall.stl will print all parts except wall and pole
   attachments. Pick the attachment which you will use and print that.
@@ -1066,9 +1069,9 @@ Makefile will make all parts. These include:
   electronics, modify this to suit your implementation.
 
 We used d1mini esp32 board with a reedswitch between GND and pin 4 to
-detect swing. With the 90mm funnel it corresponds to 1.62mm of rain
-for a swing, so this is not very accurate. Making cups smaller and
-making funnel larger would increase resolution.
+detect swing. With the 90mm funnel it corresponded to 1.62mm of rain
+for a swing, so this is not accurate enough, so I updated the funnel
+to 180mm, so it now 0.4mm or rain per swing.
 
 ![rainmeter in Openscad.](rainmeter.png)
 ![rainmeter installed.](rainmeter.jpg)
@@ -1158,6 +1161,7 @@ Mousetrap with creeping featurism.  Multiple parts. Needs accurate
 printer. No supports needed.
 
 ![Mouse trap in Openscad.](mousetrap.png)
+![Mouse trap](mousetrap.jpg)
 
 ### ankermaketopbox.scad
 
@@ -1247,6 +1251,7 @@ connectors for other cabling, 6mm. Use 2.5mm cables.
 
 ![ryobiadapter from bottom in Openscad.](ryobiadapter-bottom.png)
 ![ryobiadapter from top in Openscad.](ryobiadapter-top.png)
+![ryobiadapter installed.](ryobiadapter.jpg)
 
 ### type2.scad
 
