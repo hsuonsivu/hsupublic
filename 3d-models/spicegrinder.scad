@@ -84,7 +84,7 @@ bottomraise=3.38;
 
 baseheight=-wall-ztolerance;
 
-versiontext=str("V1.6");
+versiontext=str("V1.7");
 textsize=7;
 textdepth=0.7;
 textfont="Liberation Sans:style=Bold";
@@ -105,7 +105,7 @@ knobaxleheight=1+knobaxled/2; // From base
 knobaxledepth=2;
 knobsupportwall=4;
 knobsupportoutwall=7;
-knobsupportwallcut=0.1;
+knobsupportwallcut=0.2;
 knobsupporth=15;// knobaxleheight+knobaxled/2+knobsupportwall;
 knobsupportwallh=knobsupporth-1.5*wall;
 knobstopperh=knobsupporth-cornerd; // knobheight-cornerd;
@@ -307,10 +307,6 @@ module millrotor() {
 	      translate([knobdistance+knobshaftd/2+dtolerance/2,knobsupporty,baseheight]) roundedbox(knobsupportoutwall,knobsupportw+dtolerance/2,knobsupporth,cornerd,1);
 	    }
 
-	    for (x=[knobdistance+knobshaftd/2+dtolerance+wall+xtolerance:wall:knobdistance+knobshaftd/2+dtolerance/2+knobsupportoutwall-wall]) {
-	      translate([x,knobsupporty+wall,baseheight+knobsupporth/2-knobsupportwallh/2]) cube([knobsupportwallcut,knobsupportw-wall*2,knobsupportwallh]);
-	    }
-	    
 	    knobaxleandclip(1,180);
 	    knobaxleandclip(1,0);
 	  }
@@ -348,6 +344,20 @@ module millrotor() {
 	hull() {
 	  translate([0,0,baseheight-0.1]) cylinder(d=lowd+dtolerance,h=lowstraighth+wall+ztolerance+0.2);
 	  translate([0,0,lowstraighth-0.1]) cylinder(d=middled+dtolerance,h=lowh-lowstraighth+0.2);
+	}
+
+	for (z=[baseheight+knobsupporth/2-knobsupportwallh/2:wall/2:knobsupporth-wall-wall/2]) {
+	  for(x=[knobdistance+knobshaftd/2+dtolerance+wall+xtolerance:wall/2:knobdistance+knobshaftd/2+dtolerance+wall+xtolerance+knobsupportoutwall-wall*2-wall/2]) {
+	    translate([x,knobsupporty+wall,z]) cube([0.1,knobsupportw-wall*2+wall/2,knobsupportwallcut]);
+	  }
+	}
+	    
+	for (z=[baseheight+knobsupporth/2-knobsupportwallh/2-wall/4:wall/2:knobsupporth-wall-wall/2]) { //-knobsupportwallh/2
+	  if (z>0) {
+	    for (y=[knobshaftd+cornerd/2-z:wall/2:knobshaftd+cornerd/2+wall/2]) {
+	      if (y>knobshaftd/2+wall/2) translate([lowd/2+wall,y,z]) cube([knobdistance-lowd/2+knobshaftd-wall*2-wall/2,0.1,knobsupportwallcut]);
+	    }
+	  }
 	}
       }
      
@@ -411,7 +421,8 @@ if (print==0) {
     }
     
     // if (debug) translate([-100,knobclipyoffset,-100]) cube([200,200,300]);
-    if (debug) translate([-100,0,-100]) cube([200,200,300]);
+    if (debug) translate([-100,0,-100]) cube([160,200,300]);
+    //if (debug) translate([-100,0,-100]) cube([200,200,300]);
   }
  }
 
