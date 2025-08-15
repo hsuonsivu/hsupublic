@@ -7,7 +7,7 @@ include <hsu.scad>
 $fn=90;
 
 adhesion=1;
-debug=0;
+debug=1;
 
 cornerd=1;
 dtolerance=0.7;
@@ -88,7 +88,6 @@ module knob() {
     }
 
     translate([0,0,knobh-textdepth+0.01]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="center",halign="center");
-
   }
 
   if (adhesion) cylinder(d=knobshaftbottomd-0.1*2,h=0.2);
