@@ -5,10 +5,14 @@
 include <hsu.scad>
 include <text_on_OpenSCAD/text_on.scad>
 
-print=1; // 0 test and debut, 1 print both + and - versions (testing as color does not change), 2 8 copies of +, 3 8 copies of -.
-
+print=0; // 0 test and debug, 1 print - version, 2 print + version, 3 print both
 debug=1;
+count=7; // How many to print: Note max count is 8+12=20
 
+if (count>20) {
+  echo("ERROR: count max is 20");
+ }
+  
 textdepth=0.7;
 textsize=7;
 versiontext="v1.0";
@@ -24,7 +28,7 @@ wall=1.6;
 topwall=2.5; // Needs to accommodate version text depth
 
 terminald=22.36;
-terminalnarrowd=21.15;
+terminalnarrowd=21.15-dtolerance;
 terminalnarrowh=2.14;
 terminalnarrowheight=3.26;
 terminalclipdepth=(terminald-terminalnarrowd)/2;
@@ -34,7 +38,7 @@ terminalmaxh=11.3;
 
 covertop=10;
 
-coverd=terminald+dtolerance+wall*2+terminalclipdepth*2+dtolerance+wall*2;
+coverd=terminald+dtolerance+wall*2+terminalclipdepth*2+dtolerance+wall*2+0.6; // 0.6 is to workaround a bug in eufymake slicer
 
 signsize=coverd-cornerd-5;
 signw=4;
@@ -46,6 +50,7 @@ covercliph=ztolerance+terminalnarrowheight+terminalnarrowh;
 coverclipspringa=6;
 coverclipspringcut=5;
 coverclipspringh=covercliph-ztolerance;
+coverhandled=6.5;
 
 boltd=8;
 boltheadh=5.2;
@@ -56,11 +61,12 @@ boltclipdepth=0.9;
 boltclipgapd=boltheadd+dtolerance+wall*2+dtolerance+boltclipdepth*2+dtolerance;
 boltclipspringcut=1;
 
-boltcliph=1.8;
+boltcliph=2;
 boltcliptotalh=ztolerance+boltheadh+ztolerance+boltcliph+ztolerance;
 
 terminalheight=topwall+ztolerance+boltheadh+ztolerance+boltcliph;
 boltclipspringh=ztolerance+boltheadh+ztolerance+boltcliph+ztolerance;
+coverminh=topwall+ztolerance+boltheadh+ztolerance+boltcliph+ztolerance+terminalminh-ztolerance;
 
 module bolt() {
   cylinder(d=boltd,h=30,$fn=90);
@@ -72,11 +78,24 @@ module screwterminalcover(sign) {
     union() {
       difference() {
 	union() {
-	  roundedcylinder(coverd,topwall+ztolerance+boltheadh+ztolerance+boltcliph+ztolerance+terminalminh-ztolerance,cornerd,1,90);
+	  roundedcylinder(coverd,coverminh,cornerd,1,90);
 	  roundedcylinder(coverbottomd,topwall+ztolerance+boltheadh+ztolerance+boltcliph+ztolerance+terminalmaxh-ztolerance,cornerd,0,90);
 	  hull() {
 	    cylinder(d=coverbottomd,h=topwall+ztolerance+boltheadh+ztolerance+boltcliph+ztolerance+terminalminh-ztolerance+dtolerance,$fn=90);
 	    cylinder(d=coverbottomd+dtolerance*2,h=topwall+ztolerance+boltheadh+ztolerance+boltcliph+ztolerance+terminalminh-ztolerance,$fn=90);
+	  }
+
+	  hull() {
+	    
+	    for (a=[0:360/6:359]) {
+	      roundedcylinder(coverd,coverhandled,cornerd,1,90);
+	      rotate([0,0,a]) translate([coverd/2,0,0]) {
+		hull() {
+		  translate([0,0,coverhandled/2]) sphere(d=coverhandled,$fn=90);
+		  cylinder(d=coverhandled/2,h=coverhandled/2,$fn=90);
+		}
+	      }
+	    }
 	  }
 	}
 
@@ -106,7 +125,7 @@ module screwterminalcover(sign) {
 
 	// Space for clip to extend to
 	translate([0,0,topwall+ztolerance+boltheadh+ztolerance+boltcliph+ztolerance+terminalnarrowheight+terminalnarrowh]) cylinder(d1=coveroutgapd,d2=terminald-0.01,h=(coveroutgapd-terminald)/2,$fn=90);
-	translate([0,0,topwall+ztolerance+boltheadh+ztolerance+boltcliph]) ring(coveroutgapd,terminalclipdepth,covercliph+0.01,0,90);
+	translate([0,0,topwall+ztolerance+boltheadh+ztolerance+boltcliph]) ring(coveroutgapd,terminalclipdepth+dtolerance/2,covercliph+0.01,0,90);
 
 	// Bolt hole
 	union() {
@@ -131,7 +150,7 @@ module screwterminalcover(sign) {
 
 	for (a=(sign?[0,90]:[0])) rotate([0,0,a]) translate([-signsize/2,-signw/2,-0.01]) cube([signsize,signw,textdepth+(a?0.2:0)+0.01]);
 	
-	translate([0,0,cornerd/2+textsize]) rotate([0,180,90]) text_on_cylinder(t=versiontext,r=coverd/2-textdepth/2+0.01,h=1,updown=2,size=textsize,font=textfont,extrusion_height=textdepth);
+	translate([0,0,coverminh-textsize/2+1]) rotate([0,180,90]) text_on_cylinder(t=versiontext,r=coverd/2-textdepth/2+0.01,h=1,updown=2,size=textsize,font=textfont,extrusion_height=textdepth);
       }
     }
 
@@ -146,7 +165,20 @@ if (print==0) {
   }
  }
 
-if (print==1) {
-  screwterminalcover(1);
-  translate([coverd+0.5,0,0]) screwterminalcover(0);
+if (print==1 || print==2) {
+  translate([coverd+0.5,0,0]) screwterminalcover(print-1);
+  for (i=[0:1:min(5,count-2)]) { //count-1
+    d=coverd+coverhandled/2;
+    translate([coverd+0.5+d*sin(0+60*i),d*cos(0+60*i),0]) screwterminalcover(print-1);
+  }
+  if (count>7) {
+    for (i=[8:2:min(7+12,count)]) { //count-1
+      d=(coverd+coverhandled/2)*2;
+      translate([coverd+0.5+d*sin(0+30*(i-8)),d*cos(0+30*(i-8)),0]) screwterminalcover(print-1);
+    }
+    for (i=[9:2:min(7+12,count)]) { //count-1
+      d=(coverd+coverhandled/2)*2*cos(30);
+      translate([coverd+0.5+d*sin(30+30*(i-9)),d*cos(30+30*(i-9)),0]) screwterminalcover(print-1);
+    }
+  }
  }
