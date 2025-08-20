@@ -197,12 +197,12 @@ well. Use PLA.
 
 Holder for paper towel rolls. Left and right parts can be printed at
 the same time if your printer is large enough. Left and right parts
-lock into each other, but currently the mechanism leaves room for
-improvement. Slight push releases the "fingers" holding the right
-side.
+are locked together with a stick you push through on the right
+side. Then replacing a roll, you can insert the stick to a temprary
+hole left of the locking hole.
 
-Update: now locks with a pin, so changing the roll is easier and
-safer.
+When pulling out a paper, pull a whole sheet and then quickly rip it
+off.
 
 ![Image of the paper roll holder installed](paperiteline.jpg)
 
@@ -1071,7 +1071,7 @@ Makefile will make all parts. These include:
 We used d1mini esp32 board with a reedswitch between GND and pin 4 to
 detect swing. With the 90mm funnel it corresponded to 1.62mm of rain
 for a swing, so this is not accurate enough, so I updated the funnel
-to 180mm, so it now 0.4mm or rain per swing.
+to 180mm, so it is now 0.4mm of rain per swing.
 
 ![rainmeter in Openscad.](rainmeter.png)
 ![rainmeter installed.](rainmeter.jpg)
@@ -1082,7 +1082,10 @@ My bicycle bottle holder disintegrated, this is a
 replacement. Attachment is designed for my bicycle, brand Sarda (not
 expensive one).
 
-No supports are needed to print. 
+No supports are needed to print.
+
+You can add cable binders to secure the holder better. It might work with screws used
+originally, but 3D printed plastic might not be strong enough.
 
 ![Bicycle bottleholder in Openscad.](bicyclebottleholder.png)
 
@@ -1175,7 +1178,7 @@ Adapted from Tero Kivinen's model, a different type of power strip.
 
 ### kyltti.scad
 
-Angled label for table. Text plate can be printed with two materials to improve visibility. No supports needed.
+Angled label for table. Text plate can be printed with two materials to improve text visibility. No supports needed.
 
 ### lidldiffusor.scad
 
@@ -1192,7 +1195,9 @@ Spare parts for a loom. No supports needed.
 
 ### polecover.scad
 
-cover for end of metal square tube. No supports needed.
+cover for end of metal square tube. No supports
+needed. badweldworkaround enables a cut at two corners for bed welding
+work.
 
 ![Pole cover in scad.](polecover.png)
 
@@ -1242,12 +1247,12 @@ undervoltage protection. This uses xh-m609 voltage protection circuit
 to prevent battery damage due to undervoltage. This must not be used
 for charging, so use original Lidl charger to charge
 batteries. xh-m609 buttons are accessible through buttons in the case
-and display is visible through opening. This neeeds M4x20 and M4x30
+and display is visible through opening. This needs M4x20 and M4x30
 screws, latter with countersink, as those I happened to have.
 
 It needs copper plate contacts for the ryobi interface. 1.5mm copper
-plate can be cut easily to shapes, models are provided, and crimp
-connectors for other cabling, 6mm. Use 2.5mm cables.
+plate can be cut easily to shapes, for which models are provided, and crimp
+connectors are used for other cabling, 6mm. Use 2.5mm cables.
 
 ![ryobiadapter from bottom in Openscad.](ryobiadapter-bottom.png)
 ![ryobiadapter from top in Openscad.](ryobiadapter-top.png)
@@ -1262,4 +1267,24 @@ the model.
 ![type2 plug while inserting in Openscad.](type2-plug-while-inserting.png)
 ![type2 plug when in place in Openscad.](type2-plug-when-in-place.png)
 ![type2 holder in Openscad.](type2-holder.png)
+
+### screwterminalcover.scad
+
+### Makefile.screwterminalcover.scad
+
+Screw terminal covers for the LFP battery packs we have at the
+office. They clip to the terminal covers, but you can attach M8 bolt
+to the cover for additional strength. It clips into the cover. Change
+to count to make multiple terminals in one print.
+
+![screwterminalcover in Openscad.](screwterminalcover.png)
+
+### spicegrinder.scad
+
+"Santa Maria" brand spice grinders are tedious to use, so I added a
+handle. I would need a bit more torque but works better than without this.
+
+### knob.scad
+
+Our cheese grater knob broke, this is a replacement.
 
