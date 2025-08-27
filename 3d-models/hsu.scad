@@ -683,7 +683,12 @@ module supportcylinder(diameterin,hin,onbed,fnin) {
   dstep=(dsteps > 0)?diameter/dsteps:diameter;
 
   h=(onbed>0)?hin-0.2:hin-0.4;
-  
+
+  if (onbed>0 && hin>0.8) {
+    adhesionheight=(onbed==2)?hin-0.6:0;
+    translate([0,0,adhesionheight]) cylinder(d=diameterin-2,h=0.6,$fn=fn);
+  }
+    
   for (d=[0:dstep:diameter]) {
     asteps=(is_undef(fnin)?floor(2*3.14159*(d)/maxbridge):fn);
     astep=360/fn;
