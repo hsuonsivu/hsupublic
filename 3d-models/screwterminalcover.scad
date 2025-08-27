@@ -182,3 +182,9 @@ if (print==1 || print==2) {
     }
   }
  }
+
+if (print==3) {
+  translate([coverd+0.5,0,0]) screwterminalcover(1);
+  d=coverd+coverhandled/2;
+  translate([coverd+0.5+d*sin(0+60),d*cos(0+60),0]) screwterminalcover(0);
+ }

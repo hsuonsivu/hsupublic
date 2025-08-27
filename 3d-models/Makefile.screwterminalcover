@@ -1,7 +1,7 @@
 SOURCE=screwterminalcover.scad
 DEPENDS=hsu.scad Makefile.screwterminalcover text_on_OpenSCAD/text_on.scad text_on_OpenSCAD/README.md
 IMAGES=
-ALL=screwterminalcoverplus.stl screwterminalcoverminus.stl screwterminals.stl
+ALL=screwterminalcoverplus.stl screwterminalcoverminus.stl screwterminalcovers.stl
 OPENSCADOPTIONS=--backend=manifold --enable textmetrics
 
 all: $(ALL)
@@ -27,15 +27,15 @@ screwterminalcover-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
 clean:
 	rm $(ALL)
 
-screwterminalcoverplus.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
-	echo $@ built.
-
 screwterminalcoverminus.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
+screwterminalcoverplus.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
 screwterminalcovers.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
 	echo $@ built.
 
