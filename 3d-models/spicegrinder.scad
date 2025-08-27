@@ -27,7 +27,7 @@ ztolerance=0.3;
 wall=2;
 cornerd=2;
 
-screwd=4.4; // M5
+screwd=4.4; // M4
 screwheadd=8.5; //8.6; // Round head
 screwheadh=3.1;
 screwheadspaceh=6;
