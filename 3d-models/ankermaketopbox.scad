@@ -15,7 +15,8 @@ cornerd=1;
 
 topbarh=25.1;
 topbardepth=18.1;
-bartexts=["PLA", "ABS", "PETG", "PLA", "TPU95", "GlowPETG"];
+//bartexts=["PLA", "ABS", "PETG", "PLA", "TPU95", "GlowPETG"];
+bartexts=["PETG", "PETG" ];
 bartextsize=16;
 versiontext="v1.2";
 versiontextsize=7;
@@ -132,8 +133,11 @@ if (print==2) {
   for (i=[0:1:3]) {
     translate([0,i*(labelh+0.5),0]) rotate([-90,0,0]) translate([-wall-ytolerance,-thinwall-ytolerance-labelthickness,0]) label(bartexts[floor(i/2)]);
   }
-  for (i=[4:1:5]) {
-    translate([labelw+0.5+(i-4)*(labelh+0.5),labelw,0]) rotate([-90,0,-90]) translate([-wall-ytolerance,-thinwall-ytolerance-labelthickness,0]) label(bartexts[floor(i/2)]);
+
+  if (bartexts[2]) {
+    for (i=[4:1:5]) {
+      translate([labelw+0.5+(i-4)*(labelh+0.5),labelw,0]) rotate([-90,0,-90]) translate([-wall-ytolerance,-thinwall-ytolerance-labelthickness,0]) label(bartexts[floor(i/2)]);
+    }
   }
  }
 
