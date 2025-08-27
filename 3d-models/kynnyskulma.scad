@@ -2,15 +2,18 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
+include <hsu.scad>
+
 // width=x, depth=y
 final=1; // 0 for test print
+screwholes=1; // Generate screw holes
 vertical=0; // vertical prints parts in vertical mode, which makes them more difficult to attach to each other, but can be printed in a smaller printer
 printerwidth=220;
-thickness=17; // 21;//23;
+thickness=16;//17.3-0.4; // 21;//23;
 flat=5;
-slopedepth=80;
+slopedepth=50;
 totaldepth=flat+slopedepth;
-length=95;
+length=56;
 tappidiameter=10;
 tappitolerance=0.6;
 tolerance=0.15;
@@ -20,8 +23,15 @@ connectordepth=vertical?10:20;
 connectorendnarrowing=1;
 narrowing=0.75;
 connectorposition=(vertical?(thickness/2-connectorwidth/2)*0.6:(totaldepth/2-connectordepth/2)*0.75);
-maxwidth=295*3+9;//960;
+maxwidth=565; // 295*3+9;//960;
 printparts=1; // Multiphase print if all do not fit into the print bed
+
+screwd=3;
+screwl=19;
+screwyposition=totaldepth/2.5;
+screwxposition=screwd*3*3;
+screwheight=((screwyposition>flat-screwd*3/2)?(slopedepth-(screwyposition-flat+screwd*3/2))*(thickness/slopedepth):thickness)-screwl;
+echo("screw height below ",screwheight, " screw length ",screwl, " screw base height ",screwheight+screwl);
 
 module male(x,y,h) {
   linear_extrude(height=h) {
@@ -65,6 +75,19 @@ module lista(t,l) {
       union() {
 	cube([l,flat+0.01,thickness]);
 	translate([0,totaldepth,0]) rotate([0,0,-90]) triangle(slopedepth,l,thickness,0);
+
+	if (screwholes) {
+	  for (x=[screwxposition,l-screwxposition]) {
+	    translate([x,screwyposition,0]) cylinder(d=screwd*3,h=screwheight+screwl,$fn=60); // screwxposition
+	  }
+	}
+      }
+
+      if (screwholes) {
+	for (x=[screwxposition,l-screwxposition]) {
+	  translate([x,screwyposition,screwheight+screwl-0.01]) cylinder(d=screwd*3,h=screwl,$fn=60);
+	  translate([x,screwyposition,screwheight]) ruuvireika(screwl,screwd,1,1);
+	}
       }
       
       if (t=="right") {
@@ -143,7 +166,7 @@ if (final) rotate([0,0,vertical?90:0]) {
   i=0;
 
   sections=floor(maxwidth/printerwidth);
-  
+
   totalsections=(sections*printerwidth < maxwidth)?sections+1:sections;
   
   sectionwidth=maxwidth/totalsections;
