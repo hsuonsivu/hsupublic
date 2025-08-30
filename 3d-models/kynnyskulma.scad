@@ -26,7 +26,7 @@ connectorposition=(vertical?(thickness/2-connectorwidth/2)*0.6:(totaldepth/2-con
 maxwidth=565; // 295*3+9;//960;
 printparts=1; // Multiphase print if all do not fit into the print bed
 
-screwd=3;
+screwd=3.5;
 screwl=19;
 screwyposition=totaldepth/2.5;
 screwxposition=screwd*3*3;
