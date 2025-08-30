@@ -612,6 +612,9 @@ module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
 }
 
 module supportbox(xsize,ysize,height,onbed) {
+  z=onbed?0:0.2;
+  h=onbed?height-0.2:height-0.4;
+  
   // Corners
   for (z=[0,height-0.2]) {
     if (xsize >= ysize) translate([-0.2,-0.2,z]) cube([0.8,0.4,0.2]);
@@ -623,7 +626,7 @@ module supportbox(xsize,ysize,height,onbed) {
     if (xsize >= ysize) translate([xsize-0.2-0.4,-0.2,z]) cube([0.8,0.4,0.2]);
     if (xsize < ysize)translate([xsize-0.2,-0.2,z]) cube([0.4,0.8,0.2]);
     
-    xsteps=floor(xsize/10);
+    xsteps=floor(xsize/5);
     if (xsteps > 0) {
       xstep=xsize/xsteps;
       for (x=[xstep:xstep:xsize-xstep]) {
@@ -632,18 +635,17 @@ module supportbox(xsize,ysize,height,onbed) {
       }
     }
 
-    ysteps=floor(ysize/10);
+    ysteps=floor(ysize/5);
     if (ysteps > 0) {
       ystep=ysize/ysteps;
       for (y=[ystep:ystep:ysize-ystep]) {
 	translate([-0.2,y-0.2,z]) cube([0.4,0.4,0.2]);
-	translate([ysize-0.2,y-0.2,z]) cube([0.4,0.4,0.2]);
+	translate([xsize-0.2,y-0.2,z]) cube([0.4,0.4,0.2]);
+	if (z==0) translate([-0.2,y-0.2,0.2]) cube([xsize+0.4,0.4,h]);
       }
     }
   }
 
-  z=onbed?0:0.2;
-  h=onbed?height-0.2:height-0.4;
   translate([-0.2,-0.2,z]) cube([xsize+0.4,0.4,h]);
   translate([-0.2,-0.2,z]) cube([0.4,ysize+0.4,h]);
   translate([xsize-0.2,-0.2,z]) cube([0.4,ysize+0.4,h]);
