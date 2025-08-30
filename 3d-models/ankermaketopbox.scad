@@ -4,12 +4,12 @@
 
 include <hsu.scad>
 
-print=2;
-howmany=4;
+print=1;
+howmany=1;
 
 debug=print>0?0:1;
 
-antiwarp=1;
+antiwarp=0;
 
 cornerd=1;
 
@@ -114,18 +114,20 @@ if (print==1) {
     translate([(boxdepth+1)*(i-1),0,boxh]) rotate([180,0,90]) ankermaketopbox();
   }
 
-  difference() {
-    minkowski() {
-      cube([(boxdepth+1)*howmany,boxw,boxh+2]);
-      cylinder(d=10,h=1);
-    }
+  if (antiwarp) {
+    difference() {
+      minkowski() {
+	cube([(boxdepth+1)*howmany,boxw,boxh+2]);
+	cylinder(d=10,h=1);
+      }
 
-    translate([0,0,-0.01]) minkowski() {
-      cube([(boxdepth+1)*howmany,boxw,boxh+2+0.02]);
-      cylinder(d=10-0.8*2,h=1);
-    }
+      translate([0,0,-0.01]) minkowski() {
+	cube([(boxdepth+1)*howmany,boxw,boxh+2+0.02]);
+	cylinder(d=10-0.8*2,h=1);
+      }
 
-    translate([-10,boxw/2,-0.01]) cube([9.9,1,1.01]);
+      translate([-10,boxw/2,-0.01]) cube([9.9,1,1.01]);
+    }
   }
  }
 
