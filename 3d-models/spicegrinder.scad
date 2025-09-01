@@ -11,6 +11,10 @@ $fn=60;
 
 print=0;
 
+// Make a version with a hanle to grind
+// If handle is not made, a larger handwheel is used for bottom
+handle=0;
+
 abs=0;
 
 debug=1;
@@ -57,15 +61,16 @@ handlekaulanarrowd=(kaulad+kaulanarrowd)/2;
 topd=51; // 50.72;
 toph=24.7;
 topstraighth=7;
+topstraightdeduct=1.2;
 lowd=50.40;
 lowbased=35;
 lowh=26-3.1;
 lowstraighth=15.3-3.1;
 lownotches=40;
-lownotchdepth=0.6;
-lownotchd=3;
+lownotchdepth=0.7; //6;
+lownotchd=3.2; //3;
 bodyh=102.7-0.3;
-middled=44.8;//45.15;
+middled=44.2; //44.8;//45.15;
 middleh=bodyh-toph-lowh;
 middleheight=lowh;
 topheight=lowh+middleh;
@@ -84,7 +89,7 @@ bottomraise=3.38;
 
 baseheight=-wall-ztolerance;
 
-versiontext=str("V1.7");
+versiontext=str("V1.8");
 textsize=7;
 textdepth=0.7;
 textfont="Liberation Sans:style=Bold";
@@ -127,8 +132,8 @@ totalbearingh=bearingdepth+bearingl+bearingdepth;
 bearinglowopenw=2.6;
 bearingaxlelowextrad=bearingaxled/2+bearingaxletolerance+bearingaxledtolerance+0.55;
 
-handleh=topheight+toph-middleheight-totalbearingh;
-handleheight=middleheight+totalbearingh;
+handleh=topheight+toph-middleheight-totalbearingh-10;
+handleheight=middleheight+totalbearingh+10;
 
 knobclipd=4;
 knobclipsink=0.6+axledtolerance/2; //1.3;
@@ -137,6 +142,12 @@ knobclipyoffset=knobaxled/2+5+knobclipd/2;
 knobcliptolerance=0.3;
 knobsupporty=-knobaxled/2-knobclipyoffset;
 knobsupportw=knobaxled+cornerd/2+knobstopperh+dtolerance/2+knobclipyoffset;
+
+handwheeld=70;
+handwheelfd=15;
+handwheelh=15;
+handwheelsteps=10;
+handwheelcornerd=0;
 
 //echo("totalheight ", totalheight, " upperheight + upperh ",upperheight+upperh);
 
@@ -158,7 +169,7 @@ module millbody() {
 
   hull() {
     translate([0,0,topheight]) cylinder(d=middled,h=toph);
-    translate([0,0,topheight+toph-topstraighth]) cylinder(d=topd,h=topstraighth);
+    translate([0,0,topheight+toph-topstraighth]) cylinder(d=topd,h=topstraighth-topstraightdeduct);
   }
 
   translate([0,0,kaulanarrowheight-0.1]) cylinder(d=kaulanarrowd,h=kaulanarrowh+0.2);
@@ -176,8 +187,8 @@ module millbody() {
 module millhandle() {
   difference() {
     union() {
-      translate([0,0,kaulanarrowheight]) cylinder(d=topd+wall*2+dtolerance,h=kaulanarrowh-ztolerance);
-      translate([0,0,kaulaheight-ztolerance]) ring(kaulad+wall*2+dtolerance,wall,kaulah,0,90);
+      translate([0,0,kaulanarrowheight-topstraightdeduct]) cylinder(d=topd+wall*2+dtolerance,h=kaulanarrowh-ztolerance);
+      translate([0,0,kaulaheight-ztolerance-topstraightdeduct]) ring(kaulad+wall*2+dtolerance,wall,kaulah+topstraightdeduct,0,90);
       translate([0,0,upperheight-wall-ztolerance+upperadjust]) ring(uppermaxd+wall*2+dtolerance,wall,upperh+wall+ztolerance-upperadjust,0,upperfn);
       translate([0,0,upperheight-wall-ztolerance+(kaulad-uppermaxd)/2+upperadjust]) cylinder(d1=kaulad+wall*2+dtolerance,d2=uppermaxd+wall*2+dtolerance,h=(uppermaxd-kaulad)/2,$fn=upperfn);
       intersection() {
@@ -187,7 +198,6 @@ module millhandle() {
 	translate([0,0,upperheight-wall-ztolerance+upperadjust]) cylinder(d=uppermaxd+wall*2+dtolerance,h=upperh+wall+ztolerance-upperadjust,$fn=upperfn);
       }
       hull() {
-	//translate([0,0,handleheight]) ring(topd+wall*2+dtolerance,wall,handleh,0,90);
 	translate([0,0,handleheight]) cylinder(d=topd+wall*2+dtolerance,h=handleh);
 	for (a=[0:360/bearings:359]) {
 	  rotate([0,0,a]) translate([topd/2+bearingaxled/2-bearingsink,0,handleheight]) cylinder(d=bearingaxled+wall+bearingspace*2,h=bearingdepth+bearingl+bearingdepth);
@@ -196,12 +206,15 @@ module millhandle() {
     }
 
     rotate([0,0,90]) translate([0,0,upperheight-wall-ztolerance+upperadjust]) text_on_cylinder(t=versiontext,r=(uppermaxd+wall*2+dtolerance)/2-textdepth/2+0.01,h=upperh+wall+ztolerance-upperadjust,size=textsize,font=textfont,extrusion_height=textdepth);
-    
-    translate([0,0,handleheight-0.01]) cylinder(d=topd+dtolerance,h=kaulanarrowheight-handleheight+0.02);
+
+    hull() {
+      translate([0,0,handleheight-0.01-topstraightdeduct]) cylinder(d=topd+dtolerance,h=kaulanarrowheight-handleheight+0.02);
+      translate([0,0,handleheight-0.01]) cylinder(d=kaulanarrowd+dtolerance,h=kaulanarrowheight-handleheight+0.02);
+    }
     
     union() {
-      translate([0,0,kaulanarrowheight-0.01]) cylinder(d1=topd+dtolerance,d2=handlekaulanarrowd+dtolerance,h=handlekaulanarrowstart+0.02);
-      translate([0,0,kaulanarrowheight+handlekaulanarrowstart-0.1]) cylinder(d=handlekaulanarrowd+dtolerance,h=kaulanarrowh-handlekaulanarrowstart+0.2);
+      translate([0,0,kaulanarrowheight-0.01-topstraightdeduct]) cylinder(d1=topd+dtolerance,d2=handlekaulanarrowd+dtolerance,h=handlekaulanarrowstart+0.02);
+      translate([0,0,kaulanarrowheight+handlekaulanarrowstart-0.1-topstraightdeduct]) cylinder(d=handlekaulanarrowd+dtolerance,h=kaulanarrowh-handlekaulanarrowstart+0.2);
       translate([0,0,kaulaheight-0.1]) cylinder(d=kaulad+dtolerance,h=kaulah+0.2);
     }
 
@@ -251,28 +264,53 @@ module millrotor() {
 	union() {
 	  translate([0,0,middleheight]) cylinder(d=middled+dtolerance+rotormiddlethickness,h=middleh*2/3);
 	  difference() {
-	    hull() {
+	    union() {
 	      hull() {
-		translate([0,0,middleheight]) cylinder(d=middled+dtolerance+rotormiddlethickness,h=0.01);
-		translate([0,0,lowstraighth]) ring(lowd+dtolerance+wall*2,wall,0.01,0,90);
-		translate([0,0,middleheight]) cylinder(d=middled+dtolerance+rotormiddlethickness,h=totalbearingh); //middleh*1/3
-		for (y=[-middled/2+wall/2-screwheadd/2,middled/2+screwheadd/2-wall/2]) {
-		  translate([-screwl/2,y,middleheight]) rotate([0,90,0]) cylinder(d=screwheadd+wall*2,h=screwl);
+		hull() {
+		  translate([0,0,middleheight]) cylinder(d=middled+dtolerance+rotormiddlethickness,h=0.01);
+		  translate([0,0,lowstraighth]) ring(lowd+dtolerance+wall*2,wall,0.01,0,90);
+		  translate([0,0,middleheight]) cylinder(d=middled+dtolerance+rotormiddlethickness,h=totalbearingh); //middleh*1/3
+		  for (y=[-middled/2+wall/2-screwheadd/2,middled/2+screwheadd/2-wall/2]) {
+		    translate([-screwl/2,y,middleheight]) rotate([0,90,0]) cylinder(d=screwheadd+wall*2,h=screwl);
+		  }
+		}
+		hull() {
+		  translate([0,0,baseheight]) roundedcylinder(lowd+dtolerance+wall*2,lowstraighth+ztolerance+wall,cornerd,1,90); //ring(lowd+dtolerance+wall*2,wall,lowstraighth,0,90);
+		  if (handle) {
+		    translate([knobdistance-knobshaftd/2-dtolerance/2-knobsupportwall,knobsupporty,baseheight]) roundedbox(knobsupportwall,knobsupportw,knobsupporth,cornerd,1);
+		  }
 		}
 	      }
-	      hull() {
-		translate([0,0,baseheight]) roundedcylinder(lowd+dtolerance+wall*2,lowstraighth+ztolerance+wall,cornerd,1,90); //ring(lowd+dtolerance+wall*2,wall,lowstraighth,0,90);
-		//translate([knobdistance-knobshaftd/2-dtolerance/2-knobsupportwall,-knobaxled/2-knobsupportwall,baseheight]) roundedbox(knobsupportwall,knobaxled+knobsupportwall+cornerd/2+knobstopperh,knobsupporth,cornerd,1);
-		translate([knobdistance-knobshaftd/2-dtolerance/2-knobsupportwall,knobsupporty,baseheight]) roundedbox(knobsupportwall,knobsupportw,knobsupporth,cornerd,1);
+
+	      if (!handle) {
+		difference() {
+		  //#		    translate([0,0,baseheight+handwheelcornerd/2]) cylinder(d=handwheeld-handwheelcornerd,h=handwheelh-handwheelcornerd);
+		  for (a=[0:360/handwheelsteps:359]) {
+		    hull() {
+		      translate([0,0,baseheight+handwheelcornerd/2]) cylinder(d=handwheeld-handwheelfd-handwheelcornerd,h=handwheelh-handwheelcornerd);
+		      rotate([0,0,a]) translate([handwheeld/2,0,baseheight]) {
+			translate([0,0,handwheelh/2]) sphere(d=handwheelfd-handwheelcornerd,$fn=90);
+			cylinder(d=handwheelfd/3,h=handwheelfd/2,$fn=90);
+		      }
+		    }
+		  }
+
+		  if (0) for (a=[0:360/handwheelsteps:359]) {
+		    echo(a,360/handwheelsteps/2);
+		    rotate([0,0,a-360/handwheelsteps/2]) translate([handwheeld/2,0,baseheight]) cylinder(d=handwheelfd-handwheelcornerd,h=handwheelh-handwheelcornerd);
+		  }
+		}
 	      }
 	    }
-
-	    knobaxleandclip(1,180);
-	    knobaxleandclip(1,0);
+	    
+	    if (handle) {
+	      knobaxleandclip(1,180);
+	      knobaxleandclip(1,0);
+	    }
 	  }
 
 	  // Knob rotating shaft
-	  translate([0,0,baseheight+knobaxleheight]) rotate([knobangle,0,0]) union() {
+	  if (handle) translate([0,0,baseheight+knobaxleheight]) rotate([knobangle,0,0]) union() {
 	    difference() {
 	      union() {
 		hull() {
@@ -295,13 +333,13 @@ module millrotor() {
 	      translate([knobdistance-knobshaftd/2,-knobshaftd/2,-knobaxleheight+knobstopperh]) roundedbox(knobshaftd,knobshaftd/2+cornerd/2,cornerd,cornerd,1);
 	    }
 	  }
-
-	  knobaxleandclip(0,knobangle);
+	    
+	  if (handle) knobaxleandclip(0,knobangle);
 
 	  // Knob axle support
 
 	  // Sides
-	  difference() {
+	  if (handle) difference() {
 	    union() {
 	      translate([knobdistance-knobshaftd/2-dtolerance/2-knobsupportwall,knobsupporty,baseheight]) roundedbox(knobsupportwall,knobsupportw+dtolerance/2,knobsupporth,cornerd,1);
 	      translate([knobdistance+knobshaftd/2+dtolerance/2,knobsupporty,baseheight]) roundedbox(knobsupportoutwall,knobsupportw+dtolerance/2,knobsupporth,cornerd,1);
@@ -312,7 +350,7 @@ module millrotor() {
 	  }
 
 	  // Stopper counter face
-	  difference() {
+	  if (handle) difference() {
 	    hull() {
 	      w=knobsupportwall+dtolerance/2+knobshaftd+dtolerance/2+knobsupportwall;
 	      translate([knobdistance-w/2,knobshaftd+cornerd/2,baseheight]) roundedbox(w,cornerd,cornerd,cornerd,1);
@@ -336,10 +374,9 @@ module millrotor() {
 	  }
 	  hull() {
 	    translate([screwl/2-screwheadh,y,middleheight]) rotate([0,90,0]) cylinder(d=screwheadd,h=screwheadd+middled/4);
-	    translate([screwl/2-screwheadh+middled/2,y,middleheight+middled/2]) rotate([0,90,0]) cylinder(d=screwheadd,h=screwheadd+middled/4);
+	    translate([screwl/2-screwheadh+screwheadd,y,middleheight+screwheadd]) rotate([0,90,0]) cylinder(d=0.1,h=screwheadd+middled/4);
 	  }
 	}
-
 
 	hull() {
 	  translate([0,0,baseheight-0.1]) cylinder(d=lowd+dtolerance,h=lowstraighth+wall+ztolerance+0.2);
@@ -376,11 +413,16 @@ module millrotor() {
       }
     }
 
-    translate([knobdistance+knobshaftd/2+dtolerance/2+knobsupportoutwall-textdepth+0.01,-knobaxled/2-knobsupportoutwall+(knobaxled+knobsupportwall+cornerd/2+knobstopperh)/2,baseheight+knobsupporth/2]) rotate([90,0,90]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
+    if (handle) {
+      translate([knobdistance+knobshaftd/2+dtolerance/2+knobsupportoutwall-textdepth+0.01,-knobaxled/2-knobsupportoutwall+(knobaxled+knobsupportwall+cornerd/2+knobstopperh)/2,baseheight+knobsupporth/2]) rotate([90,0,90]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
+    } else {
+      translate([0,lowbased/2+1+textsize/2,baseheight+textdepth-0.01]) rotate([0,180,0]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
+      translate([0,-(lowbased/2+1+textsize/2),baseheight+textdepth-0.01]) rotate([0,180,180]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
+    }
 
-    translate([0,0,middleheight-0.1]) cylinder(d=middled+dtolerance,h=middleh);
+   translate([0,0,middleheight-0.1]) cylinder(d=middled+dtolerance,h=middleh);
 
-    translate([0,0,-wall-ztolerance-0.1]) cylinder(d=lowbased,h=wall+lownotchd+0.2);
+   translate([0,0,-wall-ztolerance-0.1]) cylinder(d=lowbased,h=wall+lownotchd+0.2);
   }
 }
 
@@ -411,13 +453,13 @@ module mill()  {
 }
 
 if (print==0) {
-  #mill();
+  //#  mill();
 
   intersection() {
     union() {
       millhandle();
       millrotor();
-      translate([knobdistance,0,baseheight+knobaxleheight]) rotate([knobangle,0,0]) knob();
+      if (handle) translate([knobdistance,0,baseheight+knobaxleheight]) rotate([knobangle,0,0]) knob();
     }
     
     // if (debug) translate([-100,knobclipyoffset,-100]) cube([200,200,300]);
@@ -445,7 +487,7 @@ if (print==2 || print==4) {
  }
 
 if (print==3 || print==4) {
-  translate([0,0,knobh]) rotate([180,0,0]) translate([0,0,knobaxleheight-knobshaftnarrowheight]) knob();
+  if (handle) translate([0,0,knobh]) rotate([180,0,0]) translate([0,0,knobaxleheight-knobshaftnarrowheight]) knob();
  }
 
 if (print==4) {
