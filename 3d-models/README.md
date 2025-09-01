@@ -1288,3 +1288,16 @@ handle. I would need a bit more torque but works better than without this.
 
 Our cheese grater knob broke, this is a replacement.
 
+### shellydinadapter.scad
+
+### Makefile.shellydinadapter
+
+DIN rail box for shelly 1PM Gen 4.  Needs some wiring, spring
+terminals (or with a bit of mod, screw terminals), and optional on/off
+switch. Support option enables support for a longish bridge for on/off
+switch.
+
+It has reset button from front panel, but it lacks feel and may need
+more testing.
+
+
