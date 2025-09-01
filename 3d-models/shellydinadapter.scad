@@ -5,11 +5,11 @@
 include <hsu.scad>
 
 print=0;
-debug=0;
+debug=1;
 debugscrewcuts=1; // This makes model slow to display
-peekholes=1; // Cutouts to see reset mechanism
+peekholes=0; // Cutouts to see reset mechanism
 powerswitch=1;
-resetpressed=1;
+resetpressed=0;
 support=1;
 
 textdepth=0.7;
@@ -578,8 +578,10 @@ module shellydinadapter() {
       difference() {
 	translate([shellyx-shellyxtolerance-wall,-dincasetopw/2,wall-cornerd/2]) roundedbox(wall,dincasetopw,shellyheight+3,cornerd);
 
-	translate([shellyx-shellyxtolerance-wall-0.01,-switchcablew/2,wall]) cube([wall+0.02,switchcablew,shellyheight+3]);
-	translate([shellyx-shellyxtolerance-wall-0.01,-dincaseshellymidsupporty+switchcablew/2-wall,wall]) cube([wall+0.02,switchcablew,shellyheight+3]);
+	if (powerswitch) {
+	  translate([shellyx-shellyxtolerance-wall-0.01,-switchcablew/2,wall]) cube([wall+0.02,switchcablew,shellyheight+3]);
+	  translate([shellyx-shellyxtolerance-wall-0.01,-dincaseshellymidsupporty+switchcablew/2-wall,wall]) cube([wall+0.02,switchcablew,shellyheight+3]);
+	}
       }
 
       for (m=[0,1]) mirror([0,m,0]) {
@@ -710,9 +712,11 @@ module shellydinadapter() {
     translate([contactl/2,dincasew/2-textdepth+0.01,dincaseh/2+contactblockw/2-contactw/2]) rotate([-90,-90,0]) linear_extrude(height=textdepth) text("L",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
 
     translate([contactl/2,-dincasew/2+textdepth-0.01,dincaseh/2+contactblockw/2-contactw/2]) rotate([90,90,0]) linear_extrude(height=textdepth) text("O",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
-    
-    translate([shellyx+textsize,0,wall-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) scale([0.7,1,1]) text("SW",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
-    translate([shellyx+textsize,-dincaseshellymidsupporty+switchcablew-wall,wall-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text("L",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
+
+    if (powerswitch) {
+      translate([shellyx+textsize,0,wall-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) scale([0.7,1,1]) text("SW",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
+      translate([shellyx+textsize,-dincaseshellymidsupporty+switchcablew-wall,wall-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text("L",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
+    }
     
     translate([shellyx-shellyxtolerance-wall-0.01,dincaseresetbuttony-dincaseresetbuttonspacew/2,wall]) cube([wall+0.02,dincaseresetbuttonspacew,dincaseresetbuttonspaceh]);
 
@@ -897,7 +901,7 @@ if (print==0) {
     }
   }
     
-  #translate([dincasetopl,switchy,switchheight]) switch();
+  if (powerswitch) #translate([dincasetopl,switchy,switchheight]) switch();
       
   if (0) {
     screwtower(basescrewx,basescrewy);
