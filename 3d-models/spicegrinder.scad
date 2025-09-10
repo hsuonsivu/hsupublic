@@ -95,7 +95,7 @@ bottomraise=3.38;
 
 baseheight=-wall-ztolerance;
 
-versiontext=str("V1.16");
+versiontext=str("V1.17");
 textsize=7;
 textdepth=0.7;
 textfont="Liberation Sans:style=Bold";

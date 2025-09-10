@@ -35,7 +35,7 @@ angle=(print==0 || print==5)?90.5:0; // 194.2
 length=228-testlreduction;
 height=75-testhreduction; // 125;
 
-versiontext="v1.18"; // str("v1.10",(print==4)?"D":"");;
+versiontext="v1.19"; // str("v1.10",(print==4)?"D":"");;
 
 textsize=(print==4)?4:7;
 smalltextsize=3;
