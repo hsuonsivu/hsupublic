@@ -488,11 +488,13 @@ module spring(h,d,plateh,thickness) {
 }
 
 // This is used by onehinge
-module axle(diameter,width,axledepthin,cutout) {
-  axledepth=axledepthin>diameter/3?diameter/3:axledepthin;
+module axle(diameter,width,axledepthin,cutout,ytolerance,dtolerance) {
+  axledepth=(axledepthin>diameter/3?diameter/3:axledepthin);
   if (cutout) {
-    translate([0,-width/2,0]) rotate([90,0,0]) cylinder(d2=diameter-axledepth*2,d1=diameter,h=axledepth,$fn=90);
-    translate([0,width/2,0]) rotate([-90,0,0]) cylinder(d2=diameter-axledepth*2,d1=diameter,h=axledepth,$fn=90);
+    for (a=[0,180]) mirror([0,a,0]) hull() {
+	translate([0,-width/2-ytolerance,0]) rotate([90,0,0]) cylinder(d2=diameter+dtolerance-axledepth*2,d1=diameter+dtolerance,h=axledepth,$fn=90);
+	translate([0,-width/2,0]) rotate([90,0,0]) cylinder(d=diameter+dtolerance,h=ytolerance,$fn=90);
+      }
   } else {
     hull() {
       translate([0,-width/2,0]) rotate([-90,0,0]) cylinder(d=diameter,h=width,$fn=90);
@@ -510,11 +512,11 @@ module axle(diameter,width,axledepthin,cutout) {
 module onehinge(diameter,width,axledepth,cutout,ytolerance,dtolerance) {
   if (cutout) {
     difference() {
-      translate([0,0,0]) axle(diameter+dtolerance,width,axledepth+ytolerance,cutout);
-      if (cutout==1) translate([0,0,0]) axle(diameter,width,axledepth,cutout);
+      translate([0,0,0]) axle(diameter,width,axledepth,cutout,ytolerance,dtolerance);
+      if (cutout==1) translate([0,0,0]) axle(diameter,width,axledepth,cutout,ytolerance,dtolerance);
     }
   } else {
-        translate([0,0,0]) axle(diameter,width,axledepth,cutout);
+    translate([0,0,0]) axle(diameter,width,axledepth,cutout,0,0);
   }
 }
 
