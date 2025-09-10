@@ -171,8 +171,8 @@ axledepth=2;
 //echo(axledsmall,axledlarge,axleoutd);
 axleh=axleoutd/2+wall/2;
 axlefrombottom=axleh; //dlarge/2+wall;
-axleytolerance=ytolerance+0.2;
-axledtolerance=1.2;
+axleytolerance=ytolerance;//+0.2;
+axledtolerance=0.7; //7;
 hingeh=axleh+axleoutd/2;
 backopening=axlefrombottom+4.5;
 backcornersupport=5;
@@ -818,7 +818,7 @@ module berrypicker() {
 }
 
 intersection() {
-  //if (debug) translate([-20,-width/2-lcornerd/2,-100]) cube([25,lcornerd/2+20,length+3+100]);
+  if (debug) translate([-20,-width/2-lcornerd/2,-100]) cube([25,lcornerd/2+20,length+3+100]);
   //if (debug) translate([-20,-width/2-lcornerd/2,-100]) cube([height+80,lcornerd/2+width/2,length+3+100]);
   //if (debug) translate([20,-width/2-lcornerd/2,-100]) cube([30,lcornerd/2+width/2,length+3+100]);
   //  if (debug) translate([-20,-width/2-lcornerd,0]) cube([height+80,width/2+lcornerd,length+3]);
