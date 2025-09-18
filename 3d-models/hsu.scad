@@ -53,16 +53,22 @@ module ruuvireika(height,diameter,countersink,strong,strongl) {
   }
 
   if (makestrong) {
-    maxd=diameter*countersinkdiametermultiplier-(diameter+0.3)+1;
-    for (d=[diameter+0.8:0.9:diameter*3-0.6]) {
-      di=d;
-      bottom=(d<diameter*3*0.6-0.8)?-diameter/3*3+0.4:-diameter/3*3+(d-diameter)*1-diameter*0.6+0.4;
-      top=(d>countersinkd(diameter))?height-0.4:height-0.8-diameter+d/2-0.4;
-      translate([0,0,0])
-	difference() {
-	translate([0,0,bottom]) cylinder(h=top-bottom,d=di+0.03,$fn=20);
-	translate([0,0,bottom-0.01]) cylinder(h=top-bottom+0.02,d=di,$fn=20);
+    intersection() {
+      union() {
+	maxd=diameter*countersinkdiametermultiplier-(diameter+0.3)+1;
+	for (d=[diameter+0.8:1:diameter*3-0.6]) {
+	  di=d;
+	  bottom=(d<diameter*3*0.6-0.8)?-diameter/3*3+0.4:-diameter/3*3+(d-diameter)*1-diameter*0.6+0.4;
+	  top=countersink?((d>countersinkd(diameter))?height-0.4:height-0.8-diameter+d/2-0.4):height-0.4;
+	  translate([0,0,0])
+	    difference() {
+	    translate([0,0,bottom]) cylinder(h=top-bottom,d=di+0.03,$fn=20);
+	    translate([0,0,bottom-0.01]) cylinder(h=top-bottom+0.02,d=di,$fn=20);
+	  }
+	}
       }
+
+      translate([0,0,height-strongl+0.4]) cylinder(d=diameter*countersinkdiametermultiplier+3,h=sl-0.8);
     }
   }
 
