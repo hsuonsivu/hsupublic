@@ -2,8 +2,9 @@ include <threads.scad>
 
 debug=0;
 adhesion=1;
+tube=0;
 
-dtolerance=0.6;
+dtolerance=0.5;
 
 $fn=90;
 
@@ -58,7 +59,14 @@ stripw=8;
 edgew=4;
 supportw=2; // Cross supports in the mask
 
-outholed=1.4;
+tubed=9;
+tubex=-externald1/2;
+tubey=cover2d/2-tubed/2;
+tubeangle=-20;
+
+outholex=13;
+outholed=1.5;
+outholeangle=-30;
 
 module cpaptube() {
   difference() {
@@ -133,9 +141,11 @@ module cpaptube() {
       
 	for (i=[1:1:4]) {
 	  for (j=[1:1:4]) {
-	    translate([coverxstart+5+edgew+outholed*2+i*outholed*1.3,-outholed*2.5*1.3+j*outholed*1.3,0]) cylinder(d=outholed,h=coverheight);
+	    translate([coverxstart+outholex+edgew+outholed*2+i*outholed*1.5,-outholed*2.5*1.5+j*outholed*1.5,0]) rotate([0,outholeangle,0]) cylinder(d=outholed,h=coverheight);
 	  }
-      }
+	}
+
+	if (tube) translate([tubex,tubey,0]) rotate([0,tubeangle,0]) cylinder(d=tubed,h=adapterheight);
       }
       translate([0,0,-0.01]) cylinder(d=externald2+dtolerance,h=coverheight+0.02);
     }
