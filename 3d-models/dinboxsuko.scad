@@ -4,7 +4,15 @@
 
 include <hsu.scad>
 
-debug=0;
+print=0;
+debugon=0;
+debug=(print==0)?debugon:0;
+
+textdepth=0.7;
+textsize=7;
+versiontext="v1.1";
+label="Schuko box";
+textfont="Liberation Sans:style=Bold";
 
 // 52*sin(a)=0.4
 // sin(a)=0.4/52;
@@ -24,7 +32,7 @@ maxbridge=8;
 cornerd=3;
 outcornerd=cornerd*2;
 
-screwd=4.4;
+screwd=4.5;
 screwl=23;
 screwbased=10;
 screwfromcorner=screwbased/2+cornerd/2;
@@ -106,7 +114,16 @@ module sukobox() {
     // Screw holes for main box screws
     for (y=[-sukobasew/2+screwfromcorner,sukobasew/2-screwfromcorner]) {
       for (z=[screwfromcorner,sukoh-screwfromcorner]) {
-	translate([sukobasel-screwl+0.01,y,z]) rotate([0,90,0]) render() ruuvireika(screwl,screwd,0,1,sukobasel-0.4);
+	if (print==2) {
+	  translate([0,y,z]) rotate([0,90,0]) cylinder(d1=2,d2=screwl*2,h=screwl,$fn=60);
+	} else {
+	  translate([sukobasel-screwl+0.01,y,z]) rotate([0,90,0]) render() ruuvireika(screwl,screwd,0,print==1?1:0,sukobasel-0.8);
+
+	  hull() {
+	    translate([sukobasel-screwl+0.01,y,z]) rotate([0,90,0]) cylinder(d=screwd,h=screwl,$fn=60);
+	    translate([-0.01,y-screwd/4,z]) cube([sukobasel+0.02,screwd/2,screwd/2]);
+	  }
+	}
       }
     }
 
@@ -116,14 +133,31 @@ module sukobox() {
 	translate([x,y,wall]) cylinder(d=sukoscrewd,h=sukoh-wall+0.1,$fn=60);
       }
     }
+
+    translate([boxld+outcornerd/2+1+textsize/2,0,sukoh-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize-1,halign="center", valign="center");
+    translate([boxld+outcornerd/2+1+textsize+1+textsize/2,0,sukoh-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(label,font="Liberation Sans:style=Bold,Narrow",size=textsize,halign="center", valign="center");
   }
 }
 
-intersection() {
-  //if (debug) translate([0,0,0]) cube([200,100,100]); // Split at xz plane
-  if (debug) translate([0,-100,0]) cube([200,100+sukobasew/2-screwfromcorner,100]); // Split at screw hole
-  //if (debug) translate([0,0,0]) cube([100,100,100]);
+if (print==0) {
+  intersection() {
+    //if (debug) translate([0,0,0]) cube([200,100,100]); // Split at xz plane
+    if (debug) translate([0,-100,0]) cube([200,100+sukobasew/2-screwfromcorner,100]); // Split at screw hole
+    //if (debug) translate([0,0,0]) cube([100,100,100]);
+    sukobox();
+  }
+ }
+
+if (print==1) {
   sukobox();
-}
+ }
+
+if (print==2) {
+  intersection() {
+    translate([0,-100,0]) cube([5,200,100]); // Split at screw hole
+    sukobox();
+  }
+ }
+
 
      
