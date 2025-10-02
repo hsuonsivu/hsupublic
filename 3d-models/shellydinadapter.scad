@@ -14,7 +14,7 @@ support=1;
 
 textdepth=0.7;
 textsize=7;
-versiontext="v1.6";
+versiontext="v1.8";
 textfont="Liberation Sans:style=Bold";
 labelsize=5;
 
@@ -215,7 +215,9 @@ switchh=6.8;
 switchl=14.5;
 switchsw=21.4; // Locking width
 switchsh=5.5; // Locking h
-switchsl=10;
+switchsl=10; // locking clip l
+switchswl=4; // Widest point of switch clip
+switchlwall=2; // 2 + some 
 switchfw=21.3;
 switchfh=9.33;
 switchfl=2;
@@ -236,6 +238,10 @@ module switch() {
   difference() {
     union() {
       translate([-switchl,-switchw/2,-switchh/2]) roundedbox(switchl+switchfl+textdepth-0.01,switchw,switchh,cornerd);
+      hull() {
+	translate([-switchsl,-switchw/2,-switchsh/2]) roundedbox(switchsl,switchw,switchsh,cornerd);
+	translate([-switchswl-cornerd/2,-switchsw/2,-switchsh/2]) roundedbox(cornerd,switchsw,switchsh,cornerd);
+      }
       translate([0,-switchfw/2,-switchfh/2]) roundedbox(switchfl,switchfw,switchfh,cornerd);
       translate([-switchcontactl-switchl+0.01,switchw/2-switchcontacty-switchcontactw/2,-switchh/2+switchcontactheight]) roundedbox(switchcontactl+cornerd/2,switchcontactw,switchcontacth,cornerd);
       translate([-switchcontactl-switchl+0.01,-switchw/2+switchcontacty-switchcontactw/2,switchh/2-switchcontactheight-switchcontacth]) roundedbox(switchcontactl+cornerd/2,switchcontactw,switchcontacth,cornerd);
@@ -697,6 +703,12 @@ module shellydinadapter() {
 	    translate([dincasetopl-switchl-xtolerance,switchy-switchw/2-ytolerance,switchheight-switchh/2-ztolerance]) cube([switchl-wall+xtolerance+0.01,ytolerance+switchw+ytolerance,ztolerance+switchh+ztolerance]);
 	    translate([dincasetopl-switchl-xtolerance+hdiff,switchy-switchw/2-ytolerance+hdiff,switchheight-switchh/2-ztolerance]) cube([switchl-wall+xtolerance+0.01-hdiff*2,ytolerance+switchw+ytolerance-hdiff*2,ztolerance+switchh+ztolerance+hdiff]);
 	  }
+	  hull() {
+	    wd=switchsw-switchw;
+	    translate([dincasetopl-switchsl-switchlwall,switchy-switchw/2-ytolerance,switchheight-switchsh/2-ztolerance]) cube([switchsl+0.01,ytolerance+switchw+ytolerance,ztolerance+switchsh+ztolerance]);
+	    translate([dincasetopl-switchsl,switchy-switchsw/2-ytolerance,switchheight-switchsh/2-ztolerance]) cube([switchsl-switchswl+0.01,ytolerance+switchsw+ytolerance,ztolerance+switchsh+ztolerance]);
+	    translate([dincasetopl-switchsl-switchlwall+wd,switchy-switchsw/2+wd-ytolerance,switchheight-switchsh/2-ztolerance]) cube([switchsl-wd*2+0.01,ytolerance+switchsw-wd*2+ytolerance,ztolerance+switchsh+wd+ztolerance]);
+	  }
 	}
 
 	translate([dincasetopl-wall,switchy-switchw/2+1,switchheight-switchh/2-ztolerance]) supportbox(wall,switchw-2,ztolerance+switchh+ztolerance,0);
@@ -712,6 +724,7 @@ module shellydinadapter() {
     translate([contactl/2,dincasew/2-textdepth+0.01,dincaseh/2+contactblockw/2-contactw/2]) rotate([-90,-90,0]) linear_extrude(height=textdepth) text("L",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
 
     translate([contactl/2,-dincasew/2+textdepth-0.01,dincaseh/2+contactblockw/2-contactw/2]) rotate([90,90,0]) linear_extrude(height=textdepth) text("O",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
+    translate([contactl/2,-dincasew/2+textdepth-0.01,dincaseh/2-contactblockw/2+contactw/2]) rotate([90,90,0]) linear_extrude(height=textdepth) text("N",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
 
     if (powerswitch) {
       translate([shellyx+textsize,0,wall-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) scale([0.7,1,1]) text("SW",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
@@ -720,9 +733,6 @@ module shellydinadapter() {
     
     translate([shellyx-shellyxtolerance-wall-0.01,dincaseresetbuttony-dincaseresetbuttonspacew/2,wall]) cube([wall+0.02,dincaseresetbuttonspacew,dincaseresetbuttonspaceh]);
 
-    // DEBUGGING
-    if (0) translate([dincaseresetbuttonx,dincaseresetbuttony,-0.01]) cylinder(d=shellyresetd+0.5,h=shellyheight+1,$fn=60);
-    
     for (m=[0,1]) mirror([0,m,0]) {
 	//	translate([dinbaseh+wall,-dincasew/2+contactl/2,dincaseh/2]) rotate([90,0,90]) cylinder(d=contactblockscrewd,h=-dinbaseh-wall+dincasecontactx+0.01,$fn=60);
 
@@ -865,11 +875,11 @@ module shellydinadaptercover() {
     translate([dincasel-textdepth+0.01,dincasew/2-textsize,dincaseh/2+contactblockw/2-contactw/2]) rotate([180,90,180]) linear_extrude(height=textdepth) text("L",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
 
     // Out connectors
-    if (0) translate([dincasel-textsize,-dincasew/2+textdepth-0.01,dincaseh/2-contactblockw/2+contactw/2+1]) rotate([90,90,0]) linear_extrude(height=textdepth) scale([0.7,1,1]) text("SW",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
     translate([dincasel-textsize,-dincasew/2+textdepth-0.01,dincaseh/2+contactblockw/2-contactw/2]) rotate([90,90,0]) linear_extrude(height=textdepth) text("O",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
+    translate([dincasel-textsize,-dincasew/2+textdepth-0.01,dincaseh/2-contactblockw/2+contactw/2]) rotate([90,90,0]) linear_extrude(height=textdepth) text("N",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
     
-    if (0) translate([dincasel-textdepth+0.01,-dincasew/2+textsize,dincaseh/2-contactblockw/2+contactw/2+1]) rotate([0,90,0]) linear_extrude(height=textdepth) scale([0.7,1,1]) text("SW",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
     translate([dincasel-textdepth+0.01,-dincasew/2+textsize,dincaseh/2+contactblockw/2-contactw/2]) rotate([0,90,0]) linear_extrude(height=textdepth) text("O",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
+    translate([dincasel-textdepth+0.01,-dincasew/2+textsize,dincaseh/2-contactblockw/2+contactw/2]) rotate([0,90,0]) linear_extrude(height=textdepth) text("N",font="Liberation Sans:style=Bold",size=labelsize,halign="center", valign="center");
     
   }
 }
@@ -881,7 +891,7 @@ if (print==0) {
 	shellydinadapter();
 #	dincaseresetbutton(0);
 	dinclip();
-	//	shellydinadaptercover();
+	shellydinadaptercover();
       }
     
       //      translate([shellyx,shellyy,shellyheight]) #render() shelly(); //xxxx
@@ -893,8 +903,8 @@ if (print==0) {
     }
 
     if (debug) {
-      translate([-0.1,-13,0]) cube([200,200,200]); // Debug bottom side
-      //translate([-0.1,-100,0]) cube([200,200,27]); // Debug Right side
+      //translate([-0.1,-13,0]) cube([200,200,200]); // Debug bottom side
+      translate([-0.1,-100,0]) cube([200,200,27]); // Debug Right side
       //translate([12,-13-22,-50]) cube([200,200,200]); // Debug screw hole
       //translate([-0.1,-100,0]) cube([200,200,20]); // Debug dinclip
       //translate([12,-100,11]) cube([200,200,200]); // Debug shelly position
