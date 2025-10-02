@@ -45,21 +45,21 @@ module cylindervoids(diameter1,diameter2,height,distancein,voidwin,strong) {
 
 module ruuvireika(height,diameter,countersink,strong,strongl) {
   makestrong=(strong=="")?1:strong;
-  sl=(strongl=="")?height:strongl;
+  sl=(!strongl || strongl=="")?height:strongl;
   
   hull() {
-    translate([0,0,diameter/2]) cylinder(h=height-diameter/2,d=diameter-0.1,$fn=90); // Slightly smaller hole
-    translate([0,0,0]) cylinder(h=diameter/2,d2=diameter-0.1,d1=1,$fn=90); // screw head
+    translate([0,0,diameter/2]) cylinder(h=height-diameter/2,d=diameter,$fn=90);
+    translate([0,0,0]) cylinder(h=diameter/2,d2=diameter,d1=1,$fn=90); // Sharp end
   }
 
   if (makestrong) {
     intersection() {
       union() {
 	maxd=diameter*countersinkdiametermultiplier-(diameter+0.3)+1;
-	for (d=[diameter+0.8:1:diameter*3-0.6]) {
+	for (d=[diameter+2:1.2:diameter*3-2]) {
 	  di=d;
-	  bottom=(d<diameter*3*0.6-0.8)?-diameter/3*3+0.4:-diameter/3*3+(d-diameter)*1-diameter*0.6+0.4;
-	  top=countersink?((d>countersinkd(diameter))?height-0.4:height-0.8-diameter+d/2-0.4):height-0.4;
+	  bottom=(d<diameter*3*0.6-0.8)?-diameter/3*3+0.8:-diameter/3*3+(d-diameter)*1-diameter*0.6+0.8;
+	  top=countersink?((d>countersinkd(diameter))?height-0.8:height-0.8-diameter+d/2-0.8):height-0.8;
 	  translate([0,0,0])
 	    difference() {
 	    translate([0,0,bottom]) cylinder(h=top-bottom,d=di+0.03,$fn=20);
@@ -68,7 +68,7 @@ module ruuvireika(height,diameter,countersink,strong,strongl) {
 	}
       }
 
-      translate([0,0,height-strongl+0.4]) cylinder(d=diameter*countersinkdiametermultiplier+3,h=sl-0.8);
+      translate([0,0,height-sl+1.2]) cylinder(d=diameter*countersinkdiametermultiplier+1,h=sl-2.4);
     }
   }
 
