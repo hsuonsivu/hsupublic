@@ -4,7 +4,7 @@ debug=0;
 adhesion=1;
 tube=0;
 
-dtolerance=0.5;
+dtolerance=0.6;
 
 $fn=90;
 
