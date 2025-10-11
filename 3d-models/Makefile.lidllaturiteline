@@ -1,16 +1,20 @@
 SOURCE=lidllaturiteline.scad
 DEPENDS=hsu.scad Makefile.lidllaturiteline
 
-all: lidllaturitelinedesk.stl lidllaturitelineteslamodels.stl lidllaturitelinebase.stl
+all: lidllaturitelinedesk.stl lidllaturitelineteslamodels.stl lidllaturitelinebase.stl lidllaturitelinesingle.stl lidllaturitelineheightadjuster.stl
 
 lidllaturitelinedesk.stl: $(SOURCE) $(DEPENDS)
-	openscad -D teslamodels=0 -D print=1 -o $@ $(SOURCE)
+	openscad -D phones=2 -D teslamodels=0 -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
 lidllaturitelineteslamodels.stl: $(SOURCE) $(DEPENDS)
-	openscad -D teslamodels=1 -D print=1 -D strong=1 -o $@ $(SOURCE)
+	openscad -D phones=2 -D teslamodels=1 -D print=1 -D strong=1 -o $@ $(SOURCE)
 	echo $@ built.
 
- lidllaturitelinebase.stl: $(SOURCE) $(DEPENDS)
-	openscad -D teslamodels=1 -D print=3 -D strong=1 -o $@ $(SOURCE)
+lidllaturitelinesingle.stl: $(SOURCE) $(DEPENDS)
+	openscad -D phones=1 -D print=1 -D strong=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+ lidllaturitelineheightadjuster.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=3 -D strong=1 -o $@ $(SOURCE)
 	echo $@ built.
