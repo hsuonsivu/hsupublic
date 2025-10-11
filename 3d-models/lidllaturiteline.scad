@@ -7,11 +7,11 @@ include <hsu.scad>
 $fn=60;
 
 print=1;
-teslamodels=0;
+teslamodels=1;
 abs=0;
 cornerd=2;
 
-strong=(print>0)?1:0;
+strong=(print>0)?0:0;
 
 versiontext=str("V1.6",teslamodels?"S":"");;
 textdepth=0.8;

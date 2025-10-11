@@ -14,7 +14,7 @@ support=1;
 
 textdepth=0.7;
 textsize=7;
-versiontext="v1.8";
+versiontext="v1.9";
 textfont="Liberation Sans:style=Bold";
 labelsize=5;
 
@@ -212,7 +212,7 @@ dinclippulloutw=wall+dinclippulloutholew+wall*3;
 
 switchw=20;
 switchh=6.8;
-switchl=14.5;
+switchl=16; // 14.5; 15, but need some tolerance
 switchsw=21.4; // Locking width
 switchsh=5.5; // Locking h
 switchsl=10; // locking clip l
@@ -697,21 +697,21 @@ module shellydinadapter() {
     if (powerswitch) {
       difference() {
 	union() {
-	  translate([dincasetopl-switchl-xtolerance,switchy-switchw/2-ytolerance,switchheight-switchh/2-ztolerance]) cube([switchl+xtolerance+0.01,ytolerance+switchw+ytolerance,ztolerance+switchh+ztolerance]);
+	  translate([dincasetopl-switchl-xtolerance,switchy-switchw/2-ytolerance,switchheight-switchh/2-ztolerance]) cube([switchl+xtolerance+0.01,ytolerance+switchw+ytolerance,ztolerance+switchh+ztolerance*2]);
 	  hdiff=shellyheight-(switchheight+switchh/2);
 	  hull() {
-	    translate([dincasetopl-switchl-xtolerance,switchy-switchw/2-ytolerance,switchheight-switchh/2-ztolerance]) cube([switchl-wall+xtolerance+0.01,ytolerance+switchw+ytolerance,ztolerance+switchh+ztolerance]);
-	    translate([dincasetopl-switchl-xtolerance+hdiff,switchy-switchw/2-ytolerance+hdiff,switchheight-switchh/2-ztolerance]) cube([switchl-wall+xtolerance+0.01-hdiff*2,ytolerance+switchw+ytolerance-hdiff*2,ztolerance+switchh+ztolerance+hdiff]);
+	    translate([dincasetopl-switchl-xtolerance,switchy-switchw/2-ytolerance,switchheight-switchh/2-ztolerance]) cube([switchl-wall+xtolerance+0.01,ytolerance+switchw+ytolerance,ztolerance+switchh+ztolerance*2]);
+	    translate([dincasetopl-switchl-xtolerance+hdiff,switchy-switchw/2-ytolerance+hdiff,switchheight-switchh/2-ztolerance]) cube([switchl-wall+xtolerance+0.01-hdiff*2,ytolerance+switchw+ytolerance-hdiff*2,ztolerance+switchh+ztolerance*2+hdiff]);
 	  }
 	  hull() {
 	    wd=switchsw-switchw;
-	    translate([dincasetopl-switchsl-switchlwall,switchy-switchw/2-ytolerance,switchheight-switchsh/2-ztolerance]) cube([switchsl+0.01,ytolerance+switchw+ytolerance,ztolerance+switchsh+ztolerance]);
-	    translate([dincasetopl-switchsl,switchy-switchsw/2-ytolerance,switchheight-switchsh/2-ztolerance]) cube([switchsl-switchswl+0.01,ytolerance+switchsw+ytolerance,ztolerance+switchsh+ztolerance]);
-	    translate([dincasetopl-switchsl-switchlwall+wd,switchy-switchsw/2+wd-ytolerance,switchheight-switchsh/2-ztolerance]) cube([switchsl-wd*2+0.01,ytolerance+switchsw-wd*2+ytolerance,ztolerance+switchsh+wd+ztolerance]);
+	    translate([dincasetopl-switchsl-switchlwall,switchy-switchw/2-ytolerance,switchheight-switchsh/2-ztolerance]) cube([switchsl+0.01,ytolerance+switchw+ytolerance,ztolerance+switchsh+ztolerance*2]);
+	    translate([dincasetopl-switchsl,switchy-switchsw/2-ytolerance,switchheight-switchsh/2-ztolerance]) cube([switchsl-switchswl+0.01,ytolerance+switchsw+ytolerance,ztolerance+switchsh+ztolerance*2]);
+	    translate([dincasetopl-switchsl-switchlwall+wd,switchy-switchsw/2+wd-ytolerance,switchheight-switchsh/2-ztolerance]) cube([switchsl-wd*2+0.01,ytolerance+switchsw-wd*2+ytolerance,ztolerance+switchsh+wd+ztolerance*2]);
 	  }
 	}
 
-	translate([dincasetopl-wall,switchy-switchw/2+1,switchheight-switchh/2-ztolerance]) supportbox(wall,switchw-2,ztolerance+switchh+ztolerance,0);
+	translate([dincasetopl-wall,switchy-switchw/2+1,switchheight-switchh/2-ztolerance]) supportbox(wall,switchw-2,ztolerance+switchh+ztolerance*2,0);
       }
     }
     
@@ -911,7 +911,7 @@ if (print==0) {
     }
   }
     
-  if (powerswitch) #translate([dincasetopl,switchy,switchheight]) switch();
+  //  #if (powerswitch) translate([dincasetopl,switchy,switchheight]) switch();
       
   if (0) {
     screwtower(basescrewx,basescrewy);
