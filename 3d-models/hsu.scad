@@ -528,7 +528,7 @@ module onehinge(diameter,width,axledepth,cutout,ytolerance,dtolerance) {
 
 // Used to work out placement of components being printed
 module printareacube(printer) {
-  xysize=(printer=="ankermake")?232:(print=="anycubic")?380:380; // No other working printers at the moment
+  xysize=(printer=="ankermake")?235:(print=="anycubic")?380:380; // No other working printers at the moment
   height=(printer=="ankermake")?249:(print=="anycubic")?380:380; // No other working printers at the moment
   xsize=xysize; // Leave some space for safety
   ysize=xysize;
