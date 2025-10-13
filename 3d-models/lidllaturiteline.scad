@@ -9,7 +9,9 @@ $fn=60;
 print=0;
 teslamodels=0;
 abs=0;
-phones=1;
+phones=2;
+lighten=0;
+lmargin=8;
 
 // Add springs to base shift to keep phones better in place. Does not work very well with some wireless chargers,
 // as the phone is not always fully seated because of this.
@@ -46,7 +48,7 @@ mirroring=(phones==2?[0,1]:[0]);
 chargingcoildistance=(phones==2?95:0);
 chargingcoildiameter=(phones==2?64:chargerwidth);
 usbholewidth=10;
-usbconnectorl=25;
+usbconnectorl=35;
 usbholethickness=chargerthickness;
 usbholed=usbholethickness;
 usbconnectorw=18; // USB A, really uses C for single phone base
@@ -260,7 +262,7 @@ module body() {
 	    right=width/2-legwidth;
 	    w=right-left;
 	    // This adds one hour to printing time and saves a whopping 2 grams of filament...
-	    if (0) for (m=[0,1]) mirror([m,0,0]) {
+	    if (lighten) for (m=[0,1]) mirror([m,0,0]) {
 		translate([left,wall,chargerthickness-ratchetthickness-ztolerance-0.01]) rotate([-90,0,0]) lighten(w,bottomheight+phonebottomlevel-wall*2,backthickness+chargerthickness-ratchetthickness-wall,wall,thinwall,maxbridge,"up");
 	      }
 	  }
@@ -331,7 +333,7 @@ module body() {
 	  translate([-chargingcoildistance/2-microphoneholewidth/2,-ytolerance,backthickness+chargerthickness]) rotate([0,0,0]) cube([microphoneholewidth,microphoneholewidth,microphoneholedepth]);
 	}
       
-      // USB cable tunnel
+      // USB cable tunnel (can go through back or front)
       if (phones==2) {
 	union() {
 	  w=chargingcoildistance-heightbasewidth+0.01;//divideredge;
@@ -340,12 +342,19 @@ module body() {
 	    translate([-w/2,bottomheight+phonebottomlevel+cornerd/2,-0.01]) triangle(w,w/2+usbholed/2,backthickness+usbholethickness,17);
 	    for (x=[-usbholewidth/2+usbholed/4,usbholewidth/2-usbholed/4]) {
 	      for (z=[0,backthickness+usbholed/2]) {
-		translate([x,bottomheight+phonebottomlevel-usbconnectorl,z]) rotate([-90,0,0]) cylinder(d=usbholed,h=usbconnectorl+cornerd/2,$fn=60);
+		if (z > 0) {
+		  translate([x,bottomheight+phonebottomlevel-usbconnectorl,z]) rotate([-90,0,0]) cylinder(d=usbholed,h=usbconnectorl+cornerd/2,$fn=60);
+		} else {
+		  translate([x,-usbholed-0.1,z]) rotate([-90,0,0]) cylinder(d=usbholed,h=usbconnectorl+bottomheight+usbholed,$fn=60);
+		}
 	      }
 	    }
+
+	    t=usbholewidth/1.3;
+	    if (angle<45) {
+	      translate([-w/2-0.02,bottomheight+phonebottomlevel-usbconnectorl,backthickness+usbholethickness-0.01]) triangle(w+0.04,usbconnectorl+0.1,usbconnectorl*sin(45-angle),11);
+	    }
 	  }
-	  t=usbholewidth/1.3;
-	  translate([-w/2-0.01,bottomheight+phonebottomlevel+1-usbconnectorl,backthickness+usbholethickness-0.01]) triangle(w+0.02,usbconnectorl+1,usbconnectorl*sin(45-angle),11);
 	}
       } else {
 	hull() {
@@ -363,7 +372,7 @@ module body() {
 	  for (y=[screwd*3/2,height*cos(angle)-screwd*3/2]) {
 	    intersection() {
 	      translate([-width/2+legposition+screwd*3/2,y,screwlength-0.01]) rotate([180,0,0]) {
-		ruuvireika(screwlength,screwd,1,strong);
+		render() ruuvireika(screwlength,screwd,1,strong);
 	      }
 
 	      translate([-width/2+legposition+screwd*3/2,y,-0.01]) union() {
@@ -383,10 +392,10 @@ module body() {
     // Lightening holes
     if (0) hull() {
       y=cos(angle)*height-maxbridge*2;
-      z=sin(angle)*height-maxbridge*2;
-      translate([-width/2,y,z+bottomlift]) cube([width,8,0.1]);
-      translate([-width/2,y-z+4+8/2+10,bottomlift+8/2+5]) rotate([0,90,0]) cylinder(d=8,h=width);
-      translate([-width/2,y+maxbridge/2,bottomlift+8/2+5]) rotate([0,90,0]) cylinder(d=8,h=width);
+      z=sin(angle)*height-maxbridge*2-lmargin*2;
+      translate([-width/2,y,z+bottomlift]) cube([width,1,0.1]);
+      translate([-width/2,y-z+4+8/2+10+lmargin,bottomlift+8/2+5+lmargin]) rotate([0,90,0]) cylinder(d=8,h=width);
+      translate([-width/2,y+maxbridge/2-lmargin,bottomlift+8/2+5+lmargin]) rotate([0,90,0]) cylinder(d=8,h=width);
     }
   }
 }
