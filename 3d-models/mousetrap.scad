@@ -9,9 +9,9 @@
 
 include <hsu.scad>
 
-print=0;
+print=4;
 adhesion=(print>0 && print<6)?1:0;
-debug=0;
+debug=print>0?0:1;
 antiwarp=(print>0)?1:0;
 antiwarpdistance=4; //3 mm
 antiwarpw=0.8;
@@ -96,7 +96,7 @@ boxy=swingtunnelw/2+wall-boxw;
 boxcrosssupportheight=boxh-wall-boxincornerd/2-wall-ztolerance;
 boxcrosssupporth=wall;
 boxcrosssupportl=10;
-boxcrosssupportx=boxx+boxl/2-swingtunnelw/2+clipl;
+boxcrosssupportx=boxx+boxl/2-swingtunnelw/2; //+clipl
 
 boxinsupporth=10;
 
@@ -147,6 +147,169 @@ boxlockpinholeytable=[boxlocky+5+boxlockpind/2,boxlocky+boxlockw-5-boxlockpind/2
 boxclipxpositions=[boxx+boxl/4-clipl,boxx+boxl/2-clipl,boxx+boxl-boxl/4-clipl];
 
 mouseh=midholel; // Size of tunnels for a mouse to crawl through
+
+baitboxx=swingl/2+33;
+baitboxy=-14;
+baitboxangle=-35;
+
+baitboxwall=2;
+baitboxw=30;
+baitboxtopw=baitboxw/2;
+baitboxl=30;
+baitboxh=24;
+baitboxhandledepth=6;
+baitboxtopl=baitboxl+2*(baitboxh-baitboxwall)-2;
+baitboxcornerd=10;
+baitboxincornerd=baitboxcornerd-baitboxwall;
+baitboxinw=baitboxw-baitboxwall*2;
+baitboxinh=baitboxh-baitboxwall*2;
+baitboxinl=baitboxl-baitboxwall*2;
+baitboxtopinl=baitboxinl+2*baitboxh-baitboxwall*2;
+baitboxdoorcornerd=2;
+baitboxdoorw=baitboxw-baitboxcornerd;
+baitboxdoortopheight=baitboxwall+(baitboxinw-maxbridge)/2-1;
+baitboxdoorh=baitboxh-baitboxhandledepth-baitboxdoortopheight-1;
+baitboxflangeextend=2;
+baitboxflangecornerd=baitboxcornerd+baitboxflangeextend;
+baitboxflangew=baitboxw+baitboxflangeextend*2;
+baitboxflangetopw=baitboxw/2+baitboxflangeextend*2;
+baitboxflangel=baitboxl+baitboxflangeextend;
+baitboxflangetopl=baitboxtopl;//+baitboxflangeextend;
+//baitboxflangetopl=baitboxtopl+baitboxwall*2+cornerd*2+xtolerance*2;
+baitboxflangeh=2;
+baitboxhandled=maxbridge+17;
+baitboxhandlebottomd=maxbridge+10;
+
+baitboxhandlescale=1.6; // Scale up lengthwise
+baitboxclipdepth=0.8+max(xtolerance,ytolerance);
+baitboxclipd=baitboxwall+baitboxclipdepth;
+baitboxclipl=12;
+baitboxclipheight=baitboxh/2+2;
+baitboxslotl=baitboxl+xtolerance*2;
+baitboxslottopl=baitboxtopl+xtolerance*2;
+baitboxslotw=baitboxw+ytolerance*2;
+baitboxslottopw=baitboxw/2+ytolerance*2;
+baitboxsloth=baitboxh+ztolerance;
+
+baitboxholed=2;
+baitboxholedistance=baitboxholed+1.2;
+
+module baitboxslot() {
+  difference() {
+    union() {
+      for (m=[0,1]) mirror([0,m,0]) translate([0,-baitboxw/2+baitboxwall-baitboxclipdepth,baitboxclipheight]) tubeclip(baitboxclipl+baitboxwall*2,baitboxclipd+baitboxwall*2,0);
+      intersection() {
+	hull() {
+	  translate([-baitboxslotl/2-baitboxwall,-baitboxslotw/2-baitboxwall,baitboxh-baitboxcornerd/2]) roundedbox(baitboxslotl+baitboxwall*2,baitboxslotw+baitboxwall*2,baitboxcornerd,baitboxcornerd);
+	  translate([-baitboxslotl/2-baitboxwall,-baitboxslotw/2-baitboxwall,-ztolerance-baitboxwall]) roundedbox(baitboxslotl+baitboxwall*2,baitboxslotw+baitboxwall*2,baitboxsloth+ztolerance+baitboxcornerd,baitboxcornerd);
+
+	  translate([-baitboxslottopl/2-baitboxwall,-baitboxslottopw/2-baitboxwall,baitboxh-baitboxcornerd/2]) roundedbox(baitboxslottopl+baitboxwall*2,baitboxslottopw+baitboxwall*2,baitboxcornerd,baitboxcornerd);
+	  translate([-baitboxslotl/2-baitboxwall,-baitboxslotw/2-baitboxwall,-ztolerance-baitboxwall]) roundedbox(baitboxslotl+baitboxwall*2,baitboxslotw+baitboxwall*2,baitboxsloth+ztolerance+baitboxcornerd,baitboxcornerd);
+	}
+	translate([-baitboxslottopl/2-baitboxwall,-baitboxslotw/2-baitboxwall,-ztolerance-baitboxwall]) cube([baitboxslottopl+baitboxwall*2,baitboxslotw+baitboxwall*2,baitboxsloth]);
+      }
+      intersection() {
+	hull() {
+	  h=baitboxflangeextend/2;
+	  translate([-baitboxflangetopl/2-baitboxwall*2,-baitboxflangetopw/2-baitboxwall-ytolerance,baitboxh-wall]) roundedboxxyz(baitboxflangetopl+baitboxwall*4,baitboxflangetopw+baitboxwall*2+ytolerance*2,baitboxflangeh+baitboxwall+ztolerance,baitboxflangecornerd,cornerd+xtolerance,2,90);
+	  translate([-baitboxflangel/2-baitboxwall,-baitboxflangew/2-baitboxwall-ytolerance,baitboxh-wall]) roundedboxxyz(baitboxflangel+baitboxwall*2,baitboxflangew+baitboxwall*2+ytolerance*2,baitboxflangeh+baitboxwall+ztolerance,baitboxflangecornerd,cornerd+xtolerance,2,90);
+	  translate([-baitboxflangetopl/2-baitboxwall,-baitboxflangetopw/2-baitboxwall-ytolerance,baitboxh-baitboxflangeh-baitboxwall-ztolerance]) roundedboxxyz(baitboxflangetopl+baitboxwall*2,baitboxflangetopw+baitboxwall*2+ytolerance*2,baitboxflangeh+baitboxwall+ztolerance,baitboxflangecornerd,cornerd+xtolerance,2,90);
+	  translate([-baitboxflangel/2-baitboxwall,-baitboxflangew/2-baitboxwall-ytolerance,baitboxh-baitboxflangeh-baitboxwall-ztolerance]) roundedboxxyz(baitboxflangel+baitboxwall*2,baitboxflangew+baitboxwall*2+ytolerance*2,baitboxflangeh+baitboxwall+ztolerance,baitboxflangecornerd,cornerd+xtolerance,2,90);
+	  //translate([-baitboxslottopl/2-baitboxwall,-baitboxslotw/2-baitboxwall,baitboxh-baitboxflangeh-baitboxwall-h]) roundedboxxyz(baitboxslottopl+baitboxwall*2,baitboxslotw+baitboxwall*2,baitboxflangeh+baitboxwall+ztolerance,baitboxflangecornerd+h,cornerd+xtolerance,2,90);
+	}
+
+	translate([-baitboxflangetopl/2-baitboxwall*2,-baitboxflangew/2-baitboxwall-ytolerance,baitboxh-baitboxflangeh-baitboxwall-ztolerance]) cube([baitboxflangetopl+baitboxwall*4,baitboxflangew+baitboxwall*2+ytolerance*2,baitboxflangeh+baitboxwall+ztolerance]);
+      }
+    }
+
+    for (m1=[0,1]) mirror([m1,0,0]) translate([-baitboxl/2-baitboxwall,0,baitboxh/2-baitboxdoorh/2]) {
+	rotate([0,-45,0]) for (m=[0,1]) mirror([0,m,0]) for (y=[0:baitboxholedistance:baitboxdoorw/2-baitboxholed/2]) {
+	  for (z=[0:baitboxholedistance:baitboxdoorh]) {
+	    translate([-baitboxwall*4-0.01,y,z]) {
+	      hull() {
+		rotate([0,90,0]) cylinder(d=baitboxholed,h=baitboxwall*4+0.02);
+		translate([0,-baitboxholed/4,-baitboxholed/2]) cube([baitboxwall*4+0.02,baitboxholed/2,baitboxholed]);
+	      }
+	      //rotate([0,90,0]) cylinder(d2=baitboxholed,d1=baitboxholed+1,h=0.2);
+	    }
+	  }
+	}
+    }
+  }
+}
+
+module baitboxslotcut() {
+  for (m=[0,1]) mirror([0,m,0]) translate([0,-baitboxw/2+baitboxwall-+baitboxclipdepth,baitboxclipheight]) tubeclip(baitboxclipl,baitboxclipd,1);
+
+  intersection() {
+    hull() {
+      h=2;
+      translate([-baitboxtopl/2-xtolerance,-baitboxtopw/2-xtolerance,baitboxh]) roundedboxxyz(baitboxtopl+xtolerance*2,baitboxtopw+xtolerance*2,h,baitboxcornerd,h/2,2,90);
+      translate([-baitboxl/2-xtolerance,-baitboxw/2-xtolerance,baitboxh]) roundedboxxyz(baitboxl+xtolerance*2,baitboxw+xtolerance*2,h,baitboxcornerd,h/2,2,90);
+      translate([-baitboxl/2-xtolerance,-baitboxw/2-xtolerance,-ztolerance]) roundedbox(baitboxl+xtolerance*2,baitboxw+xtolerance*2,baitboxh+ztolerance*2+baitboxcornerd/2,baitboxcornerd);
+    }
+    translate([-baitboxtopl/2-xtolerance,-baitboxw/2-xtolerance,-ztolerance]) cube([baitboxtopl+xtolerance*2,baitboxw+xtolerance*2,baitboxh+ztolerance*1]);
+  }
+  hull() {
+    translate([-baitboxflangel/2-xtolerance-baitboxflangeh-ztolerance,-baitboxflangew/2-ytolerance,baitboxh]) roundedboxxyz(baitboxflangel+xtolerance*2+(baitboxflangeh+ztolerance)*2,baitboxflangew+ytolerance*2,baitboxflangeh+baitboxcornerd+ztolerance,baitboxflangecornerd,cornerd+xtolerance,2,90);
+    translate([-baitboxflangetopl/2-xtolerance-baitboxflangeh-ztolerance,-baitboxflangetopw/2-ytolerance,baitboxh]) roundedboxxyz(baitboxflangetopl+xtolerance*2+(baitboxflangeh+ztolerance)*2,baitboxflangetopw+ytolerance*2,baitboxflangeh+baitboxcornerd+ztolerance,baitboxflangecornerd,cornerd+xtolerance,2,90);
+    translate([-baitboxflangel/2-xtolerance,-baitboxflangew/2-ytolerance,baitboxh-baitboxflangeh-ztolerance]) roundedboxxyz(baitboxflangel+xtolerance*2,baitboxflangew+ytolerance*2,baitboxflangeh+baitboxcornerd+ztolerance,baitboxflangecornerd,cornerd+xtolerance,2,90);
+    translate([-baitboxflangetopl/2-xtolerance,-baitboxflangetopw/2-ytolerance,baitboxh-baitboxflangeh-ztolerance]) roundedboxxyz(baitboxflangetopl+xtolerance*2,baitboxflangetopw+ytolerance*2,baitboxflangeh+baitboxcornerd+ztolerance,baitboxflangecornerd,cornerd+xtolerance,2,90);
+  }
+}
+
+module baitbox() {
+  difference() {
+    union() {
+      difference() {
+	union() {
+	  translate([-baitboxl/2,-baitboxw/2,0]) intersection() {
+	    roundedbox(baitboxl,baitboxw,baitboxh+baitboxcornerd/2,baitboxcornerd);
+	    cube([baitboxl,baitboxw,baitboxh]);
+	  }
+
+	  for (m=[0,1]) mirror([0,m,0]) translate([0,-baitboxw/2+baitboxwall-baitboxclipdepth,baitboxclipheight]) tubeclip(baitboxclipl,baitboxclipd,0);
+
+	  intersection() {
+	    hull() {
+	      translate([-baitboxflangel/2-baitboxflangeh,-baitboxflangew/2,baitboxh]) roundedboxxyz(baitboxflangel+baitboxflangeh*2,baitboxflangew,baitboxflangeh,baitboxflangecornerd,cornerd,2,90);
+	      translate([-baitboxflangetopl/2-baitboxflangeh,-baitboxflangetopw/2,baitboxh]) roundedboxxyz(baitboxflangetopl+baitboxflangeh*2,baitboxflangetopw,baitboxflangeh,baitboxflangecornerd,cornerd,2,90);
+	      translate([-baitboxflangel/2,-baitboxflangew/2,baitboxh-baitboxflangeh]) roundedboxxyz(baitboxflangel,baitboxflangew,baitboxflangeh,baitboxflangecornerd,cornerd,2,90);
+	      translate([-baitboxflangetopl/2,-baitboxflangetopw/2,baitboxh-baitboxflangeh]) roundedboxxyz(baitboxflangetopl,baitboxflangetopw,baitboxflangeh,baitboxflangecornerd,cornerd,2,90);
+	    }
+	    translate([-baitboxflangetopl/2-baitboxflangeh,-baitboxflangew/2,baitboxh-baitboxflangeh]) roundedboxxyz(baitboxflangetopl+baitboxflangeh*2,baitboxflangew,baitboxflangeh,baitboxflangecornerd,cornerd,2,90);
+	  }
+	}
+
+	difference() {
+	  hull() {
+	    hwdiff=maxbridge/2;
+	    hldiff=baitboxcornerd/2-baitboxwall;
+	    translate([-baitboxinl/2,-baitboxinw/2,baitboxwall+hwdiff]) roundedbox(baitboxinl,baitboxinw,baitboxinh-hwdiff,baitboxincornerd);
+	    translate([-baitboxinl/2,-baitboxinw/2+baitboxincornerd/2,baitboxwall+hldiff]) roundedbox(baitboxinl,baitboxinw-baitboxincornerd,baitboxinh-hldiff,baitboxincornerd);
+	    translate([-baitboxinl/2+baitboxcornerd/2,-maxbridge/2,baitboxwall]) cube([baitboxinl-baitboxcornerd,maxbridge,1]);
+	  }
+	}
+
+	hull() {
+	  translate([-baitboxl/2-baitboxdoorcornerd/2-0.01,-baitboxdoorw/2,baitboxdoortopheight]) roundedbox(baitboxwall+baitboxdoorcornerd+0.02,baitboxdoorw,baitboxdoorh,baitboxdoorcornerd-2);
+	  translate([-baitboxl/2-baitboxcornerd/2-0.01,-maxbridge/2,baitboxwall]) cube([baitboxwall+baitboxcornerd+0.02,maxbridge,maxbridge/2]);
+	}
+      }
+
+      translate([0,0,baitboxh-baitboxhandledepth-baitboxwall]) scale([baitboxhandlescale,1,1]) cylinder(d1=baitboxhandlebottomd+baitboxwall*2,d2=baitboxhandled+baitboxwall*2,h=baitboxhandledepth+baitboxwall);
+    }
+
+    difference() {
+      translate([0,0,baitboxh-baitboxhandledepth]) scale([baitboxhandlescale,1,1]) cylinder(d1=baitboxhandlebottomd,d2=baitboxhandled,h=baitboxhandledepth+0.01);
+      translate([-baitboxhandled/2*baitboxhandlescale-baitboxwall,-baitboxwall/2,baitboxh-baitboxhandledepth-baitboxwall]) scale([baitboxhandlescale,1,1]) roundedbox(baitboxhandled+baitboxwall*2,baitboxwall,baitboxhandledepth+baitboxwall,cornerd);
+      translate([-baitboxhandled/2*baitboxhandlescale-baitboxwall,-baitboxwall*1.5/2,baitboxh-baitboxwall]) scale([baitboxhandlescale,1,1]) roundedbox(baitboxhandled+baitboxwall*2,baitboxwall*1.5,baitboxwall,cornerd);
+    }
+    
+    translate([-baitboxflangetopl/2+1+baitboxflangeh,0,baitboxh-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(version, size=textsize-1, valign="bottom",halign="center",font="Liberation Sans:style=Bold");
+    translate([baitboxflangetopl/2-1-baitboxflangeh,0,baitboxh-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("Bait", size=textsize, valign="top",halign="center",font="Liberation Sans:style=Bold");
+  }
+}
 
 // Circular hole cut for swing movement
 module swingcut() {
@@ -869,9 +1032,9 @@ module storagecover() {
 	  difference() {
 	    union() {
 	      // Mouse storage
-	      roundedroof(storageboxx+wall,storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-boxincornerd-wall*3,storagew,boxincornerd/2,boxincornerd);
-	      roundedroof(storageboxx+wall,storageboxy+wall+wall,storageboxh-wall-boxincornerd/2,storagel,storagew-wall,boxincornerd/2,boxincornerd);
-	      roundedroof(storageboxx+storageboxl-wall-(storagel/2-boxincornerd-wall*3),storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-boxincornerd-wall*3,storagew-2,boxincornerd/2,boxincornerd);
+	      roundedroof(storageboxx+wall,storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-boxincornerd-wall*3,storagew,boxincornerd/2,boxincornerd+xtolerance);
+	      roundedroof(storageboxx+wall,storageboxy+wall+wall,storageboxh-wall-boxincornerd/2,storagel,storagew-wall,boxincornerd/2,boxincornerd+xtolerance);
+	      roundedroof(storageboxx+storageboxl-wall-(storagel/2-boxincornerd-wall*3),storageboxy+wall,storageboxh-wall-boxincornerd/2,storagel/2-boxincornerd-wall*3,storagew-2,boxincornerd/2,boxincornerd+xtolerance);
 	    }
 
 	    // Storage roof cut
@@ -1058,8 +1221,12 @@ module cover() {
       if (0) hull() {
 	translate([(-swingl/2)*cos(closedangle)+wall+wall+closeh*sin(closedangle),-swingw/2+wall*2,boxh-wall]) rotate([-90,0,0]) cylinder(h=closew,d=wall);
       }
+
+      translate([baitboxx,baitboxy,boxh-baitboxh]) rotate([0,0,baitboxangle]) baitboxslot();
     }
 
+    translate([baitboxx,baitboxy,boxh-baitboxh]) rotate([0,0,baitboxangle]) baitboxslotcut(); 
+   
     // Cover locking clips
     for (x=boxclipxpositions) {
       for (y=[boxy+clipd/2,boxy+boxw-clipd/2]) {
@@ -1151,7 +1318,7 @@ if (print==0) {
     //if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
     //if (debug) translate([boxx,-swingtunnelw/2-swingtunnelw-50,boxh-wall*15]) cube([590,swingtunnelw*2+midwallw+50,100]);//axleheight+1
     //if (debug) translate([storageboxx+storageboxl/2-0,storageboxy,50]) cube([storageboxl+50,storageboxw,100]);
-    if (debug) translate([boxx,-swingtunnelw/2-midwallw-swingtunnelw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
+    if (debug) translate([boxx-30,-swingtunnelw/2-midwallw-swingtunnelw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
     //if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
     //if (debug) translate([boxx-50,0,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
   }
@@ -1191,20 +1358,24 @@ if (print==3) {
  }
 
 if (print==4) {
-  rotate([0,0,45])
-  intersection() {
-    translate([0,0,boxh]) rotate([180,0,0]) {
-      translate([-boxx,-boxy-boxw/2,0]) cover();
-    }
-    d=(boxw)/sqrt(2);
-    d2=(boxw)/sqrt(2)+wall*2;
-    hull() {
-      translate([wall+ytolerance*2-0.3,0,0]) rotate([0,0,45]) translate([-d/2,-d/2,0]) cube([d,d,boxh]);
-      translate([boxl-tunnelendx/2+5.95,0,0]) rotate([0,0,45]) translate([-d/2,-d/2,0]) cube([d,d,boxh]);
+  difference() {
+    rotate([0,0,45])
+      intersection() {
+      translate([0,0,boxh]) rotate([180,0,0]) {
+	translate([-boxx,-boxy-boxw/2,0]) cover();
+      }
+      d=(boxw)/sqrt(2);
+      d2=(boxw)/sqrt(2)+wall*2;
+      hull() {
+	translate([wall+ytolerance*2-0.3,0,0]) rotate([0,0,45]) translate([-d/2,-d/2,0]) cube([d,d,boxh]);
+	translate([boxl-tunnelendx/2+5.95,0,0]) rotate([0,0,45]) translate([-d/2,-d/2,0]) cube([d,d,boxh]);
 
-      translate([wall+ytolerance*2+0.5,0]) rotate([0,0,45]) translate([-d2/2,-d2/2,wall]) cube([d2,d2,boxh]);
-      translate([boxl-tunnelendx/2+9,0,0]) rotate([0,0,45]) translate([-d2/2,-d2/2,wall]) cube([d2,d2,boxh]);
+	translate([wall+ytolerance*2+0.5,0]) rotate([0,0,45]) translate([-d2/2,-d2/2,wall]) cube([d2,d2,boxh]);
+	translate([boxl-tunnelendx/2+9,0,0]) rotate([0,0,45]) translate([-d2/2,-d2/2,wall]) cube([d2,d2,boxh]);
+      }
     }
+
+    #    translate([73,73,0]) printareacube("ankermake");
   }
  }
 
@@ -1214,9 +1385,45 @@ if (print==5) {
 
 if (print==6) {
   intersection() {
-    mousestorage();
     storagecover();
-    //cover();
-    //mechanics(angle,lockangle);
+    mousestorage();
+    cover();
+    mechanics(angle,lockangle);
   }
  }
+
+if (print==7) {
+  intersection() {
+    union() {
+      if (debug) {
+	baitbox();
+	difference() {
+	  baitboxslot();
+	  baitboxslotcut();
+	}
+      } else {
+	translate([0,0,baitboxh]) rotate([180,0,0]) baitbox();
+	translate([0,baitboxflangew/2+baitboxflangew/2+ytolerance+baitboxwall+0.5,baitboxflangetopl/2+baitboxwall*2])	rotate([0,90,0]) {
+	  difference() {
+	    union() {
+	      baitboxslot();
+	      for (y=[-baitboxw/2,baitboxw/2-2]) {
+		translate([0,y,0]) cube([baitboxflangetopl/2+baitboxwall*2,2,baitboxh-cornerd]);
+	      }
+	    }
+	    baitboxslotcut();
+	  }
+	}
+      }
+    }
+    
+    if (debug) translate([0,0,0]) cube([100,100,100]);
+    //if (debug) translate([-50,0,-50]) cube([100,100,150]);
+  }
+
+ }
+
+if (print==4 || print==8) {
+  translate([113,0,baitboxh]) rotate([180,0,45]) baitbox();
+ }
+

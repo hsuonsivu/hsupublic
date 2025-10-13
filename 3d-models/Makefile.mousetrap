@@ -1,6 +1,7 @@
 SOURCE=mousetrap.scad
 DEPENDS=hsu.scad Makefile.mousetrap
-ALL=mousetrapstoragebox.stl mousetrapmechanics.stl mousetrapstoragecover.stl mousetrapcover.stl mousetrapdoor.stl
+ALL=mousetrapstoragebox.stl mousetrapmechanics.stl mousetrapstoragecover.stl mousetrapcover.stl mousetrapdoor.stl baitboxtest.stl baitbox.stl
+
 IMAGES=mousetrap.jpg mousetrap.png
 
 all: $(ALL)
@@ -44,5 +45,13 @@ mousetrapcover.stl: $(SOURCE) $(DEPENDS)
 
 mousetrapdoor.stl: $(SOURCE) $(DEPENDS)
 	openscad -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+
+baitboxtest.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=7 -o $@ $(SOURCE)
+	echo $@ built.
+
+baitbox.stl: $(SOURCE) $(DEPENDS)
+	openscad -D print=8 -o $@ $(SOURCE)
 	echo $@ built.
 
