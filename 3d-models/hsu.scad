@@ -157,7 +157,7 @@ module roundedtriangle(x,y,z,mode,cornerd) {
 	    //translate([c/2+xc/2,y-c/2,c/2]) rotate([90,0,0]) linear_extrude(height=y-yc) polygon(points=[[0,0],[x-c-xc/2,z-c-zc/2],[x-c-yc/2,0]]);
 	    xx=(x-c)*z/x;
 	    zz=(z-c)*x/z;
-	    echo("xx ",xx, " zz ",zz);
+	    //echo("xx ",xx, " zz ",zz);
 	    translate([c/2,y-c/2,c/2]) rotate([90,0,0]) linear_extrude(height=y-c) polygon(points=[[0,0],[x-c,z-c],[x-c,0]]);
 	    if (0) hull() {
 	    translate([0,0,0]) cube([xc/2,y,zc/2]);
@@ -176,12 +176,12 @@ module roundedtriangle(x,y,z,mode,cornerd) {
 	  //translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,0]]);
 	  a=atan2(x,z); echo(x,z,a);
 
-	  echo("a, cos ",a, cos(a)," sin ",sin(a), " tan ", tan(a));
+	  //echo("a, cos ",a, cos(a)," sin ",sin(a), " tan ", tan(a));
 	  
 	  xc=sin(a)*c;
 	  zc=cos(a)*c;
 
-	  echo("c, c/2 ",c,c/2," xc ",xc," zc ",zc,sqrt(xc*xc+zc*zc));
+	  //echo("c, c/2 ",c,c/2," xc ",xc," zc ",zc,sqrt(xc*xc+zc*zc));
 	  //translate([c/2,y-c/2,c/2]) rotate([90,0,0]) linear_extrude(height=y-c) polygon(points=[[0,0],[0,z-c-zc],[x-c-xc,0]]);
 	  //translate([c/2,y-c/2,c/2]) rotate([90,0,0]) linear_extrude(height=y-c) polygon(points=[[0,0],[0,z-c],[x-c/2,0]]);
 	  r=sqrt((x-c)*(x-c)+(z-c)*(z-c));
@@ -518,8 +518,10 @@ module axle(diameter,width,axledepthin,cutout,ytolerance,dtolerance) {
 module onehinge(diameter,width,axledepth,cutout,ytolerance,dtolerance) {
   if (cutout) {
     difference() {
-      translate([0,0,0]) axle(diameter,width,axledepth,cutout,ytolerance,dtolerance);
-      if (cutout==1) translate([0,0,0]) axle(diameter,width,axledepth,cutout,ytolerance,dtolerance);
+      union() {
+	translate([0,0,0]) axle(diameter,width,axledepth,cutout,ytolerance,dtolerance);
+	if (cutout==2) translate([0,-width/2-0.01,0]) rotate([-90,0,0]) cylinder(d=diameter+dtolerance,h=width+0.02,$fn=90);//axle(diameter,width,axledepth,cutout,ytolerance,dtolerance);
+      }
     }
   } else {
     translate([0,0,0]) axle(diameter,width,axledepth,cutout,0,0);
@@ -622,6 +624,11 @@ module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
 module supportbox(xsize,ysize,height,onbed) {
   z=onbed?0:0.2;
   h=onbed?height-0.2:height-0.4;
+
+  // If on bed, make a surface for adhesion
+  if (onbed) {
+    cube([xsize,ysize,0.2]);
+  }
   
   // Corners
   for (z=[0,height-0.2]) {
@@ -634,22 +641,25 @@ module supportbox(xsize,ysize,height,onbed) {
     if (xsize >= ysize) translate([xsize-0.2-0.4,-0.2,z]) cube([0.8,0.4,0.2]);
     if (xsize < ysize)translate([xsize-0.2,-0.2,z]) cube([0.4,0.8,0.2]);
     
-    xsteps=floor(xsize/5);
+    xsteps=floor(xsize/1.2);
+    //echo(xsteps);
     if (xsteps > 0) {
       xstep=xsize/xsteps;
       for (x=[xstep:xstep:xsize-xstep]) {
+	//echo(x);
 	translate([x-0.2,-0.2,z]) cube([0.4,0.4,0.2]);
 	translate([x-0.2,ysize-0.2,z]) cube([0.4,0.4,0.2]);
+	if (z==0) translate([x-0.2,-0.2,0.2]) cube([0.4,ysize+0.4,h-0.2]);
       }
     }
 
-    ysteps=floor(ysize/5);
+    ysteps=floor(ysize/2.5);
     if (ysteps > 0) {
       ystep=ysize/ysteps;
       for (y=[ystep:ystep:ysize-ystep]) {
 	translate([-0.2,y-0.2,z]) cube([0.4,0.4,0.2]);
 	translate([xsize-0.2,y-0.2,z]) cube([0.4,0.4,0.2]);
-	if (z==0) translate([-0.2,y-0.2,0.2]) cube([xsize+0.4,0.4,h]);
+	if (z==0) translate([-0.2,y-0.2,0.2]) cube([xsize+0.4,0.4,h-0.2]);
       }
     }
   }
@@ -750,3 +760,34 @@ module flatspring(l,w,h,width,coils,cornerend) {
     cube([w,l,h]);
   }
 }
+
+function textlen(t,fontsize) = textmetrics(text=t,font="Liberation Sans:style=Bold",size=fontsize,valign="top",halign="center").size[0];
+
+// Centered by width,length
+// Note: upper step is outside l, so l should be only the steps l
+module portaat(l,w,h,n) {
+  zstep=h/n;
+  xstep=l/(n-1);
+
+  translate([-l/2,-w/2,0]) {
+    intersection() {
+      cube([l+xstep,w,h]);
+      union() {
+	for (i=[0:1:n-1]) {
+	  translate([i*xstep,0,i*zstep]) roundedbox(xstep,w,zstep,cornerd);
+	}
+
+	hull() {
+	  for (i=[0,n-1]) {
+	    translate([i*xstep,0,(i-1)*zstep]) roundedbox(xstep,w,zstep,cornerd);
+	  }
+	  if (l>h) {
+	    lw=l-h;
+	    translate([l-h,w/2-lw/2,-zstep]) roundedbox(xstep,lw,zstep,cornerd);
+	  }
+	}
+      }
+    }
+  }
+}
+
