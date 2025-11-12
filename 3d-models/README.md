@@ -1300,4 +1300,12 @@ switch.
 It has reset button from front panel, but it lacks feel and may need
 more testing.
 
+### pussinsulkija.scad
+
+To make yet another version of one the most common objects in the
+3D design space, this is my take on bag clip.  As 3D printed materials
+tend to flex a bit, male grabbing part is slightly curved to
+compensate the flexing.  Adjust l for making longer versions for
+larger bags.
+
 
