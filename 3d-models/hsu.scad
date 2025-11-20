@@ -167,14 +167,7 @@ module roundedtriangle(x,y,z,mode,cornerd) {
 	} else if (mode==1) {
 	  translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,z]]);
 	} else if (mode==2) {
-	  //xx=(x-c)*z/x;
-	  //zz=(z-c)*x/z;
-	  //zz=sqrt(c*c/(1+(x/z)*(x/z)));
-	  //xx=zz*(x/z);
-	  //echo(x,xx,z,zz,x/z,xx/zz);
-	  //echo(sqrt(xx*xx+zz*zz)*z/x);
-	  //translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,0]]);
-	  a=atan2(x,z); echo(x,z,a);
+	  a=atan2(x,z); //echo(x,z,a);
 
 	  //echo("a, cos ",a, cos(a)," sin ",sin(a), " tan ", tan(a));
 	  
@@ -598,14 +591,14 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
     
     translate([0,0,cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
       intersection() {
-	circle(d=cornerd);
+	circle(d=cornerd,$fn=90);
 	translate([0,-diameter/2]) square([diameter,diameter]);
       }
     }
     
     translate([0,0,height-cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
       intersection() {
-	circle(d=cornerd);
+	circle(d=cornerd,$fn=90);
 	translate([0,-diameter/2]) square([diameter,diameter]);
       }
     }
@@ -790,4 +783,73 @@ module portaat(l,w,h,n) {
     }
   }
 }
+
+function length_and_depth_to_diameter(l,depth) = 2*(depth/2+l*l/8/depth);
+
+knobwall=2;
+knobxtolerance=0.3;
+knobytolerance=0.3;
+knobztolerance=0.3;
+knobshaftnarrowing=0.6;
+knobshaftnarrowheight=1.5;
+knobshaftnarrowh=2;
+knobbridge=4;
+
+module knobaxle(knobd,knobh) {
+  knobshaftd=knobd-5;
+  knobcornerd=knobd/10;
+
+  knobshafth=knobh-knobwall-knobztolerance;
+  knobshaftnarrowd=knobshaftd-knobshaftnarrowing*2;
+  hull() {
+    translate([0,0,0]) cylinder(d=knobshaftd,h=knobshaftnarrowheight-knobshaftnarrowing,$fn=90);
+    translate([0,0,0]) cylinder(d=knobshaftnarrowd,h=knobshaftnarrowheight,$fn=90);
+  }
+
+  translate([0,0,0+knobshaftnarrowheight]) cylinder(d=knobshaftnarrowd,h=knobshaftnarrowh,$fn=90);
+  
+  hull() {
+    translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=knobshaftd,h=knobshafth-knobshaftnarrowing-knobshaftnarrowh-knobshaftnarrowing-knobshaftd/2,$fn=90);
+    translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=min(knobbridge,knobshaftd/2),h=knobshafth-knobshaftnarrowing-knobshaftnarrowh-knobshaftnarrowing,$fn=90);
+    translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh]) cylinder(d=knobshaftnarrowd,h=knobshaftnarrowing,$fn=90);
+  }
+}
+
+module knob(knobd,knobh) {
+  knobshaftd=knobd-5;
+  knobaxleheight=0;
+  knobshaftnarrowd=knobshaftd-knobshaftnarrowing*2;
+  knobshafth=knobh-knobwall-knobztolerance;
+  knobspringin=1;
+  knobdtolerance=0.6;
+  knobspringh=6.5;
+  knobspringa=10;
+  knobspringcut=max(0.5,knobd/20);
+  //echo(knobspringcut,knobd);
+  
+  difference() {
+    union() {
+      translate([0,0,0+knobshaftnarrowheight]) roundedcylinder(knobd,knobh-knobshaftnarrowheight,cornerd,2,90);
+    }
+    
+    translate([0,0,0+knobshaftnarrowheight+knobspringin-0.1]) cylinder(d=knobshaftnarrowd+knobdtolerance,h=knobshaftnarrowh-knobspringin+0.2,$fn=90);
+    translate([0,0,0+knobshaftnarrowheight-0.1]) cylinder(d1=knobshaftd+knobdtolerance*2,d2=knobshaftnarrowd+knobdtolerance,h=knobshaftnarrowh-knobspringin+0.2,$fn=90);
+    hull() {
+      dd=min(knobbridge,knobshaftd/2);
+      dh=max(knobbridge,knobshaftd/2);
+      translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=knobshaftd+knobdtolerance,h=knobshafth-knobshaftnarrowh-knobshaftnarrowing-knobztolerance-dh,$fn=90);
+      translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=dd+knobdtolerance,h=knobshafth-knobshaftnarrowh - knobshaftnarrowing-knobztolerance,$fn=90);
+      translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh]) cylinder(d=knobshaftnarrowd+knobdtolerance,h=knobshaftnarrowing,$fn=90);
+    }
+    translate([0,0,0+knobshaftnarrowheight-0.1]) ring(knobd-2,knobshaftnarrowing,knobspringh,0,90);
+    for (a=[0:360/knobspringa:359]) {
+      rotate([0,0,a]) translate([0,-knobspringcut/2,0+knobshaftnarrowheight-0.1]) cube([(knobd-2)/2,knobspringcut,knobspringh]);
+    }
+
+    //translate([0,0,-knobaxleheight+knobshaftnarrowheight+knobh-textdepth+0.01]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="center",halign="center");
+
+  }
+}
+
+
 
