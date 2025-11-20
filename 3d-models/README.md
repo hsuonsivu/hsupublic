@@ -6,7 +6,10 @@ under [Creative Commons CC-BY-NC-SA](https://creativecommons.org/licenses/by-nc-
 I mostly use OpenSCAD for modeling, it will export STL. As I use
 hull() a lot, these might be difficult to import to other cad
 programs. Some of the models are really slow in OpenSCAD, so use F6
-(or whatever in your computer) to render before changing viewing angle.
+(or whatever in your computer) to render before changing viewing
+angle. Make sure you have manifold as backend (Advanced options). Many
+models also need textmetrics (Features/textmetrics) and other libraries. Later models are
+usually rotated for printing.
 
 Please return improvements to me to be included in the
 main distribution.
@@ -94,11 +97,11 @@ the slots, and they will start charging. The desktop version has angle
 of 45 degrees which seems convenient, Tesla Model S version has lower
 angle to allow better view of the phone screen.
 
-This was designed for my Blackview phones. Unfortunately, many phones
-seem to have the induction loop at different position. For example,
-some phones need to be upside down. It is relatively easy to tune for
-various phones, the settings are in top of the files, hopefully
-self-explanatory.
+The latest version has adjustable phone height to accommodate phones
+with different positions of induction loop.
+
+There is option to make desktop version for single phone using
+different wireless charging pad.
 
 The model generates large support underneath if the angle is less than
 45 degrees, so printing with lightning fill is recommend to reduce
@@ -198,7 +201,7 @@ well. Use PLA.
 Holder for paper towel rolls. Left and right parts can be printed at
 the same time if your printer is large enough. Left and right parts
 are locked together with a stick you push through on the right
-side. Then replacing a roll, you can insert the stick to a temprary
+side. Then replacing a roll, you can insert the stick to a temporary
 hole left of the locking hole.
 
 When pulling out a paper, pull a whole sheet and then quickly rip it
@@ -688,6 +691,14 @@ models. hsutest is a test file for some functions in the library.
 
 Modules
 
+function countersinkd returns countersink diameter when using
+ruuvireika module to create screw holes. 
+
+cylindervoids cuts tiny voids in cylinder shape, to make objects
+potentially stronger by replacing fill with 100% fill in specified
+area. Note that you need to check your slicer settings, as defaults
+may cause voids to be expanded or deleted.
+
 ruuvireika makes a hole for screw, including countersink shape. This
 is intended to be used to cut out the hole for screw. I normally use wood screws for 3D prints.
 
@@ -698,6 +709,11 @@ which orientation the triangle should be (0-11 for off-center
 triangles and 12-23 for centered triangles). To see the shapes
 generated, call triangletest() in openscad.
 
+lighten makes a printable shape to make structures consume less
+filament. This does not save much unless the structure is large, as
+making fill at low fill percentage is very efficient, and additional
+walls required to make this negate the savings.
+
 roundedbox makes a cube with rounded edges. Third parameter is corner diameter.
 
 tassu makes a shape to place in corners of a model to improve bed
@@ -705,6 +721,12 @@ adhesion, useful in particular for materials which are prone to
 warping and using wide brim is not practical.
 
 ring makes a cylinder with inside cut out, given diameter, wall thickness and height.
+
+cone makes a hollow cone or cylinder, such as one made with cylinder
+with d1 and d2 parameters. The cone is open at bottom.
+
+tubeclip makes a round barrel shape for making clips for various boxes
+other other attachments. Essentially two spheres hulled together.
 
 spring makes a spring, with flat ends and mid plate. Mid plate splits
 the spring direction to avoid spring creating torsion when
@@ -725,7 +747,7 @@ inside the cube. Use difference and # in openscad so you can leave it
 in the model.
 
 antiwarpwall makes a heat cage to be used with ABS and other materials
-which tend to warp and you do not have a enclosure for your
+which tend to warp if you do not have a heat enclosure for your
 printer. It is intended to be used with brim, so there is a tiny hole
 to allow outside brim only option in the slicer.
 
@@ -740,6 +762,18 @@ supportcylinder makes a round support structure for parts if you do
 
 flatspring makes a flat, more durable spring, which can be printed
 sideways to make layers in strong direction.
+
+function textlen calculates x size of given string.
+
+portaat makes stairs, to be used for 3d modeling of buildings.
+
+function length_and_depth_to_diameter calculates diameter of circle
+when width and depth are given. This is useful in some situations when designing 3D models.
+
+knobaxle and knob make knobs which rotate freely, so that various
+cranks can be made. The axle can be printed in design orientation,
+knob prints better upside down. Use same parameters when using these.
+
 
 ### lattialista.scad
 
@@ -814,6 +848,7 @@ Protective covers for car battery terminals. Note that these do not seem to be v
 Case for ceramic egg by Anja Suonsivu.
 
 ![Egg case in scad.](eggcase.png)
+![Egg case in use.](eggcase.jpg)
 
 ### tippadosetti.scad
 
@@ -861,8 +896,8 @@ Don't forget close the bottom after emptying berries!
 
 Tool to help with cleaning berries. Berries roll out, while leaves and
 other non-round objects stay or drop through slits. The model includes
-a top part for cleaning and bottom part to collect non-berry stuff
-drops through slits. 
+a top part for cleaning and bottom part to store non-berry stuff
+dropping through slits. 
 
 ![berrycleaner in scad.](berrycleaner.png)
 ![berrycleaner base and top in scad.](berrycleanerall.png)
@@ -897,6 +932,7 @@ did the first version.
 Handy measurement tool to figure out sizes of trees, to find out if the trees should be spaced (12 cm) or if the tree is fully grown (27cm).  Also includes 6cm for pre-thinning.
 
 ![treemeter in Openscad.](treemeter.png)
+![treemeter in use.](treemeter.jpg)
 
 ### stevensonshield.scad
 
@@ -1142,6 +1178,8 @@ ports, so this combines the ports. It kind of works, but not very well. No suppo
 We had problems with people tuning sauna temperature without
 authorization, so we needed to protect the sauna thermostat.
 
+![Saunasuoja installed.](saunasuoja.jpg)
+
 ### ankermakeenclosure
 
 ### Makefile.ankermakeenclosure
@@ -1162,6 +1200,13 @@ Model for powerstrip to be used for holders. This is from Tero Kivinen.
 
 Mousetrap with creeping featurism.  Multiple parts. Needs accurate
 printer. No supports needed.
+
+This has caugth one mouse this far. There seems to be problem with
+swinging plates not moving under the mice, in particular small
+ones. Removing caugth mouse from the trap is a bit of challenge, the
+storage box where the mice should end into does not have doors in the
+input side so mice tend to hide under the swing plate. I need to some
+sort of one-way door.
 
 ![Mouse trap in Openscad.](mousetrap.png)
 ![Mouse trap](mousetrap.jpg)
@@ -1184,6 +1229,9 @@ Angled label for table. Text plate can be printed with two materials to improve 
 
 Lidl led desk lamp has very brigth leds, so I needed a diffusor to
 ease strain on my eyes and reduce shade effects. No supports needed.
+
+![Lamp before installing diffusor](lidldiffusorbefore.jpg)
+![Lamp after installing the diffusor](lidldiffusorafter.jpg)
 
 ### filamentroll centering.scad
 
@@ -1267,6 +1315,7 @@ the model.
 ![type2 plug while inserting in Openscad.](type2-plug-while-inserting.png)
 ![type2 plug when in place in Openscad.](type2-plug-when-in-place.png)
 ![type2 holder in Openscad.](type2-holder.png)
+![type2 holder installed and in use.](type2.jpg)
 
 ### screwterminalcover.scad
 
@@ -1283,6 +1332,8 @@ to count to make multiple terminals in one print.
 
 "Santa Maria" brand spice grinders are tedious to use, so I added a
 handle. I would need a bit more torque but works better than without this.
+
+![spidegrinder installed.](spicegrinder.jpg)
 
 ### knob.scad
 
@@ -1308,4 +1359,52 @@ tend to flex a bit, male grabbing part is slightly curved to
 compensate the flexing.  Adjust l for making longer versions for
 larger bags.
 
+### cableroller.scad
+### Makefile.cableroller
 
+We 3D print a lot, so we had accumulated large number of empty
+filament rolls. We needed a use for those. Turns out that 25m ethernet
+cables fit in 1kg filament roll. This is a roller which you can use to
+roll cables up easier. Top plate has slot you can initially put the
+end of the ethernet cable.
+
+As filament rolls do not seem to have a standardized center hole, this
+includes adapeters for 3 most common roll types we had. Likely there
+are many more, and with various brands.
+
+To make all parts, use the makefile. Make -n -j -f Makefile.cableroller
+
+*cablerollerbody.stl is the base plate.
+
+*cablerollercrank.stl is the top plate with crank.
+
+*cablerollerbolt.stl has center bolt and crank handle.
+
+cablerollerknob.stl is just the crank handle (previous prints that as well).
+
+**cablerollerclasohlsonadapter.stl is adapter for Clas Ohlson filament roll.
+
+**cablerollerfrontierfilaadapter.stl is adapter for Frontierfila filament roll.
+
+**cablerollernoname72adapter.stl is adapter for random filament roll we have plenty of.
+
+cablerollernonamecarryhandlebar.stl is handle bar for carry handle.
+
+cablerollercarryhandle.stl is the carry handle body
+
+cablerollerhandlebolts.stl is the bolt for carry handle (two needed)
+
+*cablerollerhandleparts.stl is all parts for carry handle.
+
+You need all *, and one of **.
+
+Bolts may require accurate printer.
+
+![cableroller from top in Openscad.](cableroller.png)
+![cableroller being used.](cableroller.jpg)
+
+### headphonehanger.scad
+
+Headphone hangers for wall install.
+
+![Headphone hanger in use.](headphonehanger.jpg)
