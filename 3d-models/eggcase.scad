@@ -7,6 +7,8 @@ printtext=1;
 // ;LAYER:135, add M600
 eggs=1;
 
+logodepth=1;
+textsizeonnenmuna=12;
 tolerance=0.2;
 cornersize=3;
 wall=2.5;
@@ -43,7 +45,7 @@ basedepth=28;
 deeptext=0;
 textheight=7;
 textspace=textheight/3;
-textdepth=1;
+textdepth=logodepth;
 basewidth=eggmaxd*eggs*ysize;
 baselength=eggmaxd + lockdepth + lockback + eggspace + textspace + textheight + lockdepth + lockback;
 eggxposition=eggmaxd/2 + tolerance + wall + locknotchd;
@@ -64,6 +66,10 @@ eggtop=eggbasez+eggheight;
 eggbase=basedepth-eggheight/eggholedepth;
 
 $fn=(print > 0) ? 180 : 90;
+
+module anjalogo() {
+  linear_extrude(height=logodepth) import("AS_muna_nimi.svg");
+}
 
 module roundedbox(x,y,z,c) {
   corner=(c > 0) ? c : 1;
@@ -146,8 +152,10 @@ module triangle(x,y,z,mode) {
 
 if ((print == 0) || (print == 1) || (print == 2)) {
   difference() {
-    translate([tolerance,tolerance]) roundedbox(baselength-tolerance*2,basewidth-tolerance*2,basedepth-tolerance,cornersize);
+    translate([tolerance,tolerance,0]) roundedbox(baselength-tolerance*2,basewidth-tolerance*2,basedepth-tolerance,cornersize);
 
+        translate([cornersize+3,basewidth/2-baselength*0.8/2-3,-0.01]) translate([baselength/2,basewidth/2,0]) rotate([0,0,0]) translate([-baselength/2,-basewidth/2,0]) resize([baselength*0.8,0,logodepth],auto=true) translate([0,0,logodepth-0.05]) rotate([180,0,90]) anjalogo();
+    
     for (y=[eggy:eggdistance:basewidth]) {
       translate([eggxposition,y,eggbase]) hull() {
 	translate([0,0,eggd/2]) sphere(d=eggd);
@@ -156,7 +164,8 @@ if ((print == 0) || (print == 1) || (print == 2)) {
       }
     }
 
-    teksti=(eggs>1)?((eggs>2)?"Design by Anja Suonsivu":"Anja Suonsivu"):"Anja Suonsivu";
+    //teksti=(eggs>1)?((eggs>1)?"Design by Anja Suonsivu":"Anja Suonsivu"):"Onnenmuna";
+    teksti="Onnenmuna";
     if ((print > 0) || printtext) {
       translate([eggtextxposition, basewidth/2,basedepth-textdepth-tolerance]) 
 	linear_extrude(height=textdepth+0.01) rotate([0,0,90]) text(teksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
@@ -211,7 +220,8 @@ if ((print == 0) || (print == 1) || (print == 3)) {
     difference() {
     coverheight = eggtop;
     translate([-wall,-wall,0]) fancyroundedbox(baselength+wall*2,basewidth+wall*2,coverheight,cornersize);
-
+    translate([baselength/2+textsizeonnenmuna/2+1,basewidth/2,textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text("Onnen",size=textsizeonnenmuna,font="Liberation Sans:style=Bold",halign="center",valign="center");
+    translate([baselength/2-textsizeonnenmuna/2-1,basewidth/2,textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text("muna",size=textsizeonnenmuna,font="Liberation Sans:style=Bold",halign="center",valign="center");
 
     translate([0,0,coverheight-basedepth]) roundedbox(baselength,basewidth,coverheight,cornersize);
 
