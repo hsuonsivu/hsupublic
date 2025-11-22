@@ -1,7 +1,9 @@
 SOURCE=cableroller.scad
 DEPENDS=hsu.scad Makefile.cableroller
 IMAGES=
-ALL=cablerollerbody.stl cablerollercrank.stl cablerollerhandle.stl cablerollerknob.stl cablerollerbolt.stl cablerollerthreadtest.stl cablerollerclasohlsonadapter.stl cablerollerclasohlsonadapter.stl cablerollerfrontierfilaadapter.stl cablerollernoname72adapter.stl cablerollernonamecarryhandlebar.stl cablerollercarryhandle.stl cablerollerhandleparts.stl cablerollerhandlebolt.stl
+ALL=cablerollerbody.stl cablerollercrank.stl cablerollerhandle.stl cablerollerknob.stl cablerollerbolt.stl cablerollerclasohlsonadapter.stl cablerollerclasohlsonadapter.stl cablerollerfrontierfilaadapter.stl cablerollernoname72adapter.stl cablerollernonamecarryhandlebar.stl cablerollercarryhandle.stl cablerollerhandleparts.stl cablerollerhandlebolt.stl
+
+# cablerollerthreadtest.stl
 
 OPENSCADOPTIONS=--backend=manifold --enable textmetrics
 
