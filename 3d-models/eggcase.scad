@@ -1,11 +1,25 @@
-// 0 = draft 1 = final 2 = bottom 3 = cover
+include <hsu.scad>
+
+xtolerance=0.3;
+ytolerance=0.3;
+ztolerance=0.3;
+dtolerance=0.6;
+
+// 0 = draft 1 = final 2 = bottom 3 = cover 4=text background parts if textbackground is enabled
+
 print=1;
+debug=1;
+  
 // Print texts even in draft mode
 printtext=1;
 // ankermake 0.2 mm layers, change color at
 // ;LAYER:132, add M600
 // ;LAYER:135, add M600
 eggs=1;
+
+textbackground=1;
+textbackgroundh=1.2; // Works for both 0.2 and 0.3mm layers
+textztolerance=0.1; // One layer
 
 logodepth=1;
 textsizeonnenmuna=12;
@@ -154,8 +168,13 @@ if ((print == 0) || (print == 1) || (print == 2)) {
   difference() {
     translate([tolerance,tolerance,0]) roundedbox(baselength-tolerance*2,basewidth-tolerance*2,basedepth-tolerance,cornersize);
 
-        translate([cornersize+3,basewidth/2-baselength*0.8/2-3,-0.01]) translate([baselength/2,basewidth/2,0]) rotate([0,0,0]) translate([-baselength/2,-basewidth/2,0]) resize([baselength*0.8,0,logodepth],auto=true) translate([0,0,logodepth-0.05]) rotate([180,0,90]) anjalogo();
-    
+    translate([cornersize+3,basewidth/2-baselength*0.8/2-3,-0.01]) translate([baselength/2,basewidth/2,0]) rotate([0,0,0]) translate([-baselength/2,-basewidth/2,0]) resize([baselength*0.8,0,logodepth+0.01],auto=true) translate([0,0,logodepth-0.05]) rotate([180,0,90]) anjalogo();
+
+    if (textbackground) {
+      h=baselength*0.8;
+      translate([cornersize+3,basewidth/2-baselength*0.8/2-3,textdepth]) cube([
+    }
+
     for (y=[eggy:eggdistance:basewidth]) {
       translate([eggxposition,y,eggbase]) hull() {
 	translate([0,0,eggd/2]) sphere(d=eggd);
@@ -170,6 +189,12 @@ if ((print == 0) || (print == 1) || (print == 2)) {
       translate([eggtextxposition, basewidth/2,basedepth-textdepth-tolerance]) 
 	linear_extrude(height=textdepth+0.01) rotate([0,0,90]) text(teksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
 
+#      if (textbackground) {
+	l=textlen(teksti,textheight-1);
+	h=textheight(teksti,textheight-1);
+	translate([eggtextxposition-h-xtolerance,basewidth/2-l/2-ytolerance,basedepth-textdepth-tolerance-textbackgroundh-textztolerance]) cube([h+xtolerance*2,l+ytolerance*2,textbackgroundh+textztolerance*2]);
+      }
+      
       if (deeptext) {
 	translate([eggtextxposition, basewidth/2,basedepth-textdepth-textdepth-tolerance]) 
 	  for (xb=[-0.1,0.1]) {
