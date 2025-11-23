@@ -1,15 +1,17 @@
+// Copyright 2025 Heikki Suonsivu
+
 include <hsu.scad>
 
+// 0 = draft 1 = final 2 = bottom 3 = cover 4=text background parts if textbackground is enabled
+
+print=4;
+debug=0;
+  
 xtolerance=0.3;
 ytolerance=0.3;
 ztolerance=0.3;
 dtolerance=0.6;
 
-// 0 = draft 1 = final 2 = bottom 3 = cover 4=text background parts if textbackground is enabled
-
-print=1;
-debug=1;
-  
 // Print texts even in draft mode
 printtext=1;
 // ankermake 0.2 mm layers, change color at
@@ -23,6 +25,7 @@ textztolerance=0.1; // One layer
 
 logodepth=1;
 textsizeonnenmuna=12;
+
 tolerance=0.2;
 cornersize=3;
 wall=2.5;
@@ -66,6 +69,15 @@ eggxposition=eggmaxd/2 + tolerance + wall + locknotchd;
 eggtextxposition=baselength - tolerance - lockdepth - lockback - textspace;
 //echo("textheigth ", textheight);
 eggholedepth=2.9;
+
+logoh=baselength*0.8;
+logol=baselength*0.8;
+
+insideteksti="Onnenmuna";
+insidetekstil=textlen(insideteksti,textheight-1);
+insidetekstih=textheight(insideteksti,textheight-1);
+
+toptextd=min(baselength,basewidth)-cornersize;
 
 yfree=basewidth - eggmaxd*eggs;//)/2;//????
   
@@ -164,15 +176,25 @@ module triangle(x,y,z,mode) {
 
 //echo("width ",basewidth, " length ",baselength);
 
-if ((print == 0) || (print == 1) || (print == 2)) {
+module logobackground(h,l,cut) {
+  cube([h+(cut?xtolerance*2:0),l+(cut?ytolerance*2:0),textbackgroundh+(cut?textztolerance*2:0)]);
+}
+
+module insidetextbackground(h,l,cut) {
+  cube([insidetekstih+(cut?xtolerance*2:0),insidetekstil+(cut?ytolerance*2:0),textbackgroundh+(cut?textztolerance*2:0)]);
+}
+
+module toptextbackground(diameter,cut) {
+  cylinder(d=diameter+(cut?dtolerance:0),h=textbackgroundh+(cut?textztolerance*2:0));}
+
+module base() {
   difference() {
     translate([tolerance,tolerance,0]) roundedbox(baselength-tolerance*2,basewidth-tolerance*2,basedepth-tolerance,cornersize);
 
     translate([cornersize+3,basewidth/2-baselength*0.8/2-3,-0.01]) translate([baselength/2,basewidth/2,0]) rotate([0,0,0]) translate([-baselength/2,-basewidth/2,0]) resize([baselength*0.8,0,logodepth+0.01],auto=true) translate([0,0,logodepth-0.05]) rotate([180,0,90]) anjalogo();
 
     if (textbackground) {
-      h=baselength*0.8;
-      translate([cornersize+3,basewidth/2-baselength*0.8/2-3,textdepth]) cube([
+      translate([cornersize+3-xtolerance,basewidth/2-logoh/2-ytolerance,textdepth-textztolerance]) logobackground(logoh,logol,1); //cube([h+xtolerance*2,l+ytolerance*2,textbackgroundh+textztolerance*2]);
     }
 
     for (y=[eggy:eggdistance:basewidth]) {
@@ -184,31 +206,12 @@ if ((print == 0) || (print == 1) || (print == 2)) {
     }
 
     //teksti=(eggs>1)?((eggs>1)?"Design by Anja Suonsivu":"Anja Suonsivu"):"Onnenmuna";
-    teksti="Onnenmuna";
     if ((print > 0) || printtext) {
       translate([eggtextxposition, basewidth/2,basedepth-textdepth-tolerance]) 
-	linear_extrude(height=textdepth+0.01) rotate([0,0,90]) text(teksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
+	linear_extrude(height=textdepth+0.01) rotate([0,0,90]) text(insideteksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
 
-#      if (textbackground) {
-	l=textlen(teksti,textheight-1);
-	h=textheight(teksti,textheight-1);
-	translate([eggtextxposition-h-xtolerance,basewidth/2-l/2-ytolerance,basedepth-textdepth-tolerance-textbackgroundh-textztolerance]) cube([h+xtolerance*2,l+ytolerance*2,textbackgroundh+textztolerance*2]);
-      }
-      
-      if (deeptext) {
-	translate([eggtextxposition, basewidth/2,basedepth-textdepth-textdepth-tolerance]) 
-	  for (xb=[-0.1,0.1]) {
-	    for (yb=[-0.1,0.1]) {
-	      translate([xb,yb,0]) linear_extrude(height=textdepth+0.02) rotate([0,0,90]) text(teksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
-	    }
-	  }
-	
-	translate([eggtextxposition, basewidth/2,basedepth-2*textdepth-textdepth-textdepth-tolerance]) 
-	  for (xs=[-0.2,0.2]) {
-	    for (ys=[-0.2,0.2]) {
-	      translate([xs,ys,0]) linear_extrude(height=2*textdepth+0.02) rotate([0,0,90]) text(teksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
-	    }
-	  }
+      if (textbackground) {
+	translate([eggtextxposition-insidetekstih-xtolerance,basewidth/2-insidetekstil/2-ytolerance,basedepth-textbackgroundh-tolerance-textdepth-textztolerance+0.01]) insidetextbackground(insidetekstih,insidetekstil,1);
       }
     }
 
@@ -222,36 +225,36 @@ if ((print == 0) || (print == 1) || (print == 2)) {
     for (x=[lockdepth+tolerance,baselength-lockdepth-lockback-tolerance]) {
       translate([x,basewidth/2-lockwidth/2-0.01,lockbottom]) cube([lockback,lockwidth+0.02,basedepth]);
     }
+  }
 
- }
+  hull() {
+    translate([0,basewidth/2-lockwidth/2,basedepth-locknotchd/2-tolerance]) rotate([270,0,0]) cylinder(h=lockwidth,d=locknotchd);
+    translate([-tolerance+0.01,basewidth/2-lockwidth/2,basedepth-2*tolerance-locknotchd+0.01]) triangle(tolerance*2,lockwidth,tolerance,3);
+  }
 
-hull() {
-  translate([0,basewidth/2-lockwidth/2,basedepth-locknotchd/2-tolerance]) rotate([270,0,0]) cylinder(h=lockwidth,d=locknotchd);
-  translate([-tolerance+0.01,basewidth/2-lockwidth/2,basedepth-2*tolerance-locknotchd+0.01]) triangle(tolerance*2,lockwidth,tolerance,3);
-}
-
-hull() {
-  translate([baselength,basewidth/2-lockwidth/2,basedepth-locknotchd/2-tolerance]) rotate([270,0,0]) cylinder(h=lockwidth,d=locknotchd);
-  translate([baselength-tolerance-0.01,basewidth/2-lockwidth/2,basedepth-2*tolerance-locknotchd+0.01]) triangle(tolerance*2,lockwidth,tolerance,1);
-}
+  hull() {
+    translate([baselength,basewidth/2-lockwidth/2,basedepth-locknotchd/2-tolerance]) rotate([270,0,0]) cylinder(h=lockwidth,d=locknotchd);
+    translate([baselength-tolerance-0.01,basewidth/2-lockwidth/2,basedepth-2*tolerance-locknotchd+0.01]) triangle(tolerance*2,lockwidth,tolerance,1);
+  }
 
   translate([baselength-tolerance-0.01,basewidth/2-lockwidth/2,basedepth-locknotchd/2-tolerance]) rotate([270,0,0]) cylinder(h=lockwidth,d=locknotchd);
 
-for (x=[0,baselength-locknotchd]) translate([x,basewidth/2-lockwidth/2,basedepth-locknotchd-tolerance]) cube([locknotchd,lockwidth,locknotchd]);
- }
+  for (x=[0,baselength-locknotchd]) translate([x,basewidth/2-lockwidth/2,basedepth-locknotchd-tolerance]) cube([locknotchd,lockwidth,locknotchd]);
 
-if ((print == 0) || (print == 1) || (print == 3)) {
+}
+
+module top() {
   translate([-baselength-objectxgap-wall,0,0]) 
     difference() {
     coverheight = eggtop;
     translate([-wall,-wall,0]) fancyroundedbox(baselength+wall*2,basewidth+wall*2,coverheight,cornersize);
     translate([baselength/2+textsizeonnenmuna/2+1,basewidth/2,textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text("Onnen",size=textsizeonnenmuna,font="Liberation Sans:style=Bold",halign="center",valign="center");
     translate([baselength/2-textsizeonnenmuna/2-1,basewidth/2,textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text("muna",size=textsizeonnenmuna,font="Liberation Sans:style=Bold",halign="center",valign="center");
-
+    translate([baselength/2,basewidth/2,textdepth-0.02]) toptextbackground(toptextd,1);
     translate([0,0,coverheight-basedepth]) roundedbox(baselength,basewidth,coverheight,cornersize);
 
     for (y=[eggy:eggdistance:basewidth]) {
-      translate([baselength-eggxposition,y,wall]) cylinder(h=coverheight,d=eggmaxd);
+      translate([baselength-eggxposition,y,wall-textbackgroundh]) cylinder(h=coverheight+textbackgroundh,d=eggmaxd);
     }
     //    translate([baselength-eggxposition,vainoy,wall]) cylinder(h=coverheight,d=vainomaxd);
     //    translate([baselength-eggxposition,almay,wall]) cylinder(h=coverheight,d=almamaxd);
@@ -264,4 +267,24 @@ if ((print == 0) || (print == 1) || (print == 3)) {
     for (x=[0,baselength]) translate([x,basewidth/2-lockwidth/2-1,coverheight-basedepth+locknotchd/2+tolerance]) rotate([270,0,0]) cylinder(h=lockwidth+2,d=locknotchd+tolerance);
     for (x=[0,baselength-locknotchd]) translate([x,basewidth/2-lockwidth/2-1,coverheight-basedepth]) cube([locknotchd,lockwidth+2,locknotchd]);
   }
+}
+
+intersection() {
+  if (debug) translate([-100,31,-10]) cube([200,200,200]);
+
+  union() {
+    if ((print == 0) || (print == 1) || (print == 2)) {
+      base();
+    }
+
+    if ((print == 0) || (print == 1) || (print == 3)) {
+      top();
+    }
+  }
+}
+
+if (print==4) {
+  logobackground(logoh,logol,0);
+  translate([logoh+0.5,0,0]) insidetextbackground(insidetekstih,insidetekstil,0);
+  translate([-toptextd/2-0.5,toptextd/2]) toptextbackground(toptextd,0);
  }
