@@ -2,15 +2,17 @@
 
 include <hsu.scad>
 
-// 0 = draft 1 = final 2 = bottom 3 = cover 4=text background parts if textbackground is enabled
+// 0 = draft 1 = final 2 = bottom 3 = cover 4=text background parts if textbackground is enabled, 5 base backgrounds, 6 top background only 7 test backgrounds
 
-print=4;
+print=7;
 debug=0;
   
 xtolerance=0.3;
 ytolerance=0.3;
 ztolerance=0.3;
 dtolerance=0.6;
+
+layerh=0.24;
 
 // Print texts even in draft mode
 printtext=1;
@@ -21,23 +23,30 @@ eggs=1;
 
 textbackground=1;
 textbackgroundh=1.2; // Works for both 0.2 and 0.3mm layers
-textztolerance=0.1; // One layer
+textztolerance=0.15; // One layer
 
-logodepth=1;
+logodepth=textbackgroundh; //1.2;  These must be same now to allow printing both base and top at the same time
 textsizeonnenmuna=12;
+logooffset=1;
+backgroundoffset=logooffset;
+toptextoffset=2;
 
 tolerance=0.2;
 cornersize=3;
 wall=2.5;
 eggspace=2;
-zfactor = (print == 0) ? 0.2 : 1;
-xyfactor= (print == 0) ? 0.2 : 1;
+zfactor = 1;
+xyfactor= 1;
 
 eggd=40 * xyfactor;
 
-eggheight=59.5 * zfactor;
+bottomfillh=2.5;
+filld=3;
 
-eggmaxd=48 * xyfactor;
+//eggheight=59.5 * zfactor;
+eggheight=57.5 * zfactor;
+
+eggmaxd=46+dtolerance+filld; //48+2 * xyfactor;
 
 eggmaxdh=28 * zfactor;
 
@@ -61,17 +70,18 @@ ysize=1.3;
 basedepth=28;
 deeptext=0;
 textheight=7;
+insidetextheight=textheight-1;
 textspace=textheight/3;
 textdepth=logodepth;
 basewidth=eggmaxd*eggs*ysize;
 baselength=eggmaxd + lockdepth + lockback + eggspace + textspace + textheight + lockdepth + lockback;
 eggxposition=eggmaxd/2 + tolerance + wall + locknotchd;
-eggtextxposition=baselength - tolerance - lockdepth - lockback - textspace;
+eggtextxposition=baselength - tolerance - lockdepth - lockback - insidetextheight;
 //echo("textheigth ", textheight);
 eggholedepth=2.9;
 
-logoh=baselength*0.8;
-logol=baselength*0.8;
+logoh=baselength-cornersize-4.5-1;
+logol=basewidth-cornersize-1;
 
 insideteksti="Onnenmuna";
 insidetekstil=textlen(insideteksti,textheight-1);
@@ -87,14 +97,22 @@ eggdistance=(eggmaxd+yfree/(eggs+1));
 
 eggbasez=basedepth+eggd/eggholedepth-eggd/2;
 
-eggtop=eggbasez+eggheight;
-
 eggbase=basedepth-eggheight/eggholedepth;
+
+eggtop=eggbase+eggheight+wall+textbackgroundh*2+3+2.5;
+
+coverheight = eggtop;
 
 $fn=(print > 0) ? 180 : 90;
 
-module anjalogo() {
-  linear_extrude(height=logodepth) import("AS_muna_nimi.svg");
+echo(logol,logoh);
+
+module egg() {
+  hull() {
+    translate([0,0,eggd/2]) sphere(d=eggd-dtolerance);
+    translate([0,0,eggmaxdh]) sphere(d=eggmaxd-dtolerance);
+    translate([0,0,eggheight-eggtopd/2]) sphere(d=eggtopd-dtolerance);
+  }
 }
 
 module roundedbox(x,y,z,c) {
@@ -176,25 +194,50 @@ module triangle(x,y,z,mode) {
 
 //echo("width ",basewidth, " length ",baselength);
 
+module anjalogo() {
+  translate([-logol/2,-logoh/2]) intersection() {
+    square([logol,logoh]);
+    translate([-cornersize-0.5,0]) resize([logol-1,0],auto=true) import("AS_muna_nimi.svg",convexity=10);
+  }
+}
+
+module anjalogoholes(cut) {
+  difference() {
+    fill() anjalogo();
+    offset(cut?0.2:0) anjalogo();
+  }
+}
+
+
+//module anjalogofilled(cut) {
+//  offset(logooffset+(cut?dtolerance/2:0)) fill() anjalogo();
+//}
+
 module logobackground(h,l,cut) {
-  cube([h+(cut?xtolerance*2:0),l+(cut?ytolerance*2:0),textbackgroundh+(cut?textztolerance*2:0)]);
+  difference() {
+    union() {
+      translate([0,0,logodepth-0.01]) linear_extrude(height=logodepth+(cut?textztolerance:0)) offset(cut?dtolerance/2:0) anjalogo();
+      translate([0,0,cut?-textztolerance:0]) linear_extrude(height=logodepth+(cut?textztolerance*2:0)) offset(logooffset+(cut?dtolerance/2:0)) anjalogo(); //fill()
+    }
+    translate([0,0,-textztolerance-0.01]) linear_extrude(height=logodepth*2+textztolerance*2+0.02) anjalogoholes(cut);
+  }
 }
 
-module insidetextbackground(h,l,cut) {
-  cube([insidetekstih+(cut?xtolerance*2:0),insidetekstil+(cut?ytolerance*2:0),textbackgroundh+(cut?textztolerance*2:0)]);
-}
+module insidetextbackground(cut) {
+  translate([0,0,cut?-textztolerance:0]) linear_extrude(height=textbackgroundh+(cut?textztolerance*2:0)) offset(backgroundoffset+(cut?dtolerance/2:0)) fill() text(insideteksti,size=insidetextheight,font="Liberation Sans:style=Bold",halign="center",valign="center");
 
-module toptextbackground(diameter,cut) {
-  cylinder(d=diameter+(cut?dtolerance:0),h=textbackgroundh+(cut?textztolerance*2:0));}
+  //cube([insidetekstih+(cut?xtolerance*2:0),insidetekstil+(cut?ytolerance*2:0),textbackgroundh+(cut?textztolerance*2:0)]);
+}
 
 module base() {
   difference() {
     translate([tolerance,tolerance,0]) roundedbox(baselength-tolerance*2,basewidth-tolerance*2,basedepth-tolerance,cornersize);
 
-    translate([cornersize+3,basewidth/2-baselength*0.8/2-3,-0.01]) translate([baselength/2,basewidth/2,0]) rotate([0,0,0]) translate([-baselength/2,-basewidth/2,0]) resize([baselength*0.8,0,logodepth+0.01],auto=true) translate([0,0,logodepth-0.05]) rotate([180,0,90]) anjalogo();
+    translate([tolerance+baselength/2,tolerance+basewidth/2,logodepth-0.01])
+    rotate([180,0,-90]) linear_extrude(height=logodepth+0.01) anjalogo();
 
     if (textbackground) {
-      translate([cornersize+3-xtolerance,basewidth/2-logoh/2-ytolerance,textdepth-textztolerance]) logobackground(logoh,logol,1); //cube([h+xtolerance*2,l+ytolerance*2,textbackgroundh+textztolerance*2]);
+      translate([tolerance+baselength/2,tolerance+basewidth/2,logodepth*2+logodepth-0.03+textztolerance]) rotate([180,0,-90]) logobackground(logoh,logol,1);
     }
 
     for (y=[eggy:eggdistance:basewidth]) {
@@ -206,12 +249,13 @@ module base() {
     }
 
     //teksti=(eggs>1)?((eggs>1)?"Design by Anja Suonsivu":"Anja Suonsivu"):"Onnenmuna";
-    if ((print > 0) || printtext) {
+    if (printtext) {
       translate([eggtextxposition, basewidth/2,basedepth-textdepth-tolerance]) 
-	linear_extrude(height=textdepth+0.01) rotate([0,0,90]) text(insideteksti,size=textheight-1,font="Liberation Sans:style=Bold",halign="center");
+	linear_extrude(height=textdepth+0.01) rotate([0,0,90]) text(insideteksti,size=insidetextheight,font="Liberation Sans:style=Bold",halign="center",valign="center");
 
       if (textbackground) {
-	translate([eggtextxposition-insidetekstih-xtolerance,basewidth/2-insidetekstil/2-ytolerance,basedepth-textbackgroundh-tolerance-textdepth-textztolerance+0.01]) insidetextbackground(insidetekstih,insidetekstil,1);
+	translate([eggtextxposition, basewidth/2,basedepth-textdepth-tolerance-textdepth-textztolerance+0.01])
+	  rotate([0,0,90]) insidetextbackground(1);
       }
     }
 
@@ -243,18 +287,47 @@ module base() {
 
 }
 
+module toptext() {
+  rotate([0,0,180]) {
+    translate([0,textsizeonnenmuna/2+1]) text("Onnen",size=textsizeonnenmuna,font="Liberation Sans:style=Bold",halign="center",valign="center");
+    translate([0,-textsizeonnenmuna/2-1]) text("muna",size=textsizeonnenmuna,font="Liberation Sans:style=Bold",halign="center",valign="center");
+  }
+}
+
+module toptextholes(cut) {
+  offset(cut?0.3:0)
+    difference() {
+    fill() toptext();
+    offset(0.1) toptext();
+  }
+}
+
+module toptextbackground(cut) {
+  difference() {
+    union() {
+      translate([0,0,logodepth-0.01]) linear_extrude(height=logodepth+(cut?textztolerance:0)) offset(cut?dtolerance/2:0) toptext();
+      translate([0,0,cut?-textztolerance:0]) linear_extrude(height=logodepth+(cut?textztolerance*2:0)) {
+	if (cut) {
+	  fill() offset(toptextoffset+(cut?dtolerance/2:0)) toptext();
+	} else {
+	  offset(toptextoffset+(cut?dtolerance/2:0)) toptext();
+	}
+      }
+    }
+    translate([0,0,-textztolerance-0.01]) linear_extrude(height=logodepth*2+textztolerance*2+0.02) toptextholes(cut==0);
+  }
+}
+
 module top() {
   translate([-baselength-objectxgap-wall,0,0]) 
     difference() {
-    coverheight = eggtop;
     translate([-wall,-wall,0]) fancyroundedbox(baselength+wall*2,basewidth+wall*2,coverheight,cornersize);
-    translate([baselength/2+textsizeonnenmuna/2+1,basewidth/2,textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text("Onnen",size=textsizeonnenmuna,font="Liberation Sans:style=Bold",halign="center",valign="center");
-    translate([baselength/2-textsizeonnenmuna/2-1,basewidth/2,textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text("muna",size=textsizeonnenmuna,font="Liberation Sans:style=Bold",halign="center",valign="center");
-    translate([baselength/2,basewidth/2,textdepth-0.02]) toptextbackground(toptextd,1);
+    translate([-tolerance+baselength/2,-tolerance+basewidth/2,textdepth-0.01]) rotate([180,0,-90]) linear_extrude(height=textdepth) toptext();
+    translate([-tolerance+baselength/2,-tolerance+basewidth/2,textdepth*2+textdepth-0.01+textztolerance]) rotate([180,0,-90]) toptextbackground(1);
     translate([0,0,coverheight-basedepth]) roundedbox(baselength,basewidth,coverheight,cornersize);
 
     for (y=[eggy:eggdistance:basewidth]) {
-      translate([baselength-eggxposition,y,wall-textbackgroundh]) cylinder(h=coverheight+textbackgroundh,d=eggmaxd);
+      translate([baselength-eggxposition,y,wall+textdepth*2+layerh+textztolerance]) cylinder(h=coverheight+textbackgroundh,d=eggmaxd);
     }
     //    translate([baselength-eggxposition,vainoy,wall]) cylinder(h=coverheight,d=vainomaxd);
     //    translate([baselength-eggxposition,almay,wall]) cylinder(h=coverheight,d=almamaxd);
@@ -269,22 +342,56 @@ module top() {
   }
 }
 
+if (print==0) {
+  intersection() {
+    if (debug) translate([-100,31,-10]) cube([200,200,200]);
+    union() {
+      base();
+ #     translate([eggxposition,eggy,eggbase+bottomfillh]) egg();
+      //translate([tolerance+baselength/2,tolerance+basewidth/2,logodepth*2+logodepth+layerh+textztolerance]) rotate([180,0,-90]) logobackground(logoh,logol,0);
+      translate([eggtextxposition, basewidth/2,basedepth-textdepth-tolerance-textdepth-textztolerance+0.01])
+	rotate([0,0,90]) insidetextbackground(0);
+      
+      translate([-wall*2+tolerance,0,coverheight]) rotate([0,180,0]) {
+	top();
+	//translate([-baselength-objectxgap-wall,0,0]) translate([-wall*2+tolerance,0,coverheight]) rotate([0,180,0]) translate([-wall+baselength/2,-wall+basewidth/2,textdepth*2+textdepth+layerh+textztolerance]) rotate([180,0,-90]) toptextbackground(0);
+	//#	translate([-baselength-objectxgap-wall,0,0]) translate([-wall+baselength/2,-wall+basewidth/2,textdepth*2+textdepth+layerh+textztolerance]) rotate([180,0,-90]) toptextbackground(0);
+      }
+    }
+  }
+ }
+
 intersection() {
   if (debug) translate([-100,31,-10]) cube([200,200,200]);
 
   union() {
-    if ((print == 0) || (print == 1) || (print == 2)) {
+    if ((print == 1) || (print == 2)) {
       base();
     }
 
-    if ((print == 0) || (print == 1) || (print == 3)) {
+    if ((print == 1) || (print == 3)) {
       top();
     }
   }
 }
 
-if (print==4) {
-  logobackground(logoh,logol,0);
-  translate([logoh+0.5,0,0]) insidetextbackground(insidetekstih,insidetekstil,0);
-  translate([-toptextd/2-0.5,toptextd/2]) toptextbackground(toptextd,0);
+if (print==5 || print==4) {
+  translate([logoh/2,logol/2,0]) logobackground(logoh,logol,0);
+  translate([logoh/2-2,-insidetextheight+2,0]) insidetextbackground(0);
+ }
+
+if (print==6 || print==4) {
+  translate([toptextd/2,logol+toptextd/2-16]) toptextbackground(0);
+ }
+
+if (print==7) {
+  translate([logoh/2,logol/2,0]) logobackground(logoh,logol,0);
+  translate([-logoh/2-2,logol/2,0]) logobackground(logoh,logol,1);
+  translate([logoh/2-2,-insidetextheight+2,0]) insidetextbackground(0);
+  translate([logoh/2-2,-insidetextheight+2-insidetextheight-3,0]) insidetextbackground(1);
+  translate([toptextd/2,logol+toptextd/2-16]) toptextbackground(0);
+  translate([toptextd/2,logol+toptextd/2-16+toptextd/2]) toptextbackground(1);
+
+  translate([100,0,0]) linear_extrude(height=2) toptextholes(1);
+  translate([120,0,0]) linear_extrude(height=2) toptextholes(0);
  }
