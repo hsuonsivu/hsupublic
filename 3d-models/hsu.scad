@@ -755,6 +755,7 @@ module flatspring(l,w,h,width,coils,cornerend) {
 }
 
 function textlen(t,fontsize) = textmetrics(text=t,font="Liberation Sans:style=Bold",size=fontsize,valign="top",halign="center").size[0];
+function textheight(t,fontsize) = textmetrics(text=t,font="Liberation Sans:style=Bold",size=fontsize,valign="top",halign="center").size[1];
 
 // Centered by width,length
 // Note: upper step is outside l, so l should be only the steps l
