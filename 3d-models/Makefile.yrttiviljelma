@@ -1,41 +1,58 @@
 SOURCE=yrttiviljelma.scad
 DEPENDS=libmac.scad Makefile.yrttiviljelma
-ALL=end.stl roundcup.stl squarecup.stl squarecover.stl roundcover.stl mid.stl twosquare.stl kansiteline.stl
+ALL=end.stl roundcup.stl squarecup.stl squarecover.stl roundcover.stl mid.stl twosquare.stl kansiteline.stl yrttiviljelmasuppilo.stl yrttiviljelmahatch.stl yrttiviljelmasuppiloframe.stl yrttiviljelmawatering.stl
 
 all: $(ALL)
+
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
 clean:
 	rm $(ALL)
 
 end.stl: $(SOURCE) $(DEPENDS)
-	openscad -D PRINT=2 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D PRINT=2 -o $@ $(SOURCE)
 	echo $@ built.
 
 roundcup.stl: $(SOURCE) $(DEPENDS)
-	openscad -D PRINT=3 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D PRINT=3 -o $@ $(SOURCE)
 	echo $@ built.
 
 squarecover.stl: $(SOURCE) $(DEPENDS)
-	openscad -D PRINT=4 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D PRINT=4 -o $@ $(SOURCE)
 	echo $@ built.
 
 squarecup.stl: $(SOURCE) $(DEPENDS)
-	openscad -D PRINT=5 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D PRINT=5 -o $@ $(SOURCE)
 	echo $@ built.
 
 roundcover.stl: $(SOURCE) $(DEPENDS)
-	openscad -D PRINT=6 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D PRINT=6 -o $@ $(SOURCE)
 	echo $@ built.
 
 mid.stl: $(SOURCE) $(DEPENDS)
-	openscad -D PRINT=7 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D PRINT=7 -o $@ $(SOURCE)
 	echo $@ built.
 
 twosquare.stl: $(SOURCE) $(DEPENDS)
-	openscad -D PRINT=8 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D PRINT=8 -o $@ $(SOURCE)
 	echo $@ built.
 
 kansiteline.stl: $(SOURCE) $(DEPENDS)
-	openscad -D PRINT=9 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D PRINT=9 -o $@ $(SOURCE)
 	echo $@ built.
 
+yrttiviljelmahatch.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D PRINT=11 -o $@ $(SOURCE)
+	echo $@ built.
+
+yrttiviljelmasuppilo.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D PRINT=12 -o $@ $(SOURCE)
+	echo $@ built.
+
+yrttiviljelmasuppiloframe.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D PRINT=13 -o $@ $(SOURCE)
+	echo $@ built.
+	
+yrttiviljelmawatering.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D PRINT=14 -o $@ $(SOURCE)
+	echo $@ built.
