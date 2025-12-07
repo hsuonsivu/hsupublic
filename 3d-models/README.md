@@ -926,6 +926,8 @@ did the first version.
 
 ![Parts for yrttiviljelma in scad.](yrttiviljelmaparts.png)
 ![Holder for extra covers in scad.](yrttiviljelmaholder.png)
+![Suppilo in scad.](yrttiviljelmasuppilo.png)
+![Suppilo in use.](yrttiviljelmasuppilo.jpg)
 
 ### treemeter.scad
 
