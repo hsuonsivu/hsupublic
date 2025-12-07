@@ -3,19 +3,34 @@
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
 include <hsu.scad>
+include <power-strip-attachment-lib.scad>
 
-print=0; // 0=cupholder full, 1=both cupholder parts, 2=cupholder backplate, 3=cupholder front, 4=headphone hanger, 5=test
-debug=1;
+print=8; // 0=cupholder full, 1=both cupholder parts, 2=cupholder backplate, 3=cupholder front, 4=headphone hanger, 5=test, 6=powerstrip attachments
+debug=0;
 
 strong=(print>0)?1:0;
 supports=1; // patches for easier printing
 $fn=print?120:30;
 
+versiontext="v1.1";
+textsize=7;
+textdepth=0.7;
+
+screwd=4.4; // M5
+screwheadd=8.5; //8.6; // Round head
+screwheadh=3.5;
+screwheadspaceh=6;
+screwl=23.17;
+screwtowerd=screwheadd+4;
+
+nutd=7;
+nuth=2.3;
+
 thinwall=2;//1.6;
 width=50.3;
 depth=70.2;
 collarz=130;
-angle=15.75;
+angle=print>5?0:15.75;
 supportdistance=100;
 wall=8;
 cornerd=2;
@@ -28,8 +43,6 @@ cuphandleraise=10;
 cuphandlediameter=20;
 screwholed=3.5;
 screwholebase=1; // countersink
-screwlength=30; //19;
-screwtowerd=3*screwholed;
 cupcutoffsetlow=-50;
 cupcutoffsethigh=-45;
 cupcornerd=3;
@@ -114,7 +127,7 @@ module ruuvitorni(height,diameter) {
   translate([0,0,height-0.01]) cylinder(h=diameter/3,d1=diameter,d2=diameter*0.6);
 }
 
-module roundedbox(x,y,z,c) {
+module roundedboxold(x,y,z,c) {
   corner=(c > 0) ? c : 1;
   scd = ((x < 1 || y < 1 || z < 1) ? min(x,y,z) : corner);
   f=(print > 0) ? 180 : 90;
@@ -155,6 +168,8 @@ module cupholderback() {
       for (x=[-width/2-screwtowerd/2,width/2+screwtowerd/2]) 
 	for (z=[screwtowerd/2,collarz-screwtowerd/2]) 
 	  translate([x,-depth/2-wall+screwlength-0.01,z]) rotate([90,0,0]) ruuvireika(screwlength,screwholed,1);
+
+      translate([0,-depth/2-wall+textdepth-0.01,collarz/2]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
     }
   }
 }
@@ -199,32 +214,36 @@ module cupholderfront() {
   }
 
   hull() {
+    translate([0,
+	       depth/2*cos(angle)-collarz*sin(angle)+cupoutdiameter/2+cupout,
+	       collarz-depth/2*sin(angle)+depth/2*sin(angle)+wall-cupoutdiameter/2])
+      cylinder(h=wall,d=cupoutdiameter/2);
+    rotate([angle,0,0]) {
+      translate([-width/2-wall,depth/2,0]) roundedbox(width+2*wall,wall,collarz,cornerd);
+      translate([0,supportdistance,0]) cylinder(h=1,d=cupoutdiameter/5);
+    }
+  }
+
+  rotate([angle,0,0]) {
+    translate([0,depth/2+cornerd+1+textsize,textdepth-0.01]) rotate([0,180,0]) linear_extrude(textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
+  }
+
   translate([0,
 	     depth/2*cos(angle)-collarz*sin(angle)+cupoutdiameter/2+cupout,
-	     collarz-depth/2*sin(angle)+depth/2*sin(angle)+wall-cupoutdiameter/2])
-    cylinder(h=wall,d=cupoutdiameter/2);
-  rotate([angle,0,0]) {
-    translate([-width/2-wall,depth/2,0]) roundedbox(width+2*wall,wall,collarz,cornerd);
-    translate([0,supportdistance,0]) cylinder(h=1,d=cupoutdiameter/5);
-  }
-}
-
-translate([0,
-	   depth/2*cos(angle)-collarz*sin(angle)+cupoutdiameter/2+cupout,
-	   collarz-depth/2*sin(angle)+depth/2*sin(angle)+cupcornerd/2+wall-0.01])  minkowski() {
-  sphere(d=cupcornerd);
-  difference() {
-    cylinder(h=cupheight,d1=cupoutdiameter-cupcornerd,d2=cupoutdiameter+cupexpansion-cupcornerd);
-    translate([0,0,cupcornerd]) {
-      cylinder(h=cupheight+0.02,d1=cupdiameter+cupcornerd,d2=cupdiameter+cupexpansion+cupcornerd);
-    }
-    // Front cut to accomodate bikes form
-    hull() {
-      translate([-cupoutdiameter/2-cupexpansion/2-0.01,cupcutoffsetlow,cuphandlediameter/2+cuphandleraise]) rotate([90,0,90]) cylinder(h=cupoutdiameter+cupexpansion+0.02,d=cuphandlediameter);
-      translate([-cupoutdiameter/2-cupexpansion/2-0.01,cupcutoffsethigh,cuphandlediameter/2+cuphandleraise+cupheight]) rotate([90,0,90]) cylinder(h=cupoutdiameter+cupexpansion+0.02,d=cuphandlediameter);
+	     collarz-depth/2*sin(angle)+depth/2*sin(angle)+cupcornerd/2+wall-0.01])  minkowski() {
+    sphere(d=cupcornerd);
+    difference() {
+      cylinder(h=cupheight,d1=cupoutdiameter-cupcornerd,d2=cupoutdiameter+cupexpansion-cupcornerd);
+      translate([0,0,cupcornerd]) {
+	cylinder(h=cupheight+0.02,d1=cupdiameter+cupcornerd,d2=cupdiameter+cupexpansion+cupcornerd);
+      }
+      // Front cut to accomodate bikes form
+      hull() {
+	translate([-cupoutdiameter/2-cupexpansion/2-0.01,cupcutoffsetlow,cuphandlediameter/2+cuphandleraise]) rotate([90,0,90]) cylinder(h=cupoutdiameter+cupexpansion+0.02,d=cuphandlediameter);
+	translate([-cupoutdiameter/2-cupexpansion/2-0.01,cupcutoffsethigh,cuphandlediameter/2+cuphandleraise+cupheight]) rotate([90,0,90]) cylinder(h=cupoutdiameter+cupexpansion+0.02,d=cuphandlediameter);
+      }
     }
   }
-}
 }
 
 module cupholder() {
@@ -397,3 +416,75 @@ if (print==5) {
     if (debug) translate([0,0,-100]) cube([200,200,200]);
   }
  }
+
+module powerstripholderback() {
+  rotate([angle,0,0]) {
+    difference() {
+      hull() {
+	translate([-width/2-wall,-depth/2-wall,0]) roundedbox(width+2*wall,wall,collarz,cornerd);
+
+	translate([-width/2-screwtowerd/2-wall/2,-wall-depth/2,0]) cube([0.01+screwtowerd/2+wall/2,wall,0.01]);
+	translate([-width/2-screwtowerd/2,-depth/2-wall+cornerd/2,screwtowerd/2]) rotate([270,0,0]) cylinder(h=wall-cornerd/2,d=screwtowerd);
+	translate([-width/2-screwtowerd/2,-depth/2-wall,screwtowerd/2]) rotate([270,0,0]) cylinder(h=wall,d=screwtowerd-cornerd);
+      
+	translate([width/2+screwtowerd/2,-depth/2-wall+cornerd/2,screwtowerd/2]) rotate([270,0,0]) cylinder(h=wall-cornerd/2,d=screwtowerd);
+	translate([width/2,-wall-depth/2,0]) cube([0.01+screwtowerd/2+wall/2,wall,0.01]);
+	translate([width/2+screwtowerd/2,-depth/2-wall,screwtowerd/2]) rotate([270,0,0]) cylinder(h=wall,d=screwtowerd-cornerd);
+      
+	translate([-width/2-screwtowerd/2,-depth/2-wall+cornerd/2,collarz-screwtowerd/2]) rotate([270,0,0]) cylinder(h=wall-cornerd/2,d=screwtowerd);
+	translate([-width/2-screwtowerd/2,-depth/2-wall,collarz-screwtowerd/2]) rotate([270,0,0]) cylinder(h=wall,d=screwtowerd-cornerd);
+      
+	translate([width/2+screwtowerd/2,-depth/2-wall+cornerd/2,collarz-screwtowerd/2]) rotate([270,0,0]) cylinder(h=wall-cornerd/2,d=screwtowerd);
+	translate([width/2+screwtowerd/2,-depth/2-wall,collarz-screwtowerd/2]) rotate([270,0,0]) cylinder(h=wall,d=screwtowerd-cornerd);
+      }
+
+      if (0) for (x=[-width/2-screwtowerd/2,width/2+screwtowerd/2]) 
+	for (z=[screwtowerd/2,collarz-screwtowerd/2]) 
+	  translate([x,-depth/2-wall+screwlength-0.01,z]) rotate([90,0,0]) ruuvireika(screwlength,screwholed,1);
+
+      translate([0,-depth/2-wall+textdepth-0.01,collarz/2]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
+    }
+  }
+}
+
+powerstripcollarz=screwtowerd;
+
+module powerstripholderfront() {
+  rotate([angle,0,0]) {
+    difference() {
+      union() {
+	for (m=[0,1]) mirror([m,0,0]) hull() {
+	    translate([width/2,-depth/2,0]) roundedbox(wall,depth+wall,powerstripcollarz,cornerd,1);
+	    translate([width/2+screwtowerd/2,-depth/2,screwtowerd/2]) rotate([270,0,0]) roundedcylinder(screwtowerd,screwl-wall,cornerd,0,90);
+	    translate([width/2+screwtowerd/2-screwtowerd/4,-depth/2,0]) roundedbox(screwtowerd/2,screwl-wall,screwtowerd/2,cornerd,1);
+	  }
+	translate([-width/2-wall,depth/2,0]) roundedbox(width+2*wall,wall,powerstripcollarz,cornerd,1);
+      }
+
+      for (m=[0,1]) mirror([m,0,0]) hull() {
+	  translate([width/2+screwtowerd/2,-depth/2-0.01,screwtowerd/2]) rotate([270,0,0]) cylinder(d=screwd,h=screwl-wall,$fn=90);
+	  translate([width/2+screwtowerd/2-screwd/4,-depth/2-0.01,screwtowerd/2]) cube([screwd/2,screwl,screwd/2]);
+	}
+      
+      for (m=[0,1]) mirror([m,0,0]) hull() {
+	  translate([width/2+screwtowerd/2,thinwall+cornerd-depth/2-0.01,screwtowerd/2+screwtowerd]) rotate([270,0,0]) cylinder(d=nutd,h=nuth,$fn=6);
+	  translate([width/2+screwtowerd/2,thinwall+cornerd-depth/2-0.01,screwtowerd/2]) rotate([270,0,0]) cylinder(d=nutd,h=nuth,$fn=6);
+	}
+
+#      translate([0,depth/2+wall-textdepth+0.01,powerstripcollarz/2]) rotate([-90,180,0]) linear_extrude(textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
+    }
+  }
+}
+
+if (print==6 || print==8) {
+  powerstripholderfront();
+ }
+
+if (print==7 || print==8) {
+  difference() {
+    translate([0,-HEIGHT/2-depth/2-0.5,WIDTH_MAX/2-12]) rotate([0,-90,90]) end_cap(1,width+screwtowerd,screwd,screwheadd);
+    translate([width/2,-depth/2-textsize,textdepth-0.01]) rotate([0,180,90]) linear_extrude(textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="left");
+  }
+ }
+
+

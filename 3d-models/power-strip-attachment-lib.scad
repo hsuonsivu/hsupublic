@@ -7,10 +7,6 @@
 
 use <powerstrip2.scad>;
 
-printpowerstripattachment=1;
-
-ALPHA=0.8;
-
 WIDTH_TOP=54;
 WIDTH_MAX=58;
 WIDTH_BOTTOM=54;
@@ -25,9 +21,6 @@ CABLE_HOLE_Z=HEIGHT/2;//10;
 
 BULGE=55-49;
 POWER_LEN=360;
-
-SCREW_DIA=6;
-HEAD_DIA=11;
 
 CAP_THICKNESS=24;
 
@@ -45,23 +38,35 @@ module powerbar() {
   powerstrip_solid();
 }
 
-module end_cap(cablehole) {
+module end_cap(cablehole,w,screwd,screwheadd,nutd) {
   difference() {
-    intersection() {
-      // Outer intersection with 1.1 scale, do not translate, as we want
-      // flat bottom
-      scale([1.1, 1.1, 1.1])
-	translate([0, 0, 0])
-	powerbar();
-      difference() {
-	translate([-5, 0, 0])
-	  // End piece cube
-	  cube([CAP_THICKNESS, WIDTH_MAX * 2, HEIGHT * 2], center=true);
-	// Remove powerstrip from it
-	translate([LEN/2, 0, 0])
+    union() {
+      for (y=[-w/2, w/2]) {
+	hull() {
+	  outd=screwheadd+4;
+	  h=CAP_THICKNESS*2-5;
+	  translate([-10,y,-1]) cylinder(d=outd,h=h,center=true);
+	  translate([-CAP_THICKNESS/2-5,y-outd/4,-CAP_THICKNESS+2.5-1]) cube([outd/2,outd/2,CAP_THICKNESS*2-5]);
+	}
+      }
+
+      intersection() {
+	// Outer intersection with 1.1 scale, do not translate, as we want
+	// flat bottom
+	scale([1.1, 1.1, 1.1])
+	  translate([0, 0, 0])
 	  powerbar();
+	difference() {
+	  translate([-5, 0, 0])
+	    // End piece cube
+	    cube([CAP_THICKNESS, WIDTH_MAX * 2, HEIGHT * 2], center=true);
+	  // Remove powerstrip from it
+	  translate([LEN/2, 0, 0])
+	    powerbar();
+	}
       }
     }
+    
     // Make hole for cable
     if (cablehole) {
       translate([0, 0, -HEIGHT/2+CABLE_HOLE_Z])
@@ -78,20 +83,23 @@ module end_cap(cablehole) {
     // Make holes for the screws
     if (0) {translate([-10, -WIDTH_MAX/2+10, 0])
 	union() {
-	cylinder(h=HEIGHT*2, d=SCREW_DIA, center=true);
+	cylinder(h=HEIGHT*2, d=screwd, center=true);
 	translate([0, 0, HEIGHT/2-15])
-	  cylinder(h=HEIGHT, d=HEAD_DIA, center=true);
+	  cylinder(h=HEIGHT, d=screwheadd, center=true);
       }
     }
     
-    for (y=[-WIDTH_MAX/2+10, WIDTH_MAX/2-10]) {
-      translate([-10,y, 0])
+    for (y=[-w/2, w/2]) {
+      translate([-10,y,0])
 	union() {
-	cylinder(h=HEIGHT*2, d=SCREW_DIA, center=true);
+	hull() {
+	  cylinder(h=HEIGHT*2, d=screwd, center=true);
+	  translate([screwd/2-0.1,-screwd/4,-(HEIGHT/2-15)-8]) cube([0.1,screwd/2,HEIGHT]);
+	}
 	hull() {
 	  translate([0, 0, HEIGHT/2-15])
-	    cylinder(h=HEIGHT, d=HEAD_DIA, center=true);
-	  translate([HEAD_DIA/2-0.1,-HEAD_DIA/4,-(HEIGHT/2-15)-8]) cube([0.1,HEAD_DIA/2,HEIGHT]);
+	    cylinder(h=HEIGHT, d=screwheadd, center=true);
+	  translate([screwheadd/2-0.1,-screwheadd/4,-(HEIGHT/2-15)-8]) cube([0.1,screwheadd/2,HEIGHT]);
 	}
       }
     }
@@ -107,10 +115,3 @@ module end_cap(cablehole) {
 	   valign = "center", halign = "center");
   }
 }
-
-//#powerstrip_solid();
-//translate([-POWER_LEN/2-0.5,0,0])
-if (printpowerstripattachment) {
-  rotate([0,-90,0]) end_cap(0);
-  translate([HEIGHT+2,0,0]) rotate([0,-90,0]) end_cap(1);
- }
