@@ -794,7 +794,12 @@ The usage is
 3. Set stop point to first layer above the top of the window (in slicer,
    the layer where print would continue over the polycarbonate/glass). 
 4. Use windowtemplate to print out templates for windows, these help cutting 
-   polycarbonate or whatever material you use to proper shape.
+   polycarbonate or whatever material you use to proper shape. Make sure that
+   material is cut to at most the template size. There is tolerance so the window
+   can safely be smaller, however, if it is too small, it might not stay in place
+   then layers are printed on top, which may make edges ugly.
+5. Start print, and when printer stops at stop point, drop window insert and
+   continue the print.
 
 ### lattialista.scad
 
