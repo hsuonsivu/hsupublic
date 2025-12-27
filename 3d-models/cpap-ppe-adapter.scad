@@ -63,10 +63,27 @@ tubed=9;
 tubex=-externald1/2;
 tubey=cover2d/2-tubed/2;
 tubeangle=-20;
+tuberangle=-12;
+tubesideangle=-45;
+tubesider=-cover2d/2-tubed/2;
+tubecatchd=tubed+10;
+tubecatchheight=10;
 
 outholex=13;
-outholed=1.5;
-outholeangle=-30;
+outholed=1.2;
+outholeangle=-35;
+
+module insidecut() {
+  hull() {
+    // Bottom shape
+    translate([coverxstart+coverd/2+3,0,-0.01]) cylinder(d=coverd-edgew-5,h=coverbasecuth);
+    translate([coverxstart+coverl/2+3,0,-0.01]) scale([(coverl-4)/coverw,1,1]) cylinder(d=coverw-edgew,h=coverbasecuth);
+    translate([coverxstart+coverl-coverd/2,0,-0.01]) cylinder(d=coverd-edgew,h=coverbasecuth);
+
+    // top
+    translate([0,0,coverheight-coverh]) cylinder(d1=cover2d+dtolerance,d2=cover2d+dtolerance,h=coverh);
+  }
+}
 
 module cpaptube() {
   difference() {
@@ -129,29 +146,41 @@ module cpaptube() {
     // Cover cut
     difference() {
       union() {
-	hull() {
-	  // Bottom shape
-	  translate([coverxstart+coverd/2+3,0,-0.01]) cylinder(d=coverd-edgew-5,h=coverbasecuth);
-	  translate([coverxstart+coverl/2+3,0,-0.01]) scale([(coverl-4)/coverw,1,1]) cylinder(d=coverw-edgew,h=coverbasecuth);
-	  translate([coverxstart+coverl-coverd/2,0,-0.01]) cylinder(d=coverd-edgew,h=coverbasecuth);
-
-	  // top
-	  translate([0,0,coverheight-coverh]) cylinder(d1=cover2d+dtolerance,d2=cover2d+dtolerance,h=coverh);
+	difference() {
+	  insidecut();
+	
+	  if (0) if (tube) rotate([0,0,tubesideangle]) translate([tubesider,0,0]) {
+	      intersection() {
+		translate([-tubecatchd/2+tubed/2,0,tubecatchheight]) cylinder(d=tubecatchd,h=axletoph--tubecatchheight);
+		translate([-tubecatchd/2+tubed/2,-tubecatchd/2,tubecatchheight]) rotate([0,-45,0]) cube([tubecatchd,tubecatchd,axletoph--tubecatchheight]);
+	      }
+	    }
 	}
-      
-	for (i=[1:1:4]) {
-	  for (j=[1:1:4]) {
+	
+	for (i=[1:1.5:4]) {
+	  for (j=[1:1.5:4]) {
 	    translate([coverxstart+outholex+edgew+outholed*2+i*outholed*1.5,-outholed*2.5*1.5+j*outholed*1.5,0]) rotate([0,outholeangle,0]) cylinder(d=outholed,h=coverheight);
+	    translate([coverxstart+outholex+edgew+outholed*2+i*outholed*1.5,-outholed*2.5*1.5+j*outholed*1.5,0]) rotate([0,outholeangle,0]) translate([0,0,-coverheight/2*sin(outholeangle)-2*i*sin(outholeangle)+1]) cylinder(d1=outholed,d2=outholed*2,h=coverheight/2);
 	  }
 	}
 
-	if (tube) translate([tubex,tubey,0]) rotate([0,tubeangle,0]) cylinder(d=tubed,h=adapterheight);
+	if (0) if (tube) translate([tubex,tubey,0]) rotate([0,tubeangle,0]) {
+	    cylinder(d=tubed,h=adapterheight);
+	  }
+
+	if (tube) {
+	  rotate([0,0,tubesideangle]) translate([tubesider,0,0]) {
+	    rotate([0,tuberangle,0]) cylinder(d=tubed,h=adapterheight);
+	  }
+	}
       }
       translate([0,0,-0.01]) cylinder(d=externald2+dtolerance,h=coverheight+0.02);
+
+      //translate([tubex,tubey,coverheight/2]) cylinder(d=tubed-sin(tubeangle)*threadh,coverheight/2);
     }
   }
 
-  if (adhesion) cylinder(d=cpaptubeind-0.15*2,h=0.2);
+  if (adhesion) cylinder(d1=cpaptubeind-0.15*2,d2=cpaptubeind-0.6,h=0.6);
 }
 
 module filteradapter() {
@@ -195,6 +224,6 @@ intersection() {
       cylinder(d=43.3,h=threadh-dtolerance*2+4);
     }
   }
-  if (debug) translate([-100,-100,0]) cube([200,100,200]);
+  if (debug) translate([-100,0,0]) cube([200,100,200]);
 }
 
