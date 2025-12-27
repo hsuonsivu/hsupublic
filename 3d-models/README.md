@@ -774,6 +774,27 @@ knobaxle and knob make knobs which rotate freely, so that various
 cranks can be made. The axle can be printed in design orientation,
 knob prints better upside down. Use same parameters when using these.
 
+### windowframe
+### windowcut
+### windowtemplate
+### function windowheight
+
+modules to add windows to objects. I use 2mm polycarbonate for window
+material. windowframe and windowcut take position, height and size of
+window. Height should be the top of the frame, which is somewhat
+unintuitive, as usually the windows are printed with window opening
+towards bed. windowheight function returns the thickness of window
+structure, so use that to calculate the height option for windowframe
+and windowcut. Windowframe and windowcut parameters should be same.
+
+The usage is
+1. Use windowframe to create the upper and lower frame for the window.
+2. Use windowcut to cut out the space for the window and the opening.
+3. Slice the model so that window opens down
+3. Set stop point to first layer above the top of the window (in slicer,
+   the layer where print would continue over the polycarbonate/glass). 
+4. Use windowtemplate to print out templates for windows, these help cutting 
+   polycarbonate or whatever material you use to proper shape.
 
 ### lattialista.scad
 

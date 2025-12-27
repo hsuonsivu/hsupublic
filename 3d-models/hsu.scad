@@ -607,10 +607,11 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
 
 module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
   dz=dzin>0?dzin:0.01;
+  minz=(dz==z?0.01:0);
   $fn=(fn!="" || fn>0)?fn:30;
   translate([dxy/2,dxy/2,0]) minkowski(convexity=10) {
-    cube([x-dxy,y-dxy,z-dz]);
-    roundedcylinder(dxy,dz,dz,printable,$fn);
+    cube([x-dxy,y-dxy,z-dz+minz]);
+    roundedcylinder(dxy,dz,dz-minz,printable,$fn);
   }
 }
 
@@ -852,5 +853,66 @@ module knob(knobd,knobh) {
   }
 }
 
+windowedge=14;
+windowoverlap=6; // Go over the material
+windowcornerd=10; // This is for the cover, not windows itself which are cut rectangular
+windowsmallcornerd=1;
+windowoutlap=6; // Rounded at edges
+windowcutoutlap=3;
+windowoverlapbottomh=0.3*4; // For 0.3 layers 4 layers, for 0.2 layers 6 layers;
+windowoverlaptoph=0.3*4; // For 0.3 layers 4 layers, for 0.2 layers 6 layers;
+windowh=2;
+windowztolerance=0.2;
+windowtemplateh=1;
+windowtemplateedge=7;
 
+module windowframe(x,y,height,l,w,h) {
+  overl=l+windowoutlap*2;
+  overw=w+windowoutlap*2;
+  
+  hull() {
+    translate([x-l/2,y-w/2,height]) roundedboxxyz(l,w,windowoverlapbottomh,windowcornerd,windowsmallcornerd,0,90);
+    translate([x-overl/2,y-overw/2,height+windowztolerance+windowoverlapbottomh]) roundedboxxyz(overl,overw,h,windowcornerd,windowsmallcornerd,0,90);
+  }
+}
+
+module windowcut(x,y,height,l,w,h) {
+  cutl=l-windowoverlap*2;
+  cutw=w-windowoverlap*2;
+  overl=l+windowoutlap*2;
+  overw=w+windowoutlap*2;
+  overcutl=l-windowoverlap*2+windowcutoutlap*2;
+  overcutw=w-windowoverlap*2+windowcutoutlap*2;
+  
+  translate([x-l/2-xtolerance,y-w/2-ytolerance,height+windowoverlapbottomh+windowztolerance]) cube([l+xtolerance*2,w+ytolerance*2,h+windowztolerance*2]);
+  hull() {
+    translate([x-cutl/2,y-cutw/2,height-windowsmallcornerd/2]) roundedboxxyz(cutl,cutw,windowoverlapbottomh+windowsmallcornerd,windowcornerd,windowsmallcornerd,0,90);
+    translate([x-overcutl/2,y-overcutw/2,height-windowsmallcornerd]) roundedboxxyz(overcutl,overcutw,windowsmallcornerd,windowcornerd,windowsmallcornerd,0,90);
+  }
+
+  translate([x-cutl/2,y-cutw/2,height+windowoverlapbottomh+windowztolerance+windowh+windowztolerance-0.01]) roundedboxxyz(cutl,cutw,windowoverlaptoph+0.01,windowcornerd,0.005,0,90);
+  hull() {
+    translate([x-cutl/2,y-cutw/2,height+windowoverlapbottomh+windowztolerance+windowh+windowztolerance+0.3]) roundedboxxyz(cutl,cutw,windowoverlaptoph-0.3,windowcornerd,0.005,0,90);
+    translate([x-cutl/2-h/2,y-cutw/2-h/2,height+windowoverlapbottomh+windowztolerance+windowh+windowztolerance+windowoverlaptoph]) roundedboxxyz(cutl+h,cutw+h,windowoverlaptoph+0.01,windowcornerd,0.005,0,90);
+  }
+}
+
+module windowtemplate(l,w) {
+  midsupportl=((l-windowoverlap*2-50)>0?1:0);
+  midsupportw=((w-windowoverlap*2-50)>0?1:0);
+
+  difference() {
+    echo(l,w,windowtemplateh,windowcornerd,1);
+    translate([-l/2,-w/2,0]) roundedbox(l,w,windowtemplateh,windowcornerd,1);
+    if (midsupportl&&midsupportw) {
+      for (n=[0,1]) mirror([n,0,0]) for (m=[0,1]) mirror([0,m,0]) translate([-l/2+windowtemplateedge,-w/2+windowtemplateedge,-windowcornerd/2]) roundedbox(l/2-windowtemplateedge*1.5,w/2-windowtemplateedge*1.5,windowtemplateh+windowcornerd,windowcornerd,1);
+    } else if (midsupportl) {
+      for (m=[0,1]) mirror([0,m,0]) translate([-l/2+windowtemplateedge,-w/2+windowtemplateedge,-windowcornerd/2]) roundedbox(l-windowtemplateedge*2,w/2-windowtemplateedge*1.5,windowtemplateh+windowcornerd,windowcornerd,1);
+    } else {
+      translate([-l/2+windowtemplateedge,-w/2+windowtemplateedge,-windowcornerd/2]) roundedbox(l-windowtemplateedge*2,w-windowtemplateedge*2,windowtemplateh+windowcornerd,windowcornerd,1);
+    }
+  }
+}
+
+function windowheight(h) = windowoverlapbottomh+windowztolerance+h+windowztolerance+windowoverlaptoph;
 
