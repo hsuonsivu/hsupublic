@@ -1,8 +1,9 @@
 SOURCE=mousetrap.scad
 DEPENDS=hsu.scad Makefile.mousetrap
-ALL=mousetrapstoragebox.stl mousetrapmechanics.stl mousetrapstoragecover.stl mousetrapcover.stl mousetrapdoor.stl baitboxtest.stl baitbox.stl
+ALL=mousetrapstoragebox.stl mousetrapmechanics.stl mousetrapstoragecover.stl mousetrapcover.stl mousetrapdoor.stl mousetrapbaitboxtest.stl mousetrapbaitbox.stl mousetrapflap.stl mousetrapdoorandflap.stl mousetrapwindowtemplates.stl
 
 IMAGES=mousetrap.jpg mousetrap.png
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
 all: $(ALL)
 
@@ -28,30 +29,42 @@ clean:
 	rm $(ALL)
 
 mousetrapmechanics.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=1 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
 mousetrapstoragecover.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=2 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
 	echo $@ built.
 
 mousetrapstoragebox.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=3 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
 	echo $@ built.
 
 mousetrapcover.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=4 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=4 -o $@ $(SOURCE)
 	echo $@ built.
 
 mousetrapdoor.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=5 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=5 -o $@ $(SOURCE)
 	echo $@ built.
 
-baitboxtest.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=7 -o $@ $(SOURCE)
+mousetrapbaitboxtest.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=7 -o $@ $(SOURCE)
 	echo $@ built.
 
-baitbox.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=8 -o $@ $(SOURCE)
+mousetrapbaitbox.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=8 -o $@ $(SOURCE)
+	echo $@ built.
+
+mousetrapflap.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=9 -o $@ $(SOURCE)
+	echo $@ built.
+
+mousetrapdoorandflap.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=10 -o $@ $(SOURCE)
+	echo $@ built.
+
+mousetrapwindowtemplates.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=11 -o $@ $(SOURCE)
 	echo $@ built.
 
