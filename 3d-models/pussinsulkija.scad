@@ -4,6 +4,8 @@
 
 include <hsu.scad>
 
+print=1;
+
 debug=0;
 
 xtolerance=0.3;
@@ -15,13 +17,12 @@ cornerd=1;
 
 bagw=0.5;
 
-l=210;
+//l=250; //210;
 w=7;
 h=12;
 depth=1; // Depth of groove
 axled=8;
 angle=40;
-printangle=(debug>0)?0:20; // Print angle. Thus must be open when printing due to curved grab part
 axledepth=2.2;
 springw=1.6;
 springhook=3;
@@ -37,23 +38,27 @@ rootl=outsided*1.5;
 
 textdepth=0.9;
 textsize=w;
-versiontext="v1.1";
+versiontext="v1.2";
 textfont="Liberation Sans:style=Bold";
 labelsize=5;
 
-grabdepth=l*0.01;//1.8;
-grabstart=outsided+dtolerance/2+cornerd/2;
-//grabl=l-(outsided+xtolerance)*2-grabdepth*2;
-grabl=l-grabstart;//-outsided/2-xtolerance;
-grabconcave=0.5;
+module pussinsulkija(l=250) {
+  springhookw=springhook*2+springw+springcutw+cornerd;
+  aa=atan(springhookw/(l+axled));
 
-grabr=grabconcave/2+grabl*grabl/8/grabconcave;
-grabd=2*grabr;
-echo(grabd);
+  printangle=(debug>0)?0:aa; // Print angle. Thus must be open when printing due to curved grab part
 
-module pussinsulkija() {
+  grabdepth=l*0.01;//1.8;
+  grabstart=axled+dtolerance/2+cornerd/2;
+  grabl=l-grabstart;//-outsided/2-xtolerance;
+  grabconcave=0.5;
+
+  grabr=grabconcave/2+grabl*grabl/8/grabconcave;
+  grabd=2*grabr;
+
   if (1) difference() {
-    union() {
+      // Main body
+      union() {
       translate([0,0,-h/2]) roundedcylinder(outsided,h,cornerd,1,90);
 
       hull() {
@@ -97,6 +102,7 @@ module pussinsulkija() {
 
     translate([axled/2,hingelength/2,h/2-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize-2,halign="left", valign="center");
 
+    // Locking cut
     difference() {
       union() {
 	intersection() {
@@ -115,13 +121,16 @@ module pussinsulkija() {
       translate([l-(springcutd-springcutw*2)/2,w-springw-springcutd/2,-h/2-0.01]) cylinder(d=springcutd-springcutw*2,h=h+0.02,$fn=90);
     }
 
+    // Grab cut
     hull() {
       translate([grabstart+grabdepth-xtolerance,-bagw/2-0.01,-grabdepth-ztolerance]) triangle(grabl-grabdepth*2-springhook-cornerd+xtolerance*2,grabdepth+bagw/2+ytolerance,grabdepth*2+ztolerance*2,20);
       translate([grabstart-xtolerance,-0.01,-grabdepth-ztolerance]) cube([grabl-cornerd-springhook+xtolerance*2,0.01,grabdepth*2+ztolerance*2]);
     }
 
+    // Hinge
     rotate([90,0,0]) onehinge(axled,axlel,axledepth,2,ytolerance,dtolerance);
 
+    // Space for movement
     hull() for (a=[0,angle]) rotate([0,0,-a]) {
 	hull() {
 	  translate([-axled/2-dtolerance/2,-hingelength,-h/2+axledepth+axlel-axled/2]) triangle(axled+dtolerance,hingelength,axled/2+ztolerance,12);
@@ -142,14 +151,19 @@ module pussinsulkija() {
   if (1) rotate([0,0,-printangle]) difference() {
       union() {
 	rotate([90,0,0]) onehinge(axled,axlel,axledepth,0,ytolerance,dtolerance);
+
+	// Connecting axle to closing
 	hull() {
 	  translate([-axled/2,-hingelength,-h/2+axledepth+axlel-axled/2]) triangle(axled,hingelength,axled/2,12);
 	  translate([-axled/2,-hingelength,-h/2+axledepth]) cube([axled,hingelength,axlel-axled/2]);
 	}
+
+	// Grab structure 
 	if (1) hull() {
 	    translate([grabstart+grabdepth,-bagw/2-0.01,-grabdepth]) triangle(grabl-grabdepth*2-springhook-cornerd,grabdepth+bagw/2,grabdepth*2,20);
 	    translate([grabstart,-bagw/2-w/2,-grabdepth]) cube([grabl-springhook-cornerd,w/2,grabdepth*2]);
 	  }
+
 	intersection() {
 	  translate([grabstart+grabdepth,-w,-h/2]) cube([grabl-grabdepth*2-springhook-cornerd,w*2,h]);
 	  union() {
@@ -159,7 +173,7 @@ module pussinsulkija() {
 	    }
 	    hull() {
 	      translate([grabstart+grabl/2,grabconcave-grabd/2,-grabdepth]) cylinder(d=grabd,h=grabdepth*2,$fn=2*360);
-	      translate([grabstart+grabl/2,grabconcave-grabd/2,-0.05]) cylinder(d=grabd+grabconcave*2*2*2,h=0.1,$fn=2*360);
+	      translate([grabstart+grabl/2,grabconcave-grabd/2,-0.05]) cylinder(d=grabd+grabdepth*2,h=0.1,$fn=2*360);
 	    }
 	  }
 	}
@@ -183,8 +197,14 @@ module pussinsulkija() {
     }
 }
 
-intersection() {
-  //if (debug) translate([l/2,-100,-h]) cube([1000,1000,1000]);
-  if (debug) translate([-100,-100,-h/2]) cube([1000,1000,h/2]);
-  pussinsulkija();
+if (print==0) intersection() {
+  if (debug) translate([l/2,-100,-h]) cube([1000,1000,1000]);
+  //if (debug) translate([-100,-100,-h/2]) cube([1000,1000,h/2]);
+  pussinsulkija(l=250);
 }
+
+if (print==1) {
+  for (i=[0:1:(200-80)/40]) {
+    translate([0,3.5*w*i,0]) pussinsulkija(l=100+i*40);
+  }
+ }
