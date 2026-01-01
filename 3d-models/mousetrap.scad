@@ -9,10 +9,10 @@
 
 include <hsu.scad>
 
-print=4;
+print=0;
 adhesion=(print>0 && print<6)?1:0;
 debug=0;//print>0?0:1;
-abs=0;
+abs=1;
 windows=1; // Make windows with 2mm polycarbonate inserts
 antiwarp=(print>0)?abs:0;
 antiwarpdistance=4; //3 mm
@@ -53,7 +53,7 @@ swingh=50;
 swingl=150; //135; //235/2; // Length of one arm
 swingtoplreduction=0;
 swingsideh=20;
-angle=20;//20;//20 in closed up; 5 down in open lock
+angle=-20;//20;//20 in closed up; 5 down in open lock
 closedangle=20; 
 lockangle=28;//23;//27;//27;//27;//29.7;//29.7;//23=release in plate, 29.7=locked;
 openangle=closedangle;
@@ -80,6 +80,9 @@ clipheight=boxh-wall-ztolerance-clipd/2;
 
 swingtunnelw=ytolerance+wall/2+swingw+wall/2+ytolerance;
 
+lockinsertclipd=clipd+1;
+lockinsertclipdepth=clipdepth;
+
 lockaxleheight=axled/2+wall/2;
 lockaxled=axled;
 lockaxlex=-swingl/2-21;//8;
@@ -89,11 +92,17 @@ lockweightl=30;
 lockweighth=15;
 lockweightw=wall*2;
 lockaxleyoffset=0;
-lockaxlel=wall+ytolerance+midwallw+ytolerance+wall+lockaxleyoffset;
-lockaxley=-swingtunnelw/2-midwallw/2-lockaxleyoffset/2; // midpoint
+lockaxlel=wall+ytolerance+midwallw+ytolerance+wall+lockaxleyoffset+1.5;
+lockaxley=-swingtunnelw/2-midwallw/2-lockaxleyoffset/2+1.5/2; // midpoint
 locklefty=-swingtunnelw/2+ytolerance+wall;
+lockaxlelefty=locklefty+1.5;
 lockrighty=-swingtunnelw/2-midwallw-ytolerance-wall;
 
+lockinserty=lockaxley-lockaxlel/2-wall-ytolerance+0.5;
+lockinsertw=lockaxlelefty+ytolerance-lockinserty+axledepth+0.5;;
+lockinsertl=21;
+lockinserth=lockaxleheight+lockaxled/2+wall;
+  
 boxx=lockaxlex-lockaxled/2;
 boxl=248; //248; //235  -boxx+swingl-25;
 boxw=wall+swingtunnelw+midwallw+swingtunnelw+wall;
@@ -273,6 +282,9 @@ outwindoww=swingtunnelw-4;
 outwindowheight=storagewindowheight;
 outwindowcenterx=boxl/2-10;
 outwindowcentery=-swingtunnelw/2-midwallw-swingtunnelw/2;
+
+// Open incoming tunnel wall to this point
+intunnelopenx=(-swingl/2+wall*2)*cos(closedangle)+wall+wall;
 
 module windowframeold(x,y,height,l,w,h) {
   overl=l+windowoutlap*2;
@@ -643,7 +655,6 @@ module swing(a,l) {
 arml=sqrt(pow(-lockaxlex-(swingl/2+wall+xtolerance)*cos(closedangle),2)+pow(axleheight+(swingl/2+wall)*sin(closedangle),2))+swingheight+wall/5-lockaxleheight+1;
   
 module lock(a) {
-  //translate(translate([lockaxlex,lockaxley,lockaxleheight]) {
   xx=lockaxlex;
   yy=lockaxley;
   zz=lockaxleheight;
@@ -655,7 +666,7 @@ module lock(a) {
 
   // Bar to weight
   translate([xx,yy,zz]) rotate([0,a,0]) hull() {
-    translate([0,ly,lockaxled*1.5]) rotate([90,0,0]) cylinder(d=lockaxled,h=wall);
+    translate([0,ly-1.5,lockaxled*1.5]) rotate([-90,0,0]) cylinder(d=lockaxled,h=wall);
     translate([-lockaxled/2+wall/2,ly+wall+0.5,arml+wall*4]) rotate([90,0,0]) cylinder(d=wall,h=wall*2);
     translate([-lockaxled/2+wall/2+wall*1.5+0.5,ly-wall*1+0.5,arml+wall*4]) rotate([-90,0,0]) cylinder(d=wall,h=0.2);
   }
@@ -664,16 +675,16 @@ module lock(a) {
     w=wall*2+ytolerance+wall+ytolerance+0.2;
     translate([-lockaxled/2+wall/2,lwy,arml+wall*4]) rotate([-90,0,0]) cylinder(d=wall,h=w);
     translate([-lockaxled/2+wall/2,lwy,arml+wall*3]) rotate([-90,0,0]) cylinder(d=wall,h=w);
-    translate([-lockaxled/2+wall/2+wall*1.5,lwy,arml+wall*4]) rotate([-90,0,0]) cylinder(d=wall,h=w);
+    translate([-lockaxled/2+wall/2+wall*1.5,lwy,arml+wall*4]) rotate([-90,0,0]) cylinder(d=wall,h=w-1);
   }
 
   translate([xx,yy,zz]) rotate([0,a,0]) hull() {
-    translate([0,ly,0]) rotate([90,0,0]) cylinder(d=axled,h=wall);
-    translate([0,ly,lockaxled*1.5]) rotate([90,0,0]) cylinder(d=axled,h=wall);
+    translate([0,ly+1.5,0]) rotate([90,0,0]) cylinder(d=axled,h=wall+1.5);
+    translate([0,ly+1.5,lockaxled*1.5]) rotate([90,0,0]) cylinder(d=axled,h=wall+1.5);
   }
 
   translate([xx,yy,zz]) rotate([0,a,0]) hull() {
-    translate([0,ly,lockaxled*1.5]) rotate([90,0,0]) cylinder(d=axled,h=wall);
+    translate([0,ly+1.5,lockaxled*1.5]) rotate([90,0,0]) cylinder(d=axled,h=wall+1.5);
     translate([-lockaxled/2+wall*3,ly+wall+0.5-wall*2,arml-wall-ytolerance-0.5]) rotate([-90,0,0]) cylinder(d=wall,h=wall);
     translate([-lockaxled/2+wall/2,ly+wall+0.5,arml-wall*2.2-ytolerance-0.5]) rotate([90,0,0]) cylinder(d=wall,h=wall*2);
     translate([-lockaxled/2+wall/2+wall+1.8,ly+wall+0.5,arml-wall*1.5-ytolerance-0.5+0.7]) rotate([90,0,0]) cylinder(d=wall,h=wall*2);
@@ -710,11 +721,85 @@ module lock(a) {
 	  }
 	  intersection() {
 	    translate([xx+xtolerance/2,yy,zz]) rotate([0,a-23,0]) translate([-xx,-yy,-zz]) translate([0,yy+ry-0.01,axleheight]) rotate([-90,0,0]) cylinder(d=swingl+xtolerance,h=0.02,$fn=360);
-	    translate([boxx,yy+ry-0.01,0]) cube([boxl,0.02,23]);
+	    translate([boxx,yy+ry-0.01,0]) cube([boxl,0.02,25]);
 	  }
 	}
     }
   }
+}
+
+module lockcuts() {
+  lockaxlecuts();
+
+  difference() {
+    union() {
+      incomingtunnelcuts();
+      outgoingtunnelcuts(0);
+    }
+    
+    // Do not cut lock axle end covers
+    for (y=[lockaxlelefty+ytolerance,lockaxley-lockaxlel/2-wall-ytolerance+0.5]) {
+      hull() {
+	translate([lockaxlex,y,lockaxleheight]) rotate([-90,0,0]) cylinder(d=lockaxled+2,h=axledepth+0.5);
+      }
+    }
+  }
+}
+
+module locksideclips(cut) {
+  tolerance=0.2;
+  dtolerance=0.4;
+  yt=cut?tolerance:0;
+  xt=cut?tolerance:0;
+  zt=cut?tolerance:0;
+  dt=cut?dtolerance:0;
+  //  yt=cut?ytolerance:0;
+  //xt=cut?xtolerance:0;
+  //zt=cut?ztolerance:0;
+  //dt=cut?dtolerance:0;
+  
+  intersection() {
+    translate([boxx+lockinsertl/2-lockinsertclipd/2,lockinserty+lockinsertclipdepth,lockinsertclipd/2+1]) tubeclip(lockinsertl+lockinsertclipd/2,lockinsertclipd,cut);
+    translate([boxx+lockinsertl/2-lockinsertl/2-(cut?0.01:0),lockinserty+lockinsertclipdepth-lockinsertclipd/2-dt*2,1]) cube([lockinsertl+lockinsertclipd/2+(cut?0.01:0),lockinsertclipd/2+dt,lockinsertclipd]);
+  }
+
+  intersection() {
+    translate([boxx+lockinsertl/2-lockinsertclipd/2,lockinserty+lockinsertw-lockinsertclipdepth,lockinsertclipd/2+1]) tubeclip(lockinsertl+lockinsertclipd/2,lockinsertclipd,cut);
+    translate([boxx+lockinsertl/2-lockinsertl/2-(cut?0.01:0),lockinserty+lockinsertw-lockinsertclipdepth,1]) cube([lockinsertl+lockinsertclipd/2+(cut?0.01:0),lockinsertclipd/2+dt*2,lockinsertclipd]);
+  }
+}
+
+module lockinsertform(cut) {
+  tolerance=0.2;
+  dtolerance=0.4;
+  yt=cut?tolerance:0;
+  xt=cut?tolerance:0;
+  zt=cut?tolerance:0;
+  dt=cut?dtolerance:0;
+  
+  hull() {
+    //    translate([boxx-(cut?0.01:0),lockinserty-yt,cut?-0.01:0]) cube([lockinsertl+(cut?0.01:0)+xt,lockinsertw+yt*2,(cut?0.01:0)+lockinserth+zt]);
+    //    translate([boxx-(cut?0.01:0),lockinserty-yt,cut?-0.01:0]) cube([lockinsertl+lockinserth+(cut?0.01:0)+xt,lockinsertw+yt*2,0.01]);
+    translate([boxx-(cut?0.01:0),lockinserty-yt,cut?-0.01:0]) roundedbox(lockinsertl+(cut?0.01:0)+xt,lockinsertw+yt*2,(cut?0.01:0)+lockinserth+zt,cornerd,5);
+    translate([boxx-(cut?0.01:0),lockinserty-yt,cut?-0.01:0]) cube([lockinsertl+lockinserth+(cut?0.01:0)+xt,lockinsertw+yt*2,0.01]);
+  }
+
+  translate([boxx+lockinsertl-lockinsertclipd/2-1-(cut?0.01:0),-swingtunnelw/2-midwallw/2,lockinserth-lockinsertclipdepth]) sphere(d=lockinsertclipd+(cut?dtolerance:0));
+
+  if (cut) locksideclips(cut);
+}
+
+module lockinsert() {
+  difference() {
+    union() {
+      lockinsertform(0);
+      locksideclips(0);
+    }
+
+    lockcuts();
+  }
+
+  lock(0);
 }
 
 module storagegate() {
@@ -1000,18 +1085,28 @@ module mechanicsbox() {
   }
 }
 
-// Open the mechanics box for mechanics
-module mechanicscuts() {
-  // Spaces for swinging platforms
-  swingcut();
-  translate([0,-swingtunnelw/2-midwallw-swingtunnelw/2,0]) swingcut();
-    
-  // Incoming tunnel
+module incomingtunnelcuts() {
   c=boxincornerd;
   translate([boxx-c/2,-swingtunnelw/2,wall*2]) roundedbox(swingtunnell,swingtunnelw,boxh-wall*3+c/2,c);
   hull() {
     translate([boxx-c/2,-swingtunnelw/2,wall*2]) roundedbox(swingtunnell-wall-c/2,swingtunnelw,boxh-wall*3-c/2,c);
     translate([-swingl/2*cos(closedangle)-swingheight*cos(closedangle)-cornerd/2-cornerd/2-swingweightl,-swingtunnelw/2,wall*2]) roundedbox(cornerd+2*swingweightl+swingl*cos(closedangle)-wall,swingtunnelw,boxh-wall*3-c/2,cornerd);
+  }
+
+  // Cut for lock movement, incoming tunnel
+  translate([lockaxlex-lockaxled/2-axledtolerance/2,-swingtunnelw/2,wall*2]) cube([axledtolerance+lockaxled+arml*sin(90-lockangle)+xtolerance,ytolerance+wall*2+ytolerance*2,storageh]);
+
+  // Cut for lock movement, incoming tunnel
+  //  translate([lockaxlex-lockaxled/2-axledtolerance/2,-swingtunnelw/2,wall*2]) cube([axledtolerance+lockaxled+arml*sin(90-lockangle)+xtolerance,ytolerance+wall*2+ytolerance*2,storageh]);
+}
+
+module outgoingtunnelcuts(rightwide) {
+  c=boxincornerd;
+  
+  // Cut for lock movement, outgoing tunnel
+  hull() {
+    translate([lockaxlex-lockaxled/2-axledtolerance/2,-swingtunnelw/2-midwallw-ytolerance-wall-ytolerance-0.5,wall*2]) cube([axledtolerance+lockaxled+arml*sin(90-lockangle)+xtolerance,ytolerance+wall+ytolerance+0.5,storageh]);
+    translate([lockaxlex+lockaxled*2,-swingtunnelw/2-midwallw-ytolerance-wall-ytolerance-0.5,0.8]) cube([20-lockaxled,ytolerance+wall+ytolerance+0.5,storageh]);
   }
 
   // Outgoing tunnel
@@ -1021,6 +1116,27 @@ module mechanicscuts() {
   }
   translate([boxx-c/2,-swingtunnelw/2-midwallw-swingtunnelw,wall*2]) roundedbox(swingtunnell,swingtunnelw-wall-ytolerance-wall-ytolerance,storageh-wall,c);
 	      
+  hull() {
+    ywiden=rightwide?lockrighty-lockinserty:0;
+    translate([lockaxlex-lockaxled/2-axledtolerance/2,lockrighty-ytolerance-ywiden,wall*2]) cube([axledtolerance+lockaxled+arml*sin(90-lockangle)+xtolerance,ytolerance+wall+ytolerance+ywiden,lockinserth+ztolerance-wall*2]);
+    translate([lockaxlex+lockaxled*2,lockrighty-ytolerance-ywiden,0.8]) cube([20-lockaxled,ytolerance+wall+ytolerance+ywiden,lockinserth+ztolerance-0.8]);
+  }
+}
+
+// Open the mechanics box for mechanics
+module mechanicscuts() {
+  c=boxincornerd;
+  
+  // Spaces for swinging platforms
+  swingcut();
+  translate([0,-swingtunnelw/2-midwallw-swingtunnelw/2,0]) swingcut();
+    
+  // Incoming tunnel
+  incomingtunnelcuts();
+
+  // Outgoing tunnel
+  outgoingtunnelcuts(1);
+  
   xx=swingl/2*cos(closedangle);
 
   // Opening between in and out tunnels
@@ -1044,21 +1160,19 @@ module mechanicscuts() {
     translate([boxlockpinholex,y,0]) cylinder(d=boxlockpind+dtolerance,h=boxlockpinholeh);
   }
 
-  // Cut for lock movement, incoming tunnel
-  translate([lockaxlex-lockaxled/2-axledtolerance/2,-swingtunnelw/2,wall*2]) cube([axledtolerance+lockaxled+arml*sin(90-lockangle)+xtolerance,ytolerance+wall*2+ytolerance*2,storageh]);
-
-  // Cut for lock movement, outgoing tunnel
-  hull() {
-    translate([lockaxlex-lockaxled/2-axledtolerance/2,-swingtunnelw/2-midwallw-ytolerance-wall-ytolerance-0.5,wall*2]) cube([axledtolerance+lockaxled+arml*sin(90-lockangle)+xtolerance,ytolerance+wall+ytolerance+0.5,storageh]);
-    translate([lockaxlex+lockaxled*2,-swingtunnelw/2-midwallw-ytolerance-wall-ytolerance-0.5,0.8]) cube([20-lockaxled,ytolerance+wall+ytolerance+0.5,storageh]);
-  }
-	      
+  // Cut for lock insert
+  lockinsertform(1);
+  
+  // Cuts for lock movement
+  lockcuts();
+  
   // Cut for lock weight movement
   y=-swingtunnelw/2-midwallw/2-lockweightw/2-0.5-ytolerance;
   h=storageh-arml+lockweighth-wall*1-0.3-wall;
   height=arml/2;
   oheight=lockaxled/2+arml*cos(lockangle);
   oh=boxh-wall-oheight-wall/2;
+  
   intersection() {
     union() {
       translate([lockaxlex-lockaxled/2+0.4,y,height]) cube([axledtolerance+lockaxled+arml*sin(90-lockangle)+lockweightl+xtolerance,ytolerance+lockweightw+ytolerance+1,h]);
@@ -1177,16 +1291,6 @@ module printadhesionsupports() {
 
     translate([x,ry-swingw/2+wall*3+1,swingmheight]) cube([0.4,swingw-wall*2-3,swingmheight]);
   }
-
-  // Prevent support below crossbars
-  if (0) for (yy=[0,-swingtunnelw/2-midwallw-swingtunnelw/2]) {
-    translate([lockaxlex-lockaxled/2,yy-(maxbridge/4-cornerd/2),boxcrosssupportheight]) cube([0.4,maxbridge/2,incomingcrossbarheight-boxcrosssupportheight-0.3]);
-  }
-
-  // Prevent support below swing box (no idea why this is generated)
-  if (0) for (y=midwallw) {
-    translate([lockaxlex-lockaxled/2,-swingtunnelw/2-y+1.8,boxcrosssupportheight-5]) cube([0.4,y,incomingcrossbarheight-boxcrosssupportheight+5-0.3]);
-  }
 }
 
 module lockaxlecuts() {
@@ -1204,9 +1308,8 @@ module lockaxlecuts() {
     }
     
     union() {
-      for (y=[lockaxley-lockaxlel/2-ytolerance,lockaxley+lockaxlel/2-wall-ytolerance]) {
-	translate([lockaxlex,y,wall]) cube([lockweightl,wall+ytolerance*2,wall+0.01]);
-      }
+      translate([lockaxlex,lockaxley-lockaxlel/2-ytolerance,wall]) cube([lockweightl,wall+ytolerance*2,wall+0.01]);
+      translate([lockaxlex,-swingtunnelw/2,wall]) cube([lockweightl,wall+ytolerance*2+1.5,wall+0.01]);
     }
   }
 }
@@ -1227,14 +1330,6 @@ module mousebox() {
       // Support below swings
       swingsupports();
 
-      // Lock axle end covers
-      for (y=[locklefty+ytolerance,lockaxley-lockaxlel/2-wall-ytolerance+0.5]) {
-	hull() {
-	  translate([lockaxlex,y,lockaxleheight]) rotate([-90,0,0]) cylinder(d=lockaxled,h=axledepth+0.5);
-	  //	      translate([lockaxlex-lockaxled*2,y,wall/2]) rotate([-90,0,0]) cylinder(d=wall,h=axledepth+0.5);
-	}
-      }
-
       crossbars();
 	  
       if (adhesion) {
@@ -1243,7 +1338,7 @@ module mousebox() {
     }
 
     // Lock axle hinge cuts
-    lockaxlecuts();
+    //lockaxlecuts();
 
     for (y=[0,-swingtunnelw/2-midwallw-swingtunnelw/2]) {
       translate([0,y-swingw/2,axleheight]) onehinge(axled,axlel,axledepth,2,ytolerance,axledtolerance);
@@ -1473,7 +1568,7 @@ module cover() {
 	
       difference() {
 	union() {
-	  x=(-swingl/2+wall*2)*cos(closedangle)+wall+wall;
+	  x=intunnelopenx;
 	  z=closeheight-wall;
 	  lx=x/2;
 	  hull() {
@@ -1499,19 +1594,19 @@ module cover() {
       }
     }
 
-    if (windows) {
+  // Cover locking clips
+  for (x=boxclipxpositions) {
+    for (y=[boxy+clipd/2,boxy+boxw-clipd/2]) {
+      translate([x,y,clipheight]) tubeclip(clipl,clipd,dtolerance);
+    }
+  }
+
+  if (windows) {
       windowcut(boxx+inwindowcenterx,inwindowcentery,inwindowheight,inwindowl,inwindoww,windowh);
       windowcut(boxx+outwindowcenterx,outwindowcentery,outwindowheight,outwindowl,outwindoww,windowh);
     }
 
     translate([baitboxx,baitboxy,boxh-baitboxh]) rotate([0,0,baitboxangle]) baitboxslotcut(); 
-   
-    // Cover locking clips
-    for (x=boxclipxpositions) {
-      for (y=[boxy+clipd/2,boxy+boxw-clipd/2]) {
-	translate([x,y,clipheight]) tubeclip(clipl,clipd,dtolerance);
-      }
-    }
 
     translate([boxx+boxl/2,boxy+boxw/2+copyrighttextoffset/2,boxh-textdepth+0.01]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
     translate([boxx+boxl/2,boxy+boxw/2-copyrighttextoffset/2,boxh-textdepth+0.01]) linear_extrude(height=textdepth) text(copyrighttext, size=copyrighttextsize, valign="center",halign="center",font="Liberation Sans:style=Bold");
@@ -1524,8 +1619,9 @@ module mousetrap(a,la) {
       mousebox();
       swing(a,1);
       translate([0,-swingtunnelw/2-midwallw-swingtunnelw/2,0]) swing(a,0);
-  
-      translate([lockaxlex,lockaxley,lockaxleheight]) rotate([0,0,0]) translate([-lockaxlex,-lockaxley,-lockaxleheight]) lock(la);
+
+      //lockinsert();
+      //translate([lockaxlex,lockaxley,lockaxleheight]) rotate([0,0,0]) translate([-lockaxlex,-lockaxley,-lockaxleheight]) lock(la);
     }
     //                    translate([-200,-swingtunnelw,-1]) cube([400,400,200]);//axleheight+1
     //                   translate([-200,-swingtunnelw/2+0.1-swingtunnelw-midwallw,-1]) cube([400,400,200]);//axleheight+1
@@ -1593,10 +1689,12 @@ if (print==0) {
       }
       
       //mousestorage();
-      #door();
+      //#door();
       //#storagecover();
-      #translate([baitboxx,baitboxy,boxh-baitboxh]) rotate([0,0,baitboxangle]) baitbox();
-      #cover();
+      //#translate([baitboxx,baitboxy,boxh-baitboxh]) rotate([0,0,baitboxangle]) baitbox();
+      //#cover();
+
+      lockinsert();
     }
     //if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
     //if (debug) translate([boxx,-swingtunnelw/2-swingtunnelw-50,boxh-wall*15]) cube([590,swingtunnelw*2+midwallw+50,100]);//axleheight+1
@@ -1778,3 +1876,20 @@ if (print==9 || print==10) {
 if (print==11) {
   windowtemplates();
  }
+
+if (print==12) {
+  translate([0,0,-boxx]) rotate([0,-90,0]) lockinsert();
+ }
+
+if (print==13) {
+  x=20;
+  translate([-x-0.8,0,-boxx]) rotate([0,-90,0]) lockinsert();
+
+  intersection() {
+    translate([-x,-55,0]) cube([x,50,50]);
+
+    translate([0,0,-xxx-0.01]) rotate([0,-90,0]) mousetrap(0,lockangleprint);
+  }
+ }
+
+
