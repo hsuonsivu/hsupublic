@@ -1,7 +1,7 @@
 
 include <hsu.scad>
 
-l=11;
+l=13;
 extral=1;
 diameter=9;
 insided=6;
@@ -9,12 +9,12 @@ narrowd=7;
 
 flangeh=1;
 flanged=diameter+2;
-clipx=1;
+clipx=2;
 clipmovementl=1;
 clipcut=0.5;
 clipy=(diameter-4)/2-clipcut;;
 clipmovementy=clipy-clipcut;
-clipheight=7;
+clipheight=8;
 cliph=3;
 clipcutheight=3;
 clipcuth=l-1-clipcutheight;
