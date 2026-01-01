@@ -1436,3 +1436,4 @@ Bolts may require accurate printer.
 Headphone hangers for wall install.
 
 ![Headphone hanger in use.](headphonehanger.jpg)
+
