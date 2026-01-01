@@ -7,12 +7,13 @@ include <power-strip-attachment-lib.scad>
 
 print=8; // 0=cupholder full, 1=both cupholder parts, 2=cupholder backplate, 3=cupholder front, 4=headphone hanger, 5=test, 6=powerstrip attachments
 debug=0;
+testprint=0;
 
 strong=(print>0)?1:0;
 supports=1; // patches for easier printing
 $fn=print?120:30;
 
-versiontext="v1.1";
+versiontext="v1.2";
 textsize=7;
 textdepth=0.7;
 
@@ -23,8 +24,8 @@ screwheadspaceh=6;
 screwl=23.17;
 screwtowerd=screwheadd+4;
 
-nutd=7;
-nuth=2.3;
+nutd=7.2;
+nuth=3.2;
 
 thinwall=2;//1.6;
 width=50.3;
@@ -467,24 +468,30 @@ module powerstripholderfront() {
 	}
       
       for (m=[0,1]) mirror([m,0,0]) hull() {
-	  translate([width/2+screwtowerd/2,thinwall+cornerd-depth/2-0.01,screwtowerd/2+screwtowerd]) rotate([270,0,0]) cylinder(d=nutd,h=nuth,$fn=6);
-	  translate([width/2+screwtowerd/2,thinwall+cornerd-depth/2-0.01,screwtowerd/2]) rotate([270,0,0]) cylinder(d=nutd,h=nuth,$fn=6);
+	  translate([width/2+screwtowerd/2,thinwall+cornerd-depth/2-0.01,screwtowerd/2+screwtowerd]) rotate([270,30,0]) cylinder(d=nutd/cos(180/6),h=nuth,$fn=6);
+	  translate([width/2+screwtowerd/2,thinwall+cornerd-depth/2-0.01,screwtowerd/2]) rotate([270,30,0]) cylinder(d=nutd/cos(180/6),h=nuth,$fn=6);
 	}
 
-#      translate([0,depth/2+wall-textdepth+0.01,powerstripcollarz/2]) rotate([-90,180,0]) linear_extrude(textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
+      translate([0,depth/2+wall-textdepth+0.01,powerstripcollarz/2]) rotate([-90,180,0]) linear_extrude(textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
     }
   }
 }
 
-if (print==6 || print==8) {
-  powerstripholderfront();
- }
+intersection() {
+  union() {
+    if (print==6 || print==8) {
+      powerstripholderfront();
+    }
 
-if (print==7 || print==8) {
-  difference() {
-    translate([0,-HEIGHT/2-depth/2-0.5,WIDTH_MAX/2-12]) rotate([0,-90,90]) end_cap(1,width+screwtowerd,screwd,screwheadd);
-    translate([width/2,-depth/2-textsize,textdepth-0.01]) rotate([0,180,90]) linear_extrude(textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="left");
+    if (print==7 || print==8) {
+      difference() {
+	translate([0,-HEIGHT/2-depth/2-0.5,WIDTH_MAX/2-12]) rotate([0,-90,90]) end_cap(1,width+screwtowerd,screwd,screwheadd);
+	translate([width/2,-depth/2-textsize,textdepth-0.01]) rotate([0,180,90]) linear_extrude(textdepth) text(versiontext,font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="left");
+      }
+    }
   }
- }
+
+  if (testprint) translate([25,-45,0]) cube([50,20,16]); 
+}
 
 
