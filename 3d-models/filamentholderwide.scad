@@ -10,14 +10,14 @@ include <hsu.scad>
 // depth=y
 // width=z
 
-print=0; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
+print=3; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
 debug=0;
 dodebug=print>0?0:debug;
 
 //printbed=320;
 
 $fn=90;
-versiontext="V1.3";
+versiontext="V1.4";
 font = "Liberation Sans";
 textdepth = 0.5;
 textsize=8;
@@ -31,7 +31,7 @@ ztolerance=0.30;
 dtolerance=0.70;
 cornerd=1;
 
-rollwidth=150;
+rollwidth=80;
 rolldiameteroutside=130;
 rolldiameterinside=35; //3;
 rollextra=5; // Distance from backplate to roll
@@ -134,11 +134,15 @@ module holder() {
 	  translate([backplateheight-backplatedepth/2,backplatedepth/2,0]) roundedcylinder(backplatedepth,holdersupportwidth,cornerd,z==0?1:2,$fn);
 	};
       }
-      
+
+      // Left roll holder (female)
       translate([rollaxisheight,rollaxisdepth,0]) {
-	hull() {
-	  roundedcylinder(rolldiameterinside,holdersupportwidth+rolloverlapheight-rollnarrowingh-ztolerance,cornerd,1,$fn);
-	  translate([0,0,rolloverlapheight-ztolerance]) roundedcylinder(rollnarrowingd,rollnarrowingh,cornerd,1,$fn);
+	difference() {
+	  roundedcylinder(rolldiameterinside,holdersupportwidth+rolloverlapheight+rollnarrowingh-ztolerance*2,cornerd,1,$fn);
+	  hull() {
+	    translate([0,0,rolloverlapheight+rollnarrowingh-ztolerance]) roundedcylinder(rollnarrowingd,rollnarrowingh,cornerd,1,$fn);
+	    translate([0,0,holdersupportwidth+rolloverlapheight+rollnarrowingh-ztolerance]) roundedcylinder(rolldiameterinside,rollnarrowingh,cornerd,1,$fn);
+	  }
 	}
       }
     }
@@ -158,7 +162,7 @@ module holder() {
     translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight-rolloverlaph+rolloverlapnarrowingh+rolllockd/2]) rotate([0,0,90]) tubeclip(rolloverlapd+rolllockdepth,rolllockd,xtolerance);
 
     hull() {
-      translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight]) rotate([0,0,90]) tubeclip(rolloverlapd+rolllockdepth,rolllockd,xtolerance);
+      translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight]) rotate([0,0,90]) tubeclip(rolloverlapd+rolllockdepth,rolllockd,xtolerance*2);
       translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight-rolllockd]) rotate([0,0,90]) tubeclip(rolloverlapd,rolllockd,xtolerance);
     }
     
@@ -306,7 +310,7 @@ module right() {
 	  translate([x+1,0,holdersupportwidth+rollwidth-fingerwidth]) roundedbox(fingerheight-2,backplatedepth,fingernarrowing,cornerd);
 	}
 	
-	// right roll holder
+	// right roll holder (male)
 	union() {
 	  translate([rollaxisheight,rollaxisdepth,rolloverlapheight+ztolerance+rollnarrowingh]) {
 	    hull() {
@@ -331,10 +335,10 @@ module right() {
     translate([lockpinheight-xtolerance,backplatedepth/2-lockpinh/2-ytolerance,holdersupportwidth+rollwidth-lockpinfromedge-lockpinw-ztolerance]) cube([lockpinl+xtolerance*2,lockpinh+ytolerance*2,lockpinw+ztolerance*2]);
   
     union() {
-      translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rollwidth-rolltubew]) {
+      translate([rollaxisheight,rollaxisdepth,rollwidth-holdersupportwidth]) {
 	hull() {
-	  translate([0,0,wall]) cylinder(h=rolltubew+holdersupportwidth-wall+0.1,d=rollborediameter);
-	  translate([0,0,-holdersupportwidth+wall]) cylinder(h=rolltubenarrowing,d=rolloverlapd-wall*2);
+	  translate([0,0,wall]) cylinder(h=rolltubew-holdersupportwidth-wall+0.1,d=rollborediameter);
+	  translate([0,0,-holdersupportwidth+rolltubenarrowing/2]) cylinder(h=rolltubenarrowing-wall,d=rolloverlapd-wall*2);
 	}
       }
 

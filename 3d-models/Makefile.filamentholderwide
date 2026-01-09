@@ -5,6 +5,8 @@ ALL=filamentholderwideleft.stl filamentholderwideright.stl filamentholderwidebod
 
 all: $(ALL)
 
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
+
 dist: filamentholderwide.zip
 
 filamentholderwide-source-distribution.zip: $(SOURCE) $(DEPENDS)
@@ -27,18 +29,18 @@ clean:
 	rm $(ALL)
 
 filamentholderwideleft.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=1 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
 filamentholderwideright.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=2 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
 	echo $@ built.
 
 filamentholderwidebody.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=3 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
 	echo $@ built.
 
 filamentholderwidelockpin.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=4 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=4 -o $@ $(SOURCE)
 	echo $@ built.
 
