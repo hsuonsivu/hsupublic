@@ -10,8 +10,8 @@ include <hsu.scad>
 // depth=y
 // width=z
 
-print=0; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
-debug=0;
+print=5; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
+debug=1;
 dodebug=print>0?0:debug;
 
 $fn=90;
@@ -118,6 +118,11 @@ cutterattachw=50;
 cutteraxlel=cutterattachw+(cutteraxled/2);
 cutterlength=145;
 
+cutterfrictionh=10;
+cuttertoothh=10;
+cuttertoothdepth=3;
+cuttertoothd=1;
+
 cutteraxlesupportl=(rollwidth-cutteraxlel)/2-ztolerance;
 
 cutterld=cutteraxled;
@@ -141,23 +146,34 @@ module cutter() {
 
       hull() {
 	translate([0,0,-cutterattachw/2]) cylinder(d=cutteraxled,h=cutterattachw);
-	translate([cutterupsupport,cutteraxled,-cutterattachw/2]) roundedbox(cutterthickness,cutteraxled,cutterattachw,cornerd);
+	translate([cutterupsupport,cutteraxled,-cutterattachw/2]) roundedbox(cutterthickness,cutteraxled,cutterattachw,cornerd,8);
       }
 
       hull() {
-	translate([cutterupsupport-wall,cutteraxled,-cutterattachw/2]) roundedbox(cutterthickness+wall,cutteraxled+cutterld,cutterattachw,cornerd);
-	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cornerd);
+	translate([cutterupsupport-wall,cutteraxled,-cutterattachw/2]) roundedbox(cutterthickness+wall,cutteraxled+cutterld,cutterattachw,cornerd,8);
+	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cornerd,8);
       }
       hull() {
-	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cornerd);
-	translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength,-cutterwidth/2]) roundedbox(cutterheadthickness,cutterbodyh,cutterwidth,cutterheadcornerd);
+	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cornerd,8);
+	translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength,-cutterwidth/2]) roundedbox(cutterheadthickness,cutterbodyh,cutterwidth,cutterheadcornerd,8);
       }
+
+      for (m=[0,1]) mirror([0,0,m]) {
+	  for (z=[0:cuttertoothh:cutterwidth/2-cuttertoothh]) {
+	    hull() {
+	      translate([cutterupsupport+cutterthickness,cutterlength+cutterbodyh+cuttertoothdepth,z+cuttertoothh/2]) rotate([0,-90,0]) cylinder(d=cuttertoothd,h=cuttertoothd);
+	      translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength+cutterbodyh-cutterheadcornerd,z]) roundedbox(cutterheadthickness,cutterheadcornerd,cuttertoothh,cornerd,8);
+	    }
+	  }
+	}
     }
 
     translate([cutterupsupport-cutterheadthickness+cutterthickness-0.1,cutterlength+cutterbodyh/2-cutterslith/2,-cutterslitw/2]) cube([cutterheadthickness+0.2,cutterslith,cutterslitw]);
     hull() {
-      translate([cutterupsupport-cutterheadthickness+cutterthickness-0.1,cutterlength+cutterbodyh/2-cutterslith/2-cutterheadthickness,-cutterslitw/2]) cube([0.1,cutterslith+cutterheadthickness+(cutterheadthickness-cutterthickness),cutterslitw]);
-      translate([cutterupsupport-cutterthickness-0.1,cutterlength+cutterbodyh/2-cutterslith/2,-cutterslitw/2]) cube([(cutterheadthickness-cutterthickness)+0.2,cutterslith,cutterslitw]);
+      for (x=[-cutterheadthickness-0.1,0.01]) {
+	xx=cutterthickness+cutterupsupport;
+	translate([xx+x,cutterlength+cutterbodyh/2-cutterslith/3+x,-cutterslitw/2]) cube([0.1,cutterslith+cutterheadthickness+(cutterheadthickness-cutterthickness)-4,cutterslitw]);
+      }
     }
     hull() {
       translate([cutterupsupport+1-0.1,cutterlength+cutterbodyh/2-cutterslith/2,-cutterslitw/2]) cube([1+0.1,cutterslith,cutterslitw]);

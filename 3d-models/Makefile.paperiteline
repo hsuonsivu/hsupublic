@@ -2,7 +2,7 @@ SOURCE=paperiteline.scad
 DEPENDS=hsu.scad Makefile.paperiteline
 ALL=paperitelinemost.stl paperitelineleft.stl paperitelineright.stl paperitelinecutter.stl paperitelinelockpin.stl
 IMAGES=paperiteline.jpg paperiteline.png
-OPTIONS=--enable textmetrics
+OPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
 all: $(ALL)
 
@@ -28,22 +28,22 @@ clean:
 	rm $(ALL)
 
 paperitelineleft.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPTIONS) -D print=1 -o $@ $(SOURCE)
+	openscad $(OPTIONS) -D debug=0 -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
 paperitelineright.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPTIONS) -D print=2 -o $@ $(SOURCE)
+	openscad $(OPTIONS) -D debug=0 -D print=2 -o $@ $(SOURCE)
 	echo $@ built.
 
 paperitelinelockpin.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPTIONS) -D print=4 -o $@ $(SOURCE)
+	openscad $(OPTIONS) -D debug=0 -D print=4 -o $@ $(SOURCE)
 	echo $@ built.
 
 paperitelinemost.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPTIONS) -D print=3 -o $@ $(SOURCE)
+	openscad $(OPTIONS) -D debug=0 -D print=3 -o $@ $(SOURCE)
 	echo $@ built.
 
 paperitelinecutter.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPTIONS) -D print=5 -o $@ $(SOURCE)
+	openscad $(OPTIONS) -D debug=0 -D print=5 -o $@ $(SOURCE)
 	echo $@ built.
 
