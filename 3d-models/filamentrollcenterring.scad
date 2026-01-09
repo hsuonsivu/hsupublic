@@ -5,6 +5,6 @@
 include <hsu.scad>
 
 wall=2;
-ring(37,wall,85,0);
-ring(50,(50-37)/2,wall,0);
+ring(37,wall,85,0,180);
+ring(50,(50-37)/2,wall,0,180);
 
