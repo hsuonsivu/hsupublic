@@ -359,9 +359,24 @@ module roundedbox(xsize,ysize,h,c,printableoption) {
     }
 
     if (printableoption==5 || printableoption==6) {
+      for (x=[0+scd/2,xsize-scd/2]) {
+	for (z=[0+scd/2,h-scd/2-0.01]) {
+	  translate([x,ysize-0.01,z]) rotate([-90,0,0]) cylinder(d=scd/2,h=0.01,$fn=f);
+	}
+      }
+    }
+
+    if (printableoption==7 || printableoption==9) {
       for (y=[0+scd/2,ysize-scd/2]) {
 	for (z=[0+scd/2,h-scd/2-0.01]) {
 	  translate([0,y,z]) rotate([0,-90,0]) cylinder(d=scd/2,h=0.01,$fn=f);
+	}
+      }
+    }
+    if (printableoption==8 || printableoption==9) {
+      for (y=[0+scd/2,ysize-scd/2]) {
+	for (z=[0+scd/2,h-scd/2-0.01]) {
+	  translate([xsize-0.01,y,z]) rotate([0,-90,0]) cylinder(d=scd/2,h=0.01,$fn=f);
 	}
       }
     }
@@ -878,7 +893,7 @@ module windowframe(x,y,height,l,w,h,overlap=windowoverlap) {
   }
 }
 
-module windowcut(x,y,height,l,w,h,overlap=windowoverlap) {
+module windowcut(x,y,height,l,w,h,overlap=windowoverlap,windowtest=0) {
   cutl=l-overlap*2;
   cutw=w-overlap*2;
   overl=l+overlap*2;
@@ -886,7 +901,7 @@ module windowcut(x,y,height,l,w,h,overlap=windowoverlap) {
   overcutl=l-overlap*2+windowcutoutlap*2;
   overcutw=w-overlap*2+windowcutoutlap*2;
   
-  translate([x-l/2-xtolerance,y-w/2-ytolerance,height+windowoverlapbottomh]) cube([l+xtolerance*2,w+ytolerance*2,h+windowztolerance*2]);
+  if (!windowtest) translate([x-l/2-xtolerance,y-w/2-ytolerance,height+windowoverlapbottomh]) cube([l+xtolerance*2,w+ytolerance*2,h+windowztolerance*2]);
   hull() {
     translate([x-cutl/2,y-cutw/2,height-0.01]) roundedboxxyz(cutl,cutw,windowoverlapbottomh-windowoverlapstraight+0.01,windowcornerd,0.005,0,90);
     translate([x-overcutl/2,y-overcutw/2,height-windowsmallcornerd]) roundedboxxyz(overcutl,overcutw,windowsmallcornerd,windowcornerd,windowsmallcornerd,0,90);
@@ -903,27 +918,26 @@ module windowcut(x,y,height,l,w,h,overlap=windowoverlap) {
 module windowtemplate(l,w,text="") {
   midsupportl=((l-windowoverlap*2-50)>0?1:0);
   midsupportw=((w-windowoverlap*2-50)>0?1:0);
-
+  echo(midsupportl,midsupportw);
   difference() {
-    //echo(l,w,windowtemplateh,windowcornerd,1);
     translate([-l/2,-w/2,0]) roundedbox(l,w,windowtemplateh,windowcornerd,1);
     if (midsupportl&&midsupportw) {
       for (n=[0,1]) mirror([n,0,0]) for (m=[0,1]) mirror([0,m,0]) translate([-l/2+windowtemplateedge,-w/2+windowtemplateedge,-windowcornerd/2]) roundedbox(l/2-windowtemplateedge*1.5,w/2-windowtemplateedge*1.5,windowtemplateh+windowcornerd,windowcornerd,1);
     } else if (midsupportl) {
-      for (m=[0,1]) mirror([0,m,0]) translate([-l/2+windowtemplateedge,-w/2+windowtemplateedge,-windowcornerd/2]) roundedbox(l-windowtemplateedge*2,w/2-windowtemplateedge*1.5,windowtemplateh+windowcornerd,windowcornerd,1);
+      for (m=[0,1]) mirror([m,0,0]) translate([-l/2+windowtemplateedge,-w/2+windowtemplateedge,-windowcornerd/2]) roundedbox(l/2-windowtemplateedge*1.5,w-windowtemplateedge*2,windowtemplateh+windowcornerd,windowcornerd,1);
     } else {
       translate([-l/2+windowtemplateedge,-w/2+windowtemplateedge,-windowcornerd/2]) roundedbox(l-windowtemplateedge*2,w-windowtemplateedge*2,windowtemplateh+windowcornerd,windowcornerd,1);
     }
 
-    translate([0,-w/2+1,windowtemplateh/2+0.01]) linear_extrude(windowtemplateh/2) text(text=text,size=windowtemplatetextsize,font="Liberation Sans:style=Bold",halign="center",valign="bottom");
-    translate([0,w/2-1,windowtemplateh/2+0.01]) linear_extrude(windowtemplateh/2) text(str(floor(l*100)/100," x ",floor(w*100)/100),size=windowtemplatetextsize,font="Liberation Sans:style=Bold",halign="center",valign="top");
+    translate([0,-w/2+1,windowtemplateh/2+0.01]) linear_extrude(height=windowtemplateh/2) text(text=text,size=windowtemplatetextsize,font="Liberation Sans:style=Bold",halign="center",valign="bottom");
+    translate([0,w/2-1,windowtemplateh/2+0.01]) linear_extrude(height=windowtemplateh/2) text(str(floor(l*100)/100," x ",floor(w*100)/100),size=windowtemplatetextsize,font="Liberation Sans:style=Bold",halign="center",valign="top");
   }
 }
 
 function windowheight(h) = windowoverlapbottomh+windowztolerance+h+windowztolerance+windowoverlaptoph;
 
 module recyclingsymbol(type="ABS",size=20,h=0.7,$fn=50) {
-  material_code=(type=="PET"?"01":type=="PE_HD"?"02":type=="PVC"?"03":type=="PE_LD"?"04":type=="PP"?"05":type=="PS"?"06":type=="O"?"07":type=="PC"?"07":type=="ABAK"?"08":type=="ABS"?"07":type=="ASA"?"13":"07");
+  material_code=(type=="PET"?"01":type=="PE_HD"?"02":type=="PVC"?"03":type=="PE_LD"?"04":type=="PP"?"05":type=="PS"?"06":type=="O"?"07":type=="PC"?"07":type=="ABAK"?"08":type=="ABS"?"07":type=="ASA"?"13":type=="PETG"?"07":"07");
 
   s=size/3.15*2;
   arrowheadsize=s/4;
@@ -936,7 +950,7 @@ module recyclingsymbol(type="ABS",size=20,h=0.7,$fn=50) {
   cornerx=-0.28042/10*s;
   cornery=0;
   texty=-s/25;
-  echo(-(-arrowdistance-arrowheadsize*1.1)+cornerx+s/sqrt(2)+outcornerd/2);
+  //echo(-(-arrowdistance-arrowheadsize*1.1)+cornerx+s/sqrt(2)+outcornerd/2);
 
   translate([0,s/50,0]) {
     for (a=[0:360/3:359]) {
