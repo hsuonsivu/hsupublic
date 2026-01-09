@@ -4,12 +4,14 @@ include <hsu.scad>
 
 // 0 = draft 1 = final 2 = bottom 3 = cover 4=text background parts if textbackground is enabled, 5 base backgrounds, 6 top background only 7 test backgrounds
 
-print=9;
+print=11;
 debug=1;
-window=1;
+window=2;
+debugangle=-180;
 
 // Add ABS recycling logo. This uses https://www.thingiverse.com/thing:216963/files
-materials=window?["ABS","PC"]:["ABS"];
+basematerial="ABS"; // "ABS";
+materials=window?[basematerial,"PC","PETG"]:[basematerial,"PETG"];
 
 versiontext="1.1";
 versiontextdepth=0.7;
@@ -91,7 +93,6 @@ eggxposition=eggmaxd/2 + tolerance + nwall + locknotchd;
 eggtextxposition=baselength - tolerance - lockdepth - lockback - insidetextheight;
 //echo("textheigth ", textheight);
 eggholedepth=2.9;
-
 logoh=baselength-cornersize-4.5-1;
 logol=basewidth-cornersize-1;
 
@@ -228,7 +229,7 @@ module fancyroundedbox(x,y,z,c) {
   }
 }
 
-module triangle(x,y,z,mode) {
+module triangleold(x,y,z,mode) {
   if (mode==0) {
     translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[x,z],[x,0]]);
   } else if (mode==1) {
@@ -466,7 +467,7 @@ attachh=coverheight/2+axled/2; //axled+axled/2+dtolerance/2+wall;
 attachl=axled/2+dtolerance+wall+xtolerance;
 basel=baselength;
 basew=basewidth;
-baseh=basedepth;
+baseh=basedepth-wall*2;
 cornerd=2;
 coverh=coverheight;
 coverangle=0;
@@ -476,9 +477,13 @@ coverx=wall+axled+dtolerance+wall+xtolerance;
 basebackh=axleheight+axled/2+wall;
 backraise=axlexposition+wall;
 axlecoverl=axlexposition+axled/2+xtolerance+wall*2+xtolerance;
+axlecoverh=axleheight;
 outaxlesupportw=basew/2-axlew/2-axlel/2-ytolerance;
+basefrontx=-basel/2+axlexposition+axlecoverl-axlexposition-cornerd;
+basefrontl=basel-wall-xtolerance-axlexposition-(axlecoverl-axlexposition)+cornerd;
+coverbackover=wall*2;
 
-clipdepth=1;
+clipdepth=1.2;
 clipd=wall+clipdepth;
 clipheight=1.5;
 clipl=20;
@@ -490,29 +495,38 @@ coverwindowl=baselength-17;
 coverwindoww=baselength-13;
 coverwindowoverlap=3;
 
+eggclampx=eggmaxd/2-2;
+eggclampl=2+1.5;
+eggclampw=10;
+eggclamph=baseh+10;
+eggclampww=eggclampw+10;
+eggclampwheight=baseh-cornerd;
+
 module cover() {
   difference() {
     union() {
       for (m=[0,1]) mirror([0,m,0]) {
 	  translate([axlex,-axlew/2,axleheight]) onehinge(axled,axlel,axledepth,0,ytolerance,dtolerance);
+	  translate([-basel/2+coverx+wall+xtolerance,-basew/2,baseh+ztolerance]) roundedbox(basel-coverx-wall-xtolerance,wall,coverh-baseh-ztolerance,cornerd,2);
 	  hull() {
-	    translate([-basel/2+coverx,-basew/2,basebackh+ztolerance]) roundedbox(basel-coverx,wall,coverh-basebackh-ztolerance,cornerd,2);
-	    translate([basel/2-wall,-basew/2,baseh+ztolerance]) roundedbox(wall,wall,coverh-baseh-ztolerance,cornerd,2);
+	    translate([-basel/2+coverx,-basew/2,coverh-axlecoverh+wall*0.5]) roundedbox(basel-coverx,wall,axlecoverh-wall*0.5,cornerd,2);
+	    translate([-basel/2+coverx+wall+xtolerance,-basew/2,coverh-axlecoverh-wall*0.5+ztolerance]) roundedbox(basel-coverx-wall-xtolerance,wall,axlecoverh-wall*0.5-ztolerance,cornerd,2);
 	  }
-	  translate([-basel/2+coverx,-basew/2,basebackh+ztolerance]) roundedbox(wall,basew/2-axlew/2+axlel/2,coverh-basebackh-ztolerance,cornerd,2);
+	  //	  translate([-basel/2+coverx,-basew/2,basebackh+ztolerance]) roundedbox(wall,basew/2-axlew/2+axlel/2,coverh-basebackh-ztolerance,cornerd,2);
+	  translate([-basel/2+coverx,-basew/2,coverh-axlecoverh+wall*0.5]) roundedbox(wall,basew/2-axlew/2+axlel/2,axlecoverh-wall*0.5,cornerd,2);
 	  if (1) hull() {
 	      translate([-basel/2,axlew/2-axlel/2,axleheight+axled/2]) roundedbox(coverx,axlel,coverh-basebackh-coverx+wall,cornerd,2);
 	      translate([axlex,axlew/2-axlel/2,axleheight]) rotate([-90,0,0]) roundedcylinder(axled,axlel,cornerd,0,90);
 	    }
 	  if (1) hull() {
 	      //translate([axlex,-axlew/2-axlel/2,axleheight]) rotate([-90,0,0]) roundedcylinder(axled,axlel,cornerd,0,90);
-	      translate([-basel/2,-axlew/2-axlel/2,basebackh+ztolerance]) roundedbox(coverx+wall,axlel,coverh-basebackh-coverx+wall,cornerd,2);
+	      translate([-basel/2,-axlew/2-axlel/2,axlecoverh+ztolerance]) roundedbox(coverx+wall,axlel,coverh-axlecoverh-coverx+wall,cornerd,2);
 	      translate([-basel/2+coverx-wall,-axlew/2-axlel/2,basebackh+ztolerance]) roundedbox(wall+wall,axlel,coverh-basebackh-ztolerance,cornerd,2);
 	    }
 	}
 
      translate([-basel/2+coverx,-basew/2,coverh-wall]) roundedbox(basel-coverx,basew,wall,cornerd,1);
-      if (window) intersection() {
+     if (window) intersection() {
 	translate([-basel/2+coverx,-basew/2,0]) roundedbox(basel-coverx,basew,coverh,cornerd,1);
 	windowframe(coverwindowx,0,coverh-windowheight(coverwindowh),coverwindowl,coverwindoww,coverwindowh,overlap=coverwindowoverlap);
       }
@@ -522,19 +536,31 @@ module cover() {
       }
       hull() {
 	translate([-basel/2+coverx-wall,-axlew/2-axlel/2,coverh-wall]) roundedbox(wall*2,axlew+axlel,wall,cornerd,2);
-	translate([-basel/2+coverx-wall-wall,-axlew/2-axlel/2,coverh-wall-wall]) roundedbox(wall,axlew+axlel,wall,cornerd,2);
+	translate([-basel/2+coverx-coverbackover,-axlew/2-axlel/2,coverh-wall-wall]) roundedbox(wall,axlew+axlel,wall,cornerd,2);
       }
       //  translate([-basel/2+coverx,-axlew/2,attachheight]) roundedbox(wall,axlew,axleheight+axled/2,2);
     }
 
-    if (window) windowcut(coverwindowx,0,coverh-windowheight(coverwindowh),coverwindowl,coverwindoww,coverwindowh,overlap=coverwindowoverlap);
+    if (window) windowcut(coverwindowx,0,coverh-windowheight(coverwindowh),coverwindowl,coverwindoww,coverwindowh,overlap=coverwindowoverlap,windowtest=(window==2)); //ndowtest=(window==2));
+  }
+}
+
+module basetopslope() {
+  hull() {
+    translate([-basel/2+wall+axlexposition-wall,0,coverh-wall-ztolerance-wall-wall]) roundedbox(wall+wall,wall,wall,cornerd,1);
+    translate([-basel/2,0,coverh-backraise-wall*3]) roundedbox(wall,wall,wall+wall,cornerd,1);
   }
 }
 
 module base() {
+  logox=1;
+  
   difference() {
     union() {
-      translate([-basel/2+coverx,-basew/2,0]) roundedbox(basel-coverx,basew,cornerd,cornerd,1);
+      hull() {
+	translate([-basel/2+coverx,-basew/2,0]) roundedbox(basel-coverx,basew,cornerd,cornerd,1);
+	translate([logox-logol/2-0.5,-basew/2,wall]) roundedbox(logol+1.5,basew,wall+textbackgroundh,cornerd,1);
+      }
       hull() {
 	translate([basel/2-wall,-basew/2,0]) roundedbox(wall,basew,baseh,cornerd,1);
 	translate([basel/2-wall-xtolerance-wall,-basew/2,0]) roundedbox(wall,basew,baseh,cornerd,1);
@@ -543,36 +569,38 @@ module base() {
       translate([basel/2-wall-xtolerance-wall+clipd/2,0,baseh+clipheight+clipd/2]) rotate([0,0,90]) tubeclip(clipl,clipd,0);
       for (m=[0,1]) mirror([0,m,0]) {
 	  hull() {
-	    translate([-basel/2,-basew/2,0]) roundedbox(basel,wall,baseh,cornerd,1);
+	    translate([-basel/2,-basew/2,0]) roundedbox(axlecoverl,wall,baseh,cornerd,1);
 	    translate([-basel/2,-basew/2,0]) roundedbox(axlecoverl,wall,axleheight,cornerd,1);
-	    translate([-basel/2+axlexposition,-basew/2,0]) roundedbox(axlecoverl-axlexposition,wall,basebackh,cornerd,1);
+	    //translate([-basel/2+axlexposition,-basew/2,0]) roundedbox(axlecoverl-axlexposition,wall,basebackh,cornerd,1);
 	  }
 	  hull() {
-	    translate([-basel/2+axlexposition+axlecoverl-axlexposition,-basew/2+xtolerance+wall,0]) roundedbox(basel-wall-xtolerance-axlexposition-(axlecoverl-axlexposition),wall,baseh+clipd+clipheight,cornerd,1);
-	    translate([-basel/2+axlexposition+axlecoverl-axlexposition,-basew/2+xtolerance+wall,0]) roundedbox(wall,wall,basebackh+clipd+clipheight,cornerd,1);
+	    translate([basefrontx,-basew/2+xtolerance+wall,0]) roundedbox(basefrontl,wall,baseh+clipd+clipheight,cornerd,1);
+	    //	    translate([-basel/2+axlexposition+axlecoverl-axlexposition,-basew/2+xtolerance+wall,0]) roundedbox(wall,wall,basebackh+clipd+clipheight-wall,cornerd,1);
 	  }
 	  hull() {
 	    for (y=[0,xtolerance+wall]) {
-	      translate([-basel/2+axlexposition+axlecoverl-axlexposition,-basew/2+y,0]) roundedbox(basel-axlexposition-(axlecoverl-axlexposition),wall,baseh,cornerd,1);
-	      translate([-basel/2+axlexposition+axlecoverl-axlexposition-wall-xtolerance,-basew/2+y,0]) roundedbox(wall,wall,basebackh,cornerd,1);
+	      translate([basefrontx,-basew/2+y,0]) roundedbox(basefrontl,wall,baseh,cornerd,1);
+	      //translate([-basel/2+axlexposition+axlecoverl-axlexposition-wall-xtolerance,-basew/2+y,0]) roundedbox(wall,wall,basebackh,cornerd,1);
 	    }
 	  }
 	  hull() {
 	    translate([-basel/2,-basew/2,0]) roundedbox(axlecoverl,outaxlesupportw,axleheight,cornerd,1);
-	    translate([-basel/2+axlexposition,-basew/2,0]) roundedbox(axlecoverl-axlexposition,outaxlesupportw,basebackh,cornerd,1);
+	    //	    translate([-basel/2+axlexposition,-basew/2,0]) roundedbox(axlecoverl-axlexposition,outaxlesupportw,basebackh,cornerd,1);
 	    translate([axlex,-basew/2,axleheight]) rotate([-90,0,0]) roundedcylinder(axled+wall,outaxlesupportw,cornerd,0,90);
 	  }
 	  translate([-basel/2,-basew/2,0]) roundedbox(basel,basew/2-axlew/2-axlel/2-ytolerance,wall,cornerd,1);
-	  translate([-basel/2+axlecoverl-wall,-basew/2,0]) roundedbox(wall,basew/2-axlew/2+axlel/2+ytolerance+wall,basebackh,cornerd,1);
+	  translate([-basel/2+axlecoverl-wall,-basew/2,0]) roundedbox(wall,basew/2-axlew/2+axlel/2+ytolerance+wall,axlecoverh,cornerd,1);
 	  translate([-basel/2+wall*1.5,-basew/2,0]) roundedbox(axlecoverl,basew/2-axlew/2+axlel/2+ytolerance+wall,wall,cornerd,1);
 	  hull() {
-	    translate([-basel/2,-axlew/2+axlel/2+ytolerance,wall*2]) roundedbox(axlecoverl,wall,basebackh-wall*2,cornerd,1);
-	    translate([-basel/2+wall+xtolerance,-axlew/2+axlel/2+ytolerance,0]) roundedbox(axlecoverl-wall-xtolerance,wall,basebackh-backraise,cornerd,1);
+	    translate([-basel/2,-axlew/2+axlel/2+ytolerance,coverbackover+wall*2]) roundedbox(axlecoverl,wall,axlecoverh-coverbackover-wall*2,cornerd,1);
+	    translate([0,-axlew/2+axlel/2+ytolerance,0]) basetopslope();
+	    translate([axlex,-axlew/2+axlel/2+ytolerance,axleheight]) rotate([-90,0,0]) roundedcylinder(axled+wall,wall,cornerd,0,90);
+	    translate([-basel/2+coverbackover+wall+xtolerance,-axlew/2+axlel/2+ytolerance,0]) roundedbox(axlecoverl-coverbackover-wall-xtolerance,wall,basebackh-backraise,cornerd,1);
 	  }
 	}
 
       difference() {
-	translate([-basel/2,-axlew/2+axlel/2+ytolerance,wall*2]) roundedbox(wall,axlew-axlel-ytolerance*2,coverh-backraise-wall-wall*2,cornerd,1);
+	translate([-basel/2,-axlew/2+axlel/2+ytolerance,coverbackover+wall*2]) roundedbox(wall,axlew-axlel-ytolerance*2,coverh-coverbackover-backraise-wall-wall*2,cornerd,1);
 	for (i=[0:1:len(materials)-1]) {
 	  material=materials[i];
 	  translate([-basel/2+textdepth-0.01,0,coverh/4-1+i*16]) rotate([90,0,-90]) recyclingsymbol(type=material,size=15,h=textdepth);
@@ -580,14 +608,15 @@ module base() {
       }
       
       hull() {
-	translate([-basel/2+wall+axlexposition-wall,-axlew/2+axlel/2+ytolerance,coverh-wall-ztolerance-wall-wall]) roundedbox(wall+wall,axlew-axlel-ytolerance*2,wall,cornerd,1);
-	translate([-basel/2,-axlew/2+axlel/2+ytolerance,coverh-backraise-wall*3]) roundedbox(wall,axlew-axlel-ytolerance*2,wall+wall,cornerd,1);
+	for (m=[0,1]) mirror([0,m,0]) {
+	    translate([0,-axlew/2+axlel/2+ytolerance,0]) basetopslope();
+	  }
       }
       
-      translate([-basel/2+wall+xtolerance,-axlew/2+axlel/2+ytolerance,0]) roundedbox(basel-wall-xtolerance,axlew-axlel-ytolerance*2,wall,cornerd,1);
+      translate([-basel/2+wall*1.5,-axlew/2+axlel/2+ytolerance,0]) roundedbox(basel-wall*1.5,axlew-axlel-ytolerance*2,wall,cornerd,1);
       hull() {
-	translate([-basel/2+wall+xtolerance,-axlew/2+axlel/2+ytolerance,0]) roundedbox(wall,axlew-axlel-ytolerance*2,wall,cornerd,1);
-	translate([-basel/2,-axlew/2+axlel/2+ytolerance,wall*2]) roundedbox(wall,axlew-axlel-ytolerance*2,wall,cornerd,1);
+	translate([-basel/2+coverbackover+wall+xtolerance,-axlew/2+axlel/2+ytolerance,0]) roundedbox(wall,axlew-axlel-ytolerance*2,wall,cornerd,1);
+	translate([-basel/2,-axlew/2+axlel/2+ytolerance,coverbackover+wall*2]) roundedbox(wall,axlew-axlel-ytolerance*2,wall,cornerd,1);
       }
 
       intersection() {
@@ -600,6 +629,10 @@ module base() {
 		  translate([-basel/2+axlexposition+axlecoverl-axlexposition,-basew/2+y,0]) roundedbox(wall,wall,h,cornerd,1);
 		}
 	      }
+	  }
+	  hull() {
+	    translate([eggclampx,-eggclampw/2,0]) roundedbox(eggclampl,eggclampw,eggclamph,cornerd,0);
+	    translate([eggclampx,-eggclampww/2,eggclampwheight]) roundedbox(eggclampl,eggclampww,cornerd,cornerd,0);
 	  }
 
 	  translate([-basel/2,-axlew/2+axlel/2+ytolerance,backraise]) roundedbox(axlecoverl+wall,axlew-axlel-ytolerance*2,h-backraise,cornerd,1);
@@ -617,12 +650,17 @@ module base() {
     for (m=[0,1]) mirror([0,m,0]) {
 	translate([axlex,-axlew/2,axleheight]) onehinge(axled,axlel,axledepth,1,ytolerance,dtolerance);
       }
+
+    #    translate([logox,0,logodepth-0.01]) rotate([180,0,-90]) linear_extrude(height=logodepth+0.01) anjalogo();
+#    if (textbackground) {
+      translate([logox,0,logodepth*2+logodepth-0.03+textztolerance]) rotate([180,0,-90]) logobackground(logoh,logol,1);
+    }
   }
 }
 
 module axlecase() {
   translate([axlex,0,axleheight]) rotate([0,printangle,0]) translate([-axlex,0,-axleheight]) cover();
-  if (debug) #cover();
+  if (debug) translate([axlex,0,axleheight]) rotate([0,debugangle,0]) translate([-axlex,0,-axleheight]) #cover();
   base();
 }
 
@@ -694,4 +732,8 @@ if (print==9) {
 
 if (print==10) {
   windowtemplate(coverwindowl,coverwindoww,text=str("eggflipcase ",versiontext));
+ }
+
+if (print==11) {
+  translate([logoh/2,logol/2,0]) logobackground(logoh,logol,0);
  }

@@ -1,7 +1,7 @@
 SOURCE=eggcase.scad
 DEPENDS=hsu.scad Makefile.eggcase
 IMAGES=
-ALL=eggcase.stl eggcasebase.stl eggcasetop.stl eggcasebackgrounds.stl eggcasebasebackgrounds.stl eggcasetopbackground.stl eggcasewindowtemplates.stl eggflipcase.stl eggflipcasewindowtemplate.stl eggflipcasewithwindow.stl
+ALL=eggcase.stl eggcasebase.stl eggcasetop.stl eggcasebackgrounds.stl eggcasebasebackgrounds.stl eggcasetopbackground.stl eggcasewindowtemplates.stl eggflipcase.stl eggflipcasewindowtemplate.stl eggflipcasewithwindow.stl eggflipcaselogobackground.stl
 
 OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
@@ -68,3 +68,10 @@ eggflipcasewithwindow.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D window=1 -D print=9 -o $@ $(SOURCE)
 	echo $@ built.
 
+eggflipcasewindowtemplate.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D window=1 -D print=10 -o $@ $(SOURCE)
+	echo $@ built.
+
+eggflipcaselogobackground.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D window=1 -D print=11 -o $@ $(SOURCE)
+	echo $@ built.
