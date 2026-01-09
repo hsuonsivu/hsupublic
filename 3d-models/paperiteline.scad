@@ -120,7 +120,7 @@ cutterlength=145;
 
 cutterfrictionh=10;
 cuttertoothh=10;
-cuttertoothdepth=3;
+cuttertoothdepth=4;
 cuttertoothd=1;
 
 cutteraxlesupportl=(rollwidth-cutteraxlel)/2-ztolerance;

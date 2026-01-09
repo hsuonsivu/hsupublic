@@ -7,11 +7,11 @@ use <threadlib/threadlib.scad>
 
 // Roller handle for rolling cables to 3d filament rolls
 // 0 Full model, 1 body only, 2 crank and knob, 3 handle and bolt, 4 knob, 5 threadtest
-print=11;
-debug=print==0?0:0;
+print=0;
+debug=print==0?1:0;
 
 nametext="Cable Roller";
-versiontext="V1.0";
+versiontext="V1.1";
 fulltext=str(nametext," ",versiontext);
 textsize=7;
 textdepth=0.7;
@@ -46,7 +46,12 @@ frontierfilah=60;
 noname72d=72;
 noname72h=60;
 
-maxrollh=max(clasohlsonh,frontierfilah,noname72h);
+sunlurefilld=54.6;
+sunlurefillh=66.5;
+
+maxrollh=max(clasohlsonh,frontierfilah,noname72h,sunlurefillh);
+maxrolld=max(clasohlsoninnerd,frontierfilad,noname72d,sunlurefilld);
+
 l=(print==5?20:ztolerance+maxrollh+ztolerance); // Axle length max
 lflex=10; // Rolls come in different sizes
 smalld=48;//50; // Up to 55mm?
@@ -96,11 +101,11 @@ specsint=thread_specs("M42-int",table=MY_THREAD_TABLE);
 
 holespecs=specsext;
 holepitch=holespecs[0];
-holeturns=(l+bodythickness)/holepitch-1;
+holeturns=(l+bodythickness)/holepitch-1-5;
 holeflexturns=floor(lflex/holepitch);
 holeflex=holeflexturns*holepitch;
 holeDsupport=holespecs[2];
-
+holeh=holeturns*(holepitch)+holepitch/2;
 screwspecs=specsint;
 screwpitch=screwspecs[0];
 screwturns=(l+bodythickness)/screwpitch-1;
@@ -426,6 +431,35 @@ module noname72adapter() {
   }
 }
 
+module sunlurefilladapter() {
+  dd=(sunlurefilld-lockingd+lockingpind/2)/2;
+  dh=dd/2;
+
+  difference() {
+    union() {
+      translate([0,0,bodythickness+ztolerance]) roundedcylinder(sunlurefilld,sunlurefillh,cornerd,2,lockingpins);
+
+      adapterlockingpins(sunlurefillh);
+      if (0) for (i=[0:1:lockingpins-1]) {
+	a=i*360/lockingpins;
+	rotate([0,0,a]) {
+	  difference() {
+	    hull() {
+	      translate([lockingd/2,0,bodythickness+ztolerance+sunlurefillh-ztolerance-0.01]) roundedcylinder(lockingpind,crankh+ztolerance+0.01,cornerd,2,90);
+	      translate([lockingd/2,0,bodythickness+ztolerance+sunlurefillh-ztolerance-0.01]) cylinder(d=lockingpind,h=crankh+ztolerance-cornerd/2+0.01);
+	      translate([0,0,bodythickness+ztolerance+sunlurefillh-ztolerance-0.01]) cylinder(d=1,h=crankh+ztolerance+0.01);
+	    }
+	  }
+	}
+      }
+    }
+
+    adapterversiontext(sunlurefilld,sunlurefillh/2,1,lockingpins);
+    
+    translate([0,0,bodythickness]) cylinder(d=smalld+dtolerance,h=ztolerance+sunlurefillh+ztolerance+crankh+0.03,$fn=90);
+  }
+}
+
 module rollerbody() {
   difference() {
     union() {
@@ -435,10 +469,11 @@ module rollerbody() {
 
     translate([0,0,bodythickness]) tap("M42",turns=holeturns-holeflexturns,table=MY_THREAD_TABLE);
     translate([0,0,-0.1]) cylinder(d=screwDsupport,h=bodythickness-holepitch/2+0.2);
+    translate([0,0,bodythickness+holeh-holeflex-0.01]) cylinder(d=screwDsupport,h=l-holeh+holeflex-1);
 
     lightenholes(0);
 
-    distance=max(clasohlsoninnerd/2,frontierfilad/2,noname72d/2);
+    distance=maxrolld/2; //max(clasohlsoninnerd/2,frontierfilad/2,noname72d/2,sunlurefilld/2);
     translate([distance+2+textsize/2,0,bodythickness-textdepth+0.01]) linear_extrude(textdepth) rotate([0,0,90]) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
     translate([handlebased/2+2+textsize,0,-0.01]) linear_extrude(textdepth) rotate([180,0,90]) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
   }
@@ -589,7 +624,8 @@ if (print==0) {
       translate([crankbasedistance,0,crankheight+crankbasethickness-0.01]) crankknob();
       //clasohlsonadapter();
       //frontierfilaadapter();
-      noname72adapter();
+      //noname72adapter();
+      sunlurefilladapter();
       translate([handledistance,0,handleaxleh/2]) rotate([-90,0,0]) handlebar(0);
       translate([handledistance,carryhandlel/2+handleboltthreadh,handleaxleh/2]) rotate([-90,0,180]) handlebarbolt();
     }
@@ -651,3 +687,6 @@ if (print==12 || print==11) {
   translate([handledistance+handlesupportringd/2+2,0,0]) rotate([0,0,30]) handlebarbolt();
  }
 
+if (print==13) {
+  translate([0,0,bodythickness+ztolerance+sunlurefillh+crankh]) rotate([180,0,0]) sunlurefilladapter();
+ }
