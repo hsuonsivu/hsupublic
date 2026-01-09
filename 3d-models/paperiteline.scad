@@ -122,6 +122,9 @@ cutterfrictionh=10;
 cuttertoothh=10;
 cuttertoothdepth=4;
 cuttertoothd=1;
+cuttertoothcut=1;
+cuttertoothcutdepth=0.8;
+cuttertoothcutfromedge=-cuttertoothcut;
 
 cutteraxlesupportl=(rollwidth-cutteraxlel)/2-ztolerance;
 
@@ -160,9 +163,15 @@ module cutter() {
 
       for (m=[0,1]) mirror([0,0,m]) {
 	  for (z=[0:cuttertoothh:cutterwidth/2-cuttertoothh]) {
-	    hull() {
-	      translate([cutterupsupport+cutterthickness,cutterlength+cutterbodyh+cuttertoothdepth,z+cuttertoothh/2]) rotate([0,-90,0]) cylinder(d=cuttertoothd,h=cuttertoothd);
-	      translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength+cutterbodyh-cutterheadcornerd,z]) roundedbox(cutterheadthickness,cutterheadcornerd,cuttertoothh,cornerd,8);
+	    difference() {
+	      hull() {
+		translate([cutterupsupport+cutterthickness,cutterlength+cutterbodyh+cuttertoothdepth,z+cuttertoothh/2]) rotate([0,-90,0]) cylinder(d=cuttertoothd,h=cuttertoothd+1);
+		translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength+cutterbodyh-cutterheadcornerd,z]) roundedbox(cutterheadthickness,cutterheadcornerd,cuttertoothh,cornerd,8);
+	      }
+
+	      for (fromedge=[-cuttertoothcut,2.5-cuttertoothcut]) {
+		for (m=[0,1]) translate([cutterupsupport+cutterthickness-cuttertoothcutdepth+0.01,cutterlength+cutterbodyh+fromedge,z+cuttertoothh/2]) mirror([0,0,m]) rotate([-45,0,0]) triangle(cuttertoothcutdepth,cuttertoothcut,cuttertoothh/2,4);
+	      }
 	    }
 	  }
 	}
@@ -205,7 +214,7 @@ module cutter() {
 }
   
 module roll() {
-#  translate([rollaxisheight,rollaxisdepth,holdersupportwidth]) difference() {
+  translate([rollaxisheight,rollaxisdepth,holdersupportwidth]) difference() {
     cylinder(d=rolldiameteroutside,h=rollwidth);
     translate([0,0,-0.1]) cylinder(d=rolldiameterinside+wall*2,h=rollwidth+0.2);
   }
