@@ -10,12 +10,12 @@ include <hsu.scad>
 // depth=y
 // width=z
 
-print=5; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
+print=0; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
 debug=1;
 dodebug=print>0?0:debug;
 
 $fn=90;
-versiontext="V3.11";
+versiontext="V3.12";
 font = "Liberation Sans";
 textdepth = 0.5;
 textsize=8;
@@ -49,6 +49,19 @@ backplatewidth=rollwidth+holdersupportwidth*2;
 rollaxisdepth=rolldiameteroutside/2+backplatedepth+rollextra;
 rollaxisheight=rolldiameterinside/2; // rolldiameteroutside/2;
 rollborewidth=45; // rollwidth + 2*holdersupportwidth + 10;
+
+rollnarrowingh=10;
+rollnarrowingd=rolldiameterinside-8;
+
+rolloverlapd=rollborediameter-dtolerance;
+rolloverlaph=40;
+rolloverlapheight=rollwidth-rolloverlaph;//*2/3;
+rolloverlapnarrowingh=10;
+rolloverlapnarrowingd=rolloverlapd-10;
+
+rolllockcut=0.5;
+rolllockd=5;
+rolllockdepth=rolllockd/3;
 
 screwrecessdiameter=30;
 screwrecessdepth=6;
@@ -122,8 +135,8 @@ cutterfrictionh=10;
 cuttertoothh=10;
 cuttertoothdepth=4;
 cuttertoothd=1;
-cuttertoothcut=1;
-cuttertoothcutdepth=0.8;
+cuttertoothcut=1.5;
+cuttertoothcutdepth=1.5;
 cuttertoothcutfromedge=-cuttertoothcut;
 
 cutteraxlesupportl=(rollwidth-cutteraxlel)/2-ztolerance;
@@ -169,7 +182,7 @@ module cutter() {
 		translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength+cutterbodyh-cutterheadcornerd,z]) roundedbox(cutterheadthickness,cutterheadcornerd,cuttertoothh,cornerd,8);
 	      }
 
-	      for (fromedge=[-cuttertoothcut,2.5-cuttertoothcut]) {
+	      for (fromedge=[-cuttertoothcut]) { //,2.5-cuttertoothcut]) {
 		for (m=[0,1]) translate([cutterupsupport+cutterthickness-cuttertoothcutdepth+0.01,cutterlength+cutterbodyh+fromedge,z+cuttertoothh/2]) mirror([0,0,m]) rotate([-45,0,0]) triangle(cuttertoothcutdepth,cuttertoothcut,cuttertoothh/2,4);
 	      }
 	    }
@@ -224,7 +237,7 @@ module holder() {
   difference() {
     union() {
       difference() {
-	roundedbox(backplateheight,backplatedepth,backplatewidth,cornerd);
+	roundedbox(backplateheight,backplatedepth,backplatewidth,cornerd,3);
 
 	// Lightening holes
 	hull() {
@@ -251,10 +264,14 @@ module holder() {
 	translate([backplateheight-backplatedepth/2,backplatedepth/2,0]) roundedcylinder(backplatedepth,holdersupportwidth,cornerd,1,$fn);
       };
 
+      // Left roll holder (female)
       translate([rollaxisheight,rollaxisdepth,0]) {
-	hull() {
-	  roundedcylinder(rolldiameterinside,holdersupportwidth+rollwidth-holdersupportwidth*2-rolltubew-wall,cornerd,1,$fn);
-	  translate([0,0,holdersupportwidth+rollwidth-holdersupportwidth*2-rolltubew-wall]) roundedcylinder(rollborediameter,rolltubenarrowing,cornerd,1,$fn);
+	difference() {
+	  roundedcylinder(rolldiameterinside,holdersupportwidth+rolloverlapheight+rollnarrowingh-ztolerance*2,cornerd,1,$fn);
+	  hull() {
+	    translate([0,0,rolloverlapheight+rollnarrowingh-ztolerance]) roundedcylinder(rollnarrowingd,rollnarrowingh,cornerd,1,$fn);
+	    translate([0,0,holdersupportwidth+rolloverlapheight+rollnarrowingh-ztolerance]) roundedcylinder(rolldiameterinside,rollnarrowingh,cornerd,1,$fn);
+	  }
 	}
       }
 
@@ -276,13 +293,26 @@ module holder() {
     
     translate([2,holdersupportwidth+2-textdepth+0.01,holdersupportwidth+rollwidth+textdepth-0.01]) rotate([0,180,-90]) linear_extrude(height = textdepth) text(text = str(versiontext), font = font, size = textsize, valign="bottom", halign="left");
     
-    translate([rollaxisheight,rollaxisdepth,-0.01]) {
+    translate([rollaxisheight,rollaxisdepth,-0.1]) {
+      hull() {
+	cylinder(h=holdersupportwidth+rolloverlapheight+0.2,d=rollborediameter);
+	//	translate([0,0,rollwidth-rolltubew-holdersupportwidth-wall*2]) cylinder(h=rolltubenarrowing,d=rollborediameter-wall*2);
+      }
+    }
+    if (0) translate([rollaxisheight,rollaxisdepth,-0.01]) {
       hull() {
 	cylinder(h=rollwidth-holdersupportwidth-rolltubew-wall*2,d=rollborediameter);
 	translate([0,0,rollwidth-rolltubew-holdersupportwidth-wall*2]) cylinder(h=rolltubenarrowing,d=rollborediameter-wall*2);
       }
     }
 
+    translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight-rolloverlaph+rolloverlapnarrowingh+rolllockd/2]) rotate([0,0,90]) tubeclip(rolloverlapd+rolllockdepth,rolllockd,xtolerance);
+
+    hull() {
+      translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight]) rotate([0,0,90]) tubeclip(rolloverlapd+rolllockdepth,rolllockd,xtolerance*2);
+      translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight-rolllockd]) rotate([0,0,90]) tubeclip(rolloverlapd,rolllockd,xtolerance);
+    }
+    
     translate([screwrecessheight,screwrecessdepth,screwrecessleft]) rotate([-90,0,0]) cylinder(h=backplatedepth+0.01,d1=screwrecessdiameter,d2=screwrecessdiameter+backplatedepth+0.01);
     translate([screwrecessheight,screwrecessdepth,screwrecessright]) rotate([-90,0,0]) cylinder(h=backplatedepth+0.01,d1=screwrecessdiameter,d2=screwrecessdiameter+backplatedepth+0.01);
 
@@ -381,14 +411,30 @@ module right() {
 	  translate([x+1,0,holdersupportwidth+rollwidth-fingerwidth]) roundedbox(fingerheight-2,backplatedepth,fingernarrowing,cornerd);
 	}
 	
-	// right roll holder
+	// right roll holder (male)
 	union() {
-	  translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rollwidth-rolltubew]) {
+	  translate([rollaxisheight,rollaxisdepth,rolloverlapheight+ztolerance+rollnarrowingh]) {
 	    hull() {
-	      roundedcylinder(rolldiameterinside,rolltubew+cornerd,cornerd,0,$fn);
-	      translate([0,0,-holdersupportwidth]) roundedcylinder(rollborediameter,rolltubenarrowing,cornerd,0,$fn);
+	      translate([0,0,rollnarrowingh]) roundedcylinder(rolldiameterinside,backplatewidth-rolloverlapheight-rollnarrowingh-ztolerance-holdersupportwidth,cornerd,2,$fn);
+	      roundedcylinder(rollnarrowingd,rollnarrowingh,cornerd,0,$fn);
 	    }
 	  }
+
+	  translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight-rolloverlaph]) {
+	    hull() {
+	      translate([0,0,rolloverlapnarrowingh]) roundedcylinder(rolloverlapd,rolloverlaph+wall,cornerd,1,$fn);
+	      roundedcylinder(rolloverlapnarrowingd,rolloverlaph+wall,cornerd,1,$fn);
+	    }
+	  }
+
+	  translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight-rolloverlaph+rolloverlapnarrowingh+rolllockd/2]) rotate([0,0,90]) tubeclip(rolloverlapd+rolllockdepth,rolllockd,0);
+	  //	  translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rollwidth-rolltubew]) {
+	  //translate([rollaxisheight,rollaxisdepth,rollwidth-holdersupportwidth]) {
+	  //	    hull() {
+	  //	      roundedcylinder(rolldiameterinside,rolltubew+cornerd,cornerd,0,$fn);
+	  //	      translate([0,0,-holdersupportwidth]) roundedcylinder(rollborediameter,rolltubenarrowing,cornerd,0,$fn);
+	  //	    }
+	  //	  }
 	}
     
       }
@@ -410,12 +456,20 @@ module right() {
   
     // Space for lock pin
     translate([lockpinheight-xtolerance,backplatedepth/2-lockpinh/2-ytolerance,holdersupportwidth+rollwidth-lockpinfromedge-lockpinw-ztolerance]) cube([lockpinl+xtolerance*2,lockpinh+ytolerance*2,lockpinw+ztolerance*2]);
-  
+
+    // Right roll insides cut
     union() {
-      translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rollwidth-rolltubew]) {
+      translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight+rollnarrowingh]) {
 	hull() {
-	  translate([0,0,wall]) cylinder(h=rolltubew+holdersupportwidth-wall+0.1,d=rollborediameter);
-	  translate([0,0,-holdersupportwidth+wall]) cylinder(h=rolltubenarrowing,d=rollborediameter-wall*2);
+	  translate([0,0,wall]) cylinder(h=rollwidth+holdersupportwidth-rolloverlapheight-rollnarrowingh-wall+0.1,d=rollborediameter);
+	  translate([0,0,-holdersupportwidth+rolltubenarrowing/2]) cylinder(h=rolltubenarrowing-wall,d=rolloverlapd-wall*2);
+	}
+      }
+
+      translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight-rolloverlaph]) {
+	hull() {
+	  translate([0,0,rolloverlapnarrowingh]) roundedcylinder(rolloverlapd-wall*2,rolloverlaph+0.1,cornerd,1,$fn);
+	  translate([0,0,wall]) roundedcylinder(rolloverlapnarrowingd-wall,rolloverlaph,cornerd,1,$fn);
 	}
       }
     }
@@ -442,7 +496,8 @@ if (print==0) {
       //      roll();
     }
     
-    if (dodebug) translate([0,backplatedepth/2,0]) cube([1000,1000,1000]);
+    //if (dodebug) translate([0,backplatedepth/2,0]) cube([1000,1000,1000]);
+    if (dodebug) translate([0,0,0]) cube([rollaxisheight,1000,1000]);
     //if (dodebug) translate([0,0,0]) cube([cutteraxleheight,cutteraxledepth,1000]);
     //if (dodebug) translate([0,0,0]) cube([1000,1000,holdersupportwidth+rollwidth-lockpinfromedge-lockpinw/2]);
   }

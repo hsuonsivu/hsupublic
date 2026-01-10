@@ -10,8 +10,8 @@ include <hsu.scad>
 // depth=y
 // width=z
 
-print=3; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
-debug=0;
+print=0; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
+debug=1;
 dodebug=print>0?0:debug;
 
 //printbed=320;
@@ -54,10 +54,9 @@ rollborewidth=45; // rollwidth + 2*holdersupportwidth + 10;
 rollnarrowingh=10;
 rollnarrowingd=rolldiameterinside-8;
 
-//rolloverlap=40;
 rolloverlapd=rollborediameter-dtolerance;
-rolloverlapheight=rollwidth*2/3;
 rolloverlaph=30;
+rolloverlapheight=rollwidth-rolloverlaph; //rollwidth*2/3;
 rolloverlapnarrowingh=10;
 rolloverlapnarrowingd=rolloverlapd-10;
 
@@ -333,11 +332,13 @@ module right() {
   
     // Space for lock pin
     translate([lockpinheight-xtolerance,backplatedepth/2-lockpinh/2-ytolerance,holdersupportwidth+rollwidth-lockpinfromedge-lockpinw-ztolerance]) cube([lockpinl+xtolerance*2,lockpinh+ytolerance*2,lockpinw+ztolerance*2]);
-  
+
+    // Right roll insides cut
     union() {
-      translate([rollaxisheight,rollaxisdepth,rollwidth-holdersupportwidth]) {
+      translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight+rollnarrowingh]) {
 	hull() {
-	  translate([0,0,wall]) cylinder(h=rolltubew-holdersupportwidth-wall+0.1,d=rollborediameter);
+	  translate([0,0,wall]) cylinder(h=rollwidth+holdersupportwidth-rolloverlapheight-rollnarrowingh-wall+0.1,d=rollborediameter);
+	  //translate([0,0,wall]) cylinder(h=rolltubew-holdersupportwidth-wall+0.1,d=rollborediameter);
 	  translate([0,0,-holdersupportwidth+rolltubenarrowing/2]) cylinder(h=rolltubenarrowing-wall,d=rolloverlapd-wall*2);
 	}
       }
