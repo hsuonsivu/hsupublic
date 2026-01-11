@@ -10,8 +10,8 @@ include <hsu.scad>
 // depth=y
 // width=z
 
-print=0; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
-debug=1;
+print=5; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
+debug=0;
 dodebug=print>0?0:debug;
 
 $fn=90;
@@ -126,7 +126,7 @@ cutterthickness=2;
 cutterheadthickness=4;
 cutterslith=10;
 cutterslitheight=5;
-cutterbodyh=cutterslith+14;
+cutterbodyh=cutterslith+16;
 cutterattachw=50;
 cutteraxlel=cutterattachw+(cutteraxled/2);
 cutterlength=145;
@@ -135,7 +135,7 @@ cutterfrictionh=10;
 cuttertoothh=10;
 cuttertoothdepth=4;
 cuttertoothd=1;
-cuttertoothcut=1.5;
+cuttertoothcut=2;
 cuttertoothcutdepth=1.5;
 cuttertoothcutfromedge=-cuttertoothcut;
 
@@ -167,29 +167,31 @@ module cutter() {
 
       hull() {
 	translate([cutterupsupport-wall,cutteraxled,-cutterattachw/2]) roundedbox(cutterthickness+wall,cutteraxled+cutterld,cutterattachw,cornerd,8);
-	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cornerd,8);
+	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cutterheadcornerd,8);
       }
       hull() {
-	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cornerd,8);
+	translate([cutterupsupport,cutterlength,-cutterwidth/2]) roundedbox(cutterthickness,cutterbodyh,cutterwidth,cutterheadcornerd,8);
 	translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength,-cutterwidth/2]) roundedbox(cutterheadthickness,cutterbodyh,cutterwidth,cutterheadcornerd,8);
       }
 
       for (m=[0,1]) mirror([0,0,m]) {
 	  for (z=[0:cuttertoothh:cutterwidth/2-cuttertoothh]) {
-	    difference() {
-	      hull() {
-		translate([cutterupsupport+cutterthickness,cutterlength+cutterbodyh+cuttertoothdepth,z+cuttertoothh/2]) rotate([0,-90,0]) cylinder(d=cuttertoothd,h=cuttertoothd+1);
-		translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength+cutterbodyh-cutterheadcornerd,z]) roundedbox(cutterheadthickness,cutterheadcornerd,cuttertoothh,cornerd,8);
-	      }
-
-	      for (fromedge=[-cuttertoothcut]) { //,2.5-cuttertoothcut]) {
-		for (m=[0,1]) translate([cutterupsupport+cutterthickness-cuttertoothcutdepth+0.01,cutterlength+cutterbodyh+fromedge,z+cuttertoothh/2]) mirror([0,0,m]) rotate([-45,0,0]) triangle(cuttertoothcutdepth,cuttertoothcut,cuttertoothh/2,4);
-	      }
+	    hull() {
+	      translate([cutterupsupport+cutterthickness,cutterlength+cutterbodyh+cuttertoothdepth,z+cuttertoothh/2]) rotate([0,-90,0]) cylinder(d=cuttertoothd,h=cuttertoothd+2);
+	      translate([cutterupsupport-cutterheadthickness+cutterthickness,cutterlength+cutterbodyh-cutterheadcornerd,z]) roundedbox(cutterheadthickness,cutterheadcornerd,cuttertoothh,cornerd,8);
 	    }
 	  }
 	}
     }
-
+    
+    for (m=[0,1]) mirror([0,0,m]) {
+	for (z=[0:cuttertoothh:cutterwidth/2-cuttertoothh]) {
+	  for (fromedge=[-cuttertoothcut]) { //,2.5-cuttertoothcut]) {
+	    for (m=[0,1]) translate([cutterupsupport+cutterthickness-cuttertoothcutdepth+0.01,cutterlength+cutterbodyh+fromedge,z+cuttertoothh/2]) mirror([0,0,m]) hull() for (a=[-23,-45]) rotate([a,0,0]) cube([cuttertoothcutdepth,cuttertoothcut,cuttertoothh/2+1]);//triangle(cuttertoothcutdepth,cuttertoothcut,cuttertoothh/2,4);
+	  }
+	}
+      }
+    
     translate([cutterupsupport-cutterheadthickness+cutterthickness-0.1,cutterlength+cutterbodyh/2-cutterslith/2,-cutterslitw/2]) cube([cutterheadthickness+0.2,cutterslith,cutterslitw]);
     hull() {
       for (x=[-cutterheadthickness-0.1,0.01]) {
@@ -475,6 +477,20 @@ module right() {
     }
 
     translate([cutteraxleheight,cutteraxledepth,holdersupportwidth+rollwidth-cutteraxlesupportl+cutteraxleind/3-10+ztolerance]) cylindervoids(cutteraxleind,cutteraxleind,holdersupportwidth+cutteraxlesupportl-cutteraxleind/3+10-ztolerance,0,0,1);
+
+    translate([rollaxisheight-rolllockd/2,rollaxisdepth-rolloverlapd/2,holdersupportwidth+rolloverlapheight-rolloverlaph+rolloverlapnarrowingh-0.1]) {
+      for (x=[-rolllockcut,rolllockd]) {
+	translate([x,0,0]) cube([rolllockcut,rolloverlapd,rolloverlaph-rolloverlapnarrowingh]);
+      }
+      hull() {
+	translate([-rolllockcut,0,0]) cube([rolllockcut,rolloverlapd,rolllockcut]);
+	translate([rolllockd/2-rolllockcut/2,0,-rolllockd/2]) cube([rolllockcut,rolloverlapd,rolllockcut]);
+      }
+      hull() {
+	translate([rolllockd,0,0]) cube([rolllockcut,rolloverlapd,rolllockcut]);
+	translate([rolllockd/2-rolllockcut/2,0,-rolllockd/2]) cube([rolllockcut,rolloverlapd,rolllockcut]);
+      }
+    }
   }
 }
 
