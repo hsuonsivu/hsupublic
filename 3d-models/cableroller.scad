@@ -6,8 +6,11 @@ include <hsu.scad>
 use <threadlib/threadlib.scad>
 
 // Roller handle for rolling cables to 3d filament rolls
-// 0 Full model, 1 body only, 2 crank and knob, 3 handle and bolt, 4 knob, 5 threadtest
-print=0;
+// 0 Full model, 1 body only, 2 crank, 3 knob and bolt, 4 knob, 5 threadtest, 6 clas ohlson adapter,
+// 7 frontierfila adapter, 8 no name 72 mm centerhole adapter, 9 handle bar, 10 roller handle,
+// 11 roller handle, handle bar and two handlebar bolts, 12 two handlebar bolts, 13 sunly refill adapter
+// 14 esun cardboard adapter
+print=15;
 debug=print==0?1:0;
 
 nametext="Cable Roller";
@@ -49,8 +52,11 @@ noname72h=60;
 sunlurefilld=54.6;
 sunlurefillh=66.5;
 
-maxrollh=max(clasohlsonh,frontierfilah,noname72h,sunlurefillh);
-maxrolld=max(clasohlsoninnerd,frontierfilad,noname72d,sunlurefilld);
+esuncardboardd=53.5;
+esuncardboardh=64.5;
+
+maxrollh=max(clasohlsonh,frontierfilah,noname72h,sunlurefillh,esuncardboardh);
+maxrolld=max(clasohlsoninnerd,frontierfilad,noname72d,sunlurefilld,esuncardboardd);
 
 l=(print==5?20:ztolerance+maxrollh+ztolerance); // Axle length max
 lflex=10; // Rolls come in different sizes
@@ -114,9 +120,9 @@ screwflex=screwflexturns*screwpitch;
 screwDsupport=screwspecs[2];
 
 boltbaseh=6;
-boltfingerd=11;
+boltfingerd=13;
 boltfingersteps=12;
-boltbased=larged+20; // screwDsupport+boltfingerd;
+boltbased=larged+18;//20; // screwDsupport+boltfingerd;
 
 axled=32;
 axleh=bodythickness+l+crankthickness+ztolerance+boltbaseh;
@@ -230,6 +236,13 @@ module handlebar(cutout) {
       translate([-textsize/2,-carryhandled/2-0.01,-labellen/2]) cube([textsize,labeldepth+0.01,labellen]);
     }
     translate([0,-carryhandled/2+textdepth+labeldepth-0.01]) rotate([90,-90,0]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
+
+    rotate([0,0,180]) hull() {
+      l=textlen(nametext)-20;
+      translate([-textsize/2,-carryhandled/2-textdepth-0.01,-l/2-labeldepth*2]) cube([textsize,labeldepth+0.01,labeldepth*2+l+labeldepth*2]);
+      translate([-textsize/2,-carryhandled/2-0.01,-l/2]) cube([textsize,labeldepth+0.01,l]);
+    }
+    rotate([0,0,180]) translate([0,-carryhandled/2+textdepth+labeldepth-0.01]) rotate([90,-90,0]) linear_extrude(textdepth) text("Cable Roller",size=textsize,font=textfont,valign="center",halign="center");
   }
 }
 
@@ -313,17 +326,17 @@ module lockingpins() {
   }
 }
 
-module adapterversiontext(d,h,sunklabel,n) {
+module adapterversiontext(d,h,sunklabel,n,text=versiontext) {
   a=360/(is_undef(n)?90:n);
   labeldepth=(sunklabel?d/2-min(cos(atan((textsize/2)/(d/2))),cos(a/2))*(d/2):0);
-  labellen=textlen(versiontext,textsize)+1;
+  labellen=textlen(text,textsize)+1;
 
   if (labeldepth) hull() {
       translate([-textsize/2,d/2-0.01,h-labellen/2-labeldepth*2]) cube([textsize,labeldepth+0.01,labeldepth*2+labellen+labeldepth*2]);
       translate([-textsize/2,d/2-labeldepth-0.01,h-labellen/2]) cube([textsize,labeldepth+0.01,labellen]);
     }
   
-  translate([0,d/2-labeldepth-textdepth+0.01,h]) rotate([-90,90,0]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
+  translate([0,d/2-labeldepth-textdepth+0.01,h]) rotate([-90,90,0]) linear_extrude(textdepth) text(text,size=textsize,font=textfont,valign="center",halign="center");
 }
 
 module adapterlockingpins(h) {
@@ -352,7 +365,8 @@ module clasohlsonadapter() {
     }
     translate([0,0,bodythickness]) cylinder(d=smalld+dtolerance,h=clasohlsonh+ztolerance*2,$fn=90);
 
-    adapterversiontext(clasohlsoninnerd,(clasohlsonh-clasohlsonouth)/2,1,lockingpins);
+    adapterversiontext(clasohlsoninnerd,clasohlsonh/2,1,lockingpins,text="ClasOhlson");
+    rotate([0,0,180]) adapterversiontext(clasohlsoninnerd,clasohlsonh/2-2,1,lockingpins,text=str(versiontext," ",clasohlsoninnerd,"mm"));
   }
 
   outheight=bodythickness+ztolerance+clasohlsonh-clasohlsonouth;
@@ -373,7 +387,7 @@ module clasohlsonadapter() {
   adapterlockingpins(clasohlsonh);
 }
 
-module frontierfilaadapter() {
+module frontierfilaadapterold() {
   difference() {
     union() {
       translate([0,0,bodythickness+ztolerance]) roundedcylinder(frontierfilad,frontierfilah,cornerd,2,lockingpins);
@@ -382,6 +396,7 @@ module frontierfilaadapter() {
     translate([0,0,bodythickness]) cylinder(d=smalld+dtolerance,h=frontierfilah+ztolerance*2,$fn=90);
 
     adapterversiontext(frontierfilad,frontierfilah/2,1,lockingpins);
+    rotate([0,0,180]) adapterversiontext(frontierfilad,frontierfilah/2,1,lockingpins,text="Frontierfila ");
   }
 
   adapterlockingpins(frontierfilah);
@@ -402,13 +417,13 @@ module frontierfilaadapter() {
   }
 }
 
-module noname72adapter() {
+module noname72adapterold() {
   dd=(noname72d-lockingd+lockingpind/2)/2;
   dh=dd/2;
 
   difference() {
     union() {
-      translate([0,0,bodythickness+ztolerance]) roundedcylinder(noname72d,noname72h,cornerd,2,lockingpins);
+      translate([0,0,bodythickness+ztolerance]) roundedcylinder(noname72d,noname72h,cornerd,1,lockingpins);
 
       adapterlockingpins(noname72h);
       if (0) for (i=[0:1:lockingpins-1]) {
@@ -425,19 +440,52 @@ module noname72adapter() {
       }
     }
 
-    adapterversiontext(noname72d,noname72h/2,1,lockingpins);
+    adapterversiontext(noname72d,noname72h/2+bodythickness+ztolerance,1,lockingpins,text=str(versiontext," 72mm"));
+    rotate([0,0,180]) adapterversiontext(noname72d,noname72h/2+bodythickness+ztolerance,1,lockingpins,text="No name");
     
     translate([0,0,bodythickness]) cylinder(d=smalld+dtolerance,h=ztolerance+noname72h+ztolerance+crankh+0.03,$fn=90);
   }
 }
 
-module sunlurefilladapter() {
+module genericadapter(d,h,name) {
+  dd=(d-lockingd+lockingpind/2)/2;
+  dh=dd/2;
+
+  difference() {
+    union() {
+      translate([0,0,bodythickness+ztolerance]) roundedcylinder(d,h,cornerd,2,lockingpins);
+      translate([0,0,bodythickness+ztolerance+cornerd]) cylinder(d=d,h=h-cornerd,$fn=lockingpins);
+
+      adapterlockingpins(h);
+      if (0) for (i=[0:1:lockingpins-1]) {
+	a=i*360/lockingpins;
+	rotate([0,0,a]) {
+	  difference() {
+	    hull() {
+	      translate([lockingd/2,0,bodythickness+ztolerance+h-ztolerance-0.01]) roundedcylinder(lockingpind,crankh+ztolerance+0.01,cornerd,2,90);
+	      translate([lockingd/2,0,bodythickness+ztolerance+h-ztolerance-0.01]) cylinder(d=lockingpind,h=crankh+ztolerance-cornerd/2+0.01);
+	      translate([0,0,bodythickness+ztolerance+h-ztolerance-0.01]) cylinder(d=1,h=crankh+ztolerance+0.01);
+	    }
+	  }
+	}
+      }
+    }
+
+    adapterversiontext(d,h/2+bodythickness+ztolerance,1,lockingpins,text=str(versiontext," ",d,"mm"));
+    rotate([0,0,180]) adapterversiontext(d,h/2+bodythickness+ztolerance,1,lockingpins,text=name);
+    
+    translate([0,0,bodythickness]) cylinder(d=smalld+dtolerance,h=ztolerance+h+ztolerance+crankh+0.03,$fn=90);
+  }
+}
+
+module sunlurefilladapterold() {
   dd=(sunlurefilld-lockingd+lockingpind/2)/2;
   dh=dd/2;
 
   difference() {
     union() {
       translate([0,0,bodythickness+ztolerance]) roundedcylinder(sunlurefilld,sunlurefillh,cornerd,2,lockingpins);
+      translate([0,0,bodythickness+ztolerance+cornerd]) cylinder(d=sunlurefilld,h=sunlurefillh-cornerd,$fn=lockingpins);
 
       adapterlockingpins(sunlurefillh);
       if (0) for (i=[0:1:lockingpins-1]) {
@@ -454,9 +502,40 @@ module sunlurefilladapter() {
       }
     }
 
-    adapterversiontext(sunlurefilld,sunlurefillh/2,1,lockingpins);
+    adapterversiontext(sunlurefilld,sunlurefillh/2+bodythickness+ztolerance,1,lockingpins);
+    rotate([0,0,180]) adapterversiontext(sunlurefilld,sunlurefillh/2+bodythickness+ztolerance,1,lockingpins,text="Sunlu Refill");
     
     translate([0,0,bodythickness]) cylinder(d=smalld+dtolerance,h=ztolerance+sunlurefillh+ztolerance+crankh+0.03,$fn=90);
+  }
+}
+
+module esuncardboardadapterold() {
+  dd=(esuncardboardd-lockingd+lockingpind/2)/2;
+  dh=dd/2;
+
+  difference() {
+    union() {
+      translate([0,0,bodythickness+ztolerance]) roundedcylinder(esuncardboardd,esuncardboardh,cornerd,2,lockingpins);
+      translate([0,0,bodythickness+ztolerance+cornerd]) cylinder(d=esuncardboardd,h=esuncardboardh-cornerd,$fn=lockingpins);
+
+      adapterlockingpins(esuncardboardh);
+      if (0) for (i=[0:1:lockingpins-1]) {
+	a=i*360/lockingpins;
+	rotate([0,0,a]) {
+	  difference() {
+	    hull() {
+	      translate([lockingd/2,0,bodythickness+ztolerance+esuncardboardh-ztolerance-0.01]) roundedcylinder(lockingpind,crankh+ztolerance+0.01,cornerd,2,90);
+	      translate([lockingd/2,0,bodythickness+ztolerance+esuncardboardh-ztolerance-0.01]) cylinder(d=lockingpind,h=crankh+ztolerance-cornerd/2+0.01);
+	      translate([0,0,bodythickness+ztolerance+esuncardboardh-ztolerance-0.01]) cylinder(d=1,h=crankh+ztolerance+0.01);
+	    }
+	  }
+	}
+      }
+    }
+
+    adapterversiontext(esuncardboardd,esuncardboardh/2,1,lockingpins);
+    
+    translate([0,0,bodythickness]) cylinder(d=smalld+dtolerance,h=ztolerance+esuncardboardh+ztolerance+crankh+0.03,$fn=90);
   }
 }
 
@@ -473,7 +552,7 @@ module rollerbody() {
 
     lightenholes(0);
 
-    distance=maxrolld/2; //max(clasohlsoninnerd/2,frontierfilad/2,noname72d/2,sunlurefilld/2);
+    distance=maxrolld/2;
     translate([distance+2+textsize/2,0,bodythickness-textdepth+0.01]) linear_extrude(textdepth) rotate([0,0,90]) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
     translate([handlebased/2+2+textsize,0,-0.01]) linear_extrude(textdepth) rotate([180,0,90]) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
   }
@@ -622,10 +701,11 @@ if (print==0) {
       rollerbolt();
       rollercrank();
       translate([crankbasedistance,0,crankheight+crankbasethickness-0.01]) crankknob();
-      //clasohlsonadapter();
+      clasohlsonadapter();
       //frontierfilaadapter();
       //noname72adapter();
-      sunlurefilladapter();
+      //sunlurefilladapter();
+      //esuncardboardadapter();
       translate([handledistance,0,handleaxleh/2]) rotate([-90,0,0]) handlebar(0);
       translate([handledistance,carryhandlel/2+handleboltthreadh,handleaxleh/2]) rotate([-90,0,180]) handlebarbolt();
     }
@@ -651,27 +731,27 @@ if (print==3 || print==4) {
   }
  }
 
-if (print==5) {
+if (0 && print==5) {
   intersection() {
     if (debug) translate([-500,-1000,-500]) cube([1000,1000,1000]);
 
     union() {
-      rollerbody();
-      translate([outd+boltfingerd/2+0.5,0,bodythickness+l+crankthickness+boltbaseh+ztolerance]) rotate([180,0,360/12/2]) rollerbolt();
+      //rollerbody();
+      //translate([outd+boltfingerd/2+0.5,0,bodythickness+l+crankthickness+boltbaseh+ztolerance]) rotate([180,0,360/12/2]) rollerbolt();
     }
   }
  }
 
-if (print==6) {
+if (print==6 || print==15) {
   translate([0,0,bodythickness+ztolerance+clasohlsonh+crankh]) rotate([180,0,0]) clasohlsonadapter();
  }
 
-if (print==7) {
-  translate([0,0,bodythickness+ztolerance+frontierfilah+crankh]) rotate([180,0,0]) frontierfilaadapter();
+if (print==7 || print==15) {
+  translate([lockingd+0.5+lockingpind,0,0]) translate([0,0,bodythickness+ztolerance+frontierfilah+crankh]) rotate([180,0,0]) genericadapter(frontierfilad,frontierfilah,"Frontierfila");
  }
 
-if (print==8) {
-  translate([0,0,-bodythickness-ztolerance]) noname72adapter();
+if (print==8 || print==15) {
+  rotate([0,0,-61.5]) translate([lockingd+lockingpind+4.5,0,0]) translate([0,0,-bodythickness-ztolerance]) genericadapter(noname72d,noname72h,"Noname");
  }
 
 if (print==9 || print==11) {
@@ -687,6 +767,11 @@ if (print==12 || print==11) {
   translate([handledistance+handlesupportringd/2+2,0,0]) rotate([0,0,30]) handlebarbolt();
  }
 
-if (print==13) {
-  translate([0,0,bodythickness+ztolerance+sunlurefillh+crankh]) rotate([180,0,0]) sunlurefilladapter();
+if (print==13 || print==15) {
+  rotate([0,0,60]) translate([lockingd+0.5+lockingpind,0,0]) translate([0,0,bodythickness+ztolerance+sunlurefillh+crankh]) rotate([180,0,0]) genericadapter(sunlurefilld,sunlurefillh,"Sunlu refill");
  }
+
+if (print==14 || print==15) {
+  rotate([0,0,120]) translate([lockingd+0.5+lockingpind,0,0]) translate([0,0,bodythickness+ztolerance+esuncardboardh+crankh]) rotate([180,0,0]) genericadapter(esuncardboardd,esuncardboardh,"esun recycle");
+ }
+

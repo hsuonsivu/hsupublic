@@ -1,7 +1,7 @@
 SOURCE=cableroller.scad
 DEPENDS=hsu.scad Makefile.cableroller
 IMAGES=
-ALL=cablerollerbody.stl cablerollercrank.stl cablerollerhandle.stl cablerollerknob.stl cablerollerbolt.stl cablerollerclasohlsonadapter.stl cablerollerclasohlsonadapter.stl cablerollerfrontierfilaadapter.stl cablerollernoname72adapter.stl cablerollernonamecarryhandlebar.stl cablerollercarryhandle.stl cablerollerhandleparts.stl cablerollerhandlebolt.stl cablerollersunlurefilladapter.stl
+ALL=cablerollerbody.stl cablerollercrank.stl cablerollerhandle.stl cablerollerknob.stl cablerollerbolt.stl cablerollerclasohlsonadapter.stl cablerollerclasohlsonadapter.stl cablerollerfrontierfilaadapter.stl cablerollernoname72adapter.stl cablerollernonamecarryhandlebar.stl cablerollercarryhandle.stl cablerollerhandleparts.stl cablerollerhandlebolt.stl cablerollersunlurefilladapter.stl cablerolleresuncardboardadapter.stl cablerolleradapters.stl
 
 # cablerollerthreadtest.stl
 
@@ -81,5 +81,14 @@ cablerollerhandlebolt.stl: $(SOURCE) $(DEPENDS)
 cablerollersunlurefilladapter.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D print=13 -o $@ $(SOURCE)
 	echo $@ built.
+
+cablerolleresuncardboardadapter.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=14 -o $@ $(SOURCE)
+	echo $@ built.
+
+cablerolleradapters.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=15 -o $@ $(SOURCE)
+	echo $@ built.
+
 
 
