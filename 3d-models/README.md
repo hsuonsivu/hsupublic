@@ -1416,6 +1416,12 @@ cablerollerknob.stl is just the crank handle (previous prints that as well).
 
 **cablerollernoname72adapter.stl is adapter for random filament roll we have plenty of.
 
+**cablerollersunlurefilladapter.stl is adapter for Sunlu refill adapter.
+
+**cablerolleresuncardboardadapter.stl is adapter for sunlu recycled cardboard adapter
+
+**cablerolleradapters.stl prints all adapters
+
 cablerollernonamecarryhandlebar.stl is handle bar for carry handle.
 
 cablerollercarryhandle.stl is the carry handle body
