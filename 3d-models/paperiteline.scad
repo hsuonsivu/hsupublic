@@ -10,7 +10,7 @@ include <hsu.scad>
 // depth=y
 // width=z
 
-print=5; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
+print=0; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
 debug=0;
 dodebug=print>0?0:debug;
 
@@ -147,6 +147,11 @@ cutterheadcornerd=3;
 
 cutterupsupport=cutteraxled/2+40;
 
+lightenbar=20;
+lightenholew=45;
+lightenholeh=60;
+lightenmargin=2;
+
 module cutter() {
   sd=cutterld*(cutterattachw/cutterwidth);
   widecut=cutterlength-cutterld/2;
@@ -242,7 +247,49 @@ module holder() {
 	roundedbox(backplateheight,backplatedepth,backplatewidth,cornerd,3);
 
 	// Lightening holes
-	hull() {
+	holewidth=backplateheight/2-screwrecessdiameter+lightenbar/2;
+	if (0) for (z=[holdersupportwidth:rollwidth/2-lightenbar*2:rollwidth-(rollwidth/2-lightenbar)]) {
+	  for (x=[0,holewidth]) {
+	    #	translate([x+lightenbar/2,-0.01,z]) lighten(holewidth,rollwidth/2-lightenbar,backplatedepth+0.02,backplatedepth,6,maxbridge-2,"up");
+	  }
+	}
+
+	intersection() {
+	  zshift=-10;
+	  union() {
+	    translate([lightenbar,-0.1,holdersupportwidth+lightenmargin]) cube([backplateheight-lightenbar-screwrecessdiameter-lightenbar,holdersupportwidth+0.2,rollwidth-fingerwidth-lightenmargin*2]);
+	    translate([lightenbar,-0.1,screwrecessleft+screwrecessdiameter/2+lightenmargin]) cube([backplateheight-lightenbar-25,holdersupportwidth+0.2,rollwidth-fingerwidth-lightenmargin*2-screwrecessleft-screwrecessdiameter-screwrecessdepth/2]);
+	    translate([lightenbar,-0.1,holdersupportwidth+cutteraxlesupportl+lightenmargin]) cube([backplateheight-lightenbar*2,holdersupportwidth+0.2,rollwidth-fingerwidth-lightenmargin*2-screwrecessdiameter-cutteraxlesupportl+lightenmargin]);
+	  }
+
+	  union() {
+	    for (z=[backplatedepth+lightenholeh/2+zshift:lightenholeh+lightenbar:rollwidth+lightenholeh]) 
+	      for (x=[lightenbar-lightenbar:lightenholew+lightenbar:backplateheight]) {
+		hull() {
+		  for (zz=[-lightenholeh/2-1,lightenholeh/2-1]) {
+		    translate([x-1,-0.1,z+zz]) cube([2,backplatedepth+0.2,2]);
+		  }
+		  for (xx=[-lightenholew/2-1,lightenholew/2-1]) {
+		    translate([x+xx,-0.1,z-1]) cube([2,backplatedepth+0.2,2]);
+		  }
+		}
+	      }
+
+	    for (z=[backplatedepth-lightenbar/2+zshift:lightenholeh+lightenbar:rollwidth]) 
+	      for (x=[lightenbar/2+lightenholew/2:lightenholew+lightenbar:backplateheight-lightenbar]) {
+		hull() {
+		  for (zz=[-lightenholeh/2-1,lightenholeh/2-1]) {
+		    translate([x-1,-0.1,z+zz]) cube([2,backplatedepth+0.2,2]);
+		  }
+		  for (xx=[-lightenholew/2-1,lightenholew/2-1]) {
+		    translate([x+xx,-0.1,z-1]) cube([2,backplatedepth+0.2,2]);
+		  }
+		}
+	      }
+	  }
+	}
+	
+	if (0) hull() {
 	  translate([backplatedepth/2+rolldiameterinside+(rolldiameterinside-rollborewidth),backplatedepth+0.01,backplatedepth*2]) rotate([90,0,0]) cylinder(h=backplatedepth+0.02,d=backplatedepth);
 	  translate([backplateheight*0.7-backplatedepth/2,backplatedepth+0.01,backplatedepth*2]) rotate([90,0,0]) cylinder(h=backplatedepth+0.02,d=backplatedepth);
 	  for (x=[backplatedepth*2,backplateheight*0.85-backplatedepth/2]) 
@@ -277,6 +324,7 @@ module holder() {
 	}
       }
 
+      // Support for cutter axle
       translate([cutteraxleheight,cutteraxledepth,holdersupportwidth-cornerd]) roundedcylinder(cutteraxleoutd,cutteraxlesupportl+cornerd,cornerd,1,$fn);
 
       hull() {
@@ -504,7 +552,7 @@ if (print==0) {
 
 	//cutangles=[20,30,40,48];
 	cutangles=[65,38]; // 38
-	for (cutterangle=cutangles) {
+	if (0) for (cutterangle=cutangles) {
 	  translate([cutteraxleheight,cutteraxledepth,holdersupportwidth+rollwidth/2]) rotate([0,0,cutterangle]) cutter();
 	}
       }
