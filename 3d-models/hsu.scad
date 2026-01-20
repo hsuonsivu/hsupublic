@@ -811,6 +811,7 @@ knobshaftnarrowing=0.6;
 knobshaftnarrowheight=1.5;
 knobshaftnarrowh=2;
 knobbridge=4;
+knobzwall=1;
 
 module knobaxle(knobd,knobh) {
   knobshaftd=knobd-5;
@@ -826,8 +827,8 @@ module knobaxle(knobd,knobh) {
   translate([0,0,0+knobshaftnarrowheight]) cylinder(d=knobshaftnarrowd,h=knobshaftnarrowh,$fn=90);
   
   hull() {
-    translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=knobshaftd,h=knobshafth-knobshaftnarrowing-knobshaftnarrowh-knobshaftnarrowing-knobshaftd/2,$fn=90);
-    translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=min(knobbridge,knobshaftd/2),h=knobshafth-knobshaftnarrowing-knobshaftnarrowh-knobshaftnarrowing,$fn=90);
+    translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=knobshaftd,h=knobshafth-knobshaftnarrowing-knobshaftnarrowh-knobshaftnarrowing-knobshaftd/2-knobzwall,$fn=90);
+    translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=min(knobbridge,knobshaftd/2),h=knobshafth-knobshaftnarrowing-knobshaftnarrowh-knobshaftnarrowing-knobzwall,$fn=90);
     translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh]) cylinder(d=knobshaftnarrowd,h=knobshaftnarrowing,$fn=90);
   }
 }
@@ -854,8 +855,8 @@ module knob(knobd,knobh) {
     hull() {
       dd=min(knobbridge,knobshaftd/2);
       dh=max(knobbridge,knobshaftd/2);
-      translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=knobshaftd+knobdtolerance,h=knobshafth-knobshaftnarrowh-knobshaftnarrowing-knobztolerance-dh,$fn=90);
-      translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=dd+knobdtolerance,h=knobshafth-knobshaftnarrowh - knobshaftnarrowing-knobztolerance,$fn=90);
+      translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=knobshaftd+knobdtolerance,h=knobshafth-knobshaftnarrowh-knobshaftnarrowing-knobztolerance-dh-knobzwall,$fn=90);
+      translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh+knobshaftnarrowing]) cylinder(d=dd+knobdtolerance,h=knobshafth-knobshaftnarrowh-knobshaftnarrowing-knobztolerance-knobzwall,$fn=90);
       translate([0,0,0+knobshaftnarrowheight+knobshaftnarrowh]) cylinder(d=knobshaftnarrowd+knobdtolerance,h=knobshaftnarrowing,$fn=90);
     }
     translate([0,0,0+knobshaftnarrowheight-0.1]) ring(knobd-2,knobshaftnarrowing,knobspringh,0,90);
