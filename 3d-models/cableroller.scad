@@ -10,11 +10,11 @@ use <threadlib/threadlib.scad>
 // 7 frontierfila adapter, 8 no name 72 mm centerhole adapter, 9 handle bar, 10 roller handle,
 // 11 roller handle, handle bar and two handlebar bolts, 12 two handlebar bolts, 13 sunly refill adapter
 // 14 esun cardboard adapter
-print=15;
+print=0;
 debug=print==0?1:0;
 
 nametext="Cable Roller";
-versiontext="V1.1";
+versiontext="V1.2";
 fulltext=str(nametext," ",versiontext);
 textsize=7;
 textdepth=0.7;
@@ -101,9 +101,6 @@ MY_THREAD_TABLE=[
 
 specsext=thread_specs("M42-ext",table=MY_THREAD_TABLE);
 specsint=thread_specs("M42-int",table=MY_THREAD_TABLE);
-
-//echo(specsext);
-//echo(specsint);
 
 holespecs=specsext;
 holepitch=holespecs[0];
@@ -250,6 +247,7 @@ module rollerhandle() {
   difference() {
     union() {
       translate([0,0,handleaxleheight]) cylinder(d=axled-dtolerance,h=handleaxleh);
+      translate([0,0,handleaxleheight+handlesupportthickness]) cylinder(d1=axled+wall-dtolerance,d2=axled-dtolerance,h=wall-dtolerance);
       hull() {
 	translate([0,0,handleaxleheight+handleaxleh-0.01]) cylinder(d=axled-dtolerance,h=handlelockh);
 	translate([0,0,handleaxleheight+handleaxleh+handlelocknarrowingh]) cylinder(d=handlelockd,h=0.3);
@@ -286,6 +284,8 @@ module rollerhandle() {
     }
 
     translate([0,0,handleaxleheight-0.01]) cylinder(d=axled-dtolerance-wall*2,h=handleaxleh+handlelockh+0.02);
+    translate([0,0,handleaxleheight-0.01]) cylinder(d1=axled,d2=axled-dtolerance-wall*2,h=(dtolerance+wall*2)/1.5+0.02);
+    translate([0,0,handleaxleheight-0.01]) cylinder(d1=axled-wall,d2=axled-dtolerance-wall*2,h=(dtolerance+wall*2)+0.02);
     
     for (a=[0:360/handlecutn:359]) {
       rotate([0,0,a]) {
@@ -577,6 +577,7 @@ module rollerbolt() {
     }
 
     translate([0,0,-0.1]) cylinder(d=axled+dtolerance,h=axleh+0.2);
+    translate([0,0,bodythickness+screwflex-screwpitch/2-0.1]) cylinder(d1=axled+wall+dtolerance,d2=axled+dtolerance,h=wall-dtolerance+0.2);
     
     translate([0,boltbased/2-1-textsize,boltbaseheight+boltbaseh-textdepth+0.01]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
   }
