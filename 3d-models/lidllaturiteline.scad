@@ -7,18 +7,20 @@ include <hsu.scad>
 $fn=60;
 
 print=0;
-teslamodels=0;
+teslamodels=1;
 abs=0;
 phones=2;
 lighten=0;
 lmargin=8;
+support=0; // This is work in progress, does not work.
 
 // Add springs to base shift to keep phones better in place. Does not work very well with some wireless chargers,
 // as the phone is not always fully seated because of this.
 basespring=0;
 
 cornerd=2;
-debug=(print>0)?0:0;
+forcedebug=0;
+debug=(print>0)?forcedebug:forcedebug;
 
 strong=(print>0)?1:0; // 1:0
 
@@ -71,6 +73,7 @@ microphoneholeposition=0; // Offset from center
 smallcornerdiameter=legwidth;
 largecornerdiameter=5;
 baselift=teslamodels?7:0;
+supportlift=baselift;
 bottomlift=teslamodels?baselift+legposition:legposition;
 angle=teslamodels?28:45;
 bottomy=bottomlift*sin(angle);
@@ -156,18 +159,21 @@ module body() {
       leftybase=0;
       for (m=[0,1]) mirror([m,0,0]) {
 	  hull() {
-	    translate([-width/2+legposition,leftybottom,0]) cube([legwidth,height*cos(angle)-leftybottom,0.01]);//baselift
-	    translate([-width/2+legposition,leftybase,baselift]) cube([legwidth,height*cos(angle)-leftybase,0.01]);//baselift
+	    translate([-width/2+legposition,leftybottom,0]) roundedboxxyz(legwidth,height*cos(angle)-leftybottom,0.01,smallcornerdiameter,0,1,90);//baselift
+	    translate([-width/2+legposition,leftybase,baselift]) roundedboxxyz(legwidth,height*cos(angle)-leftybase,0.01,smallcornerdiameter,0,1,90);//baselift
 	  }
 
-	  if (baselift) {
+	  if (baselift && !support) {
 	    for (y=[screwd*3/2,height*cos(angle)-screwd*3/2]) {
-	      translate([-width/2+legposition+screwd*3/2,y,screwlength]) rotate([180,0,0]) ruuvitorni(screwlength,screwd*3);
+	      hull() {
+		translate([-width/2+legposition+screwd*3/2,y,screwlength]) rotate([180,0,0]) ruuvitorni(screwlength,screwd*3);
+		translate([-width/2+legposition+legwidth/2,y-screwd*3/2,0]) roundedboxxyz(legwidth/2,screwd*3,baselift,smallcornerdiameter,0,1,90);
+	      }
 	    }
 	  }
 
 	  translate([-width/2,0,0]) hull() {
-	    translate([legposition,leftybase,baselift]) cube([legwidth,height*cos(angle)-leftybase,wall]);
+	    translate([legposition,leftybase,baselift]) roundedboxxyz(legwidth,height*cos(angle)-leftybase,wall,smallcornerdiameter,0,1,90);
 	    translate([0,0,bottomlift]) rotate([angle,0,0]) {
 	      translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	      translate([legwidth-smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
@@ -175,7 +181,7 @@ module body() {
 	  }
 
 	  translate([-width/2,0,0]) hull() {
-	    translate([legposition,height*cos(angle)-smallcornerdiameter,baselift]) cube([legwidth,smallcornerdiameter,wall]);
+	    translate([legposition,height*cos(angle)-smallcornerdiameter,baselift]) roundedboxxyz(legwidth,smallcornerdiameter,wall,smallcornerdiameter,0,1,90);
 	    translate([0,0,bottomlift]) rotate([angle,0,0]) {
 	      translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	      translate([smallcornerdiameter/2,height-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
@@ -186,27 +192,31 @@ module body() {
 
       // front leg
       translate([-width/2,0,0]) hull() {
-	translate([legposition,0,baselift]) cube([width-legposition*2,legwidth,wall]);
+	translate([legposition,0,baselift]) roundedboxxyz(width-legposition*2,legwidth,wall,smallcornerdiameter,0,1,90);
 	translate([0,0,bottomlift]) rotate([angle,0,0]) {
 	  translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	  translate([width-smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter);
 	}
       }
-    
+
+      if (teslamodels&&support) {
+	translate([legposition-width/2+legwidth+1,0,0]) supportbox(width-legposition*2-legwidth*2-2,legwidth,baselift,1);
+      }
+      
       // support for printing
-      supportbottomstart=(legwidth+baselift+supportwall/2);
-      supportbottomend=(height-smallcornerdiameter/2)*cos(angle)-(height-smallcornerdiameter/2)*sin(angle)-baselift;
+      supportbottomstart=(legwidth+supportlift+supportwall/2);
+      supportbottomend=(height-smallcornerdiameter/2)*cos(angle)-(height-smallcornerdiameter/2)*sin(angle)-supportlift;
       supportwidth=width/2-legwidth-maxbridge-maxbridge/2;
-      supportbottomwideend=supportbottomstart+supportwidth/2-baselift;
+      supportbottomwideend=supportbottomstart+supportwidth/2-supportlift;
       supportmidpoint=supportbottomwideend<supportbottomend?supportbottomend-supportbottomwideend:0;
       supportdistance=(width/2-legwidth-maxbridge + maxbridge/2);
 
       if (supportbottomend>supportbottomstart) {
 	for (m=[0,1]) mirror([m,0,0]) {
 	    translate([-supportdistance/2,0,0]) hull() {
-	      translate([0,supportbottomstart+supportwall/2,baselift]) cylinder(d=supportwall,h=0.1);
-	      translate([0,supportbottomend-supportwall/2,baselift]) cylinder(d=supportwall,h=0.1);
-	      translate([0,supportbottomend+supportmidpoint-supportwall/2,baselift+supportmidpoint+supportwall/2]) sphere(d=supportwall);
+	      translate([0,supportbottomstart+supportwall/2,supportlift]) cylinder(d=supportwall,h=0.1);
+	      translate([0,supportbottomend-supportwall/2,supportlift]) cylinder(d=supportwall,h=0.1);
+	      translate([0,supportbottomend+supportmidpoint-supportwall/2,supportlift+supportmidpoint+supportwall/2]) sphere(d=supportwall);
 	      
 	      translate([0,0,bottomlift]) rotate([angle,0,0]) {
 		translate([0,height-smallcornerdiameter/2,supportwall/2]) sphere(d=supportwall);
@@ -214,11 +224,11 @@ module body() {
 	    }
       
 	    if (supportbottomstart<supportbottomend) translate([-supportdistance/2,0,0]) hull() {
-		translate([0,supportbottomend+supportmidpoint-supportwall/2,baselift+supportmidpoint+supportwall/2]) sphere(d=supportwall);
+		translate([0,supportbottomend+supportmidpoint-supportwall/2,supportlift+supportmidpoint+supportwall/2]) sphere(d=supportwall);
 	      
 		for (m2=[0,1]) mirror([m2,0,0]) {
 		    hull() {
-		      translate([0,supportbottomwideend-supportwall/2,baselift]) cylinder(d=supportwall,h=0.1);
+		      translate([0,supportbottomwideend-supportwall/2,supportlift]) cylinder(d=supportwall,h=0.1);
 	      
 		      translate([0,0,bottomlift]) rotate([angle,0,0]) {
 			translate([0,height-smallcornerdiameter/2,supportwall/2]) sphere(d=supportwall);
@@ -227,8 +237,8 @@ module body() {
 		    }
 		
 		    hull() {
-		      translate([-supportwidth/2+baselift*2+supportwall,supportbottomstart+supportwall/2,baselift]) cylinder(d=supportwall,h=0.1);
-		      translate([-0,supportbottomwideend-supportwall/2,baselift]) cylinder(d=supportwall,h=0.1);
+		      translate([-supportwidth/2+supportlift*2+supportwall,supportbottomstart+supportwall/2,supportlift]) cylinder(d=supportwall,h=0.1);
+		      translate([-0,supportbottomwideend-supportwall/2,supportlift]) cylinder(d=supportwall,h=0.1);
 
 		      translate([0,0,bottomlift]) rotate([angle,0,0]) {
 			translate([-supportwidth/2+supportwall/2,height-smallcornerdiameter/2,supportwall/2]) sphere(d=supportwall);
@@ -237,8 +247,8 @@ module body() {
 	
  
 		    hull() {
-		      translate([-supportwidth/2+baselift*2+supportwall,supportbottomstart+supportwall/2,baselift]) cylinder(d=supportwall,h=0.1);
-		      translate([0,supportbottomstart+supportwall/2,baselift]) cylinder(d=supportwall,h=0.1);
+		      translate([-supportwidth/2+supportlift*2+supportwall,supportbottomstart+supportwall/2,supportlift]) cylinder(d=supportwall,h=0.1);
+		      translate([0,supportbottomstart+supportwall/2,supportlift]) cylinder(d=supportwall,h=0.1);
 	    
 		      translate([0,0,bottomlift]) rotate([angle,0,0]) {
 			translate([-0,legwidth,0]) cylinder(d=supportwall,h=0.1);
@@ -367,7 +377,7 @@ module body() {
       translate([-width/2+phonewidth,bottomheight+keycutposition,chargerthickness+backthickness+1]) cube([width,keycutheight,phonethickness+thicknessmargin+backthickness]);
     }
 
-    if (baselift) {
+    if (baselift && !support) {
       for (m=mirroring) mirror([m,0,0]) {
 	  for (y=[screwd*3/2,height*cos(angle)-screwd*3/2]) {
 	    intersection() {
@@ -502,12 +512,12 @@ if (print==0) {
 if (print==1) {
   intersection() {
     union() {
-      if (!teslamodels) {
+      if (!teslamodels || support) {
 	body();
       }
 
       // Teslas need bottom of legs to be printed separately, as angle is too low to print in one piece and center console is slightly convex
-      if (teslamodels) {
+      if (teslamodels && !support) {
 	translate([0,0,-baselift]) {
 	  difference() {
 	    body();
@@ -526,7 +536,7 @@ if (print==1) {
 
       if (abs) {
 	//antiwarpwall(x,y,z,l,w,h,distanceoption,walloption);
-	antiwarpwall(-screwd*3/2-1,-thickness/2*cos(angle)-(teslamodels?0:8),0,width+screwd*3+2,thickness/2*cos(angle)+height*cos(angle)+screwd*3/2+2,(height+baselift)*sin(angle)+(thickness+baselift)*cos(angle)+5);
+	antiwarpwall(-width/2-screwd*3/2-1,-thickness/2*cos(angle)-(teslamodels?0:8),0,width+screwd*3+2,thickness/2*cos(angle)+height*cos(angle)+screwd*3/2+2,(height+baselift)*sin(angle)+(thickness+baselift)*cos(angle)+5,adhesion=3);
       }
     }
       
@@ -534,7 +544,7 @@ if (print==1) {
   }
  }
 
-if (print==2 || print==1 || print==0) {
+if (print==2) {
   translate([-width/2+legposition+legwidth+0.5+phonewidth/2-screwd*3/2-1,height*cos(angle)-screwd*3*3-0.5-cornerd/2-0.5,0]) {
     translate([0,0,0]) rotate([0,0,90]) translate([0,0,0]) heightbase();
   }
