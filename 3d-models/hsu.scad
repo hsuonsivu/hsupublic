@@ -568,7 +568,7 @@ module printareacube(printer) {
 // need to be accommodated, wall is wall thickness, 1-2 times
 // nozzle. I use 2x for wall.
 
-module antiwarpwall(x,y,z,l,w,h,distanceoption,walloption) {
+module antiwarpwall(x,y,z,l,w,h,distanceoption,walloption,adhesion=0) {
   distance=distanceoption?distanceoption:3;
   wall=walloption?walloption:0.8;
   diameterin=min(distance+wall,l+distance*2,w+distance*2);
@@ -577,17 +577,25 @@ module antiwarpwall(x,y,z,l,w,h,distanceoption,walloption) {
   hh=max(h+2,2);
   
   difference() {
-    translate([x,y,0]) minkowski() {
-      cube([l,w,hh]);
-      cylinder(d=diameterout,h=1);
+    union() {
+      translate([x-diameterout/2,y-diameterout/2,0]) roundedboxxyz(l+diameterout,w+diameterout,hh,diameterout,0,1,90);
+      if (adhesion) translate([x-diameterout/2-adhesion,y-diameterout/2-adhesion,0]) roundedboxxyz(l+diameterout+adhesion*2,w+diameterout+adhesion*2,1.2,diameterout,0,1,90);
+    }
+    
+    if (0) union() {
+      translate([x,y,0]) minkowski() {
+	cube([l,w,hh]);
+	cylinder(d=diameterout,h=1);
+      }
     }
 
-    translate([x,y,-0.1]) minkowski() {
-      cube([l,w,hh+0.2]);
-      cylinder(d=diameterin,h=1);
-    }
-
-    translate([x-diameterout/2-0.1,y+w/2,-0.01]) cube([diameterout/2-0.1+0.1,1,1.01]);
+    translate([x-diameterin/2,y-diameterin/2,-0.1]) roundedboxxyz(l+diameterin,w+diameterin,hh+0.2,diameterin,0,1,90);
+    if (0) translate([x,y,-0.1]) minkowski() {
+	cube([l,w,hh+0.2]);
+	cylinder(d=diameterin,h=1);
+      }
+    
+    translate([x-diameterout/2-adhesion-0.1,y+w/2,-0.01]) cube([diameterout/2+adhesion-0.1+0.1,1,1.01]);
   }
 }
 
@@ -621,12 +629,21 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
 }
 
 module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
-  dz=dzin>0?dzin:0.01;
-  minz=(dz==z?0.01:0);
-  $fn=(fn!="" || fn>0)?fn:30;
-  translate([dxy/2,dxy/2,0]) minkowski(convexity=10) {
-    cube([x-dxy,y-dxy,z-dz+minz]);
-    roundedcylinder(dxy,dz,dz-minz,printable,$fn);
+  if (dzin==0) {
+    hull() {
+      translate([dxy/2,dxy/2,0]) cylinder(d=dxy,h=z);
+      translate([x-dxy/2,dxy/2,0]) cylinder(d=dxy,h=z);
+      translate([dxy/2,y-dxy/2,0]) cylinder(d=dxy,h=z);
+      translate([x-dxy/2,y-dxy/2,0]) cylinder(d=dxy,h=z);
+    }
+  } else {
+    dz=dzin>0?dzin:0.01;
+    minz=(dz==z?0.01:0);
+    $fn=(fn!="" || fn>0)?fn:30;
+    translate([dxy/2,dxy/2,0]) minkowski(convexity=10) {
+      cube([x-dxy,y-dxy,z-dz+minz]);
+      roundedcylinder(dxy,dz,dz-minz,printable,$fn);
+    }
   }
 }
 
@@ -650,7 +667,7 @@ module supportbox(xsize,ysize,height,onbed) {
     if (xsize >= ysize) translate([xsize-0.2-0.4,-0.2,z]) cube([0.8,0.4,0.2]);
     if (xsize < ysize)translate([xsize-0.2,-0.2,z]) cube([0.4,0.8,0.2]);
     
-    xsteps=floor(xsize/1.2);
+    xsteps=floor(xsize/2.5);
     //echo(xsteps);
     if (xsteps > 0) {
       xstep=xsize/xsteps;
