@@ -2,18 +2,21 @@
 
 include <hsu.scad>
 
-// 0 = draft 1 = final 2 = bottom 3 = cover 4=text background parts if textbackground is enabled, 5 base backgrounds, 6 top background only 7 test backgrounds
+// 0 = draft 1 = final 2 = bottom 3 = cover 4=text background parts if textbackground is enabled, 5 base backgrounds,
+// 6 top background only 7 test backgrounds, 8 window template for old version,
+// 9 flip case, 10 window template for flipcase, 11 logo background for flip case
 
-print=11;
+print=9;
 debug=1;
-window=2;
+window=1;
 debugangle=-180;
 
 // Add ABS recycling logo. This uses https://www.thingiverse.com/thing:216963/files
 basematerial="ABS"; // "ABS";
-materials=window?[basematerial,"PC","PETG"]:[basematerial,"PETG"];
+//materials=window?[basematerial,"PC","PETG"]:[basematerial,"PETG"];
+materials=window?["O"]:[basematerial,"PETG"];
 
-versiontext="1.1";
+versiontext="1.2";
 versiontextdepth=0.7;
 
 xtolerance=0.3;
@@ -37,9 +40,12 @@ textbackground=1;
 textbackgroundh=1.2; // Works for both 0.2 and 0.3mm layers
 textztolerance=0.15; // One layer
 
+logoasinsert=1; // Use insert for a separately printed logo
+
 logodepth=textbackgroundh; //1.2;  These must be same now to allow printing both base and top at the same time
 textsizeonnenmuna=12;
 logooffset=1;
+logox=1;
 backgroundoffset=logooffset;
 toptextoffset=2;
 
@@ -87,14 +93,14 @@ textheight=7;
 insidetextheight=textheight-1;
 textspace=textheight/3;
 textdepth=logodepth;
-basewidth=eggmaxd*eggs*ysize;
-baselength=eggmaxd + lockdepth + lockback + eggspace + textspace + textheight + lockdepth + lockback;
+basewidth=eggmaxd*eggs*ysize+5;
+baselength=eggmaxd + lockdepth + lockback + eggspace + textspace + textheight + lockdepth + lockback + 2;
 eggxposition=eggmaxd/2 + tolerance + nwall + locknotchd;
 eggtextxposition=baselength - tolerance - lockdepth - lockback - insidetextheight;
 //echo("textheigth ", textheight);
 eggholedepth=2.9;
-logoh=baselength-cornersize-4.5-1;
-logol=basewidth-cornersize-1;
+logoh=baselength-cornersize-4.5-3;
+logol=basewidth-cornersize-3;
 
 insideteksti="Onnenmuna";
 insidetekstil=textlen(insideteksti,textheight-1);
@@ -259,10 +265,24 @@ module triangleold(x,y,z,mode) {
 
 //echo("width ",basewidth, " length ",baselength);
 
-module anjalogo() {
-  translate([-logol/2,-logoh/2]) intersection() {
+module anjalogo(offset=0) {
+  ll=min(logol,logoh);
+  resize([ll-5,0],auto=true) translate([-ll/2,-logoh/2]) intersection() {
     square([logol,logoh]);
-    translate([-cornersize-0.5,0]) resize([logol-1,0],auto=true) import("AS_muna_nimi.svg",convexity=10);
+    translate([-cornersize-0.5,0]) offset(r=offset) resize([ll-1,0],auto=true) import("AS_muna_nimi.svg",convexity=10);
+  }
+}
+
+module logoinsert() {
+  difference() {
+    union() {
+      hull() {
+	translate([logox-logol/2+logodepth,-logoh/2+logodepth,0]) roundedboxxyz(logol-logodepth*2,logoh-logodepth*2,logodepth+logodepth,cornerd,0,1,90);
+	translate([logox-logol/2,-logoh/2,logodepth]) roundedboxxyz(logol,logoh,logodepth,cornerd,0,1,90);
+      }
+    }
+
+    translate([logox,0,-0.01]) linear_extrude(height=logodepth) rotate([0,180,90]) anjalogo(offset=0.2);
   }
 }
 
@@ -294,7 +314,7 @@ module insidetextbackground(cut) {
   //cube([insidetekstih+(cut?xtolerance*2:0),insidetekstil+(cut?ytolerance*2:0),textbackgroundh+(cut?textztolerance*2:0)]);
 }
 
-module base() {
+module baseold() {
   difference() {
     translate([tolerance,tolerance,0]) roundedbox(baselength-tolerance*2,basewidth-tolerance*2,basedepth-tolerance,cornersize);
 
@@ -385,7 +405,7 @@ module toptextbackground(cut) {
 
 windowh=2;
 windowl=baselength-9;
-windoww=baselength-9;
+windoww=basewidth-9;
 topl=windowl-4;
 topw=windoww-4;
 
@@ -492,11 +512,17 @@ clipl=20;
 coverwindowx=coverx/2;
 coverwindowh=2;
 coverwindowl=baselength-17;
-coverwindoww=baselength-13;
+coverwindoww=basewidth-9;
 coverwindowoverlap=3;
 
-eggclampx=eggmaxd/2-2;
-eggclampl=2+1.5;
+frontwindowx=coverx/2;
+frontwindowh=2;
+frontwindowl=baselength-17;
+frontwindoww=basewidth-13;
+frontwindowoverlap=3;
+
+eggclampx=eggmaxd/2-4;
+eggclampl=2+3.5;
 eggclampw=10;
 eggclamph=baseh+10;
 eggclampww=eggclampw+10;
@@ -524,14 +550,14 @@ module cover() {
 	      translate([-basel/2+coverx-wall,-axlew/2-axlel/2,basebackh+ztolerance]) roundedbox(wall+wall,axlel,coverh-basebackh-ztolerance,cornerd,2);
 	    }
 	}
-
-     translate([-basel/2+coverx,-basew/2,coverh-wall]) roundedbox(basel-coverx,basew,wall,cornerd,1);
-     if (window) intersection() {
-	translate([-basel/2+coverx,-basew/2,0]) roundedbox(basel-coverx,basew,coverh,cornerd,1);
-	windowframe(coverwindowx,0,coverh-windowheight(coverwindowh),coverwindowl,coverwindoww,coverwindowh,overlap=coverwindowoverlap);
-      }
+      
+      translate([-basel/2+coverx,-basew/2,coverh-wall]) roundedbox(basel-coverx,basew,wall,cornerd,2);
+      if (window) intersection() {
+	  translate([-basel/2+coverx,-basew/2,0]) roundedbox(basel-coverx,basew,coverh,cornerd,2);
+	  windowframe(coverwindowx,0,coverh-windowheight(coverwindowh),coverwindowl,coverwindoww,coverwindowh,overlap=coverwindowoverlap);
+	}
       difference() {
-	translate([basel/2-wall,-basew/2,baseh+ztolerance]) roundedbox(wall,basew,coverh-baseh-ztolerance,cornerd,1);
+	translate([basel/2-wall,-basew/2,baseh+ztolerance]) roundedbox(wall,basew,coverh-baseh-ztolerance,cornerd,2);
 	translate([basel/2-wall-xtolerance-wall+clipd/2,0,baseh+clipheight+clipd/2]) rotate([0,0,90]) tubeclip(clipl,clipd,dtolerance);
       }
       hull() {
@@ -553,48 +579,70 @@ module basetopslope() {
 }
 
 module base() {
-  logox=1;
-  
   difference() {
     union() {
+      // Bottom
       hull() {
-	translate([-basel/2+coverx,-basew/2,0]) roundedbox(basel-coverx,basew,cornerd,cornerd,1);
-	translate([logox-logol/2-0.5,-basew/2,wall]) roundedbox(logol+1.5,basew,wall+textbackgroundh,cornerd,1);
+	translate([-basel/2+coverx,-basew/2,0]) roundedbox(basel-coverx,basew,logoasinsert?textdepth*2+textztolerance+wall:cornerd,cornerd,1);
+	if (!logoasinsert) {
+	  translate([logox-logol/2-0.5,-basew/2,wall]) roundedbox(logol+1.5,basew,wall+textbackgroundh,cornerd,1);
+	}
       }
+      // Front
       hull() {
 	translate([basel/2-wall,-basew/2,0]) roundedbox(wall,basew,baseh,cornerd,1);
 	translate([basel/2-wall-xtolerance-wall,-basew/2,0]) roundedbox(wall,basew,baseh,cornerd,1);
       }
       translate([basel/2-wall-xtolerance-wall,-basew/2+wall+ytolerance,0]) roundedbox(wall,basew-wall*2-ytolerance*2,baseh+clipd+clipheight,cornerd,1);
       translate([basel/2-wall-xtolerance-wall+clipd/2,0,baseh+clipheight+clipd/2]) rotate([0,0,90]) tubeclip(clipl,clipd,0);
+      
       for (m=[0,1]) mirror([0,m,0]) {
+	  // Axle support outside
 	  hull() {
 	    translate([-basel/2,-basew/2,0]) roundedbox(axlecoverl,wall,baseh,cornerd,1);
 	    translate([-basel/2,-basew/2,0]) roundedbox(axlecoverl,wall,axleheight,cornerd,1);
 	    //translate([-basel/2+axlexposition,-basew/2,0]) roundedbox(axlecoverl-axlexposition,wall,basebackh,cornerd,1);
 	  }
+
+	  // Side
+	  // raised inside
 	  hull() {
 	    translate([basefrontx,-basew/2+xtolerance+wall,0]) roundedbox(basefrontl,wall,baseh+clipd+clipheight,cornerd,1);
 	    //	    translate([-basel/2+axlexposition+axlecoverl-axlexposition,-basew/2+xtolerance+wall,0]) roundedbox(wall,wall,basebackh+clipd+clipheight-wall,cornerd,1);
 	  }
+	  // Side inside extension
 	  hull() {
 	    for (y=[0,xtolerance+wall]) {
 	      translate([basefrontx,-basew/2+y,0]) roundedbox(basefrontl,wall,baseh,cornerd,1);
 	      //translate([-basel/2+axlexposition+axlecoverl-axlexposition-wall-xtolerance,-basew/2+y,0]) roundedbox(wall,wall,basebackh,cornerd,1);
 	    }
 	  }
+
+	  // Axle support 
 	  hull() {
 	    translate([-basel/2,-basew/2,0]) roundedbox(axlecoverl,outaxlesupportw,axleheight,cornerd,1);
 	    //	    translate([-basel/2+axlexposition,-basew/2,0]) roundedbox(axlecoverl-axlexposition,outaxlesupportw,basebackh,cornerd,1);
 	    translate([axlex,-basew/2,axleheight]) rotate([-90,0,0]) roundedcylinder(axled+wall,outaxlesupportw,cornerd,0,90);
 	  }
+	  // Side low
 	  translate([-basel/2,-basew/2,0]) roundedbox(basel,basew/2-axlew/2-axlel/2-ytolerance,wall,cornerd,1);
+
+	  // Axle support front
 	  translate([-basel/2+axlecoverl-wall,-basew/2,0]) roundedbox(wall,basew/2-axlew/2+axlel/2+ytolerance+wall,axlecoverh,cornerd,1);
+
+	  // Axle support front bottom
 	  translate([-basel/2+wall*1.5,-basew/2,0]) roundedbox(axlecoverl,basew/2-axlew/2+axlel/2+ytolerance+wall,wall,cornerd,1);
 	  hull() {
+	    // Axle support side inside
 	    translate([-basel/2,-axlew/2+axlel/2+ytolerance,coverbackover+wall*2]) roundedbox(axlecoverl,wall,axlecoverh-coverbackover-wall*2,cornerd,1);
+
+	    // Back wall top slope
 	    translate([0,-axlew/2+axlel/2+ytolerance,0]) basetopslope();
+	    
+	    // Axle support side inside hinge cover
 	    translate([axlex,-axlew/2+axlel/2+ytolerance,axleheight]) rotate([-90,0,0]) roundedcylinder(axled+wall,wall,cornerd,0,90);
+
+	    // Axle support side inside hinge wall
 	    translate([-basel/2+coverbackover+wall+xtolerance,-axlew/2+axlel/2+ytolerance,0]) roundedbox(axlecoverl-coverbackover-wall-xtolerance,wall,basebackh-backraise,cornerd,1);
 	  }
 	}
@@ -612,8 +660,13 @@ module base() {
 	    translate([0,-axlew/2+axlel/2+ytolerance,0]) basetopslope();
 	  }
       }
-      
-      translate([-basel/2+wall*1.5,-axlew/2+axlel/2+ytolerance,0]) roundedbox(basel-wall*1.5,axlew-axlel-ytolerance*2,wall,cornerd,1);
+
+      // Base plate middle part
+      hull() {
+	h=textdepth*2+textztolerance;
+	translate([-basel/2+wall*1.5,-basew/2,0]) roundedbox(basel-wall*1.5,basew,wall,cornerd,1);
+	translate([-basel/2+wall*1.5+h,-basew/2,0]) roundedbox(basel-wall*1.5-h,basew,wall+h,cornerd,1);
+      }
       hull() {
 	translate([-basel/2+coverbackover+wall+xtolerance,-axlew/2+axlel/2+ytolerance,0]) roundedbox(wall,axlew-axlel-ytolerance*2,wall,cornerd,1);
 	translate([-basel/2,-axlew/2+axlel/2+ytolerance,coverbackover+wall*2]) roundedbox(wall,axlew-axlel-ytolerance*2,wall,cornerd,1);
@@ -637,6 +690,8 @@ module base() {
 
 	  translate([-basel/2,-axlew/2+axlel/2+ytolerance,backraise]) roundedbox(axlecoverl+wall,axlew-axlel-ytolerance*2,h-backraise,cornerd,1);
 	}
+
+	// Egg holder
 	difference() {
 	  union() {
 	    translate([0,0,eggbase+bottomfillh]) egg(wall);
@@ -651,16 +706,24 @@ module base() {
 	translate([axlex,-axlew/2,axleheight]) onehinge(axled,axlel,axledepth,1,ytolerance,dtolerance);
       }
 
-    #    translate([logox,0,logodepth-0.01]) rotate([180,0,-90]) linear_extrude(height=logodepth+0.01) anjalogo();
-#    if (textbackground) {
-      translate([logox,0,logodepth*2+logodepth-0.03+textztolerance]) rotate([180,0,-90]) logobackground(logoh,logol,1);
+    // Make space for logo part to be inserted
+    if (logoasinsert) {
+      hull() {
+	translate([logox-logol/2+logodepth-xtolerance,-logoh/2+logodepth-ytolerance,-0.01]) roundedboxxyz(logol-logodepth*2+xtolerance*2,logoh-logodepth*2+ytolerance*2,logodepth+logodepth+textztolerance,cornerd,0,1,90);
+	translate([logox-logol/2-xtolerance,-logoh/2-ytolerance,logodepth]) roundedboxxyz(logol+xtolerance*2,logoh+ytolerance*2,logodepth+textztolerance,cornerd,0,1,90);
+      }
+    } else {
+      #    translate([logox,0,logodepth-0.01]) rotate([180,0,-90]) linear_extrude(height=logodepth+0.01) anjalogo();
+      #    if (textbackground) {
+	translate([logox,0,logodepth*2+logodepth-0.03+textztolerance]) rotate([180,0,-90]) logobackground(logoh,logol,1);
+      }
     }
   }
 }
 
 module axlecase() {
   translate([axlex,0,axleheight]) rotate([0,printangle,0]) translate([-axlex,0,-axleheight]) cover();
-  if (debug) translate([axlex,0,axleheight]) rotate([0,debugangle,0]) translate([-axlex,0,-axleheight]) #cover();
+  if (debug) translate([axlex,0,axleheight]) rotate([0,debugangle,0]) translate([-axlex,0,-axleheight]) cover();
   base();
 }
 
@@ -726,7 +789,10 @@ if (print==8) {
 if (print==9) {
   intersection() {
     if (debug) translate([-1000,0,0]) cube([2000,1000,1000]);
-    axlecase();
+    union() {
+      axlecase();
+      if (debug) logoinsert();
+    }
   }
 }
 
@@ -736,4 +802,8 @@ if (print==10) {
 
 if (print==11) {
   translate([logoh/2,logol/2,0]) logobackground(logoh,logol,0);
+ }
+
+if (print==12) {
+  translate([0,0,textdepth*2]) rotate([180,0,0]) logoinsert();
  }
