@@ -1443,3 +1443,7 @@ Headphone hangers for wall install.
 
 ![Headphone hanger in use.](headphonehanger.jpg)
 
+### dinboxsuko.scad
+
+Schuko socket extension box for DIN electrical box we have for specific schuko socket. 
+
