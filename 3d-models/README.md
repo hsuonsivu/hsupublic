@@ -1449,4 +1449,9 @@ Schuko socket extension box for DIN electrical box we have for specific schuko s
 
 ### belttool.scad
 
-Too to narrow leather belt to narrower size. Used to narrow leather strap.
+Too to narrow leather belt to narrower size. Used to narrow leather
+strap. This was designed to use Lidl Parkside "Precision Hobby Knife"
+blades. Note that Lidl has several products with same name with
+differing blades. The one I had HG02869 Version 06/2022. From pictures
+I assume that blades are not interchangeable.
+
