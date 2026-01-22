@@ -528,6 +528,13 @@ eggclamph=baseh+10;
 eggclampww=eggclampw+10;
 eggclampwheight=baseh-cornerd;
 
+fingerpresscut=0.5;
+fingerpressw=20;
+fingerpressh=19;
+fingerpressd=45;
+fingerpressdepth=1;
+fingerpressheight=baseh-fingerpressh/2;
+
 module cover() {
   difference() {
     union() {
@@ -704,8 +711,20 @@ module base() {
 
     for (m=[0,1]) mirror([0,m,0]) {
 	translate([axlex,-axlew/2,axleheight]) onehinge(axled,axlel,axledepth,1,ytolerance,dtolerance);
+
+	translate([basel/2-wall-xtolerance-wall-0.01,-fingerpressw/2-fingerpresscut,baseh-fingerpressh]) cube([wall*2+xtolerance+0.02,fingerpresscut,fingerpressh+clipd+clipheight+0.1]);
       }
 
+    translate([basel/2-fingerpressdepth+fingerpressd/2,0,fingerpressheight]) sphere(d=fingerpressd,$fn=90);
+    difference() {
+      hull() {
+	translate([basel/2-wall-wall,-fingerpressw/2-cornerd/2,baseh-fingerpressh]) roundedbox(wall,fingerpressw+cornerd,fingerpressh-wall,cornerd);
+	translate([basel/2-wall-wall-wall,-fingerpressw/2-cornerd/2,baseh-fingerpressh]) roundedbox(wall,fingerpressw+cornerd,fingerpressh,cornerd);
+      }
+
+      translate([basel/2-fingerpressdepth+fingerpressd/2,0,fingerpressheight]) sphere(d=fingerpressd+wall*2,$fn=90);
+    }
+      
     // Make space for logo part to be inserted
     if (logoasinsert) {
       hull() {

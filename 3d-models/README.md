@@ -1447,3 +1447,6 @@ Headphone hangers for wall install.
 
 Schuko socket extension box for DIN electrical box we have for specific schuko socket. 
 
+### belttool.scad
+
+Too to narrow leather belt to narrower size. Used to narrow leather strap.
