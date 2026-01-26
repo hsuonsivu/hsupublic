@@ -1453,5 +1453,12 @@ Too to narrow leather belt to narrower size. Used to narrow leather
 strap. This was designed to use Lidl Parkside "Precision Hobby Knife"
 blades. Note that Lidl has several products with same name with
 differing blades. The one I had HG02869 Version 06/2022. From pictures
-I assume that blades are not interchangeable.
+I assume that blades are not interchangeable. Thinning is not reliable
+and should be used carefully, it can eat into the material due to 3D
+printed part flexing too much. This needs better design to prevent
+this (separate bottom is likely culprit).
+
+### paperrollholder.scad
+
+Holder for kitchen paper rolls. Top screws in to prevent roll exiting in case of mishap.
 

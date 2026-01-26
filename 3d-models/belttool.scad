@@ -29,7 +29,7 @@ bladeztolerance=0.2;
 bladel=39.7;
 bladew=0.54;
 
-versiontext=str("V1.0");
+versiontext=str("V1.1");
 brandtext="Belt cutter";
 
 textsize=7;
@@ -84,7 +84,7 @@ screwheadd=8.5; //8.6; // Round head
 screwheadh=3.1;
 screwheadspaceh=6;
 screwl=22.6; // 23; // 23.15;
-nutd=6.9;
+nutd=7.1;
 nuth=2.3;
 
 screwtable=[[cornerd+screwheadd,-beltcutterbottomh+beltcutterh-screwheadd],
@@ -201,9 +201,9 @@ module beltcutterleft() {
 
     screwholes();
 
-    translate([beltcutterl-textlen("OUT",textsize)-cornerd,0,-beltcutterbottomh-ztolerance+textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text("OUT",size=textsize,font=textfont,valign="center",halign="left");
-    translate([textlen("IN",textsize)+cornerd+1,0,-beltcutterbottomh-ztolerance+textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text("IN",size=textsize,font=textfont,valign="center",halign="right");
-
+    translate([beltcutterl-textlen("OUT",textsize)-cornerd,-beltcutterw/2+textdepth-0.01,-beltcutterbottomh+textsize+1+cornerd/2]) rotate([90,0,0]) linear_extrude(textdepth) text("OUT",size=textsize,font=textfont,valign="top",halign="left");
+    translate([textlen("IN",textsize)+cornerd+1,-beltcutterw/2+textdepth-0.01,-beltcutterbottomh+textsize+1+cornerd/2]) rotate([90,0,0]) linear_extrude(textdepth) text("IN",size=textsize,font=textfont,valign="top",halign="right");
+    
     translate([beltcutterl/2,-beltcutterw/2+textdepth-0.01,-beltcutterbottomh+beltcutterh/2+textsize/2]) rotate([90,0,0]) linear_extrude(textdepth) text(str(brandtext," ",versiontext),size=textsize,font=textfont,valign="center",halign="center");
     translate([beltcutterl/2,-beltcutterw/2+textdepth-0.01,-beltcutterbottomh+beltcutterh/2-textsize/2-1]) rotate([90,0,0]) linear_extrude(textdepth) text(str(originalbeltwidth," to ",desiredbeltwidth),size=textsize-1,font=textfont,valign="center",halign="center");
   }
@@ -251,7 +251,11 @@ module beltcutterright() {
 
     screwholes();
 
-    translate([beltcutterl/2,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+beltcutterh/2-0.01]) rotate([-90,180,0]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
+    translate([beltcutterl-textlen("OUT",textsize)-cornerd,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+textsize+1+cornerd/2]) rotate([-90,180,0]) linear_extrude(textdepth) text("OUT",size=textsize,font=textfont,valign="top",halign="right");
+    translate([textlen("IN",textsize)+cornerd+1,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+textsize+1+cornerd/2]) rotate([-90,180,0]) linear_extrude(textdepth) text("IN",size=textsize,font=textfont,valign="top",halign="left");
+
+    translate([beltcutterl/2,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+beltcutterh/2+textsize/2]) rotate([-90,180,0]) linear_extrude(textdepth) text(str(brandtext," ",versiontext),size=textsize,font=textfont,valign="center",halign="center");
+    translate([beltcutterl/2,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+beltcutterh/2-textsize/2-1]) rotate([-90,180,0]) linear_extrude(textdepth) text(str(originalbeltwidth," to ",desiredbeltwidth),size=textsize-1,font=textfont,valign="center",halign="center");
   }
 }
 
