@@ -203,8 +203,12 @@ if (print==0) intersection() {
   pussinsulkija(l=250);
 }
 
+step=10;
+start=170;
+end=200;
+
 if (print==1) {
-  for (i=[0:1:(200-80)/40]) {
-    translate([0,3.5*w*i,0]) pussinsulkija(l=100+i*40);
+  for (i=[0:1:(end-start)/step]) {
+    translate([0,3.5*w*i,0]) pussinsulkija(l=start+i*step);
   }
  }
