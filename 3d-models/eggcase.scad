@@ -6,7 +6,7 @@ include <hsu.scad>
 // 6 top background only 7 test backgrounds, 8 window template for old version,
 // 9 flip case, 10 window template for flipcase, 11 logo background for flip case
 
-print=9;
+print=12;
 debug=1;
 window=1;
 debugangle=-180;
@@ -35,10 +35,13 @@ eggs=1;
 
 textontop=0;
 windowontop=1;
+windowonfront=1;
 
 textbackground=1;
 textbackgroundh=1.2; // Works for both 0.2 and 0.3mm layers
 textztolerance=0.15; // One layer
+
+raisedtexth=0.4;
 
 logoasinsert=1; // Use insert for a separately printed logo
 
@@ -48,6 +51,7 @@ logooffset=1;
 logox=1;
 backgroundoffset=logooffset;
 toptextoffset=2;
+logoedge=1;
 
 tolerance=0.2;
 cornersize=3;
@@ -64,7 +68,7 @@ eggd=40+dtolerance+filld * xyfactor;
 //eggheight=59.5 * zfactor;
 eggheight=57.5 * zfactor;
 
-eggmaxd=40.5;
+eggmaxd=42;
 
 //eggmaxd=41+dtolerance+filld; //48+2 * xyfactor;
 
@@ -93,9 +97,10 @@ textheight=7;
 insidetextheight=textheight-1;
 textspace=textheight/3;
 textdepth=logodepth;
-basewidth=eggmaxd*eggs*ysize+5;
-baselength=eggmaxd + lockdepth + lockback + eggspace + textspace + textheight + lockdepth + lockback + 2;
-eggxposition=eggmaxd/2 + tolerance + nwall + locknotchd;
+sizeextra=5;
+basewidth=40.5*eggs*ysize+5+sizeextra;
+baselength=40.5 + lockdepth + lockback + eggspace + textspace + textheight + lockdepth + lockback + 2+sizeextra;
+eggxposition=40.5/2 + tolerance + nwall + locknotchd;
 eggtextxposition=baselength - tolerance - lockdepth - lockback - insidetextheight;
 //echo("textheigth ", textheight);
 eggholedepth=2.9;
@@ -108,30 +113,32 @@ insidetekstih=textheight(insideteksti,textheight-1);
 
 toptextd=min(baselength,basewidth)-cornersize;
 
-yfree=basewidth - eggmaxd*eggs;//)/2;//????
+yfree=basewidth - 40.5*eggs;//)/2;//????
   
-eggy=yfree/(eggs+1)+eggmaxd/2;
-eggdistance=(eggmaxd+yfree/(eggs+1));
+eggy=yfree/(eggs+1)+40.5/2;
+eggdistance=(40.5+yfree/(eggs+1));
 //echo("eggdistance ", eggdistance);
 
 eggdtable=[[4.33,25,0],
 	   [8.5,30,0],
 	   [9.5,31,0],
-	   [10,32,0],
+	   //	   [10,32,0],
 	   [10.3,33,0],
 	   [12,34,0],
 	   [12.1,35,0],
 	   [12.9,36,0],
 	   [14.3,37,0],
 	   [17,38,0],
-	   [19.3,39,0],
-	   [21.7,40,0],
-	   [23.1,40.5,0],
-	   [24.6,40,1],
-	   [29.7,39,1],
-	   [30.9,38,1],
+	   //[19.3,39,0],
+	   //[21.7,40,0],
+	   //	   [23.1,40.5,0],
+	   [20,eggmaxd,0],
+	   //	   [24.6,40,1],
+	   //[29.7,39,1],
+	   [32,39,1],
+	   //[30.9,38,1],
 	   [33.28,37,1],
-	   [33.8,36,1],
+	   //	   [33.8,36,1],
 	   [35.6,35,1],
 	   [37,34,1],
 	   [39,33,1],
@@ -158,22 +165,31 @@ module egg(expand) {
   hull() {
     for (i=[0:1:len(eggdtable)-1]) {
       depth=eggdtable[i][0];
-      l=eggdtable[i][1];
+      diameter=eggdtable[i][1];
       slicestart=i?eggdtable[i-1][0]:0;
       sliceh=i?depth-eggdtable[i-1][0]:depth;
-      dd=eggdtable[i][2]?length_and_depth_to_diameter(l,depth):length_and_depth_to_diameter(l,51.1-depth);
-      d=(dd>40.5)?40.5:dd;
+      //dd=eggdtable[i][2]?length_and_depth_to_diameter(diameter,depth):length_and_depth_to_diameter(diameter,51.1-depth);
+      dd=eggdtable[i][1];
+      d=(dd>eggmaxd)?eggmaxd:dd;
       //if (expand) echo(eggdtable[i][2],depth,l,dd,d,depth>d/2?depth-d/2:d/2);
       //echo(slicestart,sliceh);
+      if (!expand) echo(i,diameter,dd,d,sliceh,eggdtable[i][2]);
       if (eggdtable[i][2]==0) {
 	intersection() {
-	  translate([0,0,slicestart-expand/2]) cylinder(d=40.5+expand,h=sliceh+expand);
+	  translate([0,0,slicestart-expand/2]) cylinder(d=eggmaxd+expand,h=sliceh+expand);
 	  translate([0,0,depth>d/2?depth:d/2]) sphere(d=d+expand);
 	}
       } else {
 	intersection() {
-	  translate([0,0,slicestart-expand/2]) cylinder(d=40.5+expand,h=sliceh+expand);
-	  translate([0,0,depth+d/2>eggh?eggh-d/2:d/2]) sphere(d=d+expand);
+	  if (i==23 && expand==0) {
+	    # intersection() {
+	      translate([0,0,slicestart-expand/2]) cylinder(d=d+expand,h=sliceh+expand);
+	      translate([0,0,depth+d/2>eggh?eggh-d/2:d/2]) scale([1,1,i==len(eggdtable)-1?1:1]) sphere(d=d+expand);
+	    }
+	  } else {
+	    translate([0,0,slicestart-expand/2]) cylinder(d=d+expand,h=sliceh+expand);
+	    translate([0,0,depth+d/2>eggh?eggh-d/2:d/2]) scale([1,1,i==len(eggdtable)-1?1:1]) sphere(d=d+expand);
+	  }
 	}
       }
     }
@@ -267,7 +283,7 @@ module triangleold(x,y,z,mode) {
 
 module anjalogo(offset=0) {
   ll=min(logol,logoh);
-  resize([ll-5,0],auto=true) translate([-ll/2,-logoh/2]) intersection() {
+  resize([ll-6,0],auto=true) translate([-ll/2,-logoh/2]) intersection() {
     square([logol,logoh]);
     translate([-cornersize-0.5,0]) offset(r=offset) resize([ll-1,0],auto=true) import("AS_muna_nimi.svg",convexity=10);
   }
@@ -277,13 +293,14 @@ module logoinsert() {
   difference() {
     union() {
       hull() {
-	translate([logox-logol/2+logodepth,-logoh/2+logodepth,0]) roundedboxxyz(logol-logodepth*2,logoh-logodepth*2,logodepth+logodepth,cornerd,0,1,90);
-	translate([logox-logol/2,-logoh/2,logodepth]) roundedboxxyz(logol,logoh,logodepth,cornerd,0,1,90);
+	translate([logox-logol/2,-logoh/2,logodepth]) roundedboxxyz(logol,logoh,logodepth,cornerd+logoedge,0,1,90);
+	translate([logox-logol/2+logodepth,-logoh/2+logodepth,0]) roundedboxxyz(logol-logodepth*2,logoh-logodepth*2,logodepth+logodepth,cornerd+logoedge*2,0,1,90);
       }
     }
 
-    translate([logox,0,-0.01]) linear_extrude(height=logodepth) rotate([0,180,90]) anjalogo(offset=0.2);
+    translate([logox-logol/2+logodepth+logoedge,-logoh/2+logodepth+logoedge,-0.1]) roundedboxxyz(logol-logodepth*2-logoedge*2,logoh-logodepth*2-logoedge*2,raisedtexth+0.1,cornerd,0,1,90);
   }
+  translate([logox,0,0]) linear_extrude(height=raisedtexth+0.01) rotate([0,180,90]) anjalogo(offset=0); // 0.2
 }
 
 module anjalogoholes(cut) {
@@ -521,12 +538,19 @@ frontwindowl=baselength-17;
 frontwindoww=basewidth-13;
 frontwindowoverlap=3;
 
-eggclampx=eggmaxd/2-4;
-eggclampl=2+3.5;
+eggclampx=eggmaxd/2-wall*3;
+eggclampl=wall*2+wall*2;
 eggclampw=10;
-eggclamph=baseh+10;
+eggclamph=baseh+10+3;
 eggclampww=eggclampw+10;
 eggclampwheight=baseh-cornerd;
+
+backclampl=eggmaxd/2;//wall*2+wall*3;
+backclampx=-eggmaxd/2-wall*2;
+backclampw=15;
+backclamph=baseh+10+22;
+backclampww=eggclampw+10;
+backclampwheight=baseh-cornerd;
 
 fingerpresscut=0.5;
 fingerpressw=20;
@@ -684,27 +708,32 @@ module base() {
 	union() {
 	  hull() {
 	    for (m=[0,1]) mirror([0,m,0]) {
-		for (y=[0,xtolerance+wall]) {
-		  translate([-basel/2+axlexposition+axlecoverl-axlexposition,-basew/2+y,0]) roundedbox(basel-axlexposition-(axlecoverl-axlexposition),wall,baseh,cornerd,1);
-		  translate([-basel/2+axlexposition+axlecoverl-axlexposition,-basew/2+y,0]) roundedbox(wall,wall,h,cornerd,1);
+		for (y=[0]) {
+		  translate([-eggmaxd/2-wall,-basew/2+y,0]) roundedbox(eggmaxd+wall*2,wall,baseh,cornerd,1);
+		  translate([-eggmaxd/2-wall,-basew/2+y,0]) roundedbox(wall,wall,h,cornerd,1);
 		}
 	      }
 	  }
+	  
 	  hull() {
 	    translate([eggclampx,-eggclampw/2,0]) roundedbox(eggclampl,eggclampw,eggclamph,cornerd,0);
 	    translate([eggclampx,-eggclampww/2,eggclampwheight]) roundedbox(eggclampl,eggclampww,cornerd,cornerd,0);
 	  }
+	  hull() {
+	    translate([backclampx,-backclampw/2,0]) roundedbox(backclampl,backclampw,backclamph,cornerd,0);
+	    translate([backclampx,-backclampww/2,backclampwheight]) roundedbox(backclampl,backclampww,cornerd,cornerd,0);
+	  }
 
-	  translate([-basel/2,-axlew/2+axlel/2+ytolerance,backraise]) roundedbox(axlecoverl+wall,axlew-axlel-ytolerance*2,h-backraise,cornerd,1);
+	  translate([-basel/2,-axlew/2+axlel/2+ytolerance,0]) roundedbox(axlecoverl+wall,axlew-axlel-ytolerance*2,baseh+backraise,cornerd,1);
 	}
-
+	
 	// Egg holder
 	difference() {
 	  union() {
-	    translate([0,0,eggbase+bottomfillh]) egg(wall);
+	    translate([0,0,eggbase+bottomfillh]) egg(wall*1.5);
 	    translate([0,0,0]) cylinder(d=eggmaxd*0.66,h=eggmaxdh);
 	  }
-#	  translate([0,0,eggbase+bottomfillh]) egg(0);
+	  translate([0,0,eggbase+bottomfillh]) egg(0);
 	}
       }
     }
@@ -732,8 +761,8 @@ module base() {
 	translate([logox-logol/2-xtolerance,-logoh/2-ytolerance,logodepth]) roundedboxxyz(logol+xtolerance*2,logoh+ytolerance*2,logodepth+textztolerance,cornerd,0,1,90);
       }
     } else {
-      #    translate([logox,0,logodepth-0.01]) rotate([180,0,-90]) linear_extrude(height=logodepth+0.01) anjalogo();
-      #    if (textbackground) {
+      translate([logox,0,logodepth-0.01]) rotate([180,0,-90]) linear_extrude(height=logodepth+0.01) anjalogo();
+      if (textbackground) {
 	translate([logox,0,logodepth*2+logodepth-0.03+textztolerance]) rotate([180,0,-90]) logobackground(logoh,logol,1);
       }
     }
@@ -824,5 +853,15 @@ if (print==11) {
  }
 
 if (print==12) {
-  translate([0,0,textdepth*2]) rotate([180,0,0]) logoinsert();
+  intersection() {
+    if (debug) translate([0,0,0]) cube([100,100,100]);
+    translate([0,0,textdepth*2]) rotate([180,0,0]) logoinsert();
+  }
+ }
+
+if (print==13) {
+  intersection() {
+    base();
+    cylinder(d=eggmaxd+wall*2,52+eggbase);
+  }
  }
