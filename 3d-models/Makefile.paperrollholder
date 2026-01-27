@@ -1,0 +1,43 @@
+SOURCE=paperrollholder.scad
+DEPENDS=hsu.scad Makefile.paperrollholder
+IMAGES=
+
+ALL=paperrollholder.stl paperrollholderbase.stl paperrollholdertop.stl
+
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
+
+all: $(ALL)
+
+dist: paperrollholder.zip
+
+paperrollholder-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf paperrollholder-distribution
+	rm -f paperrollholder-distribution.zip
+	mkdir -p paperrollholder-distribution
+	cp $(SOURCE) $(DEPENDS) paperrollholder-distribution
+	zip -r $@ paperrollholder-distribution
+	echo $@ built.      
+
+paperrollholder-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf paperrollholder-distribution
+	rm -f paperrollholder-distribution.zip
+	mkdir -p paperrollholder-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) paperrollholder-distribution
+	zip -r $@ paperrollholder-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+paperrollholderbase.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+paperrollholdertop.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+paperrollholder.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+

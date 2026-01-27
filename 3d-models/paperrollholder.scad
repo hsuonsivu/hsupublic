@@ -5,10 +5,10 @@
 include <hsu.scad>
 use <threadlib/threadlib.scad>
 
-print=1;
-debug=0;
+print=0;
+debug=1;
 
-versionstring="1.0";
+versiontext="1.1";
 
 xtolerance=0.25;
 ytolerance=0.25;
@@ -59,6 +59,11 @@ topboltbasel=7;
 
 topboltheight=holderh-topboltl+topboltpitch;
 
+brandtext="Paper roll holder";
+textsize=7;
+textdepth=0.7;
+textfont="Liberation Sans:style=Bold";
+
 module base() {
   difference() {
     union() {
@@ -69,31 +74,44 @@ module base() {
       roundedcylinder(holderd,holderh,cornerd,1,180);
     }
 
-    translate([0,0,holderh-topboltholel]) tap("M20", turns=topboltholeturns,table=MY_THREAD_TABLE);
+    translate([0,0,holderh-topboltholepitch/2]) cylinder(d=topboltholed,h=topboltholepitch*2,$fn=180);
+    translate([0,0,holderh-topboltholel-topboltholepitch*2]) cylinder(d=topboltholed,h=topboltholepitch/2+0.01,$fn=180);
+    translate([0,0,holderh-topboltholel-topboltholepitch*2-cornerd/2]) roundedcylinder(topboltholed,topboltholepitch/2+cornerd/2+0.01,cornerd,0,180);
+    translate([0,0,holderh-topboltholel-topboltholepitch]) tap("M20", turns=topboltholeturns,table=MY_THREAD_TABLE);
+
+    translate([0,0,textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text(str(brandtext," ",versiontext),size=textsize,font=textfont,valign="center",halign="center");
   }
 }
 
 module top() {
-  translate([0,0,topboltheight]) bolt("M20",turns=topboltturns,table=MY_THREAD_TABLE);
-  translate([0,0,holderh+ztolerance+handleraise]) {
-    //cylinder(d=10,h=10,$fn=180);
-    hull() {
-      for (y=[-handlel/2,handlel/2]) translate([0,y,0]) roundedcylinder(handlew,handleh,handlecornerd,2,180);
-      //roundedcylinder(holderd+handlecornerd,handleh,handlecornerd,2,180);
+  difference() {
+    union() {
+      translate([0,0,topboltheight]) bolt("M20",turns=topboltturns,table=MY_THREAD_TABLE);
+      hull() {
+	translate([0,0,topboltheight-topboltpitch+ztolerance]) roundedcylinder(topboltd,topboltpitch+1,cornerd,0,180);
+	translate([0,0,topboltheight-topboltpitch-topboltpitch*1.5+ztolerance]) roundedcylinder(topboltd-topboltpitch,topboltpitch+1,cornerd,0,180);
+      }
+      translate([0,0,holderh+ztolerance+handleraise]) {
+	hull() {
+	  for (y=[-handlel/2,handlel/2]) translate([0,y,0]) roundedcylinder(handlew,handleh,handlecornerd,2,180);
+	}
+      }
+      translate([0,0,holderh+ztolerance]) {
+	hull() {
+	  roundedcylinder(topd,cornerd,cornerd,0,180);
+	  translate([0,0,toph-cornerd]) scale([1,0.8,1]) roundedcylinder(axisd,cornerd,cornerd,0,180);
+	}
+	translate([0,0,toph-cornerd]) scale([1,0.8,1]) roundedcylinder(axisd,axish+cornerd+handlecornerd/2,cornerd,0,180);
+      }
     }
-  }
-  translate([0,0,holderh+ztolerance]) {
-    hull() {
-      roundedcylinder(topd,cornerd,cornerd,0,180);
-      translate([0,0,toph-cornerd]) scale([0.8,1,1]) roundedcylinder(axisd,cornerd,cornerd,0,180);
-    }
-    translate([0,0,toph-cornerd]) scale([0.8,1,1]) roundedcylinder(axisd,axish+cornerd+handlecornerd/2,cornerd,0,180);
+
+    translate([0,-holderd/2,holderh+ztolerance+textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="bottom",halign="center");
   }
 }
 
 if (print==0) {
   intersection() {
-    if (debug) cube([200,200,1000]);
+    if (debug) translate([0,-100,0]) cube([200,200,1000]);
     union() {
       base();
       top();
@@ -101,8 +119,11 @@ if (print==0) {
   }
  }
 
-if (print==1) {
+if (print==1 || print==3) {
   base();
+ }
+
+if (print==2 || print==3) {
   translate([bottomd/2+0.5+handlew/2,0,holderh+ztolerance+toph+axish+handleh]) rotate([180,0,0]) top();
  }
 
