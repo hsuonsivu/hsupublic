@@ -24,6 +24,10 @@ ytolerance=0.3;
 ztolerance=0.3;
 dtolerance=0.6;
 
+logoxtolerance=0.15;
+logoytolerance=0.15;
+logoztolerance=0.15;
+
 layerh=0.24;
 
 // Print texts even in draft mode
@@ -757,8 +761,8 @@ module base() {
     // Make space for logo part to be inserted
     if (logoasinsert) {
       hull() {
-	translate([logox-logol/2+logodepth-xtolerance,-logoh/2+logodepth-ytolerance,-0.01]) roundedboxxyz(logol-logodepth*2+xtolerance*2,logoh-logodepth*2+ytolerance*2,logodepth+logodepth+textztolerance,cornerd,0,1,90);
-	translate([logox-logol/2-xtolerance,-logoh/2-ytolerance,logodepth]) roundedboxxyz(logol+xtolerance*2,logoh+ytolerance*2,logodepth+textztolerance,cornerd,0,1,90);
+	translate([logox-logol/2+logodepth-logoxtolerance,-logoh/2+logodepth-logoytolerance,-0.01]) roundedboxxyz(logol-logodepth*2+logoxtolerance*2,logoh-logodepth*2+logoytolerance*2,logodepth+logodepth+textztolerance,cornerd,0,1,90);
+	translate([logox-logol/2-logoxtolerance,-logoh/2-logoytolerance,logodepth]) roundedboxxyz(logol+logoxtolerance*2,logoh+logoytolerance*2,logodepth+textztolerance,cornerd,0,1,90);
       }
     } else {
       translate([logox,0,logodepth-0.01]) rotate([180,0,-90]) linear_extrude(height=logodepth+0.01) anjalogo();
