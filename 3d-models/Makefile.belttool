@@ -1,7 +1,8 @@
 SOURCE=belttool.scad
 DEPENDS=hsu.scad Makefile.belttool
 IMAGES=
-ALL=belttoolleft.stl belttoolright.stl belttoolmid.stl belttool.stl
+
+ALL=belttoolleft1.stl belttoolright1.stl belttoolbottom1.stl belttool1.stl beltthinnerleft.stl beltthinnerbottom.stl beltthinnerright.stl beltthinner.stl belttoolleft2.stl belttoolright2.stl belttoolbottom2.stl belttool2.stl belttoolmid2.stl 
 
 OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
@@ -28,19 +29,55 @@ belttool-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
 clean:
 	rm $(ALL)
 
-belttoolleft.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
+belttoolleft1.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=0 -D cuts=1  -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
-belttoolright.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+belttoolright1.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=0 -D cuts=1  -D print=3 -o $@ $(SOURCE)
 	echo $@ built.
 
-belttoolmid.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
+belttoolbottom1.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=0 -D cuts=1  -D print=6 -o $@ $(SOURCE)
 	echo $@ built.
 
-belttool.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPENSCADOPTIONS) -D print=4 -o $@ $(SOURCE)
+belttool1.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=0 -D cuts=1 -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+belttoolleft2.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=0 -D cuts=2 -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+belttoolright2.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=0 -D cuts=2 -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+belttoolmid2.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=0 -D cuts=2 -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+belttoolbottom2.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=0 -D cuts=2 -D print=6 -o $@ $(SOURCE)
+	echo $@ built.
+
+belttool2.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=0 -D cuts=2  -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+beltthinnerleft.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=1 -D cuts=1  -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+beltthinnerbottom.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=1  -D cuts=1  -D print=6 -o $@ $(SOURCE)
+	echo $@ built.
+
+beltthinnerright.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=1  -D cuts=1  -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+beltthinner.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D thinning=1  -D cuts=1 -D print=4 -o $@ $(SOURCE)
 	echo $@ built.
 
