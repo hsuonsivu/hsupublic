@@ -369,14 +369,14 @@ module roundedbox(xsize,ysize,h,c,printableoption) {
     if (printableoption==7 || printableoption==9) {
       for (y=[0+scd/2,ysize-scd/2]) {
 	for (z=[0+scd/2,h-scd/2-0.01]) {
-	  translate([0,y,z]) rotate([0,-90,0]) cylinder(d=scd/2,h=0.01,$fn=f);
+	  translate([0,y,z]) rotate([0,90,0]) cylinder(d=scd/2,h=0.01,$fn=f);
 	}
       }
     }
     if (printableoption==8 || printableoption==9) {
       for (y=[0+scd/2,ysize-scd/2]) {
 	for (z=[0+scd/2,h-scd/2-0.01]) {
-	  translate([xsize-0.01,y,z]) rotate([0,-90,0]) cylinder(d=scd/2,h=0.01,$fn=f);
+	  translate([xsize-0.01,y,z]) rotate([0,90,0]) cylinder(d=scd/2,h=0.01,$fn=f);
 	}
       }
     }
