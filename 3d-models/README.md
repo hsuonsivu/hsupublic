@@ -1465,3 +1465,8 @@ Holder for kitchen paper rolls. Top screws in to prevent roll exiting in case of
 ### kattokiskoclip.scad
 
 Clip for aluminium roof rail to keep cable in place.
+
+### bikebagspare.scad
+
+Spare part for a bicycle bag.
+
