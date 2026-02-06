@@ -8,7 +8,7 @@
 
 include <hsu.scad>
 
-print=0;
+print=4;
 debug=0;
 
 // 1 = cut one edge, 2 = cut from both sides. Maybe more accurate but wastes material.
@@ -22,7 +22,7 @@ if (cuts==2 && thinning>0)
 // Set to desired belt width and thickness
 //desiredbeltwidth=7.5;
 //desiredbeltthickness=3.9;
-desiredbeltwidth=16.25;
+desiredbeltwidth=7.5; //16.25;
 desiredbeltthickness=3.9;
 
 // Original belt width to be narrowed
@@ -51,7 +51,7 @@ bladeztolerance=0.20;
 bladel=39.7;
 bladew=0.54;
 
-versiontext=str("V1.8");
+versiontext=str("V1.9");
 brandtext=thinning?str("Thinner"):str(cuts==2?"Trimmer":"Cutter");
 measurementtext=thinning?str(originalbeltthickness,">",desiredbeltthickness,"mm"):str(originalbeltwidth,">",desiredbeltwidth,"mm");
 textsize=7;
@@ -65,7 +65,7 @@ beltcutadjust=(cuts==2?-bladeytolerance-bladew/2:-bladew/2+beltytolerance/2+blad
 echo("beltcutadjust ",beltcutadjust);
 beltcutw=(thinning?desiredbeltthickness+beltcutadjust:desiredbeltwidth+beltcutadjust);
 
-belth=(thinning?desiredbeltwidth:originalbeltthickness);
+belth=(thinning?originalbeltwidth:originalbeltthickness);
 
 bladekantal=10.44;
 bladekantah=5.83;
@@ -88,27 +88,25 @@ bladecutextend=1.5; // Sharpening of the edge measured from blade at 90 degrees
 bladebodyh=8;
 bladebodyl=bladel-bladekantal-bladebodynarrowingl-bladecutl;
 
-bladeangle=90+21.4;//20.5+0.03;//75;
+bladeangle=90+21.4;
 bladeheight=belth/2-bladel*cos(bladeangle)+12;
 
 beltcuttersidew=5;
 beltcuttertoph=bladeheight+bladekantah/2*sin(bladeangle)-belth-beltztolerance;
 beltcutterbottomh=10;
 beltcutterw=beltcuttersidew+beltytolerance+beltwidew+beltytolerance+beltcuttersidew;
-beltcutterl=thinning?45:85;
+beltcutterl=thinning?46:(cuts==2?65:55);
 beltcutterh=beltcutterbottomh+beltztolerance+belth+beltztolerance+beltcuttertoph;
 beltcuttertrim=(beltwidew-beltcutw)/2;
 beltcutterleftw=beltcuttersidew+beltytolerance+beltwidew;
 
 beltcuttermidw=beltcutw-beltytolerance;
 
-//bladesideangle=thinning?-atan2(bladew/2,1.5):0;//bladew/2,1.5
 bladesideangle=thinning?0:0;//bladew/2,1.5
 bladeverticalangle=thinning?10:0;//5.5:0;
 bladex=beltcutterl-bladebodyh;//-sin(bladeangle)*bladel/2+2;
 cutx=bladex-(sin(bladeangle-90)*(bladel-bladecutl)+sin(bladeangle)*bladebodyh/2);
 angleyadjust=thinning?sin(bladeverticalangle)*(sin(bladeangle)*(bladel-bladecutl)+sin(bladeangle)*bladebodyh/2)/2:0;
-//bladeverticalangle=thinning?atan2(bladew/2,1.5)*bladebodyh/bladecutl:0; //*bladebodyh/bladecutl
 echo("bladeverticalangle ", bladesideangle);
 
 bladepinw=ytolerance+1.5;
@@ -133,17 +131,17 @@ upclipl=beltcuttertoph-4;
 upclipdepth=1;
 upclipd=3;
 
-screwtable=thinning?[//[cornerd+screwheadd,-beltcutterbottomh+beltcutterh-screwheadd],
-		     [min(beltcutterl/2,bladex-bladel/3-screwd+bladebodyh),-beltcutterbottomh+beltcutterh-screwheadd],
-		     //[beltcutterl-screwheadd-cornerd,-beltcutterbottomh+beltcutterh-screwheadd],
+screwtable=thinning?[[min(beltcutterl/2,bladex-bladel/3-screwd+bladebodyh),-beltcutterbottomh+beltcutterh-screwheadd],
 		     [beltcutterl/2,-beltcutterbottomh/2]]:
   [[cornerd+screwheadd,-beltcutterbottomh+beltcutterh-screwheadd],
-   //[min(beltcutterl/2,bladex-bladel/3-screwd+bladebodyh),-beltcutterbottomh+beltcutterh-screwheadd],
-   [beltcutterl-sin(bladeangle)*bladel/2-screwheadd/2,-beltcutterbottomh+beltcutterh-screwheadd],
-   [beltcutterl/2,-beltcutterbottomh/2]
+   [beltcutterl/2,-beltcutterbottomh/2],
+   [beltcutterl-sin(bladeangle)*bladel/2-screwd/2,-beltcutterbottomh+beltcutterh-screwheadd]
    ];
 
 bladeytable=(cuts==2?[-beltcuttermidw/2-bladeytolerance-bladew/2,beltcuttermidw/2+beltytolerance/2]:[-beltwidew/2+beltcutw+beltytolerance]);
+
+bottomleftextendx=screwtable[1][0];
+bottomleftextendl=screwheadd+cornerd;
 
 if (cuts==2) {
   echo("Blade positions ",bladeytable[0],bladeytable[1]," blade distance ",bladeytable[1]-bladeytable[0]);
@@ -152,8 +150,6 @@ if (cuts==2) {
  }
 
 module screwholes() {
-  //screwy=-screwl/2;
-  //screwy=beltcutterw/2;
   screwy=beltcutterw/2;
   for (xz=screwtable) {
     translate([xz[0],-beltcutterw/2-0.01,xz[1]]) rotate([-90,0,0]) cylinder(d=screwd,h=beltcutterw+0.02,$fn=90);
@@ -162,11 +158,10 @@ module screwholes() {
       translate([xz[0],screwy-nuth+0.01,xz[1]]) rotate([-90,0,0]) cylinder(d=nutd/cos(180/6),h=nuth,$fn=6);
       translate([xz[0],screwy-nuth+0.01-difference/2,xz[1]]) rotate([-90,0,0]) cylinder(d=nutd-difference,h=nuth+difference/2,$fn=6);
     }
-    //translate([xz[0],screwl/2-0.01,xz[1]]) rotate([-90,0,0]) cylinder(d=screwheadd,h=screwl,$fn=90);
   }
 }
 
-// part 1 is kanta, part 1 is blade part. 0 is both.
+// part 1 is kanta, part 2 is blade part. 0 is both.
 module blade(part=0) {
   difference() {
     union() {
@@ -196,7 +191,7 @@ module bladehole(dt) {
 
 module bladepinspace(y) {
   ww=bladepinw+ytolerance;
-  translate([bladex,y-bladew/2-beltytolerance+angleyadjust,bladeheight]) rotate([bladesideangle,bladeangle,bladeverticalangle]) {
+  translate([bladex,y+bladew/2+bladeytolerance-0.01,bladeheight]) rotate([bladesideangle,bladeangle,bladeverticalangle]) {
     hull() {
       translate([bladeholex+bladeholed/2,0,0]) rotate([-90,0,0]) cylinder(d=bladeholed,h=ww,$fn=90);
       translate([bladeholex+bladeholel-bladeholed/2,0,0]) rotate([-90,0,0]) cylinder(d=bladeholed,h=ww,$fn=90);
@@ -267,21 +262,24 @@ module blades() {
 module beltcutterbottom() {
   difference() {
     union() {
-      translate([0,-beltcutterw/2,-beltcutterbottomh-beltztolerance]) roundedbox(beltcutterl,beltcutterleftw,beltcutterbottomh,cornerd,1);
-      translate([beltcutterl/2,-beltcutterw/2+beltcutterleftw+longclipdepth-longclipd/2,-beltcutterbottomh/2]) tubeclip(longclipl,longclipd,0);
+      x=bottomleftextendx;
+      l=bottomleftextendl;
+      
+      translate([0,-beltcutterw/2+beltcuttersidew+xtolerance,-beltcutterbottomh-beltztolerance]) roundedbox(beltcutterl,beltcutterleftw-beltcuttersidew-xtolerance,beltcutterbottomh,cornerd,1);
+      translate([0,-beltcutterw/2,-beltcutterbottomh-beltztolerance]) roundedbox(x-l/2-xtolerance,beltcutterleftw,beltcutterbottomh,cornerd,1);
+      translate([x+l/2+xtolerance,-beltcutterw/2,-beltcutterbottomh-beltztolerance]) roundedbox(beltcutterl-x-l/2-xtolerance,beltcutterleftw,beltcutterbottomh,cornerd,1);
     }
 
-    //hull() for (y=[0,bladeytolerance]) translate([0,y,0]) bladespace(ytolerance=bladeytolerance*1.5,part=1);
-    hull() for (y=[0,bladeytolerance*2]) translate([0,y,0]) bladespace(ytolerance=bladeytolerance,part=2);
-    //bladespace(ytolerance=bladeytolerance*1.5);
+    for (y=[0,bladeytolerance*2]) translate([0,y,0]) bladespace(ytolerance=bladeytolerance,part=2);
 
     pullopening();
     
     screwholes();
-    if (thinning)
-      translate([1+cornerd/2,-beltcutterw/2+textdepth-0.01,-beltcutterbottomh+textsize/2+1+cornerd/2]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="center",halign="left");
-    
-    translate([beltcutterl/2,-beltcutterw/2+(beltcuttersidew+beltwidew)/2,-beltcutterbottomh-ztolerance+textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text(thinning?str("Belttool "):str("Belttool ",versiontext),size=textsize-1,font=textfont,valign="center",halign="center");
+    if (thinning) {
+      translate([1+cornerd/2,-beltcutterw/2+beltcutterleftw-textdepth+0.01,-beltcutterbottomh+textsize/2+1+cornerd/2]) rotate([-90,180,0]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="center",halign="right");
+    } else {
+      translate([beltcutterl/2,-beltcutterw/2+beltcutterleftw-cornerd/2-1,-beltcutterbottomh-beltztolerance+textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text(thinning?str(brandtext):str(brandtext," ",versiontext),size=textsize-1,font=textfont,valign="bottom",halign="center");
+    }
   }
 }
 
@@ -289,13 +287,16 @@ module beltcutterleft() {
   difference() {
     union() {
       translate([0,-beltcutterw/2,-beltztolerance/2]) roundedbox(beltcutterl,beltcuttersidew,beltcutterh-beltcutterbottomh-beltztolerance/2,cornerd,4);
+      translate([bottomleftextendx-bottomleftextendl/2,-beltcutterw/2,-beltcutterbottomh-beltztolerance/2]) roundedbox(bottomleftextendl,beltcuttersidew,beltcutterbottomh+beltztolerance+cornerd,cornerd,4);
       translate([0,-beltcutterw/2,belth+beltztolerance]) roundedbox(beltcutterl,beltcuttersidew+beltcuttertrimleft+beltytolerance/2,beltcuttertoph,cornerd,4);
 
       intersection() {
 	translate([0,-beltcutterw/2,belth+beltztolerance+cornerd/2]) cube([beltcutterl,beltcutterw,beltcuttertoph]);
 	for (yy=bladeytable) {
-	  for (y=[-bladew-angleyadjust-bladeytolerance,-bladew+bladeytolerance]) {
-	    translate([bladex,yy+angleyadjust,bladeheight]) rotate([bladesideangle,bladeangle,bladeverticalangle]) translate([0,y,0]) blade();
+	  for (part=[1,2]) {
+	    hull() for (y=[-bladew-angleyadjust-bladeytolerance,-bladew+bladeytolerance]) {
+	      translate([bladex,yy+angleyadjust,bladeheight]) rotate([bladesideangle,bladeangle,bladeverticalangle]) translate([0,y,0]) blade(part);
+	    }
 	  }
 	}
       }
@@ -315,10 +316,13 @@ module beltcutterleft() {
     if (thinning) {
       translate([1+cornerd/2+upclipd+1,-beltcutterw/2+beltcuttersidew+beltcuttertrimleft+beltytolerance/2-textdepth+0.01,belth+beltcuttertoph/2]) rotate([-90,-90,0]) linear_extrude(textdepth) text(str(versiontext),size=textsize-1,font=textfont,valign="bottom",halign="center");
     }
-    translate([cornerd/2,-beltcutterw/2+textdepth-0.01,-beltcutterbottomh+beltcutterh/2+textsize/2]) rotate([90,0,0]) linear_extrude(textdepth) text(thinning?str(brandtext):str(brandtext," ",versiontext),size=textsize,font=textfont,valign="center",halign="left");
-    translate([cornerd/2,-beltcutterw/2+textdepth-0.01,-beltcutterbottomh+beltcutterh/2-textsize/2-1]) rotate([90,0,0]) linear_extrude(textdepth) text(measurementtext,size=textsize-2,font=textfont,valign="center",halign="left");
-  }
+    translate([cornerd/2+1,-beltcutterw/2+textdepth-0.01,-beltcutterbottomh+beltcutterh/2+textsize/2]) rotate([90,0,0]) linear_extrude(textdepth) text(thinning?brandtext:str(brandtext," ",versiontext),size=textsize,font=textfont,valign="center",halign="left");
+    if (thinning) translate([cornerd/2+1,-beltcutterw/2+textdepth-0.01,-beltcutterbottomh+beltcutterh-cornerd/2-1]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="top",halign="left");
+    translate([cornerd/2+1,-beltcutterw/2+textdepth-0.01,-beltcutterbottomh+beltcutterh/2-textsize/2-1]) rotate([90,0,0]) linear_extrude(textdepth) text(measurementtext,size=textsize-2,font=textfont,valign="center",halign="left");
 
+    translate([beltcutterl/2,-beltcutterw/2+cornerd,-beltcutterbottomh-beltztolerance+beltcutterh-textdepth+0.01]) rotate([0,0,0]) linear_extrude(textdepth) text("Belttool ",size=textsize-1,font=textfont,valign="bottom",halign="center");
+  }
+    
   bladepin(bladeytable[0]);
 }
 
@@ -353,7 +357,8 @@ module beltcuttermid() {
 
     screwholes();
 
-    translate([textlen(versiontext,textsize)+cornerd+1,beltcuttermidw/2-textdepth+0.01,-beltcutterbottomh+beltcutterh/2-0.01]) rotate([-90,180,0]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="left");
+    translate([cornerd/2+1,beltcuttermidw/2-textdepth+0.01,-beltcutterbottomh+beltcutterh/2-0.01]) rotate([-90,180,0]) linear_extrude(textdepth) text(brandtext,size=textsize,font=textfont,valign="center",halign="right");
+    translate([cornerd/2+1,-beltcuttermidw/2+textdepth-0.01,-beltcutterbottomh+beltcutterh/2-0.01]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="left");
   }
 
   bladepin(bladeytable[1]);
@@ -368,17 +373,12 @@ module beltcutterright() {
       intersection() {
 	translate([0,-beltcutterw/2,belth+beltztolerance+cornerd/2]) cube([beltcutterl,beltcutterw,beltcuttertoph]);
 	union() {
-	  hull() {
-	    for (yy=bladeytable) {
-	      for (y=[bladeytolerance,bladew+0.01]) {
-		translate([bladex,bladew+yy+angleyadjust,bladeheight]) rotate([bladesideangle,bladeangle,bladeverticalangle]) translate([0,y,0]) blade(part=1);
-	      }
-	    }
-	  }
-	  hull() {
-	    for (yy=bladeytable) {
-	      for (y=[-bladew+bladeytolerance,bladew+0.01]) {
-		translate([bladex,bladew+yy+angleyadjust,bladeheight]) rotate([bladesideangle,bladeangle,bladeverticalangle]) translate([0,y,0]) blade(part=2);
+	  for (yy=bladeytable) {
+	    for (part=[1,2]) {
+	      hull() {
+		for (y=[bladeytolerance-bladew,bladew+0.01]) {
+		  translate([bladex,bladew+yy+angleyadjust,bladeheight]) rotate([bladesideangle,bladeangle,bladeverticalangle]) translate([0,y,0]) blade(part);
+		}
 	      }
 	    }
 	  }
@@ -388,12 +388,8 @@ module beltcutterright() {
 
     if (thinning)       translate([cornerd+upclipd/2,-beltcutterw/2+beltcuttersidew+beltcuttertrimleft+longclipdepth-longclipd/2,belth+beltcuttertoph/2]) rotate([0,90,0]) tubeclip(upclipl,upclipd,dtolerance);
     
-    translate([beltcutterl/2,-beltcutterw/2+beltcutterleftw+longclipdepth-longclipd/2,-beltcutterbottomh/2]) tubeclip(longclipl,longclipd,dtolerance);
-
     hull() for (y=[0,-angleyadjust]) translate([0,y,0]) bladespace(part=1);
     hull() for (y=[0,-angleyadjust]) translate([0,y,0]) bladespace(part=2);
-
-    //bladespace();
 
     pullopening();
     
@@ -406,8 +402,8 @@ module beltcutterright() {
     translate([beltcutterl-textlen("OUT",inouttextsize)-cornerd,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+textsize+1+cornerd/2]) rotate([-90,180,0]) linear_extrude(textdepth) text("OUT",size=inouttextsize,font=textfont,valign="top",halign="right");
     translate([textlen("IN",inouttextsize)+cornerd+1,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+textsize+1+cornerd/2]) rotate([-90,180,0]) linear_extrude(textdepth) text("IN",size=inouttextsize,font=textfont,valign="top",halign="left");
 
-    translate([cornerd/2,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+beltcutterh/2+textsize/2]) rotate([-90,180,0]) linear_extrude(textdepth) text(thinning?str(versiontext):str(brandtext," ",versiontext),size=textsize,font=textfont,valign="center",halign="right");
-    translate([cornerd/2,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+beltcutterh/2-textsize/2-1]) rotate([-90,180,0]) linear_extrude(textdepth) text(measurementtext,size=textsize-2,font=textfont,valign="center",halign="right");
+    translate([cornerd/2+1,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+beltcutterh/2+textsize/2]) rotate([-90,180,0]) linear_extrude(textdepth) text(thinning?str(versiontext):str(brandtext," ",versiontext),size=textsize,font=textfont,valign="center",halign="right");
+    translate([cornerd/2+1,beltcutterw/2-textdepth+0.01,-beltcutterbottomh+beltcutterh/2-textsize/2-1]) rotate([-90,180,0]) linear_extrude(textdepth) text(measurementtext,size=textsize-2,font=textfont,valign="center",halign="right");
   }
 }
 
@@ -423,10 +419,10 @@ if (print==0) {
 	union() {
 	  beltcutterleft();
 	  if (cuts==2) {
-	    #    beltcuttermid();
+	    beltcuttermid();
 	  }
 	  beltcutterbottom();
-	  //beltcutterright();
+	  beltcutterright();
 	  #    blades();
 	}
 	  
@@ -442,14 +438,14 @@ if (print==0) {
  }
 
 if (print==1 || print==4) {
-  translate([0,-beltztolerance-0.5,beltcutterw/2]) rotate([90,0,0]) {
+  translate([beltcutterl,beltcutterbottomh-beltcutterh-beltztolerance-0.5,beltcutterw/2]) rotate([90,0,180]) {
     beltcutterleft();
   }
  }
 
-if (print==2 || print==4 || thinning==0) {
-  if (cuts==2) translate([0,beltcutterbottomh-beltcutterh+belth-beltztolerance-0.5,beltcuttermidw/2]) rotate([90,0,0]) beltcuttermid();
- }
+if (print==2 || print==4) if (thinning==0) {
+    if (cuts==2) translate([0,beltcutterh+beltwidew+beltcutterh-belth+beltztolerance+0.5,beltcuttermidw/2]) rotate([90,0,0]) beltcuttermid();
+  }
 
 if (print==3 || print==4) {
   translate([beltcutterl,beltcutterh-beltcutterbottomh-beltztolerance,beltcutterw/2]) rotate([-90,0,180]) beltcutterright();
