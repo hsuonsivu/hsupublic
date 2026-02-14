@@ -1470,3 +1470,11 @@ Clip for aluminium roof rail to keep cable in place.
 
 Spare part for a bicycle bag.
 
+### plugconverter12v.scad
+
+Highly specific 12 volt cylinderical connector, a monitor we had had
+5.5mm jack but its center is too thick for a power supply we had to
+replace the broken original. So I soldered male-female converter with
+appropriate connectors, this is cover for it. Unlikely anyone else has
+any use for this.
+
