@@ -1462,6 +1462,12 @@ this (separate bottom is likely culprit).
 
 Holder for kitchen paper rolls. Top screws in to prevent roll exiting in case of mishap.
 
+### diameter.scad
+
+### Makefile.diameter
+
+Diameter measuring tool. 
+
 ### kattokiskoclip.scad
 
 Clip for aluminium roof rail to keep cable in place.
