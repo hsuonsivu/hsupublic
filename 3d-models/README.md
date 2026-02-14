@@ -1476,11 +1476,19 @@ Clip for aluminium roof rail to keep cable in place.
 
 Spare part for a bicycle bag.
 
+![bikebagspare.scad in Openscad.](bikebagspare.png)
+![bikebagspare.scad as printed.](bikebagspare.jpg)
+
 ### plugconverter12v.scad
 
 Highly specific 12 volt cylinderical connector, a monitor we had had
 5.5mm jack but its center is too thick for a power supply we had to
 replace the broken original. So I soldered male-female converter with
 appropriate connectors, this is cover for it. Unlikely anyone else has
-any use for this.
+any use for this. For connectors I used random parts we had lying
+around. Clips are weak due to being printed cross layer lines, but
+seem to hold enough for assembly if done carefully.
+
+![plugconverter12v in Openscad.](plugconverter12v.png)
+![plugconverter12v in use.](plugconverter12v.jpg)
 
