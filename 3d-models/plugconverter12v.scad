@@ -15,6 +15,8 @@ textfont="Liberation Sans:style=Bold";
 clipwall=1.6;
 wall=1.8; //1.2+clipwall;
 
+cornerd=1;
+
 socketw=8.87;
 socketh=10.65;
 socketl=14.22; //16.82;
@@ -53,22 +55,22 @@ plugsocketinterfacel=9;
 plugsocketinterfaceh=7.2; //8.2;
 plugsocketinterfacew=6;
 
+plugcoversupportl=plugsocketinterfaceh+socketh-cornerd;
 
 plugsocketangle=1;
-
-cornerd=1;
 
 tolerance=0.25;
 
 socketcoverw=max(plugbodywided,socketw+socketpinouty*2)+tolerance*2+wall*2;;
 socketcoverh=socketh-socketpinheight+tolerance*2+wall*2;
-socketcoverl=socketl+tolerance+wall*2+2.5;
+socketcoverl=socketl+tolerance+wall*2;//+2.5;
 socketcoverx=-wall-tolerance;
 socketcoverheight=socketpinheight-tolerance-wall;
 
 plugcoverh=wall+plugbodyh+plugbarrelh+plugbarrelextendh+tolerance+cornerd;
 plugcoverw=socketcoverw;
 plugcoverl=plugbodywided+tolerance*2+wall*2;
+plugcoveraddl=0.5+1.5;
 plugcoverheight=-wall-tolerance-cornerd;
 
 ;
@@ -135,49 +137,51 @@ module cover(bottom) {
   difference() {
     union() {
       translate([plugsocketinterfacex+socketl,0,0]) rotate([0,0,180]) translate([0,-y,socketcoverheight]) {
-	difference() {
-	  union() {
-	    roundedbox(socketcoverl,socketcoverw/2,socketcoverh,cornerd,0);
-	    if (bottom) {
-	      translate([socketcoverl/2, y,socketcoverh]) clip(0);
-	      translate([0,y,clipl/2+cornerd]) rotate([0,-90,0]) clip(0);
-	      translate([socketcoverl,y,socketh/2+clipl/2+cornerd]) rotate([0,90,0]) clip(0);
-	    }
-	  }
-
+	union() {
+	  roundedbox(socketcoverl,socketcoverw/2,socketcoverh,cornerd,0);
 	  if (bottom) {
-	    translate([socketcoverl/2,textdepth-0.01,socketcoverh/2]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="center",halign="center");
-	  } else {
-	    translate([socketcoverl/2,socketcoverw/2-textdepth+0.01,socketcoverh/2]) rotate([-90,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="center",halign="center");
-	  }
-      
-	  if (!bottom) {
-	    translate([socketcoverl/2, y,socketcoverh]) clip(tolerance);
-	    translate([0,y,clipl/2+cornerd]) rotate([0,-90,0]) clip(tolerance);
-	    translate([socketcoverl,y,socketh/2+clipl/2+cornerd]) rotate([0,90,0]) clip(tolerance);
+	    translate([socketcoverl/2, y,socketcoverh]) clip(0);
+	    translate([0,y,clipl/2+cornerd]) rotate([0,-90,0]) clip(0);
+	    //translate([socketcoverl,y,socketh/2+clipl/2+cornerd]) rotate([0,90,0]) clip(0);
 	  }
 	}
       }
       
       translate([0,-socketcoverw/2+y,-plugsocketinterfaceh]) rotate([180,-plugsocketangle,180]) {
-	difference() {
-	  union() {
-	    translate([-plugcoverl/2,0,plugcoverheight]) roundedbox(plugcoverl,plugcoverw/2,plugcoverh,cornerd,0);
+	union() {
+	  translate([-plugcoverl/2,0,plugcoverheight-plugcoversupportl]) roundedbox(plugcoveraddl+plugcoverl,plugcoverw/2,plugcoverh+plugcoversupportl,cornerd,0);
 
-	    if (bottom) {
-	      translate([plugcoverl/2,0,plugbodyh+plugbarrelh+-cornerd-clipl/2]) rotate([0,-90,180]) clip(0);
-	      translate([-plugcoverl/2,0,plugbodyh+plugbarrelh+-cornerd-clipl/2]) rotate([0,90,180]) clip(0);
-	    }
-	  }
-      
-	  if (!bottom) {
-	    translate([plugcoverl/2,socketcoverw/2,plugbodyh+plugbarrelh+-cornerd-clipl/2]) rotate([0,-90,180]) clip(tolerance);
-	    translate([-plugcoverl/2,socketcoverw/2,plugbodyh+plugbarrelh+-cornerd-clipl/2]) rotate([0,90,180]) clip(tolerance);
+	  if (bottom) {
+	    translate([plugcoverl/2+plugcoveraddl,0,plugbodyh+plugbarrelh-cornerd-clipl/2]) rotate([0,-90,180]) clip(0);
+	    translate([plugcoverl/2+plugcoveraddl,0,plugbodyh+plugbarrelh-cornerd-clipl/2-plugcoversupportl-socketh/2]) rotate([0,-90,180]) clip(0);
+	    translate([-plugcoverl/2,0,plugbodyh+plugbarrelh+-cornerd-clipl/2]) rotate([0,90,180]) clip(0);
 	  }
 	}
       }
     }
     
+    translate([plugsocketinterfacex+socketl,0,0]) rotate([0,0,180]) translate([0,-y,socketcoverheight]) {
+      if (bottom) {
+	translate([cornerd,textdepth-0.01,socketcoverh/2]) rotate([90,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="center",halign="left");
+      } else {
+	translate([cornerd,socketcoverw/2-textdepth+0.01,socketcoverh/2]) rotate([-90,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize-1,font=textfont,valign="center",halign="left");
+      }
+      
+      if (!bottom) {
+	translate([socketcoverl/2, y,socketcoverh]) clip(tolerance);
+	translate([0,y,clipl/2+cornerd]) rotate([0,-90,0]) clip(tolerance);
+	//translate([socketcoverl,y,socketh/2+clipl/2+cornerd]) rotate([0,90,0]) clip(tolerance);
+      }
+    }
+      
+    translate([0,-socketcoverw/2+y,-plugsocketinterfaceh]) rotate([180,-plugsocketangle,180]) {
+      if (!bottom) {
+	translate([plugcoverl/2+plugcoveraddl,socketcoverw/2,plugbodyh+plugbarrelh-cornerd-clipl/2]) rotate([0,-90,180]) clip(tolerance);
+	translate([plugcoverl/2+plugcoveraddl,socketcoverw/2,plugbodyh+plugbarrelh-cornerd-clipl/2-plugcoversupportl-socketh/2]) rotate([0,-90,180]) clip(tolerance);
+	translate([-plugcoverl/2,socketcoverw/2,plugbodyh+plugbarrelh+-cornerd-clipl/2]) rotate([0,90,180]) clip(tolerance);
+      }
+    }
+      
 #    plugsocket(tolerance);
   }
 }
