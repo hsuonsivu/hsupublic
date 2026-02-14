@@ -438,7 +438,7 @@ module cone(diameter1,diameter2,wall,height) {
 
 module tubeclip(length,diameter,tolerance) {
   hull() {
-    for (x=[-length/2+diameter/2,length/2-diameter/2]) translate([x,0,0]) sphere(d=diameter+tolerance,$fn=60);
+    for (x=[-length/2+diameter/2+tolerance/2,length/2-diameter/2-tolerance/2]) translate([x,0,0]) sphere(d=diameter+tolerance,$fn=60);
   }
 }
 
@@ -640,7 +640,13 @@ module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
     dz=dzin>0?dzin:0.01;
     minz=(dz==z?0.01:0);
     $fn=(fn!="" || fn>0)?fn:30;
-    translate([dxy/2,dxy/2,0]) minkowski(convexity=10) {
+    hull() {
+      translate([dxy/2,dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
+      translate([x-dxy/2,dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
+      translate([dxy/2,y-dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
+      translate([x-dxy/2,y-dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
+    }
+    if (0) translate([dxy/2,dxy/2,0]) minkowski(convexity=10) {
       cube([x-dxy,y-dxy,z-dz+minz]);
       roundedcylinder(dxy,dz,dz-minz,printable,$fn);
     }
