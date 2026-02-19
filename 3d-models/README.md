@@ -1492,3 +1492,7 @@ seem to hold enough for assembly if done carefully.
 ![plugconverter12v in Openscad.](plugconverter12v.png)
 ![plugconverter12v in use.](plugconverter12v.jpg)
 
+### cpustoragebox.scad
+
+Small box to protect loose cpus. Could have more generic uses.
+
