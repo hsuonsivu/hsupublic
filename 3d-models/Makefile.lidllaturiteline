@@ -8,13 +8,13 @@ lidllaturitelinedesk.stl: $(SOURCE) $(DEPENDS)
 	echo $@ built.
 
 lidllaturitelineteslamodels.stl: $(SOURCE) $(DEPENDS)
-	openscad -D phones=2 -D teslamodels=1 -D print=1 -D strong=1 -o $@ $(SOURCE)
+	openscad -D phones=2 -D teslamodels=1 -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
 lidllaturitelinesingle.stl: $(SOURCE) $(DEPENDS)
-	openscad -D phones=1 -D print=1 -D strong=1 -o $@ $(SOURCE)
+	openscad -D phones=1 -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
  lidllaturitelineheightadjuster.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=3 -D strong=1 -o $@ $(SOURCE)
+	openscad -D print=3 -o $@ $(SOURCE)
 	echo $@ built.

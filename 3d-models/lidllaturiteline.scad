@@ -6,13 +6,13 @@ include <hsu.scad>
 
 $fn=60;
 
-print=0;
+print=1;
 teslamodels=1;
 abs=0;
 phones=2;
 lighten=0;
 lmargin=8;
-support=0; // This is work in progress, does not work.
+support=1; // Use slicer supports
 
 // Add springs to base shift to keep phones better in place. Does not work very well with some wireless chargers,
 // as the phone is not always fully seated because of this.
@@ -151,6 +151,45 @@ module basebox() {
   }
 }
 
+// support for printing
+supportbottomstart=(legwidth+supportlift+supportwall/2);
+supportbottomend=(height-smallcornerdiameter/2)*cos(angle)-(height-smallcornerdiameter/2)*sin(angle)-supportlift;
+supportwidth=width/2-legwidth-maxbridge-maxbridge/2;
+supportbottomwideend=supportbottomstart+supportwidth/2-supportlift;
+supportmidpoint=supportbottomwideend<supportbottomend?supportbottomend-supportbottomwideend:0;
+supportdistance=(width/2-legwidth-maxbridge + maxbridge/2);
+
+module supportbase() {
+  intersection() {
+    for (m=[0,1]) mirror([m,0,0]) {
+	translate([-supportdistance/2,0,0]) {
+	  translate([-supportwall/2,supportbottomwideend-supportwall/2,0]) cube([supportwall,supportbottomend-supportbottomwideend+supportwall/2,supportlift]);
+
+	  if (supportbottomstart<supportbottomend) hull() {
+	      for (z=[0,supportlift]) {
+		translate([0,supportbottomwideend-supportwall/2,z]) cylinder(d=supportwall,h=0.1);
+		for (m2=[0,1]) mirror([m2,0,0]) {
+		    translate([-supportwidth/2+supportlift*2+supportwall,supportbottomstart+supportwall/2,z]) cylinder(d=supportwall,h=0.1);
+		  }
+	      }
+	    }
+	}
+      }
+    
+    union() {
+      for (m=[0,1]) mirror([m,0,0]) {
+	  translate([-supportdistance/2,0,0]) {
+	    translate([-supportwall/2,supportbottomwideend-supportwall/2,0]) supportbox(supportwall,supportbottomend-supportbottomwideend+supportwall/2,supportlift,1);
+
+	    if (supportbottomstart<supportbottomend) translate([0,0,0]) {
+		translate([-supportwidth/4-supportwall-supportwall,supportbottomstart,0]) supportbox(supportwidth/2+supportwall*4,supportbottomend-supportbottomwideend+supportwall+supportwall/2,supportlift,1);
+	      }
+	  }
+	}
+    }
+  }
+}
+
 module body() {
   difference() {
     union() {
@@ -203,15 +242,9 @@ module body() {
 	translate([legposition-width/2+legwidth+1,0,0]) supportbox(width-legposition*2-legwidth*2-2,legwidth,baselift,1);
       }
       
-      // support for printing
-      supportbottomstart=(legwidth+supportlift+supportwall/2);
-      supportbottomend=(height-smallcornerdiameter/2)*cos(angle)-(height-smallcornerdiameter/2)*sin(angle)-supportlift;
-      supportwidth=width/2-legwidth-maxbridge-maxbridge/2;
-      supportbottomwideend=supportbottomstart+supportwidth/2-supportlift;
-      supportmidpoint=supportbottomwideend<supportbottomend?supportbottomend-supportbottomwideend:0;
-      supportdistance=(width/2-legwidth-maxbridge + maxbridge/2);
-
       if (supportbottomend>supportbottomstart) {
+	if (support) supportbase();
+	
 	for (m=[0,1]) mirror([m,0,0]) {
 	    translate([-supportdistance/2,0,0]) hull() {
 	      translate([0,supportbottomstart+supportwall/2,supportlift]) cylinder(d=supportwall,h=0.1);
