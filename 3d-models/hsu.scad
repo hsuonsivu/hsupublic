@@ -659,7 +659,7 @@ module supportbox(xsize,ysize,height,onbed) {
 
   // If on bed, make a surface for adhesion
   if (onbed) {
-    cube([xsize,ysize,0.2]);
+    cube([xsize,ysize,0.5]);
   }
   
   // Corners
@@ -674,20 +674,25 @@ module supportbox(xsize,ysize,height,onbed) {
     if (xsize < ysize)translate([xsize-0.2,-0.2,z]) cube([0.4,0.8,0.2]);
     
     xsteps=floor(xsize/2.5);
-    //echo(xsteps);
+    ysteps=floor(ysize/2.5);
+    ystep=ysize/ysteps;
+
     if (xsteps > 0) {
       xstep=xsize/xsteps;
       for (x=[xstep:xstep:xsize-xstep]) {
-	//echo(x);
 	translate([x-0.2,-0.2,z]) cube([0.4,0.4,0.2]);
 	translate([x-0.2,ysize-0.2,z]) cube([0.4,0.4,0.2]);
 	if (z==0) translate([x-0.2,-0.2,0.2]) cube([0.4,ysize+0.4,h-0.2]);
+
+	if (ysteps > 0) {
+	  for (y=[ystep:ystep:ysize-ystep]) {
+	    translate([x-0.2,y-0.2,z]) cube([0.4,0.4,0.2]);
+	  }
+	}
       }
     }
 
-    ysteps=floor(ysize/2.5);
-    if (ysteps > 0) {
-      ystep=ysize/ysteps;
+    if (1) if (ysteps > 0) {
       for (y=[ystep:ystep:ysize-ystep]) {
 	translate([-0.2,y-0.2,z]) cube([0.4,0.4,0.2]);
 	translate([xsize-0.2,y-0.2,z]) cube([0.4,0.4,0.2]);
