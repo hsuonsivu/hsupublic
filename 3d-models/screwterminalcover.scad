@@ -15,7 +15,7 @@ if (count>20) {
   
 textdepth=0.7;
 textsize=7;
-versiontext="v1.0";
+versiontext="v1.1";
 textfont="Liberation Sans:style=Bold";
 
 xtolerance=0.25;
@@ -23,6 +23,7 @@ ytolerance=0.25;
 ztolerance=0.25;
 dtolerance=0.5;
 cornerd=2;
+layerh=0.2;
 
 wall=1.6;
 topwall=2.5; // Needs to accommodate version text depth
@@ -43,14 +44,17 @@ coverd=terminald+dtolerance+wall*2+terminalclipdepth*2+dtolerance+wall*2+0.6; //
 signsize=coverd-cornerd-5;
 signw=4;
 
-coverbottomd=terminald+dtolerance+1.6*2;
+coverbottomd=terminald+dtolerance+wall*2;
 
 coveroutgapd=terminald+dtolerance+wall*2+terminalclipdepth*2+dtolerance;
+
 covercliph=ztolerance+terminalnarrowheight+terminalnarrowh;
 coverclipspringa=6;
-coverclipspringcut=5;
+coverclipspringcut=6;
 coverclipspringh=covercliph-ztolerance;
 coverhandled=6.5;
+coverclipsidecut=0.5;
+coverclipsidecuth=3;
 
 boltd=8;
 boltheadh=5.2;
@@ -67,6 +71,7 @@ boltcliptotalh=ztolerance+boltheadh+ztolerance+boltcliph+ztolerance;
 terminalheight=topwall+ztolerance+boltheadh+ztolerance+boltcliph;
 boltclipspringh=ztolerance+boltheadh+ztolerance+boltcliph+ztolerance;
 coverminh=topwall+ztolerance+boltheadh+ztolerance+boltcliph+ztolerance+terminalminh-ztolerance;
+coverclipsidecutheight=terminalheight-coverclipsidecuth+ztolerance;
 
 module bolt() {
   cylinder(d=boltd,h=30,$fn=90);
@@ -86,7 +91,6 @@ module screwterminalcover(sign) {
 	  }
 
 	  hull() {
-	    
 	    for (a=[0:360/6:359]) {
 	      roundedcylinder(coverd,coverhandled,cornerd,1,90);
 	      rotate([0,0,a]) translate([coverd/2,0,0]) {
@@ -116,10 +120,32 @@ module screwterminalcover(sign) {
 	  translate([0,0,topwall+ztolerance+boltheadh+ztolerance+boltcliph+ztolerance+terminalnarrowheight+terminalnarrowh]) cylinder(d=terminald+dtolerance,h=terminalmaxh-terminalnarrowheight-terminalnarrowh,$fn=90);
 	}
 
+	r=(terminalnarrowd+dtolerance)/2;
+	x=r*cos(asin(coverclipspringcut/2/r));
+	rside=(terminald+dtolerance)/2;
+	xside=rside*cos(asin((coverclipspringcut)/2/rside));
+	l=coverbottomd/2-x+0.01;
+	lside=coverbottomd/2-xside+0.01;
+	  
 	// Cut for terminal clip
 	for (a=[0:360/coverclipspringa:359]) {
-	  rotate([0,0,a]) translate([-0.1,-coverclipspringcut/2,terminalheight+ztolerance]) {
-	    cube([coveroutgapd/2-terminalclipdepth/2,coverclipspringcut,coverclipspringh+0.1]);
+	  rotate([0,0,a]) translate([x,-coverclipspringcut/2,terminalheight+ztolerance]) {
+	    cube([l,coverclipspringcut,coverclipspringh+0.1]);
+	  }
+	  rotate([0,0,a]) translate([xside-coverclipsidecut,-coverclipspringcut/2,coverclipsidecutheight]) {
+	    cube([lside+coverclipsidecut,coverclipsidecut,coverclipsidecuth+0.1]);
+	    translate([-0,coverclipspringcut-coverclipsidecut,0]) cube([lside+coverclipsidecut,coverclipsidecut,coverclipsidecuth+0.1]);
+	  }
+	}
+	difference() {
+	  union() {
+	    translate([0,0,coverclipsidecutheight]) ring(terminald+dtolerance,coverclipsidecut,coverclipsidecuth+0.1,0,90);
+	    translate([0,0,coverclipsidecutheight]) ring(coverbottomd+coverclipsidecut*2,coverclipsidecut,coverclipsidecuth+0.1,0,90);
+	  }
+	  for (a=[0:360/coverclipspringa:359]) {
+	    rotate([0,0,a]) translate([x,-coverclipspringcut/2+coverclipsidecut,coverclipsidecutheight-0.01]) {
+	      cube([l+coverclipsidecut,coverclipspringcut-coverclipsidecut*2,coverclipspringh+0.1]);
+	    }
 	  }
 	}
 
@@ -148,7 +174,8 @@ module screwterminalcover(sign) {
 	  }
 	}
 
-	for (a=(sign?[0,90]:[0])) rotate([0,0,a]) translate([-signsize/2,-signw/2,-0.01]) cube([signsize,signw,textdepth+(a?0.2:0)+0.01]);
+	for (a=(sign?[0,90]:[0])) rotate([0,0,a]) translate([-signsize/2,-signw/2,-0.01]) cube([signsize,signw,textdepth+0.01]);
+	if (sign) translate([-signw/2,-signw/2,-0.01]) cube([signw,signw,textdepth+layerh+0.01]);
 	
 	translate([0,0,coverminh-textsize/2+1]) rotate([0,180,90]) text_on_cylinder(t=versiontext,r=coverd/2-textdepth/2+0.01,h=1,updown=2,size=textsize,font=textfont,extrusion_height=textdepth);
       }
