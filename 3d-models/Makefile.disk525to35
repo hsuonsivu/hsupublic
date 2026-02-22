@@ -1,0 +1,43 @@
+SOURCE=disk525to35.scad
+DEPENDS=hsu.scad Makefile.disk525to35
+IMAGES=
+
+ALL=disk525to35body.stl disk525to35locks.stl disk525to35.stl
+
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
+
+all: $(ALL)
+
+dist: disk525to35.zip
+
+disk525to35-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf disk525to35-distribution
+	rm -f disk525to35-distribution.zip
+	mkdir -p disk525to35-distribution
+	cp $(SOURCE) $(DEPENDS) disk525to35-distribution
+	zip -r $@ disk525to35-distribution
+	echo $@ built.      
+
+disk525to35-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf disk525to35-distribution
+	rm -f disk525to35-distribution.zip
+	mkdir -p disk525to35-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) disk525to35-distribution
+	zip -r $@ disk525to35-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+disk525to35body.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk525to35locks.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk525to35.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+

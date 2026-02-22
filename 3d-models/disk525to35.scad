@@ -1,6 +1,10 @@
-// Copyright 2023 Heikki Suonsivu
+// Copyright 2023,2026 Heikki Suonsivu
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
+
+include <hsu.scad>
+
+print=3;
 
 // 0: Make a complex version with locking mechanism
 // 1: Make a simple version, with no locking mechanism
@@ -19,16 +23,27 @@ short=1;
 // Width locking keys as multiple of screw diameter
 keywidthmultiplier=1.60;
 
-versiontext="V2.2";
+versiontext="V2.4";
 
 length=short?170:198; // Shorter version 17.05, long version 19.8;
 
+xtolerance=0.25;
+ytolerance=0.25;
+ztolerance=0.25;
+dtolerance=0.5;
+
+sidewall=2.4;
+
+outsideincornerd=6;
+outsidecornerd=outsideincornerd+sidewall*2;
+cornerd=2;
+printable=7;
+lockprintable=4;
+
 width=146;
 height=40;//41.8;
-outscrewh=10;
-outscrew2h=22.5;
-outscrew1position=52.3;
-outscrew2position=131.93;
+outscrewztable=[10,22.5];
+outscrewxtable=[52.3,131.93];
 outscrewdiameter=2.8;
 outscrewbase=0.1;
 outscrewspringlength=25;
@@ -43,25 +58,31 @@ diskxposition=length-disklength+2;
 diskyposition=width/2-diskwidth/2;
 diskentrywidth=diskwidth; //105;
 
-bottomthickness=2;
-roofthickness=2;
-sidebottomthickness=bottomthickness+0.3;
-sideroofthickness=roofthickness+0.5;
-diskscrewh=6.7;
-diskscrew1position=16.52;
-diskscrew2position=76.71;
-diskscrew3position=118.19;
+bottomthickness=2.4;
+bottomthin=0.8;
+roofthickness=2.4;
+roofthin=0.8;
+sidebottomthickness=bottomthickness;
+sideroofthickness=roofthickness;
+diskscrewheight=bottomthickness+6.7;
+olddiskscrewheight=6.7;
+diskscrewxtable=[16.52,76.71,118.19];
 diskscrewdiameter=3;
 diskscrewbase=outscrewbase;
 diskscrewspringlength=25;
 diskscrewspringheight=diskscrewdiameter*keywidthmultiplier;
 diskscrewspringangle=simple?0:3;
 
-springpusherextra=5.3; // How much wider pusher needs to be to have strong enough sides at openings.
+// Kludge: this is used for both angles even though they are
+// independent. Likely best to simply remove independence.
+keyanglel=sidewall*sin(diskscrewspringangle)+0.01;
 
+//springpusherextra=5.3; // How much wider pusher needs to be to have strong enough sides at openings.
+outlockextrah=5.5;
+disklockextrah=6.0;
 airholediameterx=55;
-airholediametery=25;
-airholedistancex=7;
+airholediametery=40;
+airholedistancex=10;
 airholedistancey=7;
 airholesx=floor((length-airholedistancex)/(airholediameterx+airholedistancex));
 airholesy=floor(diskwidth/(airholediametery+airholedistancey));
@@ -69,11 +90,11 @@ airholeslength=airholesx*airholediameterx+(airholesx-1)*airholedistancex;
 airholeswidth=airholesy*airholediametery+(airholesy-1)*airholedistancey;
 airholexstart=length/2-airholeslength/2;
 airholeystart=width/2-airholeswidth/2;
-//echo("airholesx ",airholesx," airoholexstart", airholexstart, " airholeslength ", airholeslength, "kaava", (airholediameter+airholedistance)*airholesx/2);
 
-sidewall=2;
 sidecutwidth=width/2-diskwidth/2-2*sidewall;
 sidecutheight=height-sidebottomthickness-sideroofthickness;
+
+lockwall=2;
 
 sideairholediameterx=38;
 sideairholediametery=14;
@@ -87,7 +108,7 @@ sideairholexstart=length/2-sideairholeslength/2;
 sideairholeystart=width/2-sideairholeswidth/2;
 
 sidetopairholediameterx=38;
-sidetopairholediametery=14;
+sidetopairholediametery=11;
 sidetopairholedistancex=7;
 sidetopairholedistancey=7;
 sidetopairholesx=floor(length/(sidetopairholediameterx+sidetopairholedistancex));
@@ -97,29 +118,27 @@ sidetopairholeswidth=sidetopairholesy*sidetopairholediametery+(sidetopairholesy-
 sidetopairholexstart=length/2-sidetopairholeslength/2;
 sidetopairholeystart=sidewall+sidecutwidth/2-sidetopairholediametery/2; //width/2-sidetopairholeswidth/2;
 
-springpusherheightout=outscrewspringheight+springpusherextra;
-springpusherheightdisk=diskscrewspringheight+springpusherextra;
-springpusherheight=max(springpusherheightout,springpusherheightdisk);
-springpusherlengthout=outscrew2position + outscrewspringheight;
-springpusherlengthdisk=diskscrew3position+diskxposition + diskscrewspringheight;
-echo("outscrewh ", outscrewh, " diskscrewh ", diskscrewh);
-echo("outscrewspringpushertop ",outscrewspringpushertop," -bottom ",outscrewspringpusherbottom," top-bottom ",outscrewspringpushertop-outscrewspringpusherbottom," springpusherheightout ",springpusherheightout);
-echo("diskscrewspringpushertop ",diskscrewspringpushertop," -bottom ",diskscrewspringpusherbottom," top-bottom ",diskscrewspringpushertop-diskscrewspringpusherbottom," springpusherheightdisk ",springpusherheightdisk);
-//springpusherlength=max(springpusherlengthout,springpusherlengthdisk);
-springpusherthickness=2.5;//5;
-springpusherhandle=7;
-springpusherhandlethickness=10;
-springpushergap=1;
+outlockl=outscrewxtable[1]+outscrewdiameter*2;//outscrewspringheight; //outscrew2position + outscrewspringheight;
+disklockl=diskxposition+diskscrewxtable[2]+diskscrewdiameter*2;//diskscrewspringheight;
+lockthickness=2.5;//5;
+springpushergap=0.6;//1;
 springpusherwall=2;
 springpusherbottom=1.5;
 springpusherroof=1.5;
 
-outscrewspringpusherbottom=outscrewh-outscrewspringheight/2-springpusherextra/2-springpushergap/2;
-outscrewspringpushertop=outscrewh+outscrewspringheight/2+springpusherextra/2+springpushergap/2;
-outscrew2springpusherbottom=outscrew2h-outscrewspringheight/2-springpusherextra/2-springpushergap/2;
-outscrew2springpushertop=outscrew2h+outscrewspringheight/2+springpusherextra/2+springpushergap/2;
-diskscrewspringpusherbottom=diskscrewh-diskscrewspringheight/2-springpusherextra/2-springpushergap/2+bottomthickness;
-diskscrewspringpushertop=diskscrewh+diskscrewspringheight/2+springpusherextra/2+springpushergap/2+bottomthickness;
+lockhandlel=10;
+lockhandlethickness=7;
+
+outlockcuth=outscrewspringheight+outlockextrah+springpushergap;
+
+outlockh=outscrewspringheight+outlockextrah;
+outlockcutw=lockthickness+springpushergap;
+  
+disklockh=diskscrewspringheight+disklockextrah;
+disklockcutw=lockthickness+springpushergap;
+disklockcuth=diskscrewspringheight+disklockextrah+springpushergap;
+
+outlockcoverbottom=outscrewztable[0]-outlockcuth/2-lockwall;
 
 // this probably should be calculated from springpushergap; This adjusts steepness of raise behing screwhole insert.
 keysupportadjust=0.5;
@@ -128,21 +147,21 @@ keysupportadjust=0.5;
 keycutextra=4;
 textdepth=0.5;
 
-sidefreez=height-sideroofthickness-sidebottomthickness-springpusherheightdisk-springpushergap-springpusherroof;
-sideairholezstart=sidebottomthickness+springpusherheightdisk+springpushergap+springpusherroof+sidefreez/2-sideairholediametery/2;
+sidefreez=height-sideroofthickness-diskscrewheight-disklockcuth/2-lockwall;
+sideairholezstart=height-sideroofthickness-sidefreez/2-sideairholediametery/2;
 
 module tappi(screwdiameter,screwbase) {
   cylinder(h=screwbase,d=screwdiameter,$fn=30);
-  translate([0,0,screwbase-0.01]) sphere(d=screwdiameter,$fn=30);  //cylinder(h=screwdiameter/2,d1=screwdiameter,d2=screwdiameter/3,$fn=30);
+  translate([0,0,screwbase-0.01]) sphere(d=screwdiameter,$fn=30);
 }
 
 module key(keylength,keywidth,keythickness,keyscrewdiameter,keyscrewdepth) {
-  translate([-1,-keywidth/2,0]) union () {
-    cube([keylength+1,keywidth,keythickness]);
-    translate([keylength+1,keywidth/2,0]) cylinder(h=keythickness,d=keywidth, $fn=30);
-    translate([keylength+1,keywidth/2,keythickness]) tappi(keyscrewdiameter,keyscrewdepth);
+  translate([-keyanglel,-keywidth/2,0]) union () {
+    cube([keylength+keyanglel,keywidth,keythickness]);
+    translate([keylength+keyanglel,keywidth/2,0]) cylinder(h=keythickness,d=keywidth, $fn=30);
+    translate([keylength+keyanglel,keywidth/2,keythickness]) tappi(keyscrewdiameter,keyscrewdepth);
     if (!simple) {
-      translate([keylength+1,keywidth/2,0.5]) resize([0,0,springpushergap+1]) sphere(d=keywidth,$fn=30);
+      translate([keylength+keyanglel,keywidth/2,0.5]) resize([0,0,springpushergap+sidewall-0.5]) sphere(d=keywidth,$fn=30);
     }
   }
 }
@@ -158,41 +177,16 @@ module keycut(keycutlength,keycutwidth,keycutthickness) {
   }
 }
 
-module triangle(x,y,z,mode) {
-  if (mode==0) {
-    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[x,z],[x,0]]);
-  } else if (mode==1) {
-    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,z]]);
-  } else if (mode==2) {
-    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,0],[0,z],[x,0]]);
-  } else if (mode==3) {
-    translate([0,y,0]) rotate([90,0,0]) linear_extrude(height=y) polygon(points=[[0,z],[x,z],[x,0]]);
-  }
-}
-
-module roundedbox(x,y,z) {
-  smallcornerdiameter=1;
-  f=30;
-  hull() {
-    translate([smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([smallcornerdiameter/2,y-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([x-smallcornerdiameter/2,smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([x-smallcornerdiameter/2,y-smallcornerdiameter/2,smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([smallcornerdiameter/2,smallcornerdiameter/2,z-smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([smallcornerdiameter/2,y-smallcornerdiameter/2,z-smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([x-smallcornerdiameter/2,smallcornerdiameter/2,z-smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-    translate([x-smallcornerdiameter/2,y-smallcornerdiameter/2,z-smallcornerdiameter/2]) sphere(d=smallcornerdiameter,$fn=f);
-  }
-}
-
 module holvicut(x,y,z) {
-  translate([x/2-0.01,y/2-0.01,-0.01]) resize([x+0.02,y+0.02,z+0.02]) cylinder(h=z+0.02,d=x,$fn=6);
-  translate([-0.01,-0.01,-0.01]) cube([x/2+0.2,y+0.02,z+0.02]);
+  hull() {
+    translate([-0.01,-0.01,-0.01]) cube([x-y/2+0.02,y+0.02,z+0.02]);
+    translate([x-0.5-0.01,y/2,-0.01]) cylinder(d=1,h=z+0.02,$fn=90);
+  }
 }
 
 //tappi();
 
-//translate([-30,0,0]) key(20,6,2,3,0.3);
+//rotate([0,outscrewspringangle,0]) translate([-30,0,0]) key(20,6,2,3,0.3);
 //translate([-30,0,-3]) keycut(20,6,2);
 
 module halfholder() {
@@ -200,161 +194,204 @@ module halfholder() {
 
   union() {
     difference() {
-      roundedbox(length,width,height);
-      translate([diskxposition-0.01,width/2-diskwidth/2,bottomthickness]) cube([disklength+0.02,diskwidth,height-bottomthickness-roofthickness]);
-      translate([-0.01,width/2-diskentrywidth/2,bottomthickness]) cube([diskxposition+0.02,diskentrywidth,height-bottomthickness-roofthickness]);
-      if (diskxposition+disklength>length) {
-	translate([diskxposition+disklength-0.01,width/2-diskentrywidth/2,bottomthickness]) cube([length-diskxposition-disklength+1,diskentrywidth,height-bottomthickness-roofthickness]);
-      } else {
-	echo("Disk is recessed in the case, this is bad for cabling.");
-      }
+      union() {
+	difference() {
+	  intersection() {
+	    translate([-outsidecornerd/2,0,0]) roundedbox(length+outsidecornerd/2+cornerd,width,height,outsidecornerd,printable);
+	    cube([length,width,height]);
+	  }
+	  translate([diskxposition-0.01,width/2-diskwidth/2,bottomthickness]) cube([disklength+0.02,diskwidth,height-bottomthickness-roofthickness]);
+	  translate([-0.01,width/2-diskentrywidth/2,bottomthickness]) cube([diskxposition+0.02,diskentrywidth,height-bottomthickness-roofthickness]);
+	  if (diskxposition+disklength>length) {
+	    translate([diskxposition+disklength-0.01,width/2-diskentrywidth/2,bottomthickness]) cube([length-diskxposition-disklength+1,diskentrywidth,height-bottomthickness-roofthickness]);
+	  } else {
+	    echo("Disk is recessed in the case, this is bad for cabling.");
+	  }
 
-      if (full) {
-	for(x=[0:1:airholesx-1]) {
-	  for(y=[0:1:floor((airholesy+1)/2)]) {
-	    translate([airholexstart+x*(airholediameterx+airholedistancex),airholeystart+y*(airholediametery+airholedistancey),-0.01]) holvicut(airholediameterx, airholediametery, height+1);
+	  translate([-0.01-outsideincornerd,sidewall,sidebottomthickness]) roundedbox(length+outsideincornerd*2+0.02,sidecutwidth,sidecutheight,outsideincornerd,0);
+	  translate([-0.01,sidewall+sidecutwidth-outsideincornerd,sidebottomthickness]) cube([length+outsideincornerd*2+0.02,outsideincornerd,outsideincornerd/2]);
+
+	  if (full) {
+	    for(x=[0:1:airholesx-1]) {
+	      for(y=[0:1:floor((airholesy+1)/2)]) {
+		translate([airholexstart+x*(airholediameterx+airholedistancex),airholeystart+y*(airholediametery+airholedistancey),bottomthin]) holvicut(airholediameterx, airholediametery, height-bottomthin-roofthin);
+	      }
+	    }
+
+	    for(x=[0:1:sidetopairholesx-1]) {
+	      translate([sidetopairholexstart+x*(sidetopairholediameterx+sidetopairholedistancex),sidetopairholeystart,height-sideroofthickness-0.01]) holvicut(sidetopairholediameterx,sidetopairholediametery,sideroofthickness+1);
+	    }
+
+	    for(x=[0:1:sideairholesx-1]) {
+	      translate([sideairholexstart+x*(sideairholediameterx+sideairholedistancex),sidecutwidth+sidewall*2,sideairholezstart]) rotate([90,0,0]) holvicut(sideairholediameterx,sideairholediametery,sidecutwidth+sidewall-1);
+	    }
 	  }
 	}
 
-	for(x=[0:1:sidetopairholesx-1]) {
-	  translate([sidetopairholexstart+x*(sidetopairholediameterx+sidetopairholedistancex),sidetopairholeystart,height-sideroofthickness-0.01]) holvicut(sidetopairholediameterx,sidetopairholediametery,sideroofthickness+1);
-	}
-
-	for(x=[0:1:sideairholesx-1]) {
-	  translate([sideairholexstart+x*(sideairholediameterx+sideairholedistancex),sidecutwidth+sidewall*2,sideairholezstart]) rotate([90,0,0]) holvicut(sideairholediameterx,sideairholediametery,sidecutwidth+sidewall-1);
+	if (!simple) {
+	  translate([0,sidewall/2,outlockcoverbottom]) roundedbox(outlockl,sidewall/2+lockthickness+springpushergap+0.01+springpusherwall,outscrewztable[1]+outlockcuth/2+lockwall-outlockcoverbottom,cornerd,printable);
+	  translate([0,sidewall+sidecutwidth-lockthickness-springpushergap-springpusherwall,diskscrewheight-disklockcuth/2-springpusherwall]) roundedbox(disklockl,lockwall+lockthickness+springpushergap+0.01+lockwall,lockwall+disklockcuth+lockwall,cornerd,printable);
 	}
       }
 
-      translate([-0.01,sidewall,sidebottomthickness]) cube([length+0.02,sidecutwidth,sidecutheight]);
-      translate([-0.01,sidewall,sidebottomthickness]) cube([sidewall+sidecutwidth,sidecutwidth,springpusherheightdisk-sidebottomthickness+sidewall]);
+      if (!simple) {
+	for (z=outscrewztable) {
+	  translate([-0.01,sidewall,z-outlockcuth/2]) cube([outlockl+0.02,lockthickness+springpushergap,outlockcuth]);
+	  hull() {
+	    translate([lockhandlel,sidewall+lockthickness+springpushergap-0.01,z-outlockcuth/2]) triangle(outlockcuth+xtolerance,springpusherwall+0.02,outlockcuth,1);
+	    translate([-0.01,sidewall+outlockcutw-0.01,z-outlockcuth/2]) cube([1,lockwall+0.02,outlockcuth]);
+	  }
+	}
+	translate([-0.01,sidewall+sidecutwidth-lockthickness-springpushergap,diskscrewheight-disklockcuth/2]) cube([disklockl+0.02,lockthickness+springpushergap,disklockcuth]);
+	hull() {
+	  translate([lockhandlel,sidewall+sidecutwidth-disklockcutw-lockwall,diskscrewheight-disklockcuth/2]) triangle(disklockcuth+xtolerance,lockwall+0.02,disklockcuth,1);
+	  translate([-0.01,sidewall+sidecutwidth-disklockcutw-lockwall,diskscrewheight-disklockcuth/2]) cube([1,lockwall+0.02,disklockcuth]);
+	}
+	h=min(outscrewztable[0],diskscrewheight);
+	hull() {
+	  translate([-0.01,sidewall,sidebottomthickness+h]) cube([0.01+cornerd*2,sidecutwidth,sidecutheight-h-outsideincornerd/2]);
+	  translate([sidecutwidth/2+cornerd*2,sidewall+sidecutwidth/2,sidebottomthickness+h]) cube([0.01,0.01,sidecutheight-h-outsideincornerd/2]);
+	}
+      }
       
       translate([sidewall+diskxposition,width-(width/2-diskwidth/2-2*sidewall)-sidewall,sidebottomthickness]) cube([disklength-2*sidewall,width/2-diskwidth/2-2*sidewall,height-sidebottomthickness-sideroofthickness+20]);
 
-      for (x=[outscrew1position,outscrew2position]) {
-	translate([x-outscrewspringlength,0,outscrewh]) rotate([270,0,0]) keycut(outscrewspringlength,outscrewspringheight,sidewall);
+      for (z=outscrewztable) {
+	for (x=outscrewxtable) {
+	  translate([x-outscrewspringlength,0,z]) rotate([270,0,0]) keycut(outscrewspringlength,outscrewspringheight,sidewall);
+	}
       }
       
-      for (x=[outscrew1position,outscrew2position]) {
-	translate([x-outscrewspringlength,0,outscrew2h]) rotate([270,0,0]) keycut(outscrewspringlength,outscrewspringheight,sidewall);
-      }
-
-      for (x=[diskscrew1position,diskscrew2position,diskscrew3position]) {
-	translate([diskxposition+x-diskscrewspringlength,disky,diskscrewh+bottomthickness]) rotate([270,0,0]) keycut(diskscrewspringlength,diskscrewspringheight,sidewall);
+      for (x=diskscrewxtable) {
+	translate([diskxposition+x-diskscrewspringlength,disky,diskscrewheight]) rotate([270,0,0]) keycut(diskscrewspringlength,diskscrewspringheight,sidewall);
       }
 
       translate([-0.01,width/2+0.01,-0.01]) cube([length+0.02,width,height+0.02]);
     }
-    
-    for (x=[outscrew1position,outscrew2position]) {
-      translate([x-outscrewspringlength,sidewall,outscrewh]) rotate([90,0,outscrewspringangle]) key(outscrewspringlength,outscrewspringheight,sidewall,outscrewdiameter,outscrewbase);
-    }
-    
 
-    for (x=[outscrew1position,outscrew2position]) {
-      translate([x-outscrewspringlength,sidewall,outscrew2h]) rotate([90,0,outscrewspringangle]) key(outscrewspringlength,outscrewspringheight,sidewall,outscrewdiameter,outscrewbase);
-    }
-
-    for (x=[diskscrew1position,diskscrew2position,diskscrew3position]) {
-      translate([diskxposition+x-diskscrewspringlength,sidecutwidth+sidewall,diskscrewh+bottomthickness]) rotate([270,0,-diskscrewspringangle]) key(diskscrewspringlength,diskscrewspringheight,sidewall,diskscrewdiameter,diskscrewbase);
-    }
-
-    if (!simple) {
-      translate([0,sidewall-0.01,outscrewspringpusherbottom-springpusherbottom]) cube([springpusherlengthout,springpusherthickness+springpushergap+0.01+springpusherwall,springpusherbottom]);
-      translate([springpusherhandlethickness,sidewall+springpusherthickness+springpushergap,outscrewspringpusherbottom-0.01]) difference() {
-	cube([springpusherlengthout-springpusherhandlethickness,springpusherwall,springpusherheightout+springpushergap+0.02]);
-	translate([-0.01,-0.01,0]) triangle(springpusherheightout+springpushergap+0.02,springpusherwall+0.02,springpusherheightout+springpushergap+0.03,1);	
+    for (z=outscrewztable) {
+      for (x=outscrewxtable) {
+	translate([x-outscrewspringlength,sidewall,z]) rotate([90,0,outscrewspringangle]) key(outscrewspringlength,outscrewspringheight,sidewall,outscrewdiameter,outscrewbase);
       }
-      translate([springpusherhandlethickness+springpusherheightout,sidewall-0.01,outscrewspringpushertop]) difference() {
-	cube([springpusherlengthout-springpusherhandlethickness-springpusherheightout,springpusherthickness+springpushergap+0.01+springpusherwall,springpusherroof]);
-	translate([-0.01,-0.01,springpusherroof+0.01]) rotate([-90,0,0]) triangle(springpusherheightout+springpushergap+0.02,springpusherroof+0.02,springpusherthickness+springpushergap+springpusherwall+0.03,1);	
     }
-
-    translate([0,sidewall-0.01,outscrew2springpusherbottom-springpusherbottom]) difference() {
-      cube([springpusherlengthout,springpusherthickness+springpushergap+0.01+springpusherwall,springpusherbottom]);
-      translate([-0.01,-0.01,springpusherroof+0.01]) rotate([-90,0,0]) triangle(springpusherheightout+springpushergap+0.02,springpusherroof+0.02,springpusherthickness+springpushergap+springpusherwall+0.03,1);	      
+    
+    for (x=diskscrewxtable) {
+      translate([diskxposition+x-diskscrewspringlength,sidecutwidth+sidewall,diskscrewheight]) rotate([270,0,-diskscrewspringangle]) key(diskscrewspringlength,diskscrewspringheight,sidewall,diskscrewdiameter,diskscrewbase);
+    }
   }
-      translate([springpusherhandlethickness,sidewall+springpusherthickness+springpushergap,outscrew2springpusherbottom-0.01]) difference() {
-	cube([springpusherlengthout-springpusherhandlethickness,springpusherwall,springpusherheightout+springpushergap+0.02]);
-	translate([-0.01,-0.01,0]) triangle(springpusherheightout+springpushergap+0.02,springpusherwall+0.02,springpusherheightout+springpushergap+0.03,1);	
-	translate([-0.01-springpusherhandlethickness,-0.01-springpusherthickness-springpushergap,springpusherbottom]) rotate([-90,0,0]) triangle(springpusherheightout+springpushergap+0.02,springpusherroof+0.02,springpusherthickness+springpushergap+springpusherwall+0.03,1);
 }
-      translate([springpusherhandlethickness+springpusherheightout-0.01,sidewall-0.01,outscrew2springpushertop]) difference() {
-	cube([springpusherlengthout-springpusherhandlethickness-springpusherheightout+0.01,springpusherthickness+springpushergap+0.02+springpusherwall,springpusherroof]);
-	translate([-0.01,-0.01,springpusherroof+0.01]) rotate([-90,0,0]) triangle(springpusherheightout+springpushergap+0.02,springpusherroof+0.02,springpusherthickness+springpushergap+springpusherwall+0.03,1);	
-      }
 
-      echo("diskscrewspringpusherbottom ",diskscrewspringpusherbottom," sidebottomthickness ", sidebottomthickness);
-      translate([0,sidewall+sidecutwidth-springpusherthickness-springpushergap-springpusherwall,diskscrewspringpusherbottom-springpusherbottom]) cube([springpusherlengthdisk,springpusherthickness+springpushergap+0.01+springpusherwall,springpusherbottom]);
-      
-      translate([springpusherhandlethickness,sidewall+sidecutwidth-springpusherthickness-springpushergap-springpusherwall,diskscrewspringpusherbottom-0.01]) difference() {
-	cube([springpusherlengthdisk-springpusherhandlethickness,springpusherwall,springpusherheightdisk+springpushergap+0.02]);
-	translate([-0.01,-0.01,0]) triangle(springpusherheightdisk+springpushergap+0.02,springpusherwall+0.02,springpusherheightdisk+springpushergap+0.03,1);
+module holder() {
+  if (holder) {
+    difference() {
+      union() {
+	halfholder();
+	translate([0,width,0]) mirror([0,1,0]) halfholder();
       }
+      translate([2,width-(width-diskwidth)/2-2,bottomthickness-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,size=airholedistancex-2,halign="left");
+      translate([2,width-outsidecornerd,height-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,size=airholedistancex-2,halign="left");
+      slotnumbersize=lockthickness+springpusherwall+1;
 
-      translate([springpusherhandlethickness+springpusherheightdisk,sidewall+sidecutwidth-springpusherthickness-springpushergap-springpusherwall,diskscrewspringpushertop]) difference() {
-	cube([springpusherlengthdisk-springpusherhandlethickness-springpusherheightdisk,springpusherthickness+springpushergap+springpusherwall+0.01,springpusherroof]);
-	translate([-0.01,springpusherthickness+springpushergap+springpusherwall,0]) rotate([90,0,0]) triangle(springpusherheightdisk+springpushergap+0.02,springpusherroof+0.02,springpusherthickness+springpushergap+springpusherwall+0.03,1);	
+      if (!simple) {
+	w=lockthickness+springpushergap+0.01+springpusherwall;
+	translate([1,width-sidewall-w/2,outscrewztable[0]-outlockcuth/2-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("1",size=slotnumbersize,halign="center");
+	translate([1,width-sidewall-sidecutwidth+w/2,diskscrewheight-disklockcuth/2-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("2",size=slotnumbersize,halign="center");
+	translate([1,sidewall+sidecutwidth-w/2,diskscrewheight-disklockcuth/2-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("3",size=slotnumbersize,halign="center");
+	translate([1,sidewall+w/2,outscrewztable[0]-outlockcuth/2-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("4",size=slotnumbersize,halign="center");
       }
-  }
     }
   }
+}
 
-if (holder) {
+locktable=[[0,1],
+	   [1,0],
+	   [0,0],
+	   [1,1]
+	   ];
+
+module lockbody(i) {
+  rotate=locktable[i][0];
+  out=locktable[i][1];
+  h=out?outlockh:disklockh;
+  
+  if (out) {
+    hull() {
+      translate([0,0,-h/2]) roundedbox(outlockl,lockthickness,h,cornerd,lockprintable);
+      translate([0,lockthickness-0.5,-h/2+cornerd/2]) roundedbox(outlockl+lockthickness,0.5,h-cornerd,cornerd,lockprintable);
+    }
+  } else {
+    hull() {
+      translate([0,0,-h/2]) roundedbox(disklockl,lockthickness,h,cornerd,lockprintable);
+      translate([0,lockthickness-0.5,-h/2+cornerd/2]) roundedbox(disklockl+lockthickness,0.5,h-cornerd,cornerd,lockprintable);
+    }
+  }
+  translate([0,0,-h/2]) roundedbox(lockhandlel,lockhandlethickness,h,cornerd,lockprintable);
+  hull() {
+    translate([lockhandlel-0.01,lockthickness-0.01,-h/2+cornerd/2]) cube([0.8+0.01,lockwall+0.01,h-cornerd]);
+    translate([lockhandlel+0.8,lockthickness-0.01,-h/2+cornerd/2]) triangle(h-cornerd,lockwall+0.01,h-cornerd,rotate==0?2:1);
+  }
+}
+
+module lockspringcut(x,d,sl,sh) {
+  hull() {
+    translate([x+d*2,-0.01,-sh/2-springpushergap]) cube([sl+d*2,lockthickness+0.02,sh+springpushergap*2]);
+    translate([x+d*2+sl+d+lockthickness,-0.01,-sh/2-springpushergap]) triangle(lockthickness*2+0.02,lockthickness+0.02,sh+springpushergap*2,5);
+  }
+}
+
+module lock(i) {
+  t=str(i+1);
+  rotate=locktable[i][0];
+  out=locktable[i][1];
+  h=out?outlockh:disklockh;
+
   difference() {
     union() {
-      halfholder();
-      translate([0,width,0]) mirror([0,1,0]) halfholder();
+      lockbody(i);
     }
-    translate([2,width-(width-diskwidth)/2-2,bottomthickness-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,size=airholedistancex-2,halign="left");
-    translate([2,width-2,height-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,size=airholedistancex-2,halign="left");
-    slotnumbersize=springpusherthickness+springpusherwall+1;
 
-    if (!simple) {
-      translate([1,width-sidewall-1,outscrewspringpusherbottom-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("1",size=slotnumbersize,halign="left");
-      translate([1,width-sidewall-sidecutwidth+springpusherthickness+springpushergap+springpusherwall-1,diskscrewspringpusherbottom-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("2",size=slotnumbersize,halign="left");
-      translate([1,sidewall+sidecutwidth-1,diskscrewspringpusherbottom-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("3",size=slotnumbersize,halign="left");
-      translate([1,sidewall+springpusherthickness+springpushergap+springpusherwall-1,outscrewspringpusherbottom-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("4",size=slotnumbersize,halign="left");
+    translate([lockhandlethickness+lockhandlel+cornerd,lockthickness-textdepth+0.01,0]) rotate([90,rotate?0:180,180]) linear_extrude(height=textdepth) text(versiontext,size=h-4,halign=rotate?"right":"left",valign="center");
+    if (out) {
+      for (x=outscrewxtable) {
+	if (x<outlockl-10) lockspringcut(x,outscrewdiameter,outscrewspringlength,outscrewspringheight);
+      }
+    } else {
+      for (x=diskscrewxtable) {
+	if (x<disklockl-diskxposition-10) lockspringcut(diskxposition+x,diskscrewdiameter,diskscrewspringlength,diskscrewspringheight);
+      }
     }
+    translate([lockhandlel/2,-0.1,-h/2-1]) rotate([-90,0,0]) cylinder(h=lockhandlethickness+0.2,d=lockhandlethickness,$fn=30);
+    translate([lockhandlel/2,-0.1,-h/2+1+h]) rotate([-90,0,0]) cylinder(h=lockhandlethickness+0.2,d=lockhandlethickness,$fn=30);
+    translate([textdepth-0.01,lockhandlethickness/2,0]) rotate([90,rotate?0:180,-90]) linear_extrude(height=textdepth) resize([lockhandlethickness-3,0,0]) text(t,size=h-3,halign="center",valign="center");
+  }
+}
+
+// springpushersticks
+module springpushersticks() {
+  if (!simple && springpushers) {
+    //out
+    for (i=[0:1:3]) {
+      translate([0,0,height+outlockh/2+0.5+i*(max(outlockh,disklockh)+1)]) lock(i);
+    }
+  }
+}
+
+if (print==0) {
+  holder();
+  translate([0,sidewall+springpushergap,outscrewztable[0]]) rotate([0,0,0]) lock(3);
+  translate([0,sidewall+sidecutwidth-springpushergap,diskscrewheight]) rotate([180,0,0]) lock(2);
+  //translate([0,-10,0]) lock(3);
+ }
+
+if (print==1 || print==3) {
+  rotate([0,0,90]) {
+    translate([width,0,0]) rotate([0,-90,90]) holder();
   }
  }
 
-// springpushersticks
-if (!simple && springpushers) {
-  //out
-  for (i=[0:1:3]) {
-    translate([0,0,height+1+i*(springpusherheight+1)]) union() {
-      v=["1", "4", "3", "2"];
-      v2=[0, 1, 0, 1];
-      t=v[i];
-      rot=v2[i];
-      difference() {
-	union() {
-	  if (i < 2) {
-	    roundedbox(springpusherthickness,outscrew2position+outscrewdiameter*2,springpusherheight);
-	  } else {
-	    roundedbox(springpusherthickness,diskxposition+diskscrew3position+diskscrewdiameter*2,springpusherheight);
-	  }
-	  roundedbox(springpusherhandle,springpusherhandlethickness,springpusherheight);
-	  translate([springpusherthickness-0.01,springpusherhandlethickness-0.01,0.5]) cube([springpusherwall+0.01,0.5+0.01,springpusherheight-1]);
-	  translate([springpusherthickness+springpusherwall,springpusherhandlethickness+0.5,0.5]) rotate([0,0,90]) triangle(springpusherheight-1,springpusherwall+0.01,springpusherheight-1,(i==0 || i==2)?1:2);
-	}
-	translate([springpusherthickness-textdepth+0.01,springpusherhandlethickness+springpusherheight+2,(rot?springpusherheight-2:2)]) rotate([90,rot?180:0,90]) linear_extrude(height=textdepth) text(versiontext,size=springpusherheight-4,halign=rot?"right":"left");
-	if (i < 2) {
-	  for (x=[outscrew1position,outscrew2position]) {
-	    translate([-0.01,x+outscrewdiameter*2,springpusherheight/2-outscrewspringheight/2-springpushergap]) cube([springpusherthickness+0.02,outscrewspringlength+outscrewdiameter*2,outscrewspringheight+springpushergap*2]);
-	    translate([-0.01,x+outscrewdiameter*2+outscrewspringlength+outscrewdiameter*2+springpusherthickness,springpusherheight/2-outscrewspringheight/2-springpushergap]) rotate([90,0,0]) triangle(springpusherthickness+0.02,outscrewspringheight+springpushergap*2,springpusherthickness+0.02,1);
-	  }
-	} else {
-	  for (x=[diskscrew1position,diskscrew2position,diskscrew3position]) {
-	    translate([-0.01,x+diskxposition+diskscrewdiameter*2,springpusherheight/2-diskscrewspringheight/2-springpushergap]) cube([springpusherthickness+0.02,diskscrewspringlength+diskscrewdiameter*2,diskscrewspringheight+springpushergap*2]);
-	    translate([-0.01,x+diskxposition+diskscrewdiameter*2+diskscrewspringlength+diskscrewdiameter*2+springpusherthickness,springpusherheight/2-diskscrewspringheight/2-springpushergap]) rotate([90,0,0]) triangle(springpusherthickness+0.02,diskscrewspringheight+springpushergap*2,springpusherthickness+0.02,1);
-	  }
-	}
-	translate([-0.1,springpusherhandlethickness/2,-1]) rotate([0,90,0]) cylinder(h=springpusherhandle+0.2,d=springpusherhandle,$fn=30);
-	translate([-0.1,springpusherhandlethickness/2,1+springpusherheight]) rotate([0,90,0]) cylinder(h=springpusherhandle+0.2,d=springpusherhandle,$fn=30);
-	translate([springpusherhandle/2,textdepth-0.01,rot?springpusherheight-1.5:1.5]) rotate([90,rot?180:0,0]) linear_extrude(height=textdepth) resize([springpusherhandle-3,0,0]) text(t,size=springpusherheight-3,halign="center");
-      }
-    }
+if (print==2 || print==3) {
+  rotate([0,0,0]) {
+    rotate([90,0,90]) springpushersticks();
   }
-}
+ }
 
