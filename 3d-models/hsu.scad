@@ -2,7 +2,7 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
-print=0;
+print=1;
 strong=0;
 
 countersinkheightmultiplier=0.63;
@@ -438,7 +438,7 @@ module cone(diameter1,diameter2,wall,height) {
 
 module tubeclip(length,diameter,tolerance) {
   hull() {
-    for (x=[-length/2+diameter/2+tolerance/2,length/2-diameter/2-tolerance/2]) translate([x,0,0]) sphere(d=diameter+tolerance,$fn=60);
+    for (x=[-length/2+diameter/2,length/2-diameter/2]) translate([x,0,0]) sphere(d=diameter+tolerance,$fn=60);
   }
 }
 
