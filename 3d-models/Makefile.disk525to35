@@ -2,7 +2,7 @@ SOURCE=disk525to35.scad
 DEPENDS=hsu.scad Makefile.disk525to35
 IMAGES=
 
-ALL=disk525to35body.stl disk525to35locks.stl disk525to35.stl
+ALL=disk525to35body.stl disk525to35locks.stl disk525to35.stl disk525to35guidebody.stl disk525to35guidelocks.stl disk525to35guide.stl disk525to35guideclips.stl
 
 OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
@@ -30,14 +30,29 @@ clean:
 	rm $(ALL)
 
 disk525to35body.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=1 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D guideversion=0 -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
 disk525to35locks.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=2 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D guideversion=0 -D print=2 -o $@ $(SOURCE)
 	echo $@ built.
 
 disk525to35.stl: $(SOURCE) $(DEPENDS)
-	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=3 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D guideversion=0 -D print=3 -o $@ $(SOURCE)
 	echo $@ built.
 
+disk525to35guidebody.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D guideversion=1 -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk525to35guidelocks.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D guideversion=1 -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk525to35guide.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D guideversion=1 -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk525to35guideclips.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D guideversion=1 -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
