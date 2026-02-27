@@ -18,7 +18,7 @@ full=1;
 throughholes=1;
 
 // One of our cases has metal clips holding the drives. Replace outside locks with guides with clip
-guideversion=0;
+guideversion=1;
 
 // Enable pushers and holder separately (pushers only print with non-simple version)
 springpushers=1;
@@ -53,10 +53,14 @@ guideclipattachl=30;
 guideclipcornerd=guideclipwall;
 guideclipcut=0.5;
 guideclipcutl=20;
-guidecliplockdepth=1;
-guidecliplockd=guidecliplockdepth+guideclipwall;
-guidecliplockx=guidex+guideclipattachl-guidecliplockd/2;
-guidecliplocky=guidesloty+guidecliplockd/2;
+//guidecliplockdepth=1;
+//guidecliplockd=guidecliplockdepth+guideclipwall;
+guidecliplockh=6;
+guidecliplockl=5;
+//guidecliplockx=guidex+guideclipattachl-guidecliplockd/2;
+guidecliplockx=guideclipattachx+guideclipattachl-8;
+//guidecliplocky=guidesloty+guidecliplockd/2;
+guidecliplocky=guidesloty+guideclipwall+ytolerance;
 guidecliplockcutl=15;
 guideslotoutw=guideclipwall+ytolerance+guideclipwall+ytolerance+guideclipwall;
 
@@ -66,7 +70,8 @@ short=1;
 // Width locking keys as multiple of screw diameter
 keywidthmultiplier=1.60;
 
-versiontext="V2.6";
+versiontext="V2.7";
+textsize=8;
 
 length=short?170:198; // Shorter version 17.05, long version 19.8;
 
@@ -261,7 +266,10 @@ module guideclip() {
       }
     }
 
-    translate([guidecliplockx,guidecliplocky,0]) sphere(d=guidecliplockd+dtolerance,$fn=90);
+    //    translate([guidecliplockx,guidecliplocky,0]) sphere(d=guidecliplockd+dtolerance,$fn=90);
+    translate([guidecliplockx-0.01,guidecliplocky-0.01,-guidecliplockh/2-0.01]) cube([guidecliplockl+0.02,guideclipwall+0.02,guidecliplockh+0.02]);
+
+    translate([guideclipattachx+1,guidesloty+guideclipwall+ytolerance+textdepth-0.01,0]) rotate([90,0.0]) linear_extrude(height=textdepth) text(versiontext,size=min(textsize,guidecliph-guideclipcornerd-1)-1,halign="left",valign="center");
   }
 }
 
@@ -285,6 +293,10 @@ module guide() {
 	translate([guideclipattachx,guidesloty,-guidecliph/2-ztolerance-guideclipwall]) roundedbox(guideclipattachl+guideclipwall*2+xtolerance,guideslotoutw,guideclipwall+ztolerance+guidecliph+ztolerance+guideclipwall,guideclipcornerd,0);
 	translate([guidex+guideclipwall-guideslotoutw/2,guidesloty+guideslotoutw/2-guideclipcornerd/2,-guidecliph/2-ztolerance-guideclipwall]) roundedbox(guideclipattachl,guideclipcornerd,guideclipwall+ztolerance+guidecliph+ztolerance+guideclipwall,guideclipcornerd,0);
       }
+
+      translate([0,-1.2,-guidecliph/2-0.8]) cube([0.6,1.4,0.4]);
+      translate([0,-1.2,-guidecliph/2-0.8]) cube([0.6,0.4,guidecliph+0.8*2]);
+      translate([0,-1.2,guidecliph/2+0.4]) cube([0.6,1.4,0.4]);
     }
   }
 }
@@ -293,7 +305,7 @@ module guidecut() {
   difference() {
     union() {
       for (m=[0,1]) mirror([0,0,m]) {
-	  translate([guideclipattachx+guideclipattachl-guideclipcutl,guidesloty-0.01,-guidecliph/2-guideclipcut]) cube([guideclipcutl,guideclipwall+0.02,guideclipcut]);
+	  translate([guideclipattachx+guideclipattachl-guideclipcutl,guidesloty-0.01,-guidecliph/2-guideclipcut]) cube([guideclipcutl+guideclipcut,guideclipwall+0.02,guideclipcut]);
 	}
       hull() {
 	h=guidecliph+guideclipcut*2;
@@ -306,7 +318,11 @@ module guidecut() {
       translate([-0.01,guidesloty-0.01,-guidecliph/2-ztolerance]) cube([guidex+guideclipwall,guideslotoutw+0.02,ztolerance+guidecliph+ztolerance]);
       translate([-0.01,guidesloty+guideclipwall,-guidecliph/2-ztolerance]) cube([guideclipattachx+guideclipwall+guideclipattachl,ytolerance+guideclipwall+ytolerance,ztolerance+guidecliph+ztolerance]);
     }
-    translate([guidecliplockx,guidecliplocky,0]) sphere(d=guidecliplockd,$fn=90);
+    //translate([guidecliplockx,guidecliplocky,0]) sphere(d=guidecliplockd,$fn=90);
+    hull() {
+      translate([guidecliplockx+xtolerance,guidesloty,-guidecliplockh/2+ztolerance]) cube([guidecliplockl-xtolerance*2,guideclipwall,guidecliplockh-ztolerance*2]);
+      translate([guidecliplockx+xtolerance+guidecliplockl-xtolerance*2-1,guidesloty,-guidecliplockh/2+ztolerance+guideclipwall]) cube([1,guideclipwall+ytolerance+guideclipwall,guidecliplockh-ztolerance*2-guideclipwall*2]);
+    }
   }
 }
 
@@ -520,7 +536,7 @@ if (print==0) {
 	translate([0,sidewall+springpushergap,outscrewztable[0]]) rotate([0,0,0]) lock(3);
       }
       translate([0,sidewall+sidecutwidth-springpushergap,diskscrewheight]) rotate([180,0,0]) lock(2);
-      #translate([0,0,guideheight]) guideclip();
+      //translate([0,0,guideheight]) guideclip();
       //translate([0,-10,0]) lock(3);
     }
   }
