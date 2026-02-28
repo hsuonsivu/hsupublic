@@ -8,12 +8,12 @@
 include <hsu.scad>
 
 print=0;
-debug=0;
+debug=1;
 
 // 1 = cut one edge, 2 = cut from both sides. Maybe more accurate but wastes material.
-cuts=1;
+cuts=2;
 // This reverses measurements to allow thinning. Only works with cuts=1
-thinning=1;
+thinning=0;
 
 if (cuts==2 && thinning>0)
   echo("ERROR when thinning cuts cannot be 2 !");
@@ -192,9 +192,9 @@ module bladehole(dt) {
 module bladepinspace(y) {
   ww=bladepinw+ytolerance;
   translate([bladex,y+bladew/2+bladeytolerance-0.01,bladeheight]) rotate([bladesideangle,bladeangle,bladeverticalangle]) {
-    hull() {
-      translate([bladeholex+bladeholed/2,1,0]) rotate([-90,0,0]) cylinder(d=bladeholed,h=ww+ytolerance,$fn=90);
-      translate([bladeholex+bladeholel-bladeholed/2,1,0]) rotate([-90,0,0]) cylinder(d=bladeholed,h=ww+ytolerance,$fn=90);
+#    hull() {
+      translate([bladeholex+bladeholed/2,0,0]) rotate([-90,0,0]) cylinder(d=bladeholed,h=ww+ytolerance+1,$fn=90);
+      translate([bladeholex+bladeholel-bladeholed/2,0,0]) rotate([-90,0,0]) cylinder(d=bladeholed,h=ww+ytolerance+1,$fn=90);
     }
   }
 }
