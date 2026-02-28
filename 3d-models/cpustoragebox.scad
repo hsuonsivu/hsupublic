@@ -4,8 +4,8 @@
 
 include <hsu.scad>
 
-print=1;
-debug=print==0?1:0;
+print=0;
+debug=print==0?0:0;
 xtolerance=0.30;
 ytolerance=0.30;
 ztolerance=0.20;
@@ -21,14 +21,18 @@ inwall=1.2; // Around the object, raised
 outwall=wall-inwall-max(xtolerance,ytolerance);
 cornerd=2;
 
-cpu=1;
-cputable=[["amd-athlon64-hp-dx2250",41,41,7.5],
-	  ["celeron-acerpower-s290",38,38,6]
+cpu=print==0?0:print-1;
+cputable=[["amd-athlon64-hp-dx2250",41,41,7.5,"athlon64","hp","dx2250"],
+	  ["celeron-acerpower-s290",38,38,6,"celeron","acer","pwr s290"],
+	  ["amd-sempron-acer-aspire-t136",40,40,7,"sempron","acer", "aspiret136"]
 	  ];
   
 l=cputable[cpu][1];
 w=cputable[cpu][2];
 h=cputable[cpu][3];
+shortname=cputable[cpu][4];
+pc=cputable[cpu][5];
+brand=cputable[cpu][6];
 
 echo(cpu,cputable[cpu][0],cputable[cpu][1],cputable[cpu][2],cputable[cpu][3]);
 
@@ -101,7 +105,7 @@ module base() {
     translate([insidecutx,-w/2,-hout/2+inwall]) cube([l,w,h+0.1]);
     translate([boxx+lout-clipd/2,0,-hout/2+clipd/2]) rotate([0,0,90]) tubeclip(clipw,clipd,dtolerance);
 
-    translate([boxx+lout/2,0,-hout/2+textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
+    translate([boxx+lout/2,0,-hout/2+textdepth-0.01]) rotate([180,0,180]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
   }
 }
 
@@ -124,6 +128,10 @@ module top() {
     for (m=[0,1]) mirror([0,m,0]) translate([boxx+lout-cornerd/2-wall-0.01,-clipw/2-clipcut,-0.01]) cube([wall+cornerd/2+0.02,clipcut,hout/2-ztolerance-inwall+0.01]);
     translate([topinsidecutx,-wout/2+wall-inwall-ytolerance,-h/2]) roundedbox(topinsidecutl,wout-(wall-inwall)*2+ytolerance*2,h,cornerd,0);
     translate([boxx+wall-inwall-xtolerance,-clipw/2-clipcut-cornerd/2,-hout/2-cornerd/2]) roundedbox(lout-wall+xtolerance,clipw+clipcut*2+cornerd/2,inwall+ztolerance+h+cornerd/2,cornerd,0);
+
+    translate([boxx+lout/2,w/2-cornerd,hout/2-textdepth+0.01]) rotate([0,0,0]) resize([textlen(pc)>w?w:textlen(pc),textsize,textdepth]) linear_extrude(textdepth) text(pc,size=textsize,font=textfont,valign="top",halign="center");
+    translate([boxx+lout/2,0,hout/2-textdepth+0.01]) rotate([0,0,0]) resize([textlen(brand)>w?w:textlen(brand),textsize,textdepth]) linear_extrude(textdepth) text(brand,size=textsize,font=textfont,valign="center",halign="center");
+    translate([boxx+lout/2,-w/2+cornerd,hout/2-textdepth+0.01]) rotate([0,0,0]) resize([textlen(shortname)>w?w:textlen(shortname),textsize,textdepth]) linear_extrude(textdepth) text(shortname,size=textsize,font=textfont,valign="bottom",halign="center");
   }
 
   translate([boxx+lout-clipd/2,0,-hout/2+clipd/2]) rotate([0,0,90]) tubeclip(clipw,clipd,0);
@@ -144,7 +152,7 @@ if (print==0) {
   }
  }
 
-if (print==1) {
+if (print==1 || print==2 || print==3) {
   intersection() {
     if (debug) translate([-100,0,-100]) cube([200,200,200]);
     //if (debug) translate([0,-100,-100]) cube([200,200,200]);

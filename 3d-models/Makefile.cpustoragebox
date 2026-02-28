@@ -1,0 +1,42 @@
+SOURCE=cpustoragebox.scad
+DEPENDS=hsu.scad Makefile.cpustoragebox
+IMAGES=
+
+ALL=cpustoragebox-amd-athlon64-hp-dx2250.stl cpustoragebox-celeron-acerpower-s290.stl cpustoragebox-amd-sempron-acer-aspire-t136.stl
+
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
+
+all: $(ALL)
+
+dist: cpustoragebox.zip
+
+cpustoragebox-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf cpustoragebox-distribution
+	rm -f cpustoragebox-distribution.zip
+	mkdir -p cpustoragebox-distribution
+	cp $(SOURCE) $(DEPENDS) cpustoragebox-distribution
+	zip -r $@ cpustoragebox-distribution
+	echo $@ built.      
+
+cpustoragebox-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf cpustoragebox-distribution
+	rm -f cpustoragebox-distribution.zip
+	mkdir -p cpustoragebox-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) cpustoragebox-distribution
+	zip -r $@ cpustoragebox-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+cpustoragebox-amd-athlon64-hp-dx2250.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+cpustoragebox-celeron-acerpower-s290.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+cpustoragebox-amd-sempron-acer-aspire-t136.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
