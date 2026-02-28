@@ -4,7 +4,7 @@
 
 include <hsu.scad>
 
-print=0;
+print=2;
 debug=0;
 
 // 0: Make a complex version with locking mechanism
@@ -32,19 +32,24 @@ dtolerance=0.5;
 
 sidewall=2.4;
 
+// 15,26,135 150
+guideclipx=15;
+guidex=26;
+guidel=150-guidex;
+guidenarrowingl=150-135;
 guidesloty=-0.7;
 guideh=20.6;
 guidewall=1.6; // Measured about 0.8-1, metal
-guidel=124;
-guidenarrowingl=16;
+//guidel=123; //124
+//guidenarrowingl=16;
 guidenarrowingh=16.6;
 guideclipw=7.75;
 guidecliph=10;
-guideclipl=11.85;
+guideclipl=13;//11.85;
 guidecliphandlel=12;
 guidecliphandled=3;
 guideclipdepth=3.5;
-guidex=24.45; // Not including clip
+//guidex=25;//24.45; // Not including clip
 guidew=5;
 guidecornerd=1;
 guideclipwall=1.6;
@@ -70,7 +75,7 @@ short=1;
 // Width locking keys as multiple of screw diameter
 keywidthmultiplier=1.60;
 
-versiontext="V2.7";
+versiontext="V2.8";
 textsize=8;
 
 length=short?170:198; // Shorter version 17.05, long version 19.8;
@@ -248,14 +253,14 @@ module guideclip() {
       }
       hull() {
 	translate([guideclipattachx-guideclipwall,guidesloty+guideclipwall+ytolerance,0]) guideclipshape(1);
-	translate([guidex-guideclipl,-guideclipw-guideclipwall,0]) guideclipshape(1);
+	translate([guideclipx,-guideclipw-guideclipwall,0]) guideclipshape(1);
       }
       hull() {
-	translate([guidex-guideclipl,-guideclipw-guideclipwall,0]) guideclipshape(1);
-	translate([guidex-guideclipl-guideclipdepth/3,guideclipdepth-guideclipw-guideclipwall,0]) guideclipshape(1);
+	translate([guideclipx,-guideclipw-guideclipwall,0]) guideclipshape(1);
+	translate([guideclipx-guideclipdepth/3,guideclipdepth-guideclipw-guideclipwall,0]) guideclipshape(1);
       }
       hull() {
-	translate([guidex-guideclipl-guideclipdepth/3,guideclipdepth-guideclipw-guideclipwall,0]) guideclipshape(1);
+	translate([guideclipx-guideclipdepth/3,guideclipdepth-guideclipw-guideclipwall,0]) guideclipshape(1);
 	translate([0,guideclipdepth-guideclipw-guideclipwall,0]) guideclipshape(1);
       }
       hull() {
@@ -384,7 +389,7 @@ module halfholder() {
 	if (!guideversion) for (z=outscrewztable) {
 	  translate([-0.01,sidewall,z-outlockcuth/2]) cube([outlockl+0.02,lockthickness+springpushergap,outlockcuth]);
 	  hull() {
-	    translate([lockhandlel,sidewall+lockthickness+springpushergap-0.01,z-outlockcuth/2]) triangle(outlockcuth+xtolerance,springpusherwall+0.02,outlockcuth,1);
+	    translate([lockhandlel+lockthickness+lockwall,sidewall+lockthickness+springpushergap-0.01,z-outlockcuth/2]) triangle(outlockcuth+xtolerance,springpusherwall+0.02,outlockcuth,1);
 	    translate([-0.01,sidewall+outlockcutw-0.01,z-outlockcuth/2]) cube([1,lockwall+0.02,outlockcuth]);
 	  }
 	}
@@ -394,9 +399,9 @@ module halfholder() {
 	  translate([-0.01,sidewall+sidecutwidth-disklockcutw-lockwall,diskscrewheight-disklockcuth/2]) cube([1,lockwall+0.02,disklockcuth]);
 	}
 	h=min(outscrewztable[0],diskscrewheight);
-	if (!guideversion) hull() {
-	  translate([-0.01,sidewall,sidebottomthickness+h]) cube([0.01+cornerd*2,sidecutwidth,sidecutheight-h-outsideincornerd/2]);
-	  translate([sidecutwidth/2+cornerd*2,sidewall+sidecutwidth/2,sidebottomthickness+h]) cube([0.01,0.01,sidecutheight-h-outsideincornerd/2]);
+	hull() {
+	  translate([-0.01,sidewall,sidebottomthickness+h]) cube([0.01+lockhandlel-2,sidecutwidth,sidecutheight-h-outsideincornerd/2]);
+	  translate([sidecutwidth/2+lockhandlel-1,sidewall+sidecutwidth/2,sidebottomthickness+h]) cube([0.01,0.01,sidecutheight-h-outsideincornerd/2]);
 	}
       }
       
@@ -483,6 +488,10 @@ module lockbody(i) {
 }
 
 module lockspringcut(x,d,sl,sh) {
+  hull() {
+    translate([x+d*2+1,lockthickness,-sh/2-springpushergap]) cube([sl+d*2,0.1,sh+springpushergap*2]);
+    translate([x+d*2,lockthickness-0.3,-sh/2-springpushergap]) cube([sl+d*2,0.51,sh+springpushergap*2]);
+  }
   translate([x+d*2,-0.01,-sh/2-springpushergap]) cube([sl+d*2,lockthickness+0.02,sh+springpushergap*2]);
   hull() {
     translate([x+d*2-1,-0.01,-sh/2-springpushergap]) cube([sl+d*2,lockthickness+0.02,sh+springpushergap*2]);
@@ -536,7 +545,7 @@ if (print==0) {
 	translate([0,sidewall+springpushergap,outscrewztable[0]]) rotate([0,0,0]) lock(3);
       }
       translate([0,sidewall+sidecutwidth-springpushergap,diskscrewheight]) rotate([180,0,0]) lock(2);
-      //translate([0,0,guideheight]) guideclip();
+      translate([0,0,guideheight]) guideclip();
       //translate([0,-10,0]) lock(3);
     }
   }
