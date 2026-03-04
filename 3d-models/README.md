@@ -41,21 +41,26 @@ need some adapting. See also "suklaarasiankansi.scad".
 This is an adapter to put 3.5 inch disk drive to a 5.25 drive slot. It
 is designed to not to need screws, however, with certain cases that
 might not work well due to funky mechanisms to lock things in
-place. Maybe fixed in a future versions to allow screws to be used for
-outside attachments.
+place. There are three versions of this:
+
+1. Default: Outside screws are implemented as springs which are pushed to the screw holes in the case.
+
+2. Sideslide: Outside screw interface is implemented with sticks which
+are pushed in to suitable position, either with screw holes, or
+screwhead type such as one used in some HP cases.
+
+3. Side includes licking clips and guides for certain cases.
+
+For case attachment, you can put the stick in upper or lower position,
+as computer cases might have two different screw positions.
 
 printing time on Tronxy X5SA/Pro 400 or Anycubic Chiron takes about 18
 hours, and uses about 200g of filament. No supports are needed, rotate
 so that locking sticks are on the bed, and on moving bed printers bed
 moves in direction of locking sticks to avoid falling over.
 
-To save filament and printing time, default is to make the thing with
-various cutouts.
-
-Locking mechanism uses locking sticks, when pushed in, they push
-knobs/keys into drive/case screw holes. For outer screw holes, you can
-put the stick in upper or lower position, as computer cases might
-have different screw positions.
+To save filament and printing time and provide better cooling for the
+disks, default is to make the thing with various cutouts.
 
 If you enable simple version, there is no locking
 mechanism, and the adapter only locks with springs. This does not
