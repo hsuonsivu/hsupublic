@@ -11,7 +11,7 @@ ytolerance=0.30;
 ztolerance=0.20;
 dtolerance=0.60;
 
-versiontext="V1.0";
+versiontext="V1.1";
 textdepth=0.7;
 textsize=7;
 textfont="Liberation Sans:style=Bold";
@@ -22,9 +22,9 @@ outwall=wall-inwall-max(xtolerance,ytolerance);
 cornerd=2;
 
 cpu=print==0?0:print-1;
-cputable=[["amd-athlon64-hp-dx2250",41,41,7.5,"athlon64","hp","dx2250"],
-	  ["celeron-acerpower-s290",38,38,6,"celeron","acer","pwr s290"],
-	  ["amd-sempron-acer-aspire-t136",40,40,7,"sempron","acer", "aspiret136"]
+cputable=[["amd-athlon64-hp-dx2250",41,41,7.5,"athlon64AM2","hp","dx2250"],
+	  ["celeron-acerpower-s290",38,38,6,"celeron370","acer","pwr s290"],
+	  ["amd-sempron-acer-aspire-t136",41,41,7,"sempron754","acer aspire", "t163"]
 	  ];
   
 l=cputable[cpu][1];
@@ -104,6 +104,10 @@ module base() {
 
     translate([insidecutx,-w/2,-hout/2+inwall]) cube([l,w,h+0.1]);
     translate([boxx+lout-clipd/2,0,-hout/2+clipd/2]) rotate([0,0,90]) tubeclip(clipw,clipd,dtolerance);
+    hull() {
+      translate([boxx+lout-clipd/2,0,-hout/2+clipd/2-1]) rotate([0,0,90]) tubeclip(clipw,clipd,dtolerance);
+      translate([boxx+lout-clipd/2-1,0,-hout/2+clipd/2-2]) rotate([0,0,90]) tubeclip(clipw,clipd,dtolerance);
+    }
 
     translate([boxx+lout/2,0,-hout/2+textdepth-0.01]) rotate([180,0,180]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="center",halign="center");
   }
