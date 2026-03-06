@@ -1499,7 +1499,11 @@ seem to hold enough for assembly if done carefully.
 
 ### cpustoragebox.scad
 
-Small box to protect loose cpus. Could have more generic uses.
+Small box to protect loose cpus. Could have more generic uses.  Sizes
+for couple of loose cpus I had around included.
 
+### acercasespare.scad
 
+Spare part for Acer computer case, drive locking mechanism. Original
+plastics self-destruct with time.
 
