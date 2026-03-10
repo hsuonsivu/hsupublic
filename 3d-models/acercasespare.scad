@@ -10,6 +10,7 @@ xtolerance=0.25;
 ytolerance=0.25;
 ztolerance=0.25;
 dtolerance=0.50;
+cut=0.5;
 
 l=92.25;
 w=16.95;
@@ -18,9 +19,8 @@ belowl=85;
 sidel=91.25;
 sidew=1.8;
 minimumh=1.8;
-endh=5;
+endh=3.6;//5;
 wall=2;
-
 xtable=[6.3,56.15];
 slideholel=11.2;
 slided=4;
@@ -33,6 +33,7 @@ railh=2.2;
 belownw=14;
 belownh=5.57;
 beloww=11;//10.84;
+sidewall=(w-beloww)/2;
 widenxtable=[15.8,65.2];
 widel=23.9;
 topholextable=[4,54.5];
@@ -62,10 +63,18 @@ cuth=5.5;
 cornerd=0.5;
 
 springprintable=5;
+springwall=1.6;
 
 midsupportx=(pressxtable[0]+pressxtable[1])/2;
 midsupportl=11;
 midclipl=xtolerance*2+0.2;
+
+sideclipx=43;
+sideclipnotchx=51;
+//sideclipnotchl=2.3;
+sidecliph=3.31;
+sideclipw=1.2;
+sideclipl=2.65;
 
 module slidehole() {
   hull() {
@@ -138,11 +147,20 @@ module diskclip() {
   dw=(beloww-topholew)/2-0.5;
   difference() {
     union() {
-     translate([0,-w/2,0]) roundedbox(l,w,h,cornerd,1);
+      translate([0,-w/2,0]) roundedbox(l,w,h,cornerd,1);
       for (x=railxtable) {
 	translate([x,-railw/2,0]) roundedbox(raill,railw,railh,cornerd,1);
       }
+
+      hull() {
+	translate([sideclipnotchx,-w/2,0]) roundedbox(sideclipl,cornerd,sidecliph,cornerd,1);
+	translate([sideclipnotchx,-w/2-sideclipw,0]) roundedbox(cornerd,sideclipw+cornerd/2,sidecliph,cornerd,1);
+      }
     }
+
+    translate([sideclipx,-w/2-0.01,sidecliph]) cube([sideclipnotchx-sideclipx+sideclipl+cut,sidewall+0.02,cut]);
+    translate([sideclipx+sideclipnotchx-sideclipx+sideclipl,-w/2-0.01,-0.01]) cube([cut,sidewall+0.02,sidecliph+cut+0.01]);
+    translate([sideclipx,-w/2+springwall,-cornerd/2]) roundedbox(sideclipnotchx-sideclipx+sideclipl+cut,sidewall-springwall+cornerd/2+0.02,sidecliph+cut+cornerd/2,cornerd,0);
 
     translate([topholextable[0],-topholew/2,-cornerd/2]) roundedbox(midsupportx-midsupportl/2-topholextable[0],topholew,h+cornerd,cornerd,3);
     translate([midsupportx+midsupportl/2,-topholew/2,-cornerd/2]) roundedbox(topholextable[1]+topholeltable[1]-(midsupportx+midsupportl/2),topholew,h+cornerd,cornerd,3);
