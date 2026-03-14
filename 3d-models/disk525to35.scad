@@ -2,10 +2,12 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
-// TODO small disk lock numerot puuttuvat
+// TODO screw holes need to be open in the case body
+// TODO redesign outer locks to allow knobs to be printed horizontally in some way?
+
 include <hsu.scad>
 
-print=0;
+print=2;
 debug=1;
 
 // 0: Make a complex version with locking mechanism
@@ -23,7 +25,7 @@ simple=0;
 // extrusions. Outside screws will not work for these cases so they
 // are only implemented for the first slot.
 // 0.5 is 30mm low profile 5.25, 2.5 is +10mm higher version of 2 slot, both for HP cases.
-slots=1;//2; // 1,2,3
+slots=3;//2; // 1,2,3
 
 // Maximum (3.5) disks, rest of space is allocated to 2.5 drives.  If
 // 0, dynamically allocated, 3.5 first and rest of space for 2.5.
@@ -124,6 +126,8 @@ outsidecornerd=outsideincornerd+sidewall*2;
 cornerd=2;
 printable=7;
 lockprintable=4;
+leftlockprintable=4;
+rightlockprintable=5;
 
 // Distance between two slots when they are
 // half-height. This is likely case specific and cannot
@@ -839,12 +843,12 @@ module holder() {
   }
 }
 
-locktable=[[0,1],
-	   [1,0],
-	   [0,0],
-	   [1,1],
-	   [1,0],
-	   [0,0]
+locktable=[[0,1], // Left side
+	   [1,0], // Left side
+	   [0,0], // Right side
+	   [1,1], // Right side
+	   [1,0], // Left side
+	   [0,0]  // Right side
 	   ];
 
 module lockbody(i) {
@@ -909,45 +913,65 @@ module lock(i) {
   }
 }
 
-module smalldisklockbody(i) {
-  rotate=locktable[i][0];
-  out=locktable[i][1];
-  h=smalldisklockh;
-  hh=min(smalldisklockh,smalldisklockhandleh-lockgap);
-
-  hull() {
-    translate([lockhandlel-cornerd,0,-h/2+h-(rotate?h:smalldisklockhandleh-lockgap)]) roundedbox(smalldisklockl-lockhandlel+cornerd,lockthickness,smalldisklockhandleh-lockgap,cornerd,lockprintable);
-    translate([lockhandlel-cornerd,lockthickness-1,-h/2+h-(rotate?h:smalldisklockhandleh-lockgap)+0.5]) roundedbox(smalldisklockl-lockhandlel+cornerd+lockthickness,1,smalldisklockhandleh-lockgap-1,1,lockprintable);
-  }
-
-  translate([0,0,-h/2]) roundedbox(lockhandlel,lockhandlethickness,h,cornerd,lockprintable);
-  translate([0,0,rotate?0:hh-cornerd/2]) hull() {
-    translate([lockhandlel-0.01,lockthickness-0.01,-h/2+(rotate?cornerd/2:-h+cornerd)]) cube([0.8+0.01,lockwall+0.01,hh-cornerd]);
-    translate([lockhandlel+0.8,lockthickness-0.01,-h/2+(rotate?cornerd/2:-h+cornerd)]) triangle((hh-cornerd)*1.3,lockwall+0.01,hh-cornerd,rotate==0?2:1);
-  }
-}
-
 module smalldisklock(i) {
   t=str(i+1);
-  rotate=locktable[i][0];
-  out=locktable[i][1];
-  h=smalldisklockh;
-  
-  difference() {
-    union() {
-      smalldisklockbody(i);
-    }
+  left=locktable[i][0];
+  height=0;
+  hh=min(smalldisklockh,smalldisklockhandleh-lockgap);
+  handleh=min(smalldisklockh,smalldisklockhandleh-lockgap);
 
-    translate([lockhandlethickness+lockhandlel*1.3+cornerd,lockthickness-textdepth+0.01,rotate?-2.2:2.2]) rotate([90,rotate?0:180,180]) linear_extrude(height=textdepth) text(versiontext,size=h-5.5,halign=rotate?"right":"left",valign="center");
-    if (smalldiskslots>1) for (z=[0:smalldiskslotstep:smalldisksh]) {
-      for (x=smalldiskscrewxtable) {
-	if (x<smalldisklockl-smalldiskxposition-10) translate([0,0,(rotate?smalldisklockhandleh-lockgap-z-h+2.1:-z+keyh/2+lockgap/2)]) lockspringcut(smalldiskxposition+x,smalldiskscrewdiameter,diskscrewspringlength,keyh+1);
+  if (left) {
+    difference() {
+      union() {
+	hull() {
+	  translate([lockhandlel-cornerd,0,height]) roundedbox(smalldisklockl-lockhandlel+cornerd,lockthickness,smalldisklockhandleh-lockgap,cornerd,leftlockprintable);
+	  translate([lockhandlel-cornerd,lockthickness-1,height+0.5]) roundedbox(smalldisklockl-lockhandlel+cornerd+lockthickness,1,smalldisklockhandleh-lockgap-1,1,leftlockprintable);
+	}
+	translate([0,0,height]) roundedbox(lockhandlel,lockhandlethickness,handleh,cornerd,rightlockprintable);
+
+	hull() {
+	  translate([lockhandlel-0.01,lockthickness-0.01,height+cornerd/2]) cube([0.8+0.01,lockwall+0.01,hh-cornerd]);
+	  translate([lockhandlel+0.8,lockthickness-0.01,height+cornerd/2]) triangle((hh-cornerd)*1.3,lockwall+0.01,hh-cornerd,1);
+	}
       }
+
+      translate([lockhandlel,lockhandlethickness,height-0.01]) cylinder(r=lockhandlethickness-lockwall-lockthickness,h=hh+0.02,$fn=60);
+      translate([lockhandlel+0.8+hh*1.3,lockthickness-textdepth+0.01,height+hh/2]) rotate([90,0,180]) linear_extrude(height=textdepth) text(versiontext,size=handleh-cornerd,halign="right",valign="center");
+
+      if (smalldiskslots>1) for (z=[0:smalldiskslotstep:smalldisksh]) {
+	  for (x=smalldiskscrewxtable) {
+	    if (x<smalldisklockl-smalldiskxposition-10) translate([0,0,z+height+smalldiskscrewheight-ztolerance]) lockspringcut(smalldiskxposition+x,smalldiskscrewdiameter,diskscrewspringlength,keyh+1);
+	  }
+	}
+
+      translate([textdepth-0.01,-lockhandlethickness+lockthickness+lockhandlethickness/2,height+hh/2]) rotate([90,0,-90]) linear_extrude(height=textdepth) resize([lockhandlethickness-cornerd,0,hh-cornerd]) text(t,size=hh-2,halign="center",valign="center");
     }
-    
-    translate([lockhandlel/2,-0.1,-h/2-1]) rotate([-90,0,0]) cylinder(h=lockhandlethickness+0.2,d=lockhandlethickness,$fn=30);
-    translate([lockhandlel/2,-0.1,-h/2+1+h]) rotate([-90,0,0]) cylinder(h=lockhandlethickness+0.2,d=lockhandlethickness,$fn=30);
-    translate([textdepth-0.01,lockhandlethickness/2,0]) rotate([90,rotate?0:180,-90]) linear_extrude(height=textdepth) resize([lockhandlethickness-3,0,0]) text(t,size=h-3,halign="center",valign="center");
+  } else {
+    difference() {
+      union() {
+	hull() {
+	  translate([lockhandlel-cornerd,0,height]) roundedbox(smalldisklockl-lockhandlel+cornerd,lockthickness,smalldisklockhandleh-lockgap,cornerd,rightlockprintable);
+	  translate([lockhandlel-cornerd,0,height+0.5]) roundedbox(smalldisklockl-lockhandlel+cornerd+lockthickness,1,smalldisklockhandleh-lockgap-1,1,rightlockprintable);
+	}
+	translate([0,-lockhandlethickness+lockthickness,height]) roundedbox(lockhandlel,lockhandlethickness,handleh,cornerd,rightlockprintable);
+
+	hull() {
+	  translate([lockhandlel-0.01,-lockwall+0.01,height+cornerd/2]) cube([0.8+0.01,lockwall+0.01,hh-cornerd]);
+	  translate([lockhandlel+0.8,-lockwall+0.01,height+cornerd/2]) triangle((hh-cornerd)*1.3,lockwall+0.01,hh-cornerd,1);
+	}
+      }
+
+      translate([lockhandlel,-lockhandlethickness+lockthickness,height-0.01]) cylinder(r=lockhandlethickness-lockwall-lockthickness,h=hh+0.02,$fn=60);
+      translate([lockhandlel+0.8+hh*1.3,textdepth-0.01,height+hh/2]) rotate([90,0,0]) linear_extrude(height=textdepth) text(versiontext,size=handleh-cornerd,halign="left",valign="center");
+
+      if (smalldiskslots>1) for (z=[0:smalldiskslotstep:smalldisksh]) {
+	  for (x=smalldiskscrewxtable) {
+	    if (x<smalldisklockl-smalldiskxposition-10) translate([0,lockthickness,z+height+smalldiskscrewheight-ztolerance]) rotate([180,0,0]) lockspringcut(smalldiskxposition+x,smalldiskscrewdiameter,diskscrewspringlength,keyh+1);
+	  }
+	}
+
+      translate([textdepth-0.01,-lockhandlethickness+lockthickness+lockhandlethickness/2,height+hh/2]) rotate([90,0,-90]) linear_extrude(height=textdepth) resize([lockhandlethickness-cornerd,0,hh-cornerd]) text(t,size=hh-2,halign="center",valign="center");
+    }
   }
 }
 
@@ -976,8 +1000,8 @@ if (print==0) {
 	if (diskslots>0) translate([0,sidewall+sidecutwidth-lockgap,bottomthickness+diskscrewheight]) rotate([180,0,0]) lock(2);
 	
 	#	if (smalldiskslots>0) {
-	  translate([0,smalldiskyposition-sidewall-lockgap,smalldiskheight+smalldisklockh/2+ztolerance]) rotate([180,0,0]) smalldisklock(5);
-	  translate([0,width-(smalldiskyposition-sidewall-lockgap),smalldiskheight+smalldisklockh/2+ztolerance]) rotate([0,0,0]) smalldisklock(4);
+	  translate([0,smalldiskyposition-sidewall-lockgap-lockthickness,smalldiskheight+lockgap/2]) smalldisklock(5);
+	  translate([0,width-(smalldiskyposition-sidewall-lockgap),smalldiskheight+lockgap/2]) smalldisklock(4);
 	}
 	
 	if (guideversion) {
@@ -1048,8 +1072,8 @@ if (!simple && (print==2 || print==3)) {
     if (smalldiskslots>0) {
       translate([l3,0,0]) if (smalldiskslots>0) {
 	translate([smalldisklockh/2,smalldisklockl,0]) {
-	  translate([smalldisklockhandleh-smalldisklockh,0,0]) rotate([90,0,-90]) smalldisklock(4);
-	  translate([smalldisklockhandleh+0.5,0,0]) rotate([90,0,-90]) smalldisklock(5);
+	  translate([smalldisklockhandleh-smalldisklockh/2,0,0]) rotate([90,0,-90]) smalldisklock(4);
+	  translate([-smalldisklockh/2+smalldisklockhandleh+0.5,0,lockthickness]) rotate([-90,0,-90]) smalldisklock(5);
 	}
       }
     }
