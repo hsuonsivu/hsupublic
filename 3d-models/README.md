@@ -1507,3 +1507,9 @@ for couple of loose cpus I had around included.
 Spare part for Acer computer case, drive locking mechanism. Original
 plastics self-destruct with time.
 
+### 92to80mm-fan-adapter.scad
+
+Adapter for installing 92mm fan to a computer case with holes designed
+for 80mm fans. You need short screw/nut pair for this one. I used M4
+8mm screws.
+
