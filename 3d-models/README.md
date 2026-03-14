@@ -1513,3 +1513,6 @@ Adapter for installing 92mm fan to a computer case with holes designed
 for 80mm fans. You need short screw/nut pair for this one. I used M4
 8mm screws.
 
+### nappi.scad
+
+Spare missing power&reset button for a computer case.
