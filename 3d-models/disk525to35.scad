@@ -7,7 +7,7 @@
 
 include <hsu.scad>
 
-print=2;
+print=3;
 debug=1;
 
 // 0: Make a complex version with locking mechanism
@@ -25,12 +25,12 @@ simple=0;
 // extrusions. Outside screws will not work for these cases so they
 // are only implemented for the first slot.
 // 0.5 is 30mm low profile 5.25, 2.5 is +10mm higher version of 2 slot, both for HP cases.
-slots=3;//2; // 1,2,3
+slots=1;//2; // 1,2,3
 
 // Maximum (3.5) disks, rest of space is allocated to 2.5 drives.  If
 // 0, dynamically allocated, 3.5 first and rest of space for 2.5.
 // This will not always fill the space optimally.
-maxdisks=slots==3?4:slots==2.5?3:slots==2?0:slots==1?0:slots==0.5?1:-1;
+maxdisks=slots==3?4:slots==2.5?3:slots==2?0:slots==1?1:slots==0.5?1:-1;
 
 // Full version, includes all material saving holes (very slow in openscad - render before rotating view)
 full=1;
@@ -41,18 +41,28 @@ throughholes=1;
 // One of our cases has metal clips holding the drives. Replace outside locks with guides with clip
 guideversion=0;
 
+// Aopen case
+aopenversion=1;
+
 // Some cases expect fixed screws in either lower or upper settings. IN PROGRESS
 // Could also be basis for screw-in version
 sideslideversion=0;
 
 // Sideslides have fixed screwheads IN PROGRESS
-sideslidescrewheads=1;
+sideslidescrewheads=0;
 
-// Sideslides have screw holes TBD
+// Sideslides have screw holes
 sideslidescrewholes=0;
+
+// Sideslides with clip
+sideslideclips=1;
 
 if (guideversion && sideslideversion) {
   echo("ERROR guideversion and sideslideversion cannot be enabled together.");
+ }
+
+if (aopenversion && sideslideversion) {
+  echo("ERROR aopenversion and sideslideversion cannot be enabled together.");
  }
 
 maxbridge=10;
@@ -90,11 +100,10 @@ guideclipl=13;//11.85;
 guidecliphandlel=12;
 guidecliphandled=3;
 guideclipdepth=3.5;
-//guidex=25;//24.45; // Not including clip
 guidew=5;
 guidecornerd=1;
 guideclipwall=1.6;
-guideclipattachx=guidex+guideclipwall;
+guideclipattachx=guidex+guideclipwall+10;
 guideclipattachl=30;
 guideclipcornerd=guideclipwall;
 guideclipcut=cut;
@@ -340,6 +349,40 @@ sideslidelockcut=sideslidew+ytolerance+0.01;
 sideslidelockcuth=cut;
 sideslidelockcutendh=sideslideincuth;
 
+// Aopen
+// Values relative to first screw hole
+aopenx=outscrewxtable[0]-22;
+aopenheight=outscrewztable[0]-9.74;
+aopenh=16.3;
+aopennarrowingh=10;
+aopenw=5.4;
+aopenl=114;
+aopennarrowingl=128;
+aopennarrowingw=4.47;
+aopencornerd=2;
+aopenwall=2;
+aopenclipx=aopenx+0.9;
+
+aopenclipw=7.75;
+aopenclipdepth=3.5;
+aopencliph=9;
+aopensloty=-0.7;
+aopenclipwall=1.6;
+aopenclipattachx=aopenx+22;
+aopenclipattachl=30;
+aopenclipcornerd=aopenclipwall;
+aopenclipcut=cut;
+aopenclipcutl=20;
+aopencliplockh=5.5;
+aopencliplockl=5;
+aopencliplockx=aopenclipattachx+aopenclipattachl-8;
+aopencliplocky=aopensloty+aopenclipwall+ytolerance;
+aopencliplockcutl=15;
+aopenslotoutw=aopenclipwall+ytolerance+aopenclipwall+ytolerance+aopenclipwall;
+aopencliphandlex=aopenclipx-12.1;
+aopenclipheight=aopenheight+aopenh/2; // Center of guide
+
+
 module tappi(screwdiameter,screwbase) {
   cylinder(h=screwbase,d=screwdiameter,$fn=30);
   translate([0,0,screwbase-0.01]) sphere(d=screwdiameter,$fn=30);
@@ -465,6 +508,14 @@ module sideslidescrewholes() {
   }
 }
 
+// TBD, special version of sideslide with a guide case
+module sideslideclips() {
+  sideslidebody();
+
+  translate([0,-sideslidecornerd,-sideslideh/2]) roundedbox(sideslidebasel,sideslidewall+sideslidecornerd+sideslidecornerd,sideslideh,sideslidecornerd,sideslideprintable);
+  
+}
+
 module guideclipshape(p) {
   translate([0,0,-guidecliph/2]) roundedbox(guideclipwall,guideclipwall,guidecliph,guideclipcornerd,p);
 }
@@ -544,12 +595,120 @@ module guidecut() {
 	translate([guideclipattachx+guideclipattachl+xd,guidesloty-0.01,-maxbridge/2]) cube([guideclipcut,guideclipwall+0.02,maxbridge]);
       }
       
-      translate([-0.01,guidesloty-0.01,-guidecliph/2-ztolerance]) cube([guidex+guideclipwall,guideslotoutw+0.02,ztolerance+guidecliph+ztolerance]);
-      translate([-0.01,guidesloty+guideclipwall,-guidecliph/2-ztolerance]) cube([guideclipattachx+guideclipwall+guideclipattachl,ytolerance+guideclipwall+ytolerance,ztolerance+guidecliph+ztolerance]);
+      translate([-0.01,guidesloty-0.01,-guidecliph/2-ztolerance]) cube([guideclipattachx+guideclipwall,guideslotoutw+0.02,ztolerance+guidecliph+ztolerance]);
+      translate([-0.01,guidesloty+guideclipwall,-guidecliph/2-ztolerance]) cube([guideclipattachx+guideclipcut*2+guideclipattachl,ytolerance+guideclipwall+ytolerance,ztolerance+guidecliph+ztolerance]);
     }
     hull() {
       translate([guidecliplockx+xtolerance,guidesloty,-guidecliplockh/2+ztolerance]) cube([guidecliplockl-xtolerance*2,guideclipwall,guidecliplockh-ztolerance*2]);
       translate([guidecliplockx+xtolerance+guidecliplockl-xtolerance*2-1,guidesloty,-guidecliplockh/2+ztolerance+guideclipwall]) cube([1,guideclipwall+ytolerance+guideclipwall,guidecliplockh-ztolerance*2-guideclipwall*2]);
+    }
+  }
+}
+
+module aopenclipshape(p) {
+  translate([0,0,-aopencliph/2]) roundedbox(aopenclipwall,aopenclipwall,aopencliph,aopenclipcornerd,p);
+}
+
+module aopenclip() {
+  difference() {
+    union() {
+      hull() {
+	translate([aopenclipattachx-aopenclipwall,guidesloty+aopenclipwall+ytolerance,0]) aopenclipshape(1);
+	translate([aopenclipattachx+aopenclipattachl-aopenclipwall,guidesloty+aopenclipwall+ytolerance,0]) aopenclipshape(1);
+      }
+      hull() {
+	translate([aopenclipattachx-aopenclipwall,guidesloty+aopenclipwall+ytolerance,0]) aopenclipshape(1);
+	translate([aopenclipx,-aopenclipw-aopenclipwall,0]) aopenclipshape(1);
+      }
+      hull() {
+	translate([aopenclipx,-aopenclipw-aopenclipwall,0]) aopenclipshape(1);
+	translate([aopenclipx-aopenclipdepth/3,aopenclipdepth-aopenclipw-aopenclipwall,0]) aopenclipshape(1);
+      }
+      hull() {
+	translate([aopenclipx-aopenclipdepth/3,aopenclipdepth-aopenclipw-aopenclipwall,0]) aopenclipshape(1);
+	translate([aopencliphandlex,aopenclipdepth-aopenclipw-aopenclipwall,0]) aopenclipshape(1);
+      }
+      hull() {
+	for (x=[-aopenclipcornerd/2+aopencliphandlex,aopencliphandlex]) {
+	  translate([x,aopenclipdepth-aopenclipw-aopenclipwall,0]) aopenclipshape(1);
+	  translate([x,-aopenclipw-aopenclipwall,0]) aopenclipshape(1);
+	}
+      }
+    }
+
+    translate([aopencliplockx-0.01,aopencliplocky-0.01,-aopencliplockh/2-0.01]) cube([aopencliplockl+0.02,aopenclipwall+0.02,aopencliplockh+0.02]);
+
+    translate([aopenclipattachx+1,guidesloty+aopenclipwall+ytolerance+textdepth-0.01,0]) rotate([90,0.0]) linear_extrude(height=textdepth) text(versiontext,size=min(textsize,aopencliph-aopenclipcornerd-1)-1,halign="left",valign="center");
+  }
+}
+
+module aopenguide() {
+  hull() {
+    translate([aopenx,-aopenw,aopenheight]) roundedbox(aopenl,aopenw+outsideincornerd/2+aopencornerd,aopenwall,aopencornerd,0);
+    translate([aopenx-aopenw,outsideincornerd/2+aopencornerd-aopenwall,aopenheight]) roundedbox(aopenl+aopenw,aopenwall,aopenwall,aopencornerd,0);
+  }
+  hull() {
+    translate([aopenx+aopenl-aopencornerd,-aopenw,aopenheight]) roundedbox(aopencornerd,aopenw+sidewall+aopencornerd/2,aopenwall,aopencornerd,0);
+    translate([aopenx+aopennarrowingl-aopencornerd,-aopennarrowingw,aopenheight+(aopenh-aopennarrowingh)/2]) roundedbox(aopencornerd,aopennarrowingw+aopencornerd/2,aopenwall,aopencornerd,0);
+  }
+
+  hull() {
+    translate([aopenx,-aopenw,aopenheight+aopenh-aopenwall]) roundedbox(aopenl,aopenw+aopencornerd/2,aopenwall,aopencornerd,0);
+    translate([aopenx-aopenw,0,aopenheight+aopenh-aopenwall]) roundedbox(aopenl+aopenw,aopenwall,aopenwall,aopencornerd,0);
+  }
+  hull() {
+    translate([aopenx+aopenl-aopencornerd,-aopenw,aopenheight+aopenh-aopenwall]) roundedbox(aopencornerd,aopenw+aopencornerd,aopenwall,aopencornerd,0);
+    translate([aopenx+aopennarrowingl-aopencornerd,-aopennarrowingw,aopenheight+aopenh-(aopenh-aopennarrowingh)/2-aopenwall]) roundedbox(aopencornerd,aopennarrowingw+aopencornerd/2,aopenwall,aopencornerd,0);
+  }
+
+}
+
+module aopen() {
+  //w=ytolerance+guideclipwall+ytolerance+guideclipwall;
+  
+  difference() {
+    union() {
+      aopenguide();
+
+      translate([0,0,aopenh/2]) {
+	hull() {
+	  translate([aopenclipattachx,aopensloty,-aopencliph/2-ztolerance-aopenclipwall]) roundedbox(aopenclipattachl+aopenclipwall*2+xtolerance,aopenslotoutw,aopenclipwall+ztolerance+aopencliph+ztolerance+aopenclipwall,aopenclipcornerd,0);
+	  translate([aopenx+aopenclipwall-aopenslotoutw/2,aopensloty+aopenclipcornerd,-aopencliph/2-ztolerance-aopenclipwall]) roundedbox(aopenclipattachl,aopenclipcornerd,aopenclipwall+ztolerance+aopencliph+ztolerance+aopenclipwall,aopenclipcornerd,0);
+	}
+
+	translate([0,-1.2,-aopencliph/2-0.8]) cube([0.6,2.4,0.4]);
+	translate([0,-1.2,-aopencliph/2-0.8]) cube([0.6,0.4,aopencliph+0.8*2]);
+	translate([0,-1.2,aopencliph/2+0.4]) cube([0.6,1.4,0.4]);
+      }
+    }
+  }
+}
+
+module aopencut() {
+  translate([0,0,aopenh/2]) {
+    difference() {
+      union() {
+	for (m=[0,1]) mirror([0,0,m]) {
+	    translate([aopenclipattachx+aopenclipattachl-aopenclipcutl,aopensloty-0.01,-aopencliph/2-aopenclipcut]) cube([aopenclipcutl+aopenclipcut,aopenclipwall+0.02,aopenclipcut]);
+	  }
+	hull() {
+	  h=aopencliph+aopenclipcut*2;
+	  xd=h>maxbridge?(h-maxbridge)/2:0;
+	
+	  translate([aopenclipattachx+aopenclipattachl,aopensloty-0.01,-aopencliph/2-aopenclipcut]) cube([aopenclipcut,aopenclipwall+0.02,aopenclipcut+aopencliph+aopenclipcut]);
+	  translate([aopenclipattachx+aopenclipattachl+xd,aopensloty-0.01,-maxbridge/2]) cube([aopenclipcut,aopenclipwall+0.02,maxbridge]);
+	}
+
+	// Open bottom of wall
+	translate([-0.01,aopensloty-0.01,-aopencliph/2-ztolerance]) cube([aopenclipattachx+aopenclipwall,aopenslotoutw+0.02,ztolerance+aopencliph+ztolerance]);
+
+	// Hole to insert clip into
+	translate([-0.01,aopensloty+aopenclipwall,-aopencliph/2-ztolerance]) cube([aopenclipattachx+aopenclipwall+aopenclipattachl,ytolerance+aopenclipwall+ytolerance,ztolerance+aopencliph+ztolerance]);
+      }
+      hull() {
+	translate([aopencliplockx+xtolerance,aopensloty,-aopencliplockh/2+ztolerance]) cube([aopencliplockl-xtolerance*2,aopenclipwall,aopencliplockh-ztolerance*2]);
+	translate([aopencliplockx+xtolerance+aopencliplockl-xtolerance*2-1,aopensloty,-aopencliplockh/2+ztolerance+aopenclipwall]) cube([1,aopenclipwall+ytolerance+aopenclipwall,aopencliplockh-ztolerance*2-aopenclipwall*2]);
+      }
     }
   }
 }
@@ -689,15 +848,21 @@ module halfholder() {
 	  }
 
 	if (sideslideversion==1) {
-	  for (z=outscrewztable) translate([0,0,z]) sideslide();
+	  for (z=outscrewztable) translate([0,0,z]) {
+	      sideslide();
+	    }
 	}
 	
 	if (guideversion==1) {
 	  translate([0,0.01,guideheight]) guide();
 	}
 
+	if (aopenversion==1) {
+	  translate([0,0,0]) aopen();
+	}
+
 	if (!simple) {
-	  if (!guideversion && !sideslideversion) {
+	  if (!guideversion && !sideslideversion && !aopenversion) {
 	    translate([0,sidewall/2,outlockcoverbottom]) roundedbox(outlockl,sidewall/2+lockthickness+lockgap+0.01+lockwall,outscrewztable[1]+outlockcuth/2+lockwall-outlockcoverbottom,cornerd,printable);
 	  }
 
@@ -716,11 +881,17 @@ module halfholder() {
       }
 
       if (sideslideversion) {
-	for (z=outscrewztable) translate([0,0,z]) sideslidecut();
+	for (z=outscrewztable) translate([0,0,z]) {
+	    sideslidecut();
+	
+	    for (x=outscrewxtable) {
+	      translate([x,-0.01,0]) rotate([-90,0,0]) cylinder(d=diskscrewholed,sideslidewall+sideslidewall*2+ytolerance*2+0.02,$fn=90);
+	    }
+	}
       }
       
       if (!simple) {
-	if (!guideversion && !sideslideversion) for (z=outscrewztable) {
+	if (!guideversion && !sideslideversion && !aopenversion) for (z=outscrewztable) {
 	    // Side lock space
 	    translate([-0.01,sidewall,z-outlockcuth/2]) cube([outlockl+0.02,lockthickness+lockgap,outlockcuth]);
 	    hull() {
@@ -758,13 +929,15 @@ module halfholder() {
       
       translate([sidewall+diskxposition,width-(width/2-diskw/2-2*sidewall)-sidewall,sidebottomthickness]) cube([disklength-2*sidewall,width/2-diskw/2-2*sidewall,height-sidebottomthickness-sideroofthickness+20]);
 
-      if (!guideversion && !sideslideversion) for (z=outscrewztable) {
+      if (!guideversion && !sideslideversion && !aopenversion) for (z=outscrewztable) {
 	  for (x=outscrewxtable) {
 	    translate([x-outscrewspringlength,0,z]) rotate([270,0,0]) keycut(outscrewspringlength,outscrewspringheight,sidewall);
 	  }
 	}
       
       if (guideversion) translate([0,0,guideheight]) guidecut();
+
+      if (aopenversion) translate([0,0,aopenheight]) aopencut();
 
       if (sideslideversion) for (z=outscrewztable) {
 	  translate([0,0,z]) sideslidecut();
@@ -786,7 +959,7 @@ module halfholder() {
     }
 
     // Keys for outside if applicable
-    if (!guideversion && !sideslideversion) {
+    if (!guideversion && !sideslideversion && !aopenversion) {
       for (z=outscrewztable) {
 	for (x=outscrewxtable) {
 	  translate([x-outscrewspringlength,sidewall,z]) rotate([90,0,outscrewspringangle]) key(outscrewspringlength,outscrewspringheight,sidewall,outscrewdiameter,outscrewbase);
@@ -822,7 +995,7 @@ module holder() {
 
     if (!simple) {
       w=lockthickness+lockgap+0.01+lockwall;
-      if (!guideversion && !sideslideversion) {
+      if (!guideversion && !sideslideversion && !aopenversion) {
 	translate([1,width-sidewall-w/2,outscrewztable[0]-outlockcuth/2-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("1",size=slotnumbersize,halign="center");
       }
 
@@ -836,7 +1009,7 @@ module holder() {
 	translate([1,sidewall+smalldisksidecutwidth-w/2,smalldiskheight-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("6",size=slotnumbersize,halign="center");
       }
 	
-      if (!guideversion && !sideslideversion) {
+      if (!guideversion && !sideslideversion && !aopenversion) {
 	translate([1,sidewall+w/2,outscrewztable[0]-outlockcuth/2-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text("4",size=slotnumbersize,halign="center");
       }
     }
@@ -976,7 +1149,7 @@ module smalldisklock(i) {
 }
 
 // springpushersticks
-module springpushersticks() {
+module springpushersticksold() {
   if (!simple) {
     //out
     for (i=((guideversion || sideslideversion)?[1:1:2]:[0:1:3])) {
@@ -987,19 +1160,21 @@ module springpushersticks() {
 
 if (print==0) {
   intersection() {
-    //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+guideheight]);
+    //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+guideheight]); // Debug guides
+    if (debug) translate([-100,-100,-100]) cube([1000,1000,100+guideheight+4]); // Debug guides
+    //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+aopenheight+aopenh/2]); // aopen
     //if (debug) translate([-100,-100,-100]) cube([1000,1000,105+outscrewztable[0]]);
-    if (debug) translate([-100,33,-100]) cube([1000,1000,1000]);
+    //if (debug) translate([-100,33,-100]) cube([1000,1000,1000]);
     difference() {
       union() {
 	holder();
-	if (!guideversion && !sideslideversion) {
+	if (!guideversion && !sideslideversion && !aopenversion) {
 	  translate([0,sidewall+lockgap,outscrewztable[0]]) rotate([0,0,0]) lock(3);
 	}
 	
 	if (diskslots>0) translate([0,sidewall+sidecutwidth-lockgap,bottomthickness+diskscrewheight]) rotate([180,0,0]) lock(2);
 	
-	#	if (smalldiskslots>0) {
+	if (smalldiskslots>0) {
 	  translate([0,smalldiskyposition-sidewall-lockgap-lockthickness,smalldiskheight+lockgap/2]) smalldisklock(5);
 	  translate([0,width-(smalldiskyposition-sidewall-lockgap),smalldiskheight+lockgap/2]) smalldisklock(4);
 	}
@@ -1007,8 +1182,14 @@ if (print==0) {
 	if (guideversion) {
 	  translate([0,0,guideheight]) guideclip();
 	}
+
+	if (aopenversion) {
+	  translate([0,0,aopenheight+aopenh/2]) aopenclip();
+	}
+	
 	if (sideslideversion && sideslidescrewheads) translate([0,0,outscrewztable[0]]) sideslideheads();
 	if (sideslideversion && sideslidescrewholes) translate([0,0,outscrewztable[0]]) sideslidescrewholes();
+	if (sideslideversion && sideslideclips) translate([0,0,outscrewztable[0]]) sideslideclips();
 	//translate([0,-10,0]) lock(3);
       }
 
@@ -1033,8 +1214,8 @@ if (!simple && (print==2 || print==3)) {
   if (!simple) {
     // Side parts
     l1=height+0.5;
-    l2=l1+(guideversion?0:sideslideversion?(sideslideinh+0.5)*2:(outlockh+0.5)*2);
-    translate([l1,0,0]) if (!guideversion && !sideslideversion) {
+    l2=l1+((guideversion || aopenversion)?0:sideslideversion?(sideslideinh+0.5)*2:(outlockh+0.5)*2);
+    translate([l1,0,0]) if (!guideversion && !sideslideversion && !aopenversion) {
       translate([outlockh/2,0,0]) {
 	for (i=[0,3]) {
 	  translate([floor(i/3)*(outlockh+0.5),0,0]) rotate([90,0,90]) lock(i);
@@ -1047,6 +1228,7 @@ if (!simple && (print==2 || print==3)) {
 	    translate([floor((i/3)*(sideslideinh+0.5)),0,sideslidewall*2]) rotate([-90,0,90]) {
 	      if (sideslidescrewheads) sideslideheads();
 	      if (sideslidescrewholes) sideslidescrewholes();
+	      if (sideslideclips) sideslideclips();
 	    }
 	  }
 	}
@@ -1083,8 +1265,17 @@ if (!simple && (print==2 || print==3)) {
 if (guideversion) {
   if (print==4 || print==1 || print==3) {
     translate([guidew+sidewall-guidesloty+guideslotoutw+0.5,width/2-(guideclipattachl+guideclipattachx+guideclipl)/2,guidecliph/2]) rotate([0,0,90]) {
-      translate([10,2.5,0]) guideclip();
-      translate([10,2.5+guidew+0.5,0]) guideclip();
+      translate([7.7,2.5,0]) rotate([0,0,-8]) guideclip();
+      translate([7.7,8+guidew+0.5,0]) rotate([0,0,-8]) guideclip();
+    }
+  }
+ }
+
+if (aopenversion) {
+  if (print==4 || print==1 || print==3) {
+    translate([aopenw+sidewall-aopensloty+aopenslotoutw+0.5,width/2-(aopenclipattachl+aopenclipattachx+guideclipl)/2-10,aopencliph/2]) rotate([0,0,90]) {
+      translate([8,4,0]) rotate([0,0,-8]) aopenclip();
+      translate([8,10+guidew+0.5,0]) rotate([0,0,-8]) aopenclip();
     }
   }
  }
