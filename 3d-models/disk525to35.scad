@@ -25,7 +25,7 @@ simple=0;
 // extrusions. Outside screws will not work for these cases so they
 // are only implemented for the first slot.
 // 0.5 is 30mm low profile 5.25, 2.5 is +10mm higher version of 2 slot, both for HP cases.
-slots=1;//2; // 1,2,3
+slots=4;//2; // 1,2,3
 
 // Maximum (3.5) disks, rest of space is allocated to 2.5 drives.  If
 // 0, dynamically allocated, 3.5 first and rest of space for 2.5.
@@ -151,7 +151,9 @@ slimheight=31.5; // About 32mm
 halfheight=41.3;
 fullheight=82.6;
 hpdoubleheight=95;
-height=(slots==3)?min(slots*(halfheight+slotmaxgap),128):(slots==2?fullheight:(slots==1?halfheight:(slots==0.5?slimheight:(slots==2.5?hpdoubleheight:halfheight)))); // Standard say 41.3mm and 82.6mm
+
+// Standard say 41.3mm and 82.6mm
+height=(slots==3)?min(slots*(halfheight+slotmaxgap),128):(slots==4?170:(slots==2?fullheight:(slots==1?halfheight:(slots==0.5?slimheight:(slots==2.5?hpdoubleheight:halfheight)))));
 
 slotgapw=6;
 
