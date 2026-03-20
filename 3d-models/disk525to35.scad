@@ -2,7 +2,8 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
-// TODO screw holes need to be open in the case body
+// TODO cover does not look nice on inside (look from back). Both bottom/roof thickness and corners are wrong.
+
 // TODO redesign outer locks to allow knobs to be printed horizontally in some way?
 
 include <hsu.scad>
@@ -13,7 +14,7 @@ debug=0;
 
 // 0: Make a complex version with locking mechanism
 // 1: Make a simple version, with no locking mechanism
-simple=0;
+simple=1;
 
 // Number drive slots to use, 1 is half-height, 2 is full-height, 3 is
 // three half-height, and otherwise the value is taken as height in mm
@@ -26,7 +27,7 @@ simple=0;
 // extrusions. Outside screws will not work for these cases so they
 // are only implemented for the first slot.
 // 0.5 is 30mm low profile 5.25, 2.5 is +10mm higher version of 2 slot, both for HP cases.
-slots=4;//2; // 1,2,3
+slots=1;//2; // 1,2,3
 
 // Maximum (3.5) disks, rest of space is allocated to 2.5 drives.  If
 // 0, dynamically allocated, 3.5 first and rest of space for 2.5.
@@ -40,10 +41,10 @@ full=1;
 throughholes=1;
 
 // One of our cases has metal clips holding the drives. Replace outside locks with guides with clip
-guideversion=1;
+guideversion=0;
 
 // Aopen case
-aopenversion=0;
+aopenversion=1;
 
 // Some cases expect fixed screws in either lower or upper settings. IN PROGRESS
 // Could also be basis for screw-in version
@@ -76,17 +77,20 @@ sideslideclips=0;
 
 coverwithfan=slots>1;
 
-forcefantype=0;
-if (coverwithfan && forcefantype) {
-  if (slots<3 && forcefantype>5) {
-    echo("ERROR Fan is too large for %s slots\n");
-  }
-  if (slots<5 && forcefantype>6) {
-    echo("ERROR Fan is too large for %s slots\n");
+//forcefantype=0;
+
+if (!is_undef(forcefantype)) {
+  if (coverwithfan && forcefantype) {
+    if (slots<3 && forcefantype>5) {
+      echo("ERROR Fan is too large for ",slots," slots\n");
+    }
+    if (slots<5 && forcefantype>6) {
+      echo("ERROR Fan is too large for ",slots," slots\n");
+    }
   }
  }
 
-fantype1=forcefantype?forcefantype:slots>3?6:slots>2?4:slots>1?3:-1;
+fantype1=(!is_undef(forcefantype)?forcefantype:slots>3?6:slots>2?5:slots>1?3:-1);
 fantype=fantype1>6?6:fantype1;
 
 fansizetable=[[40,32,10],     //0
@@ -523,7 +527,7 @@ clipl=8;
 clipw=sidewall+1;
 clipx=6;
 clipholeh=ztolerance+cliph+ztolerance;
-clipheighttable=slots>2?[halfheight-outsideincornerd-clipholeh,height-halfheight/2-clipholeh/2]:[];
+clipheighttable=slots>1?[halfheight-outsideincornerd-clipholeh,height-halfheight/2-clipholeh/2]:slots>0.5?[halfheight-outsideincornerd-clipholeh]:[];
 clipholel=xtolerance+8+xtolerance;
 clipholex=clipx-xtolerance;
 clipholew=clipw+0.02;
@@ -565,7 +569,7 @@ module tappi(screwdiameter,screwbase) {
 keycornerd=1.5;
 
 module key(keylength,keywidth,keythickness,keyscrewdiameter,keyscrewdepth) {
-  render() {
+  union() {
     translate([-keyanglel,-keywidth/2,0]) union () {
       hull() {
 	translate([-keycornerd/2,0,0])  roundedbox(keylength+keyanglel+keycornerd,keywidth,keythickness,keycornerd,0);
@@ -930,6 +934,7 @@ module basebody() {
       }
       translate([-outsidecornerd/2,slots>1?slotgapw:0,0]) roundedbox(length+outsidecornerd/2+cornerd,width-(slots>1?slotgapw:0),height,outsidecornerd,printable);
     }
+    translate([-outsidecornerd/2,0,0]) roundedbox(length+outsidecornerd/2+cornerd,width,height,outsidecornerd,printable);
     cube([length,width,height]);
   }
 }
@@ -1006,7 +1011,7 @@ module coverform(w) {
   difference() {
     union() {
       hull() {
-	translate([coverwall+(w?0:-coverwall),-width/2+w,w]) rotate([0,-90,0]) roundedboxxyz(height-w*2,width-w*2,coverwall,outsidecornerd,coverwall,0,90);
+	translate([(w?0.01:0),-width/2+(w?sidewall:0),w?bottomthickness:0]) rotate([0,-90,0]) roundedboxxyz(height-(w?bottomthickness+roofthickness:0),width-(w?sidewall:0)*2,w?0.01:coverwall,w?outsideincornerd:outsidecornerd,w?0.01:coverwall,0,90);
 	translate([-coverdepth+w,-width/2+narrow+(w?sidewall:0),narrow+w]) roundedbox(coverwall,width-narrow*2-(w?sidewall*2:0),height-narrow*2-w*2,cornerd,w?0:fancoverprintable);
 	translate([-coverdepth+w,-fanholderw/2-coverwall+(w?sidewall:0),fanheight-coverwall-fanholderh/2+w]) roundedbox(coverwall,fanholderw+coverwall*2-w*2,fanholderh+coverwall*2-w*2,cornerd,w?0:fancoverprintable);
       }
@@ -1573,13 +1578,13 @@ if (print==0) {
 	
 	holder();
 	
-	if (!guideversion && !sideslideversion && !aopenversion) {
+	if (!simple && !guideversion && !sideslideversion && !aopenversion) {
 	  translate([0,sidewall+lockgap,outscrewztable[0]]) rotate([0,0,0]) lock(3);
 	}
 	
-	if (diskslots>0) translate([0,sidewall+sidecutwidth-lockgap,bottomthickness+diskscrewheight]) rotate([180,0,0]) lock(2);
+	if (!simple && diskslots>0) translate([0,sidewall+sidecutwidth-lockgap,bottomthickness+diskscrewheight]) rotate([180,0,0]) lock(2);
 	
-	if (smalldiskslots>0) {
+	if (!simple && smalldiskslots>0) {
 	  translate([0,smalldiskyposition-sidewall-lockgap-lockthickness,smalldiskheight+lockgap/2]) smalldisklock(5);
 	  translate([0,width-(smalldiskyposition-sidewall-lockgap),smalldiskheight+lockgap/2]) smalldisklock(4);
 	}
@@ -1599,11 +1604,11 @@ if (print==0) {
       }
 
       for (i=[0:1:diskslots-1]) {
-	translate([diskxposition,width/2-diskw/2,bottomthickness+i*diskslotstep]) cube([disklength,diskw,diskh]);
+	%translate([diskxposition,width/2-diskw/2,bottomthickness+i*diskslotstep]) cube([disklength,diskw,diskh]);
       }
 
       if (smalldiskslots>0) for (i=[0:1:smalldiskslots-1]) {
-	translate([smalldiskxposition,width/2-smalldiskw/2,smalldiskheight+i*smalldiskslotstep]) cube([smalldiskl,smalldiskw,smalldiskh]);
+	%translate([smalldiskxposition,width/2-smalldiskw/2,smalldiskheight+i*smalldiskslotstep]) cube([smalldiskl,smalldiskw,smalldiskh]);
       }
     }
   }
