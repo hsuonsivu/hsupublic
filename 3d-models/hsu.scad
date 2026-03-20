@@ -999,3 +999,29 @@ module recyclingsymbol(type="ABS",size=20,h=0.7,$fn=50) {
     translate([0,-arrowdistance-arrowheadsize*1.1,0]) linear_extrude(height=h) text(type,size=textsize*0.9,font="Liberation Sans:style=Bold",halign="center",valign="center");
   }
 }
+
+// Generate a round grill.  Note! This does not generate ring around
+// the fan, you need to do that yourself.
+
+module grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) {
+  dstart=centerdiameter;
+  ddistance=centerdiameter*2;
+  //diameter=ind;
+  //wall=1.6;
+  w=wall/2;//0.8;
+  //thickness=1.6;
+  
+  firstarea=dstart*dstart*PI;
+  translate([-fancoverdepth-fangrilldepth-0.1,0,0]) rotate([0,90,0]) for (d=[dstart:ddistance:diameter-w*2]) {
+    translate([0,0,0]) ring(d,w,thickness+0.2);
+
+    previousarea=d*d*PI;
+    thisarea=((d+ddistance)*(d+ddistance)*PI)-previousarea;
+    i=floor(thisarea/firstarea);
+    astep=360/i;
+    for (a=[0:astep:359]) {
+      rotate([0,0,a]) translate([d/2-w,-w/2,0]) cube([min(ddistance/2+w-0.1,diameter/2-d/2+w/2),w,thickness+0.2]);
+    }
+  }
+}
+

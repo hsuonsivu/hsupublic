@@ -6,9 +6,10 @@
 // TODO redesign outer locks to allow knobs to be printed horizontally in some way?
 
 include <hsu.scad>
+include <hsubolt.scad>
 
-print=3;
-debug=1;
+print=0;
+debug=0;
 
 // 0: Make a complex version with locking mechanism
 // 1: Make a simple version, with no locking mechanism
@@ -30,7 +31,7 @@ slots=4;//2; // 1,2,3
 // Maximum (3.5) disks, rest of space is allocated to 2.5 drives.  If
 // 0, dynamically allocated, 3.5 first and rest of space for 2.5.
 // This will not always fill the space optimally.
-maxdisks=slots==3?4:slots==2.5?3:slots==2?0:slots==1?1:slots==0.5?1:-1;
+maxdisks=slots==3?4:slots==2.5?3:slots==2?0:slots==1?0:slots==0.5?1:-1;
 
 // Full version, includes all material saving holes (very slow in openscad - render before rotating view)
 full=1;
@@ -381,9 +382,19 @@ aopencliplockx=aopenclipattachx+aopenclipattachl-8;
 aopencliplocky=aopensloty+aopenclipwall+ytolerance;
 aopencliplockcutl=15;
 aopenslotoutw=aopenclipwall+ytolerance+aopenclipwall+ytolerance+aopenclipwall;
-aopencliphandlex=aopenclipx-12.1;
+aopencliphandlex=aopenclipx-14.1;
+aopencliphandlew=aopenclipw+2;
 aopenclipheight=aopenheight+aopenh/2; // Center of guide
 
+// This only supports 3.5 inch disks, ssd:s need less cooling.
+fanh=92;
+fanclipholeh=8;
+fancliph=fanh-fanclipholeh*2;
+fanclipholel=8;
+fanclipholex=8;
+// Enable fanclips of disks can accomodate the fan.
+fanclips=disksh>fancliph+fanclipholeh+diskgaph*2?1:0;
+fanclipholeheight=diskh-fanclipholeh-2;//disksh/2-fancliph/2-fanclipholeh/2; // Centered at height.
 
 module tappi(screwdiameter,screwbase) {
   cylinder(h=screwbase,d=screwdiameter,$fn=30);
@@ -631,9 +642,9 @@ module aopenclip() {
 	translate([aopencliphandlex,aopenclipdepth-aopenclipw-aopenclipwall,0]) aopenclipshape(1);
       }
       hull() {
-	for (x=[-aopenclipcornerd/2+aopencliphandlex,aopencliphandlex]) {
+	for (x=[-aopenclipcornerd/2+aopencliphandlex-1,aopencliphandlex]) {
 	  translate([x,aopenclipdepth-aopenclipw-aopenclipwall,0]) aopenclipshape(1);
-	  translate([x,-aopenclipw-aopenclipwall,0]) aopenclipshape(1);
+	  translate([x,-aopencliphandlew-aopenclipwall,0]) aopenclipshape(1);
 	}
       }
     }
@@ -809,6 +820,17 @@ module halfholder() {
 	  translate([-0.01,sidewall+sidecutwidth-outsideincornerd,sidebottomthickness]) cube([length+outsideincornerd*2+0.02,outsideincornerd,outsideincornerd/2]);
 	  if (smalldiskslots>0) translate([-0.01,sidewall+smalldisksidecutwidth-outsideincornerd,smalldiskheight]) cube([length+outsideincornerd*2+0.02,outsideincornerd,outsideincornerd/2]);
 
+	  // Clip holes for fan case
+	  if (diskslots>0) {
+	    for (z=[0:diskslotstep:disksh]) {
+	      translate([fanclipholex,sidewall+sidecutwidth-0.01,bottomthickness+z+fanclipholeheight]) cube([fanclipholel,sidewall+0.02,fanclipholeh]);
+
+	      //possible bolt hole? M20 bolt will not fit, need to experiment with smaller ones.
+	      //translate([0,sidewall+sidecutwidth-boltholed()/2,diskslotstep-boltholed()-sidewall]) roundedcylinder(boltholed()+sidewall*2,boltholel(),cornerd,1);
+	    }
+	  }
+			 
+	  
 	  // Lightenin holes, top&bottom
 	  if (full) {
 	    zstart=throughholes?-0.01:bottomthin;
@@ -1276,8 +1298,8 @@ if (guideversion) {
 if (aopenversion) {
   if (print==4 || print==1 || print==3) {
     translate([aopenw+sidewall-aopensloty+aopenslotoutw+0.5,width/2-(aopenclipattachl+aopenclipattachx+guideclipl)/2-10,aopencliph/2]) rotate([0,0,90]) {
-      translate([8,4,0]) rotate([0,0,-8]) aopenclip();
-      translate([8,10+guidew+0.5,0]) rotate([0,0,-8]) aopenclip();
+      translate([11,7,0]) rotate([0,0,-11]) aopenclip();
+      translate([11,13+guidew+0.5,0]) rotate([0,0,-11]) aopenclip();
     }
   }
  }

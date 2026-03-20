@@ -779,6 +779,25 @@ knobaxle and knob make knobs which rotate freely, so that various
 cranks can be made. The axle can be printed in design orientation,
 knob prints better upside down. Use same parameters when using these.
 
+windowframe, windowcut, windowtemplate, windowheight, functions to add
+windows (typically polycarbonate or glass) to 3D prints. These
+functions are used by using windowframe to generate frame, cut out the
+space for the window. When printing, set breakpoints before the first
+layer on top of the window is printed.  I have only tested with
+polycarbonate windows, but glass might also work. There are some
+adherence problems with this. If a slicer supports feature that edges
+are printed from inside out it might help.
+
+recyclingsymbol(type="ABS",size=20,h=0.7,$fn=50) makes a recycling
+symbol used in Europe. Types known are PET, PE_HD, PVC, PE_LD, PP, PS,
+PC, ABAK, ABS, ASA, PETG. There is some variation in standards related
+to this, so this is best effort I could find.
+
+grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) makes a round
+grill which can be used fro various purposes, including fan covers,
+fly swatters, etc. This will not generate round circle around it, you
+need to do that yourself.
+
 ### windowframe
 ### windowcut
 ### windowtemplate
