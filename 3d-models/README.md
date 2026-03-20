@@ -38,6 +38,8 @@ need some adapting. See also "suklaarasiankansi.scad".
 
 ### disk525to35.scad
 
+### Makefile.disk525to35
+
 This is an adapter to put 3.5 inch disk drive to a 5.25 drive slot. It
 is designed to not to need screws, however, with certain cases that
 might not work well due to funky mechanisms to lock things in
@@ -49,29 +51,54 @@ place. There are three versions of this:
 are pushed in to suitable position, either with screw holes, or
 screwhead type such as one used in some HP cases.
 
-3. Side includes licking clips and guides for certain cases.
+3. Side includes locking clips and guides for certain cases (aopen and
+   some unknown case currently supported).
+
+4. Simple version which leaves out all fancy mechanisms.
 
 For case attachment, you can put the stick in upper or lower position,
 as computer cases might have two different screw positions.
 
-printing time on Tronxy X5SA/Pro 400 or Anycubic Chiron takes about 18
-hours, and uses about 200g of filament. No supports are needed, rotate
-so that locking sticks are on the bed, and on moving bed printers bed
-moves in direction of locking sticks to avoid falling over.
+It will make a cover for the adapter, which either has space for a fan
+or slits for airflow. The fan size is selected automatically from
+typical computer fans, but you use forcefantype option to set a
+specific fan type. Notice that it only gives error message if the
+selected fan type is too large for the case. For non-standard fan
+sizes edit fansizetable to add new ones.
+
+Cover uses clips to stay in place. You likely need fan extension cable
+as most fans come with very short cables.
+
+Single slot version printing time on Tronxy X5SA/Pro 400 or Anycubic
+Chiron takes about 18 hours, and uses about 200g of filament. No
+supports are needed, rotate so that locking sticks are on the bed, and
+on moving bed printers bed moves in direction of locking sticks to
+avoid falling over. The more slots you have, longer the printing time,
+going up to 40+ hours for 4 slots.
 
 To save filament and printing time and provide better cooling for the
 disks, default is to make the thing with various cutouts.
 
-If you enable simple version, there is no locking
-mechanism, and the adapter only locks with springs. This does not
-keep things in place very well.
+If you enable simple version, there is no locking mechanism, and the
+adapter and disks only locks with springs. This does not keep things
+in place very well.
 
 Full height 3.5 inch drives will not fit as they are same height as
 5.25 slot. Those are very rare anyway. Maybe this could be adapted by
 removing top and bottom from disk position.
 
+This has been tested with slimline, 1, 2, 3 and 4 slot
+versions. Slimline is not a standard, I assume, I just had one HP case
+with such a slot.
+
+You can force number of 3.5 vs. 2.5 drives. By default, it will do
+maximum number of 3.5 inch drives and use rest of the space for 2.5
+inch.
+
 This makes openscad very slow, so render (F6) first before rotating or
 zooming.
+
+Makefile 
 
 See options in the file.
 
