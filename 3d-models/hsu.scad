@@ -1005,11 +1005,10 @@ module recyclingsymbol(type="ABS",size=20,h=0.7,$fn=50) {
 
 module grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) {
   dstart=centerdiameter;
-  ddistance=centerdiameter*2;
-  //diameter=ind;
-  //wall=1.6;
+  outdiameter=diameter-centerdiameter/2;
+  dsteps=floor(outdiameter/centerdiameter/2);
+  ddistance=(diameter-centerdiameter)/dsteps;
   w=wall/2;//0.8;
-  //thickness=1.6;
   
   firstarea=dstart*dstart*PI;
   translate([-fancoverdepth-fangrilldepth-0.1,0,0]) rotate([0,90,0]) for (d=[dstart:ddistance:diameter-w*2]) {
