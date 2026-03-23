@@ -1,0 +1,56 @@
+SOURCE=disk35.scad
+DEPENDS=hsu.scad Makefile.disk35
+IMAGES=
+
+ALL=disk35base.stl disk35cover.stl disk35plate.stl disk35springs.stl disk35pcbmodel.stl disk35.stl 
+
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
+
+all: $(ALL)
+
+dist: disk35.zip
+
+disk35-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf disk35-distribution
+	rm -f disk35-distribution.zip
+	mkdir -p disk35-distribution
+	cp $(SOURCE) $(DEPENDS) disk35-distribution
+	zip -r $@ disk35-distribution
+	echo $@ built.      
+
+disk35-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf disk35-distribution
+	rm -f disk35-distribution.zip
+	mkdir -p disk35-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) disk35-distribution
+	zip -r $@ disk35-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+disk35base.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk35cover.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk35plate.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk35springs.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk35.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk35pcbmodel.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=7 -o $@ $(SOURCE)
+	echo $@ built.
+
+

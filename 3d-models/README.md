@@ -104,7 +104,7 @@ See options in the file.
 
 ![Image of the 3.5 inch drive adapter for 5.25 inch slot](disk525to35.jpg)
 ![Image of the 3.5 inch drive adapter for 5.25 inch slot with a disk installed](disk525to35-2.jpg)
-![Model in openscad, rotate to this position for printing](disk525to35.png)
+![Model in openscad](disk525to35-3slot-aopen.png)
 
 ### hammasharjateline.scad
 
@@ -1562,3 +1562,7 @@ for 80mm fans. You need short screw/nut pair for this one. I used M4
 ### nappi.scad
 
 Spare missing power&reset button for a computer case.
+
+### disk35.scad
+
+Converts 2.5 inch pata disk to 3.5 form.
