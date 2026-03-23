@@ -10,11 +10,11 @@ include <hsu.scad>
 include <hsubolt.scad>
 
 print=0;
-debug=0;
+debug=1;
 
 // 0: Make a complex version with locking mechanism
 // 1: Make a simple version, with no locking mechanism
-simple=1;
+simple=0;
 
 // Number drive slots to use, 1 is half-height, 2 is full-height, 3 is
 // three half-height, and otherwise the value is taken as height in mm
@@ -27,12 +27,12 @@ simple=1;
 // extrusions. Outside screws will not work for these cases so they
 // are only implemented for the first slot.
 // 0.5 is 30mm low profile 5.25, 2.5 is +10mm higher version of 2 slot, both for HP cases.
-slots=1;//2; // 1,2,3
+slots=2.5;
 
 // Maximum (3.5) disks, rest of space is allocated to 2.5 drives.  If
 // 0, dynamically allocated, 3.5 first and rest of space for 2.5.
 // This will not always fill the space optimally.
-maxdisks=slots==5?6:slots==3?4:slots==2.5?3:slots==2?0:slots==1?0:slots==0.5?1:-1;
+maxdisks=slots==5?6:slots==3?4:slots==2.5?2:slots==2?0:slots==1?0:slots==0.5?1:-1;
 
 // Full version, includes all material saving holes (very slow in openscad - render before rotating view)
 full=1;
@@ -44,11 +44,11 @@ throughholes=1;
 guideversion=0;
 
 // Aopen case
-aopenversion=1;
+aopenversion=0;
 
 // Some cases expect fixed screws in either lower or upper settings. IN PROGRESS
 // Could also be basis for screw-in version
-sideslideversion=0;
+sideslideversion=1;
 
 // Sideslides have fixed screwheads
 sideslidescrewheads=1;
@@ -90,7 +90,7 @@ if (!is_undef(forcefantype)) {
   }
  }
 
-fantype1=(!is_undef(forcefantype)?forcefantype:slots>3?6:slots>2?5:slots>1?3:-1);
+fantype1=(!is_undef(forcefantype)?forcefantype:slots==4?6:slots==3?5:slots==2.5?4:slots==2?4:-1);
 fantype=fantype1>6?6:fantype1;
 
 fansizetable=[[40,32,10],     //0
@@ -507,15 +507,17 @@ fangrilldepth=2;
 fangrillthickness=1.6;
 
 // If no fan, make some cooling holes
-coolingslith=5;
-coolingslitgap=3;
+coolingslith=4;
+coolingslitgap=2.5;
 coolingw=smalldiskw-5;
-coolingh=height-fancoverdepth*2-6;
+coolingh=height-fancoverdepth*2;
 coolingslitw=coolingw/2-5;
 coolingslity=coolingslitgap/2;
 coolingslits=floor(coolingh/(coolingslith+coolingslitgap));
-coolingheight=height/2-coolingh/2;
-coolingtop=height/2+coolingh/2;
+coolingslitsh=coolingslits>0?coolingslith*coolingslits+coolingslitgap*(coolingslits-1):coolingslith;
+echo(coolingh,coolingslits,coolingslith,coolingslitgap,coolingslitsh);
+coolingheight=height/2-coolingslitsh/2;
+coolingtop=height/2+coolingslitsh/2;
 
 // Outside cover
 coverwall=fancoverwall;
@@ -942,7 +944,7 @@ module basebody() {
 module fangrill() {
   dstart=8;
   ddistance=dstart*2;
-  diameter=fand;
+  diameter=fand+dtolerance-0.1; // dtolerance was too large, testing 0.1
   wall=1.6;
   w=0.8;
   thickness=1.6;
@@ -950,15 +952,15 @@ module fangrill() {
   
   difference() {
     union() {
-      translate([-fancoverdepth,0,0]) rotate([0,90,0]) cylinder(d1=fand,d2=fand+(fancoverwall+fancoverfanbaseh),h=fancoverwall+fancoverfanbaseh,$fn=90);
-      translate([-fancoverdepth-fangrilldepth,0,0]) rotate([0,90,0]) roundedcylinder(fand,fangrilldepth+cd,cd,1,90);
+      translate([-fancoverdepth,0,0]) rotate([0,90,0]) cylinder(d1=diameter,d2=diameter+(fancoverwall+fancoverfanbaseh),h=fancoverwall+fancoverfanbaseh,$fn=90);
+      translate([-fancoverdepth-fangrilldepth,0,0]) rotate([0,90,0]) roundedcylinder(diameter,fangrilldepth+cd,cd,1,90);
     }
 
     difference() {
       union() {
 	hull() {
-	  translate([-fancoverdepth,0,-0.01]) rotate([0,90,0]) cylinder(d1=fand-wall*2,d2=fand+2-wall*2,h=fancoverwall+fancoverfanbaseh+0.02,$fn=90);
-	  translate([-fancoverdepth-fangrilldepth-cd/2,0,-0.01]) rotate([0,90,0]) roundedcylinder(fand-wall*2,fangrilldepth+cd+0.02,cd,1,90);
+	  translate([-fancoverdepth,0,-0.01]) rotate([0,90,0]) cylinder(d1=diameter-wall*2,d2=diameter+2-wall*2,h=fancoverwall+fancoverfanbaseh+0.02,$fn=90);
+	  translate([-fancoverdepth-fangrilldepth-cd/2,0,-0.01]) rotate([0,90,0]) roundedcylinder(diameter-wall*2,fangrilldepth+cd+0.02,cd,1,90);
 	}
       }
 
@@ -1034,6 +1036,7 @@ module coverform(w) {
 
       if (w) {
 	translate([-coverdepth,-coverclipw/2,bottomthickness+ztolerance]) roundedbox(coverdepth+coverclipl,coverclipw,covercliph,cornerd);
+	translate([-coverdepth,-coverclipw/2,height-roofthickness-covercliph-ztolerance]) roundedbox(coverdepth+coverclipl,coverclipw,covercliph,cornerd);
       }
       
     for (m=[0,1]) mirror([0,m,0]) for (z=clipheighttable) {
@@ -1120,7 +1123,11 @@ module cover() {
     translate([-1,-coverclipw/2,-cornerd/2]) roundedbox(cornerd+cornerd,coverclipw,cornerd/2+1,0);
     translate([-1,-coverclipw/2,height-1]) roundedbox(cornerd+cornerd,coverclipw,cornerd/2+1,0);
 
-    translate([-fancoverdepth+textdepth-0.01,0,fanheight]) rotate([90,0,-90]) rotate([0,0,45]) translate([0,fand/2+1,0]) linear_extrude(height=textdepth) text(versiontext,size=airholedistancex-2,valign="bottom",halign="center");
+    if (coverwithfan) {
+      translate([-fancoverdepth+textdepth-0.01,0,fanheight]) rotate([90,0,-90]) rotate([0,0,45]) translate([0,fand/2+1,0]) linear_extrude(height=textdepth) text(versiontext,size=airholedistancex-2,valign="bottom",halign="center");
+    } else {
+      translate([-fancoverdepth+textdepth-0.01,coolingslity+coolingslitw+2,height/2]) rotate([90,0,-90]) translate([0,fand/2+1,0]) linear_extrude(height=textdepth) text(versiontext,size=airholedistancex-2,valign="center",halign="right");
+    }
   }
 }
     
@@ -1563,8 +1570,8 @@ module springpushersticksold() {
 if (print==0) {
   //fan();
   intersection() {
-    //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+guideheight]); // Debug guides
-    if (debug) translate([-100,-100,-100]) cube([1000,1000,100+clipheighttable[0]+2]); // Debug guides
+    if (debug) translate([-100,-100,-100]) cube([1000,1000,100+guideheight]); // Debug guides
+    //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+clipheighttable[0]+2]); // Debug guides
     //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+guideheight+4]); // Debug guides
     //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+aopenheight+aopenh/2]); // aopen
     //if (debug) translate([-100,-100,-100]) cube([1000,1000,105+outscrewztable[0]]);
@@ -1695,5 +1702,5 @@ if (print==5 || print==7) {
  }
 
 if (print==6 || print==7) {
-  translate([0,0,fancoverdepth+fangrilldepth]) rotate([0,-90,0]) fangrill();
+  translate([-fanheight,0,fancoverdepth+fangrilldepth]) rotate([0,-90,0]) fangrill();
  }
