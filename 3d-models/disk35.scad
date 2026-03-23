@@ -158,6 +158,8 @@ springtappid=5;
 springtappih=ztolerance+wall+ztolerance;
 springtappinarrowingh=2;
 
+springcornerd=0.5;
+
 // At plate bottom
 module springtower() {
   difference() {
@@ -167,12 +169,12 @@ module springtower() {
 }
 
 module springbar() {
-  translate([0,-springw/2,0]) roundedbox(cornerd,springw,springh,cornerd,springprintable);
+  translate([0,-springw/2,0]) roundedbox(springh,springw,springh,springcornerd,springprintable);
 }
 
 module spring() {
   difference() {
-    translate([-springl/2,-springw/2,springheight]) roundedbox(springl,springw,wall,cornerd,springprintable);
+    translate([-springl/2,-springw/2,springheight]) roundedbox(springl,springw,wall,springcornerd,springprintable);
     translate([-springspacel/2,-springspacew/2,springheight-0.01]) cube([springspacel,springspacew,wall+0.02]);
   }
 
@@ -188,7 +190,7 @@ module spring() {
     }
 
   difference() {
-    translate([-springl/2,-springw/2,springheight+springtoph]) roundedbox(springl,springw,wall,cornerd,springprintable);
+    translate([-springl/2,-springw/2,springheight+springtoph]) roundedbox(springl,springw,wall,springcornerd,springprintable);
     translate([0,0,springheight+springtoph-0.01]) hull() {
       d=springtappid+dtolerance;
       cylinder(d=d,h=wall+0.02,$fn=30);
