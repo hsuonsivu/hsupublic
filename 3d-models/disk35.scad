@@ -6,7 +6,7 @@ include <hsu.scad>
 
 // Box fitting to 3.5inch disk form. This is intended for use with various 3.5 inch
 
-print=5;
+print=0;
 debug=0;
 
 xtolerance=0.30;
@@ -14,6 +14,7 @@ ytolerance=0.30;
 ztolerance=0.20;
 dtolerance=0.60;
 
+maxbridge=10;
 cornerd=1;
 
 diskl=147;
@@ -39,8 +40,8 @@ smalldiskscrewd=3;
 wall=1.6;
 incornerd=2;
 outcornerd=2+wall*2;
-
-coverclipdepth=0.3;
+basecornerd=2;
+coverclipdepth=0.6;
 coverclipd=wall+xtolerance+coverclipdepth;
 
 belowcoverl=diskl-xtolerance*2-wall*2;
@@ -48,19 +49,26 @@ belowcoverw=diskw-xtolerance*2-wall*2;
 belowcoverh=0.5+coverclipd+0.5;
 belowcornerd=incornerd-xtolerance*2;
 
+belowcovercutl=diskl-wall*2;
+belowcovercutw=diskw-wall*2;
+belowcovercuth=0.5+coverclipd+0.5;
+//belowcornerd=incornerd-xtolerance*2;
 
 coverclipl=10;
 coveryclips=2;
 coverxclips=3;
+//coverclipsl=belowcoverl-cornerd*2-xtolerance*2-wall*2-coverclipl*2;
+//coverclipsw=belowcoverw-cornerd*2-ytolerance*2-wall*2-coverclipl*2;
 coverclipsl=belowcoverl-cornerd*2-xtolerance*2-wall*2-coverclipl*2;
 coverclipsw=belowcoverw-cornerd*2-ytolerance*2-wall*2-coverclipl*2;
+coverclipxtable=[diskl/2-coverclipsl/2,diskl/2-diskscrewd,diskl-(diskl/2-coverclipsl/2)-1];
 covercutl=belowcoverl-wall*2;
 covercutw=belowcoverw-wall*2;
 covercuth=belowcoverh+cornerd;
 covercutheight=diskh-wall-covercuth;
 covercutx=diskl/2-covercutl/2;
 covercuty=diskw/2-covercutw/2;
-coverclipheight=diskh-wall-belowcoverh/2;
+coverclipheight=diskh-wall-xtolerance-belowcoverh/2;
 
 versiontext="V1.1";
 textdepth=0.7;
@@ -99,16 +107,22 @@ smallideconnectory=pcbw/2+51.3/2-smallideconnectorw;
 
 connectorcornerd=1;
 
-connectorpcby=wall+incornerd/2+ytolerance;
-pcby=-diskw/2+connectorpcby;
+//connectorpcby=wall+incornerd/2+ytolerance;
+//pcby=-diskw/2+connectorpcby;
+pcby=-pcbw/2;
+// Connector opening
+connectorpcby=-pcbw/2;//wall+incornerd/2+ytolerance;
 pcbx=0;
 tappih=ztolerance+pcbh+1;
 
-smalldisky=pcby+pcbw/2-smalldiskw/2;
+smalldisky=pcby+pcbw/2;
 smalldiskx=pcbl+1;
 
 // Sides, should be higher than tallest potential disk (12.5mm + ztolerance*2)
 smalldisksidewallh=wall+ztolerance+smalldiskmaxh+ztolerance+wall+1;
+
+// Wall support height, just under cover
+sidewallh=baseh-belowcoverh;
 
 // At the disk end, this may not be high as disk needs to be inserted on top of this
 smalldiskbasewallh=wall+ztolerance+1;
@@ -122,7 +136,7 @@ platew=smalldiskw;
 platesideslotl=-xtolerance+smalldiskl/3-xtolerance;
 platesideslotw=wall+ytolerance+smalldiskw+ytolerance+wall;
 platex=smalldiskx;
-platey=smalldisky;
+platey=0;
 
 // Springs to put pressure on disk to keep it in place
 springclipdepth=0.25;
@@ -139,17 +153,22 @@ springtensionh=ztolerance+springspaceh+(smalldiskmaxh-smalldiskh)+2+ztolerance;
 springclipy=springtowerw/2+ytolerance+wall-springclipd/2;
 
 springl=4+xtolerance+springtowerl+xtolerance+4;
-springw=4+ytolerance+springtowerw+ytolerance+4;
+springw=4+ytolerance+springtowerw+ytolerance+2;
 springheight=wall+xtolerance;
 springprintable=4;
 springh=0.8;
 
 echo(springspaceh);
 springxtable=[smalldiskl/4,smalldiskl-smalldiskl/4];
-springytable=[smalldiskw/4,smalldiskw-smalldiskw/4];
+springytable=[-smalldiskw/4,smalldiskw/4];
 
-springmidl=45;
+springmidl=47;
 springmidh=springtensionh/2;
+
+springholell=springmidl-2-springl;
+springholel=min(springholell,maxbridge);
+springholex=(springmidl/2-springl/2)/2+springl/2-wall/2;
+springholew=springw-6;
 
 springtopl=springl;
 springtoph=springtensionh;
@@ -159,6 +178,62 @@ springtappih=ztolerance+wall+ztolerance;
 springtappinarrowingh=2;
 
 springcornerd=0.5;
+
+// Ventilation holes
+holecornerd=1;
+holew=6;
+holegap=6;
+
+// Back wall
+holebackw=holew;
+holebackh=sidewallh-wall-outcornerd/2-2;
+holebackheight=outcornerd/2+2;
+holebackystep=holew+holegap;
+holebackystart=holegap/2;
+holebackyend=diskw/2-outcornerd/2-holegap;
+
+// Front (connector side
+holefrontw=6;
+holefrontheight=wall+ztolerance+powerconnectorh+ztolerance+2;
+holefronth=diskh-holefrontheight-wall-belowcoverh;
+holefrontystep=holew*2;
+holefrontystart=holegap/2;
+holefrontyend=diskw/2-outcornerd/2-holegap-holefrontw;
+
+// Bottom and top holes
+smalldiskventilationholes=3;
+flatholel=(smalldiskl-holegap*2-(smalldiskventilationholes-1)*holegap)/smalldiskventilationholes;
+flatholew=holew;
+flatholelgap=holegap;
+flatholewgap=4;
+flatholeystep=holew+flatholewgap;
+flatholexstep=flatholel+flatholelgap;
+
+// Back small disk support plate
+holediskbackw=holew;
+holediskbackheight=wall+smalldiskbasewallh+ztolerance+2;
+holediskbackh=diskh-wall-holediskbackheight-2;
+holediskbackystep=holew+holegap;
+holediskbackystart=smalldisky+holegap/2;
+holediskbackyend=smalldisky+smalldiskw/2-holegap;
+
+module hole(w,h) {
+  hull() {
+    translate([0,-w/2+holecornerd/2,holecornerd/2]) rotate([0,90,0]) cylinder(d=holecornerd,h=wall*2+0.02,$fn=60);
+    translate([0,w/2-holecornerd/2,holecornerd/2]) rotate([0,90,0]) cylinder(d=holecornerd,h=wall*2+0.02,$fn=60);
+    translate([0,-w/2+holecornerd/2,h-holecornerd/2]) rotate([0,90,0]) cylinder(d=holecornerd,h=wall*2+0.02,$fn=60);
+    translate([0,w/2-holecornerd/2,h-holecornerd/2]) rotate([0,90,0]) cylinder(d=holecornerd,h=wall*2+0.02,$fn=60);
+  }
+}
+
+module flathole(l,w) {
+  hull() {
+    translate([-l/2+holecornerd/2,-w/2+holecornerd/2,-0.01]) cylinder(d=holecornerd,h=wall+0.02,$fn=60);
+    translate([-l/2+holecornerd/2,w/2-holecornerd/2,-0.01]) cylinder(d=holecornerd,h=wall+0.02,$fn=60);
+    translate([l/2-holecornerd/2,-w/2+holecornerd/2,-0.01]) cylinder(d=holecornerd,h=wall+0.02,$fn=60);
+    translate([l/2-holecornerd/2,w/2-holecornerd/2,-0.01]) cylinder(d=holecornerd,h=wall+0.02,$fn=60);
+  }
+}
 
 // At plate bottom
 module springtower() {
@@ -174,41 +249,96 @@ module springbar() {
 
 module spring() {
   difference() {
-    translate([-springl/2,-springw/2,springheight]) roundedbox(springl,springw,wall,springcornerd,springprintable);
-    translate([-springspacel/2,-springspacew/2,springheight-0.01]) cube([springspacel,springspacew,wall+0.02]);
-  }
+    union() {
+      difference() {
+	translate([-springl/2,-springw/2,springheight]) roundedbox(springl,springw,wall,springcornerd,springprintable);
+	translate([-springspacel/2,-springspacew/2,springheight-0.01]) cube([springspacel,springspacew,wall+0.02]);
+      }
 
-  for (m=[0,1]) mirror([m,0,0]) {
-      hull() {
-	translate([-springl/2,0,springheight]) springbar();
-	translate([-springmidl/2,0,springheight+springmidh]) springbar();
+      for (m=[0,1]) mirror([m,0,0]) {
+	hull() {
+	  translate([-springl/2,0,springheight]) springbar();
+	  translate([-springmidl/2,0,springheight+springmidh]) springbar();
+	}
+	hull() {
+	  translate([-springmidl/2,0,springheight+springmidh]) springbar();
+	  translate([-springl/2,0,springheight+springtoph+wall-springh]) springbar();
+	}
       }
-      hull() {
-	translate([-springmidl/2,0,springheight+springmidh]) springbar();
-	translate([-springl/2,0,springheight+springtoph+wall-springh]) springbar();
+
+      difference() {
+	translate([-springl/2,-springw/2,springheight+springtoph]) roundedbox(springl,springw,wall,springcornerd,springprintable);
+	translate([0,0,springheight+springtoph-0.01]) hull() {
+	  d=springtappid+dtolerance;
+	  cylinder(d=d,h=wall+0.02,$fn=30);
+	  translate([-d/4,0,0]) cube([d/2,d/2,wall+0.02]);
+	}
       }
+
+      for (m=[0,1]) mirror([0,m,0]) translate([0,-springclipy,springclipheight]) tubeclip(springclipl,springclipd,0);
     }
 
-  difference() {
-    translate([-springl/2,-springw/2,springheight+springtoph]) roundedbox(springl,springw,wall,springcornerd,springprintable);
-    translate([0,0,springheight+springtoph-0.01]) hull() {
-      d=springtappid+dtolerance;
-      cylinder(d=d,h=wall+0.02,$fn=30);
-      translate([-d/4,0,0]) cube([d/2,d/2,wall+0.02]);
-    }
+    for (m=[0,1]) mirror([m,0,0]) {
+	translate([springholex-springholel/2,-springholew/2,0]) roundedbox(springholel,springholew,springheight+springtoph,cornerd,0);
+      }
   }
-
-  for (m=[0,1]) mirror([0,m,0]) translate([0,-springclipy,springclipheight]) tubeclip(springclipl,springclipd,0);
 }
 
-module plate() {
-  translate([0,0,0]) roundedbox(platel,platew,plateh,cornerd,1);
-  translate([platel/2-platesideslotl/2,platew/2-platesideslotw/2,0]) roundedbox(platesideslotl,platesideslotw,plateh,cornerd,1);
+ribytable=[-smalldiskw/2,springytable[0]-springw/2-ytolerance-wall,springytable[0]+springw/2+ytolerance,-wall/2];
 
-  for (x=springxtable) {
-    for (y=springytable) {
-      translate([x,y,0]) springtower();
+module plate() {
+  difference() {
+    union() {
+      translate([0,-smalldiskw/2,0]) roundedbox(platel,platew,plateh,cornerd,1);
+      translate([platel/2-platesideslotl/2,-platesideslotw/2,0]) roundedbox(platesideslotl,platesideslotw,plateh,cornerd,1);
+
+      for (x=springxtable) {
+	for (y=springytable) {
+	  translate([x,y,0]) springtower();
+	}
+      }
+
+      // Ribs to make it more stiff
+      for (m=[0,1]) mirror([0,m,0]) for (y=ribytable) {
+	  hull() {
+	    translate([0,y,0]) roundedbox(wall,wall,plateh,cornerd,1);
+	    translate([springxtable[0]-wall/2,y,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	    translate([springxtable[1]-wall/2,y,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	    translate([smalldiskl-wall,y,0]) roundedbox(wall,wall,plateh,cornerd,1);
+	  }
+	}
+
+      for (m=[0,1]) mirror([0,m,0]) {
+	hull() {
+	  translate([smalldiskl/2-wall/2,-smalldiskw/2,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	  translate([smalldiskl/2-wall/2,springytable[0]-springw/2-ytolerance-wall,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	  translate([smalldiskl/2-wall/2,0,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	}
+	
+	for (x=[smalldiskl/4-wall/2,smalldiskl-smalldiskl/4-wall/2]) {
+	  hull() {
+	    translate([x,springytable[0]+springw/2+ytolerance,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	    translate([x,0,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	  }
+	  hull() {
+	    translate([x,springytable[0]-springw/2-ytolerance-wall,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	    translate([x,-platew/2,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	  }
+	}
+      }
     }
+
+    // Cut ventilation holes to the plate
+    for (m=[0,1]) mirror([0,m,0]) {
+	for (x=[smalldiskl/4:smalldiskl/4:smalldiskl]) {
+	  for (y=[(ribytable[0]+ribytable[1]+wall)/2,(ribytable[2]+ribytable[3]+wall)/2]) {
+	    translate([x-smalldiskl/8,y,0]) flathole(platel/5,platew/12);
+	  }
+	}
+	translate([platel/2,0,0]) for (n=[0,1]) mirror([n,0,0]) translate([platel/4,0,0]) for (m=[0,1]) mirror([m,0,0]) for (y=[(ribytable[1]+ribytable[2]+wall)/2]) {
+	      translate([-platel/8-springl/4,y,0]) flathole(platel/4-springl,springw-2);
+	    }
+      }
   }
 }
 
@@ -249,31 +379,52 @@ module screwholes() {
 module coverclips(t) {
   // Cover clips
   for (y=[-coverclipsw/2,0,coverclipsw/2]) {
-    for (x=[wall+xtolerance+wall-coverclipd/2,diskl-(wall+xtolerance+wall-coverclipd/2)]) {
+    for (x=[coverclipd/2,diskl-coverclipd/2]) {
       translate([x,y,coverclipheight]) rotate([0,0,90]) tubeclip(coverclipl,coverclipd,t);
     }
   }
 
-  for (x=[diskl/2-coverclipsl/2,diskl/2,diskl-(diskl/2-coverclipsl/2)]) {
-    for (y=[wall+xtolerance+wall-coverclipd/2,diskw-(wall+xtolerance+wall-coverclipd/2)]) {
+  for (x=coverclipxtable) {
+    for (y=[coverclipd/2,diskw-coverclipd/2]) {
       translate([x,-diskw/2+y,coverclipheight]) tubeclip(coverclipl,coverclipd,t);
     }
   }
 }
 
+
 module disk35() {
   difference() {
     union() {
       difference() {
-	intersection() {
-	  translate([0,-diskw/2,0]) roundedbox(diskl,diskw,baseh+outcornerd/2,outcornerd,1);
-	  translate([0,-diskw/2,0]) cube([diskl,diskw,baseh]);
+	union() {
+	  translate([diskl/2-belowcoverl/2,-belowcoverw/2,0]) roundedboxxyz(belowcoverl,belowcoverw,baseh,outcornerd,basecornerd,1,90);
+	  translate([0,-diskw/2,0]) roundedboxxyz(diskl,diskw,baseh-belowcoverh,outcornerd,basecornerd,1,90);
 	}
-	translate([wall,-diskw/2+wall,wall]) roundedbox(diskl-wall*2,diskw-wall*2,baseh+incornerd,incornerd,0);
+	
+	//translate([wall,-diskw/2+wall,wall]) roundedbox(diskl-wall*2,diskw-wall*2,baseh+incornerd,incornerd,0);
+
+	translate([wall,-diskw/2+wall,wall]) roundedbox(diskl-wall*2,diskw-wall*2,baseh-belowcoverh-wall*2-coverh,incornerd,0);
+	translate([wall,-diskw/2+wall,wall+incornerd/2]) roundedboxxyz(diskl-wall*2,diskw-wall*2,baseh-belowcoverh-wall*2-coverh-incornerd/2,incornerd,0,0,90);
+	hull() {
+	  translate([wall,-diskw/2+wall,baseh-belowcoverh-wall*2-0.1]) roundedboxxyz(diskl-wall*2,diskw-wall*2,0.1,incornerd,0,0,90);
+	  translate([diskl/2-belowcoverl/2+wall,-belowcoverw/2+wall,baseh-belowcoverh]) roundedboxxyz(belowcoverl-wall*2,belowcoverw-wall*2,0.1,incornerd,0,0,90);
+	}
+	translate([diskl/2-belowcoverl/2+wall,-belowcoverw/2+wall,baseh-belowcoverh]) roundedboxxyz(belowcoverl-wall*2,belowcoverw-wall*2,belowcoverh+0.01,incornerd,0,0,90);
+
+	difference() {
+	  translate([-0.01,-diskw/2-0.01,baseh-belowcoverh]) roundedboxxyz(diskl+0.02,diskw+0.02,belowcoverh+coverh,incornerd,0,0,90);
+	  translate([diskl/2-belowcoverl/2,-belowcoverw/2,baseh-belowcoverh]) roundedboxxyz(belowcoverl,belowcoverw,belowcoverh,incornerd,0,0,90);
+	}
+	
+	if (0) difference() {
+	  translate([wall+xtolerance,-diskw/2+wall+ytolerance,diskh-belowcoverh-wall]) roundedboxxyz(belowcoverl,belowcoverw,belowcoverh+wall,belowcornerd,cornerd,0,90);
+	  translate([covercutx,-diskw/2+covercuty,covercutheight]) roundedbox(covercutl,covercutw,covercuth,cornerd,0);
+	}
+
 
 	// Open connectorhole
 	//translate([-0.01,-diskw/2+connectorpcby,wall]) cube([pcbl+0.02,ytolerance+pcbw+ytolerance,ztolerance+powerconnectorh+ztolerance]);
-	translate([-0.01,-diskw/2+connectorpcby,wall]) cube([pcbl+0.02,ytolerance+pcbw+ytolerance,diskh-wall-ztolerance]);
+	translate([-0.01,connectorpcby,wall]) cube([pcbl+0.02,ytolerance+pcbw+ytolerance,diskh-wall-ztolerance]);
 
 	coverclips(dtolerance);
       }
@@ -285,25 +436,50 @@ module disk35() {
       }
   
       // Structures around the dist to keep it in place
-      translate([smalldiskx+smalldiskl+xtolerance,smalldisky-ytolerance-wall,0]) roundedbox(wall,wall+ytolerance+smalldiskw+ytolerance+wall,wall+smalldiskbasewallh,cornerd,0);
-      for (y=[smalldisky-ytolerance-wall,smalldisky+smalldiskw+ytolerance]) {
+      translate([smalldiskx+smalldiskl+xtolerance,smalldisky-smalldiskw/2-ytolerance-wall,0]) roundedbox(wall,wall+ytolerance+smalldiskw+ytolerance+wall,wall+smalldiskbasewallh,cornerd,0);
+      for (y=[smalldisky-smalldiskw/2-ytolerance-wall,smalldisky+smalldiskw/2+ytolerance]) {
 	translate([smalldiskx,y,0]) roundedbox(smalldiskl/3,wall,smalldisksidewallh,cornerd,0);
 	translate([smalldiskx+smalldiskl-smalldiskl/3,y,0]) roundedbox(smalldiskl/3+xtolerance+wall,wall,smalldisksidewallh,cornerd,0);
       }
 
       for (x=[smalldiskx,smalldiskx+smalldiskl-smalldiskl/3]) {
 	hull() {
-	  translate([x,-diskw/2,outcornerd/2]) roundedbox(wall,wall,smalldisksidewallh-outcornerd/2,cornerd,0);
+	  translate([x,-diskw/2+wall+ytolerance,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd/2,cornerd,0);
+	  translate([x,-diskw/2+0.01,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd,cornerd,0);
 	  translate([x,-diskw/2+outcornerd/2,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
-	  translate([x,smalldisky-ytolerance-wall,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
+	  translate([x,smalldisky-smalldiskw/2-ytolerance-wall,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
 	}
 	hull() {
-	  translate([x,smalldisky+smalldiskw+ytolerance,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
+	  translate([x,smalldisky+smalldiskw/2+ytolerance,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
 	  translate([x,diskw/2-outcornerd/2-wall,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
-	  translate([x,diskw/2-wall,outcornerd/2]) roundedbox(wall,wall,smalldisksidewallh-outcornerd/2,cornerd,0);
+	  translate([x,diskw/2-wall-0.01,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd,cornerd,0);
+	  translate([x,diskw/2-wall*2-xtolerance,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd/2,cornerd,0);
 	}
       }
+
+      for (m=[0,1]) mirror([0,m,0]) for (xx=coverclipxtable) {
+	  for (x=[-coverclipl/2+xx-wall,coverclipl/2+xx]) {
+	    hull() {
+	      translate([x,-diskw/2+wall+ytolerance,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd/2,cornerd,0);
+	      translate([x,-diskw/2+0.01,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd,cornerd,0);
+	      translate([x,-diskw/2+outcornerd/2,0]) roundedbox(wall,wall,sidewallh-outcornerd/2,cornerd,0);
+	      translate([x,pcby-ytolerance-wall,0]) roundedbox(wall,wall,wall+pcbh,cornerd,0);
+	    }
+	  }
+	}
     }
+    
+    for (m=[0,1]) mirror([0,m,0]) for (x=[smalldiskx+flatholelgap+flatholel/2:flatholexstep:smalldiskx+smalldiskl-flatholelgap]) {
+	for (y=[holegap/2+flatholew/2:flatholeystep:smalldiskw/2-holegap/2-flatholew/2]) {
+	  translate([x,y,0]) flathole(flatholel,flatholew);
+	}
+      }
+    
+    for (m=[0,1]) mirror([0,m,0]) for (y=[holebackystart:holebackystep:holebackyend]) {
+	translate([diskl-wall*2-0.01,y+holebackw/2,holebackheight]) {
+	  hole(holebackw,holebackh);
+	}
+      }
 
     screwholes();
   }
@@ -314,11 +490,10 @@ module cover() {
     union() {
       difference() {
 	union() {
-	  translate([0,-diskw/2,diskh-wall]) roundedboxxyz(diskl,diskw,wall,outcornerd,cornerd,2,90);
-	  translate([wall+xtolerance,-diskw/2+wall+ytolerance,diskh-belowcoverh-wall]) roundedboxxyz(belowcoverl,belowcoverw,belowcoverh+wall,belowcornerd,cornerd,0,90);
+	  translate([0,-diskw/2,diskh-wall-belowcoverh]) roundedboxxyz(diskl,diskw,belowcoverh+wall,outcornerd,cornerd,2,90);
 	}
 
-	translate([covercutx,-diskw/2+covercuty,covercutheight]) roundedbox(covercutl,covercutw,covercuth,cornerd,0);
+	translate([diskl/2-belowcovercutl/2,-belowcovercutw/2,diskh-wall-belowcoverh-0.01]) roundedboxxyz(belowcovercutl,belowcovercutw,belowcoverh+0.01,belowcornerd,0,0,90);
       }
   
       for (x=springxtable) {
@@ -332,8 +507,8 @@ module cover() {
 
       // Connector hole
       ch=wall+ztolerance+powerconnectorh+ztolerance;
-      translate([0,-diskw/2+connectorpcby+ytolerance,ch]) roundedbox(wall,pcbw,diskh-ch,cornerd,2);
-      for (y=[-diskw/2+connectorpcby+ytolerance,-diskw/2+connectorpcby+ytolerance+pcbw-wall]) {
+      translate([0,connectorpcby+ytolerance,ch]) roundedbox(wall,pcbw,diskh-ch,cornerd,2);
+      for (y=[connectorpcby+ytolerance,connectorpcby+ytolerance+pcbw-wall]) {
 	hull() {
 	  translate([0,y,ch]) roundedbox(wall,wall,diskh-ch,cornerd,2);
 	  translate([10,y,diskh-wall]) roundedbox(wall,wall,wall,cornerd,2);
@@ -365,15 +540,39 @@ module cover() {
 
       // Back of disk wall
       h=wall+smalldiskbasewallh+ztolerance;
-      translate([smalldiskx+smalldiskl+xtolerance,smalldisky,h]) roundedbox(wall,smalldiskw,diskh-h,cornerd,0);
-      for (y=[-smalldiskw/2,smalldiskw/2-wall]) {
+      translate([smalldiskx+smalldiskl+xtolerance,smalldisky-smalldiskw/2,h]) roundedbox(wall,smalldiskw,diskh-h,cornerd,0);
+      for (y=[-smalldiskw/2,-wall/2,smalldiskw/2-wall]) {
 	hull() {
-	  translate([smalldiskx+smalldiskl+xtolerance,smalldisky+smalldiskw/2+y,h]) roundedbox(wall,wall,diskh-h,cornerd,0);
-	  translate([smalldiskx+smalldiskl+xtolerance+6,smalldisky+smalldiskw/2+y,diskh-wall]) roundedbox(wall,wall,wall,cornerd,0);
+	  translate([smalldiskx+smalldiskl+xtolerance,smalldisky+y,h]) roundedbox(wall*2,wall,diskh-h,cornerd,0);
+	  translate([smalldiskx+smalldiskl+xtolerance+6,smalldisky+y,diskh-wall]) roundedbox(wall,wall,wall,cornerd,0);
 	}
       }
     }
 
+    // Ventilation holes on cover
+    holesl=flatholel*4+holegap*3;
+    for (m=[0,1]) mirror([0,m,0]) {
+	for (i=[0,2,3]) {
+	  for (j=[i>0?1:0:1:3]) {
+	    x=diskl/2-holesl/2+flatholel/2+j*holesl/4;
+	    y=holegap/2+flatholew/2+i*flatholeystep;
+	    translate([x,y,diskh-wall]) flathole(flatholel,flatholew);
+	  }
+	}
+      }
+
+    for (m=[0,1]) mirror([0,m,0]) for (y=[holefrontystart:holefrontystep:holefrontyend]) {
+	translate([-0.01,y+holefrontw/2,holefrontheight]) {
+	  hole(holefrontw,holefronth);
+	}
+      }
+    
+    for (m=[0,1]) mirror([0,m,0]) for (y=[holediskbackystart:holediskbackystep:holediskbackyend]) {
+	translate([smalldiskx+smalldiskl+xtolerance-0.01,y+holediskbackw/2,holediskbackheight]) {
+	  hole(holediskbackw,holediskbackh);
+	}
+      }
+    
     screwholes();
   }
 }
@@ -381,13 +580,14 @@ module cover() {
 if (print==0) {
   intersection() {
     //if (debug) translate([-100,-100+30,-100]) cube([300,25,300]);
-    if (debug) translate([-100,-diskw/2,-100]) cube([300,diskw-10,300]);
+    if (debug) translate([-100,-100,-100]) cube([115,300,300]);
+    //if (debug) translate([-100,-diskw/2,-100]) cube([300,diskw-10,300]);
     difference() {
 
       union() {
-	disk35();
+	//disk35();
 	translate([platex,platey,plateheight]) plate();
-	#      cover();
+	cover();
       
 	for (x=springxtable) {
 	  for (y=springytable) {
@@ -396,7 +596,7 @@ if (print==0) {
 	}
       }
       translate([0,pcby,wall+ztolerance]) %contactpcb();
-      translate([smalldiskx,smalldisky,wall+ztolerance]) #smalldisk();
+      //translate([smalldiskx,smalldisky,wall+ztolerance]) #smalldisk();
     }
   }
  }
@@ -410,7 +610,7 @@ if (print==2 || print==5) {
  }
 
 if (print==3 || print==5) {
-  translate([diskl-wall+0.5+platesideslotw,0,0]) rotate([0,0,90]) plate();
+  translate([diskl+0.5+platesideslotw/2,0,0]) rotate([0,0,90]) plate();
  }
 
 if (print==4 || print==5) {

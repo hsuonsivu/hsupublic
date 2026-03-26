@@ -1565,4 +1565,25 @@ Spare missing power&reset button for a computer case.
 
 ### disk35.scad
 
-Converts 2.5 inch pata disk to 3.5 form.
+### Makefile.disk35
+
+This uses LGH-IDE-k part which is available through sellers such as
+aliexpress and various suppliers.
+
+Note: this is work-in-progress, as I do not yet have the pcb for
+testing and have not yet verified the fit.  
+
+Converts 2.5 inch pata disk to 3.5 form. The disk is held in place
+with springs so it, in theory should accommodate any disks from 7 to
+12.5mm. 9mm is currently common, but many ssd:s are 7mm and
+high-capacity or older disks are up to 12.5mm thick. 
+
+Cover is held with clips.
+
+Makefile.disk35 makes all parts, which do not need supports for printing.
+
+
+
+
+
+
