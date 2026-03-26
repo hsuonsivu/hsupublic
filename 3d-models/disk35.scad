@@ -6,7 +6,7 @@ include <hsu.scad>
 
 // Box fitting to 3.5inch disk form. This is intended for use with various 3.5 inch
 
-print=0;
+print=5;
 debug=0;
 
 xtolerance=0.30;
@@ -40,13 +40,13 @@ smalldiskscrewd=3;
 wall=1.6;
 incornerd=2;
 outcornerd=2+wall*2;
-basecornerd=2;
+basecornerd=3;
 coverclipdepth=0.6;
 coverclipd=wall+xtolerance+coverclipdepth;
 
 belowcoverl=diskl-xtolerance*2-wall*2;
 belowcoverw=diskw-xtolerance*2-wall*2;
-belowcoverh=0.5+coverclipd+0.5;
+belowcoverh=0.5+coverclipd+cornerd+0.5;
 belowcornerd=incornerd-xtolerance*2;
 
 belowcovercutl=diskl-wall*2;
@@ -54,13 +54,13 @@ belowcovercutw=diskw-wall*2;
 belowcovercuth=0.5+coverclipd+0.5;
 //belowcornerd=incornerd-xtolerance*2;
 
-coverclipl=10;
+coverclipl=15;
 coveryclips=2;
 coverxclips=3;
 //coverclipsl=belowcoverl-cornerd*2-xtolerance*2-wall*2-coverclipl*2;
 //coverclipsw=belowcoverw-cornerd*2-ytolerance*2-wall*2-coverclipl*2;
-coverclipsl=belowcoverl-cornerd*2-xtolerance*2-wall*2-coverclipl*2;
-coverclipsw=belowcoverw-cornerd*2-ytolerance*2-wall*2-coverclipl*2;
+coverclipsl=belowcoverl-basecornerd*2-xtolerance*2-wall*2-coverclipl;
+coverclipsw=belowcoverw-basecornerd*2-ytolerance*2-wall*2-coverclipl;
 coverclipxtable=[diskl/2-coverclipsl/2,diskl/2-diskscrewd,diskl-(diskl/2-coverclipsl/2)-1];
 covercutl=belowcoverl-wall*2;
 covercutw=belowcoverw-wall*2;
@@ -68,15 +68,17 @@ covercuth=belowcoverh+cornerd;
 covercutheight=diskh-wall-covercuth;
 covercutx=diskl/2-covercutl/2;
 covercuty=diskw/2-covercutw/2;
-coverclipheight=diskh-wall-xtolerance-belowcoverh/2;
 
-versiontext="V1.1";
+versiontext="V0.9";
 textdepth=0.7;
 textsize=7;
 textfont="Liberation Sans:style=Bold";
+versiontextl=textlen(versiontext,textsize)+2;
 
 coverh=wall;
 baseh=diskh-ztolerance-coverh;
+
+coverclipheight=baseh-belowcoverh+coverclipd/2+dtolerance/2;
 
 // This one I just ordered from aliexpress
 
@@ -158,7 +160,6 @@ springheight=wall+xtolerance;
 springprintable=4;
 springh=0.8;
 
-echo(springspaceh);
 springxtable=[smalldiskl/4,smalldiskl-smalldiskl/4];
 springytable=[-smalldiskw/4,smalldiskw/4];
 
@@ -168,7 +169,7 @@ springmidh=springtensionh/2;
 springholell=springmidl-2-springl;
 springholel=min(springholell,maxbridge);
 springholex=(springmidl/2-springl/2)/2+springl/2-wall/2;
-springholew=springw-6;
+springholew=springw-5;
 
 springtopl=springl;
 springtoph=springtensionh;
@@ -281,6 +282,8 @@ module spring() {
     for (m=[0,1]) mirror([m,0,0]) {
 	translate([springholex-springholel/2,-springholew/2,0]) roundedbox(springholel,springholew,springheight+springtoph,cornerd,0);
       }
+
+    translate([0,springw/2-cornerd/2,springheight+springtoph+wall-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text(versiontext,size=(springw-springholew-cornerd)/2,valign="top",halign="center");
   }
 }
 
@@ -289,56 +292,64 @@ ribytable=[-smalldiskw/2,springytable[0]-springw/2-ytolerance-wall,springytable[
 module plate() {
   difference() {
     union() {
-      translate([0,-smalldiskw/2,0]) roundedbox(platel,platew,plateh,cornerd,1);
-      translate([platel/2-platesideslotl/2,-platesideslotw/2,0]) roundedbox(platesideslotl,platesideslotw,plateh,cornerd,1);
+      difference() {
+	union() {
+	  translate([0,-smalldiskw/2,0]) roundedbox(platel,platew,plateh,cornerd,1);
+	  translate([platel/2-platesideslotl/2,-platesideslotw/2,0]) roundedbox(platesideslotl,platesideslotw,plateh,cornerd,1);
 
-      for (x=springxtable) {
-	for (y=springytable) {
-	  translate([x,y,0]) springtower();
-	}
-      }
-
-      // Ribs to make it more stiff
-      for (m=[0,1]) mirror([0,m,0]) for (y=ribytable) {
-	  hull() {
-	    translate([0,y,0]) roundedbox(wall,wall,plateh,cornerd,1);
-	    translate([springxtable[0]-wall/2,y,0]) roundedbox(wall,wall,plateribh,cornerd,1);
-	    translate([springxtable[1]-wall/2,y,0]) roundedbox(wall,wall,plateribh,cornerd,1);
-	    translate([smalldiskl-wall,y,0]) roundedbox(wall,wall,plateh,cornerd,1);
+	  for (x=springxtable) {
+	    for (y=springytable) {
+	      translate([x,y,0]) springtower();
+	    }
 	  }
-	}
 
-      for (m=[0,1]) mirror([0,m,0]) {
-	hull() {
-	  translate([smalldiskl/2-wall/2,-smalldiskw/2,0]) roundedbox(wall,wall,plateribh,cornerd,1);
-	  translate([smalldiskl/2-wall/2,springytable[0]-springw/2-ytolerance-wall,0]) roundedbox(wall,wall,plateribh,cornerd,1);
-	  translate([smalldiskl/2-wall/2,0,0]) roundedbox(wall,wall,plateribh,cornerd,1);
-	}
+	  // Ribs to make it more stiff
+	  for (m=[0,1]) mirror([0,m,0]) for (y=ribytable) {
+	      hull() {
+		translate([0,y,0]) roundedbox(wall,wall,plateh,cornerd,1);
+		translate([springxtable[0]-wall/2,y,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+		translate([springxtable[1]-wall/2,y,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+		translate([smalldiskl-wall,y,0]) roundedbox(wall,wall,plateh,cornerd,1);
+	      }
+	    }
+
+	  for (m=[0,1]) mirror([0,m,0]) {
+	    hull() {
+	      translate([smalldiskl/2-wall/2,-smalldiskw/2,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	      translate([smalldiskl/2-wall/2,springytable[0]-springw/2-ytolerance-wall,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	      translate([smalldiskl/2-wall/2,0,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	    }
 	
-	for (x=[smalldiskl/4-wall/2,smalldiskl-smalldiskl/4-wall/2]) {
-	  hull() {
-	    translate([x,springytable[0]+springw/2+ytolerance,0]) roundedbox(wall,wall,plateribh,cornerd,1);
-	    translate([x,0,0]) roundedbox(wall,wall,plateribh,cornerd,1);
-	  }
-	  hull() {
-	    translate([x,springytable[0]-springw/2-ytolerance-wall,0]) roundedbox(wall,wall,plateribh,cornerd,1);
-	    translate([x,-platew/2,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	    for (x=[smalldiskl/4-wall/2,smalldiskl-smalldiskl/4-wall/2]) {
+	      hull() {
+		translate([x,springytable[0]+springw/2+ytolerance,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+		translate([x,0,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	      }
+	      hull() {
+		translate([x,springytable[0]-springw/2-ytolerance-wall,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+		translate([x,-platew/2,0]) roundedbox(wall,wall,plateribh,cornerd,1);
+	      }
+	    }
 	  }
 	}
+
+	// Cut ventilation holes to the plate
+	for (m=[0,1]) mirror([0,m,0]) {
+	    for (x=[smalldiskl/4:smalldiskl/4:smalldiskl]) {
+	      for (y=[(ribytable[0]+ribytable[1]+wall)/2,(ribytable[2]+ribytable[3]+wall)/2]) {
+		translate([x-smalldiskl/8,y,0]) flathole(platel/5,platew/12);
+	      }
+	    }
+	    translate([platel/2,0,0]) for (n=[0,1]) mirror([n,0,0]) translate([platel/4,0,0]) for (m=[0,1]) mirror([m,0,0]) for (y=[(ribytable[1]+ribytable[2]+wall)/2]) {
+		  translate([-platel/8-springl/4,y,0]) flathole(platel/4-springl,springw-2);
+		}
+	  }
+
       }
+      translate([platel/2-versiontextl-cornerd/2,cornerd/2,0]) roundedbox(versiontextl+cornerd/2,textsize+1+wall/2,plateh,cornerd,1);
     }
 
-    // Cut ventilation holes to the plate
-    for (m=[0,1]) mirror([0,m,0]) {
-	for (x=[smalldiskl/4:smalldiskl/4:smalldiskl]) {
-	  for (y=[(ribytable[0]+ribytable[1]+wall)/2,(ribytable[2]+ribytable[3]+wall)/2]) {
-	    translate([x-smalldiskl/8,y,0]) flathole(platel/5,platew/12);
-	  }
-	}
-	translate([platel/2,0,0]) for (n=[0,1]) mirror([n,0,0]) translate([platel/4,0,0]) for (m=[0,1]) mirror([m,0,0]) for (y=[(ribytable[1]+ribytable[2]+wall)/2]) {
-	      translate([-platel/8-springl/4,y,0]) flathole(platel/4-springl,springw-2);
-	    }
-      }
+    translate([platel/2-cornerd/2-versiontextl/2,wall/2+0.5+textsize/2,plateh-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
   }
 }
 
@@ -359,6 +370,8 @@ module contactpcb() {
 
     translate([pcbscrewholex,pcbw/2-pcbscrewholew/2,-0.01]) cylinder(d=pcbscrewd+dtolerance,h=pcbh+0.02,$fn=60);
     translate([pcbscrewholex,pcbw/2+pcbscrewholew/2,-0.01]) cylinder(d=pcbscrewd+dtolerance,h=pcbh+0.02,$fn=60);
+
+    translate([powerconnectorl+(pcbl-powerconnectorl)/2,pcbw/2,pcbh-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
   }
 }
 
@@ -379,7 +392,7 @@ module screwholes() {
 module coverclips(t) {
   // Cover clips
   for (y=[-coverclipsw/2,0,coverclipsw/2]) {
-    for (x=[coverclipd/2,diskl-coverclipd/2]) {
+    for (x=[diskl-coverclipd/2]) {
       translate([x,y,coverclipheight]) rotate([0,0,90]) tubeclip(coverclipl,coverclipd,t);
     }
   }
@@ -397,7 +410,7 @@ module disk35() {
     union() {
       difference() {
 	union() {
-	  translate([diskl/2-belowcoverl/2,-belowcoverw/2,0]) roundedboxxyz(belowcoverl,belowcoverw,baseh,outcornerd,basecornerd,1,90);
+	  translate([diskl/2-belowcoverl/2,-belowcoverw/2,0]) roundedboxxyz(belowcoverl,belowcoverw,baseh,outcornerd,cornerd,1,90);
 	  translate([0,-diskw/2,0]) roundedboxxyz(diskl,diskw,baseh-belowcoverh,outcornerd,basecornerd,1,90);
 	}
 	
@@ -482,6 +495,9 @@ module disk35() {
       }
 
     screwholes();
+
+    translate([textsize+2,0,textdepth-0.01]) rotate([180,0,-90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
+    translate([textsize+2,0,wall-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
   }
 }
 
@@ -574,6 +590,9 @@ module cover() {
       }
     
     screwholes();
+
+    translate([textsize+2,diskw/2-versiontextl-cornerd/2-2,diskh-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
+    translate([textsize+2,diskw/2-versiontextl-cornerd/2-2,diskh-wall+textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
   }
 }
 
@@ -585,7 +604,7 @@ if (print==0) {
     difference() {
 
       union() {
-	//disk35();
+	disk35();
 	translate([platex,platey,plateheight]) plate();
 	cover();
       
