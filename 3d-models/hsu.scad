@@ -629,12 +629,13 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
 }
 
 module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
+  echo("roundedboxxyz ",x,y,z,dxy,dzin,printable,fn);
   if (dzin==0) {
     hull() {
-      translate([dxy/2,dxy/2,0]) cylinder(d=dxy,h=z);
-      translate([x-dxy/2,dxy/2,0]) cylinder(d=dxy,h=z);
-      translate([dxy/2,y-dxy/2,0]) cylinder(d=dxy,h=z);
-      translate([x-dxy/2,y-dxy/2,0]) cylinder(d=dxy,h=z);
+      translate([dxy/2,dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
+      translate([x-dxy/2,dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
+      translate([dxy/2,y-dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
+      translate([x-dxy/2,y-dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
     }
   } else {
     dz=dzin>0?dzin:0.01;
