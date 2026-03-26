@@ -184,12 +184,12 @@ module roundedtriangle(x,y,z,mode,cornerd) {
 	  x2=-sqrt(tan(a)*c/2*tan(a)*c/2+c/2*c/2);  //-c/2*sin(a);
 	  x3=0; //-c/2*sin(a);
 	  xd=x1+x2+x3;
-	  echo ("x, x1,x2,x3,xd,x+xd ",x, x1,x2,x3,xd,x+xd);
+	  //echo ("x, x1,x2,x3,xd,x+xd ",x, x1,x2,x3,xd,x+xd);
 	  z1=-(c/2)*tan(90-a);
 	  z2=-sqrt(tan(90-a)*c/2*tan(90-a)*c/2+c/2*c/2);  //-c/2*sin(a);
 	  z3=0; //-c/2*sin(a);
 	  zd=z1+z2+z3;
-	  echo ("z, z1,z2,z3,zd,z+zd ",z, z1,z2,z3,zd,z+zd);
+	  //echo ("z, z1,z2,z3,zd,z+zd ",z, z1,z2,z3,zd,z+zd);
 	  translate([c/2,y-c/2,c/2]) rotate([90,0,0]) linear_extrude(height=y-c) polygon(points=[[0,0],[0,z+zd-c/2],[x+xd-c/2,0]]);
 	  //translate([c/2,c/2,c/2]) cube([x-c-xc,y-c,z-c-zc]);
 	  //	   translate([c/2,c/2,c/2]) cube([xx-c,y-c,zz-c]);
@@ -629,7 +629,7 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
 }
 
 module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
-  echo("roundedboxxyz ",x,y,z,dxy,dzin,printable,fn);
+  //echo("roundedboxxyz ",x,y,z,dxy,dzin,printable,fn);
   if (dzin==0) {
     hull() {
       translate([dxy/2,dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
@@ -948,7 +948,7 @@ module windowcut(x,y,height,l,w,h,overlap=windowoverlap,windowtest=0) {
 module windowtemplate(l,w,text="") {
   midsupportl=((l-windowoverlap*2-50)>0?1:0);
   midsupportw=((w-windowoverlap*2-50)>0?1:0);
-  echo(midsupportl,midsupportw);
+  //echo(midsupportl,midsupportw);
   difference() {
     translate([-l/2,-w/2,0]) roundedbox(l,w,windowtemplateh,windowcornerd,1);
     if (midsupportl&&midsupportw) {
