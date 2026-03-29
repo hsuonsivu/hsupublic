@@ -2,7 +2,7 @@ SOURCE=disk35.scad
 DEPENDS=hsu.scad Makefile.disk35
 IMAGES=
 
-ALL=disk35base.stl disk35cover.stl disk35plate.stl disk35springs.stl disk35pcbmodel.stl disk35.stl 
+ALL=disk35base.stl disk35cover.stl disk35plate.stl disk35springs.stl disk35pcbmodel.stl disk35.stl disk35test.stl
 
 OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
@@ -51,6 +51,10 @@ disk35.stl: $(SOURCE) $(DEPENDS)
 
 disk35pcbmodel.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=7 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk35test.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=8 -o $@ $(SOURCE)
 	echo $@ built.
 
 

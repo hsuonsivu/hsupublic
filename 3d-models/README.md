@@ -1567,11 +1567,12 @@ Spare missing power&reset button for a computer case.
 
 ### Makefile.disk35
 
-This uses LGH-IDE-k part which is available through sellers such as
-aliexpress and various suppliers.
+This uses either LGH-IDE-K or 120-3803 IDE 40-pin to 44-pin conversion
+part, both of which is available through sellers such as aliexpress
+and various suppliers.
 
-Note: this is work-in-progress, as I do not yet have the pcb for
-testing and have not yet verified the fit.  
+Note: this is work-in-progress, as I do not yet have the LGH-IDE-K pcb for
+testing and have not yet verified the fit.
 
 Converts 2.5 inch pata disk to 3.5 form. The disk is held in place
 with springs so it, in theory should accommodate any disks from 7 to
@@ -1582,8 +1583,4 @@ Cover is held with clips.
 
 Makefile.disk35 makes all parts, which do not need supports for printing.
 
-
-
-
-
-
+No supports are needed to print.
