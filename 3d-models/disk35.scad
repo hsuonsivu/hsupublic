@@ -6,7 +6,7 @@ include <hsu.scad>
 
 // Box fitting to 3.5inch disk form. This is intended for use with various 3.5 inch
 
-print=5;
+print=0;
 debug=0;
 
 xtolerance=0.30;
@@ -21,11 +21,12 @@ diskl=147;
 diskw=xtolerance+101.6+xtolerance;
 diskh=ztolerance+26.1+ztolerance;
 
-// Pcbversion 1 is LGH-IDE-K, Pcbversion 2 is 120-3803
-pcbversion=2;
+// Pcbversion 1 is LGH-IDE-K, Pcbversion 2 is 120-3803, pcbversion 3 is gc100-30822.
+// I did not have LGH-IDE-K so it has only been designed based on given measurements and may need adjusting.
+pcbversion=3;
 
 // Disk needs to be raised slightly
-diskbaseh=pcbversion==1?0:2;
+diskbaseh=(pcbversion==1||pcbversion==3)?0:2;
 
 // Generic disk screwd is about 3.5mm
 diskscrewholed=3.6;
@@ -76,7 +77,7 @@ covercutheight=diskh-wall-covercuth;
 covercutx=diskl/2-covercutl/2;
 covercuty=diskw/2-covercutw/2;
 
-versiontext="V1.1";
+versiontext="V1.2";
 textdepth=0.6;
 textsize=7;
 textfont="Liberation Sans:style=Bold";
@@ -89,11 +90,12 @@ coverclipheight=baseh-belowcoverh+coverclipd/2+dtolerance/2;
 
 // This one I just ordered from aliexpress
 
-pcbw=pcbversion==1?84:58;
-pcbl=pcbversion==1?33-10:2.3;
-pcbh=pcbversion==1?1:20;
-pcbx=pcbversion==1?10:10;
-pcbheight=wall+ztolerance;
+pcbw=pcbversion==1?84:pcbversion==2?58:84.4;
+pcbl=pcbversion==1?33-10:pcbversion==2?2.3:27.55;
+pcbh=pcbversion==1?1:pcbversion==2?20:1.6;
+pcbx=pcbversion==1?10:pcbversion==2?10:1.27;
+pcbbelowspace=pcbversion<3?0:1.7;
+pcbheight=wall+(pcbversion==1?ztolerance:pcbversion==2?ztolerance:ztolerance+pcbbelowspace);
 pcbsupporth=2;
 pcbtopsupporth=1.5;
 pcbscrewholew=pcbw-6; // MEASURE?
@@ -101,27 +103,31 @@ pcbscrewholex=pcbl-5.5; // Relative to pcbx
 pcbscrewd=3;
 pcbscrewholed=3;
 
-powerconnectorw=pcbversion==1?24.5:23.7;
-powerconnectorwidew=pcbversion==1?24.5:25.5;
-powerconnectorh=8.7;
-powerconnectorlowh=7;
+powerconnectorw=pcbversion==1?24.5:pcbversion==2?23.7:23.85;
+powerconnectorwidew=pcbversion==1?24.5:pcbversion==2?25.5:23.85;
+powerconnectorh=pcbversion<3?8.7:9.2;
+powerconnectorlowh=pcbversion<3?7:9.2;
 powerconnectorloww=20.5; // 20 measured
-powerconnectorl=pcbversion==1?10:8.2;
-powerconnectorx=0;
-powerconnectorwidel=pcbversion==1?0:2;
+powerconnectorl=pcbversion==1?10:pcbversion==2?8.2:13;
+powerconnectorx=pcbversion==1?-pcbx:pcbversion==2?-pcbx:-0.15;
+powerconnectorwidel=pcbversion==1?0:pcbversion==2?2:0;
 powerconnectorwidex=powerconnectorx+powerconnectorl;
 powerconnectorbackw=21.5;
 powerconnectorbackl=17;
 powerconnectorbackx=powerconnectorwidex+powerconnectorwidel;
-powerconnectorheight=pcbversion==1?0:-pcbheight+diskh-wall-ztolerance-powerconnectorh-ztolerance;
-powerconnectortotall=powerconnectorl+(pcbversion==2?powerconnectorwidel+powerconnectorbackl:0);
+// This is relative to pcb
+powerconnectorheight=pcbversion==1?0:pcbversion==2?-pcbheight+diskh-wall-ztolerance-powerconnectorh-ztolerance:pcbh;
+powerconnectortotall=pcbversion==3?powerconnectorl:powerconnectorl+(pcbversion==2?powerconnectorwidel+powerconnectorbackl:0);
 cablewayw=5;
 
-ideconnectorw=55;//59.3;
+ideconnectorw=pcbversion<3?55:58.2;//59.3;
 ideconnectornotchw=5;
 ideconnectornotchh=2.1;
-ideconnectorh=8.2;
-ideconnectorheight=pcbversion==1?0:12;
+ideconnectorh=pcbversion<3?8.2:9.2;
+// This is relative to pcbx
+ideconnectorx=pcbversion==1?-pcbx:pcbversion==2?-pcbx:-1.27;
+// This is relative to pcbheight
+ideconnectorheight=pcbversion==1?0:pcbversion==2?12:pcbh;
 ideconnectorl=10;
 ideconnectorcutl=wall+1;
 smallideconnectorw=46;
@@ -131,23 +137,45 @@ smallideconnectory=pcbw/2+51.3/2-smallideconnectorw;
 
 connectorcornerd=1;
 
+// pcbversion3
+belownotchxytable=[[2,17],
+		   [2,7],
+		   [10,22],
+		   [10,2.5]
+		   ];
+belownotchd=5;
+belownotchh=2.3+ztolerance; // Under pcb
+
+belowsupporth=pcbbelowspace+ztolerance;
+belowsupportsize=2;
+belowbacksupportw=63;
+belowcornersupportl=3;
+belowcornersupportw=3;
+belowcornersupportx=0;
+belowcornersupporty=0;//pcbw-3;
+belowmidsupportx=15;
+belowmidsupportl=3;
+belowmidsupportw=61;
+belowsidesupportl=14;
+belowsidesupportx=pcbl-belowsidesupportl;
+belowsidesupporth=pcbh+4;
+
 //connectorpcby=wall+incornerd/2+ytolerance;
 //pcby=-diskw/2+connectorpcby;
 pcbyfromdisky=9;
 powerconnectortopcby=4;
-pcby=pcbversion==1?-pcbw/2:-diskw/2+wall+powerconnectortopcby+powerconnectorwidew+wall;
-powerconnectory=pcbversion==1?0:-4.5+wall-powerconnectorwidew/2-powerconnectorw/2;
+pcby=pcbversion==1?-pcbw/2:pcbversion==2?-diskw/2+wall+powerconnectortopcby+powerconnectorwidew+wall:-pcbw/2;
+powerconnectory=pcbversion==1?0:pcbversion==2?-4.5+wall-powerconnectorwidew/2-powerconnectorw/2:0.77;
 powerconnectorwidey=powerconnectory+powerconnectorw/2-powerconnectorwidew/2;
 powerconnectorlowy=powerconnectory+powerconnectorw/2-powerconnectorloww/2;
 powerconnectorbacky=powerconnectory+powerconnectorw/2-powerconnectorbackw/2;
-ideconnectory=pcbversion==1?powerconnectorw+ytolerance:-1;
+ideconnectory=pcbversion==1?powerconnectorw+ytolerance:pcbversion==2?-1:powerconnectory+powerconnectorw+2;
 // Connector opening
-connectorpcby=pcbversion==1?-pcbw/2:pcby;
+connectorpcby=pcbversion==1?-pcbw/2:pcbversion==2?pcby:-pcbw/2;
 tappih=ztolerance+pcbh+1;
 
-//smalldisky=pcbversion==1?pcby+pcbw/2:pcby-9;
-smalldisky=pcbversion==1?-smalldiskw/2:pcby-9;
-smalldiskx=pcbversion==1?pcbx+pcbl+1:13.4;
+smalldisky=pcbversion==1?-smalldiskw/2:pcbversion==2?pcby-9:-smalldiskw/2;
+smalldiskx=pcbversion==1?pcbx+pcbl+1:pcbversion==2?13.4:pcbx+pcbl+0.5;
 
 // Sides, should be higher than tallest potential disk (12.5mm + ztolerance*2)
 smalldisksidewallh=wall+ztolerance+smalldiskmaxh+ztolerance+wall+1;
@@ -227,8 +255,9 @@ holebackyend=diskw/2-outcornerd/2-holegap;
 
 // Front (connector side)
 holefrontw=6;
-holefrontheight=wall+ztolerance+powerconnectorh+ztolerance+2;
-holefronth=diskh-holefrontheight-wall-belowcoverh;
+//holefrontheight=wall+ztolerance+powerconnectorh+ztolerance+2;
+holefrontheight=pcbheight+powerconnectorheight+powerconnectorh+ztolerance+3;
+holefronth=diskh-holefrontheight-wall-1;
 holefrontystep=holew*2;
 holefrontystart=holegap/2;
 holefrontyend=diskw/2-outcornerd/2-holegap-holefrontw;
@@ -394,7 +423,8 @@ module plate() {
     }
 
     // Open connectorhole
-    translate([-platex,-platey+pcby,-plateheight+pcbheight]) connectorcuts();
+    // XXX what was this for?
+    // translate([-platex,-platey+pcby,-plateheight+wall+pcbheight]) connectorcuts();
     translate([-platex+powerconnectorbackx,-platey+pcby+powerconnectorbacky-ytolerance,-plateheight+powerconnectorheight-10]) roundedbox(powerconnectorbackl+xtolerance,powerconnectorbackw+ytolerance*2,10+powerconnectorh,0);
     
     translate([platel/2-cornerd/2-versiontextl/2,wall/2+0.5+textsize/2,plateh-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
@@ -409,41 +439,50 @@ module contactpcb() {
   difference() {
     union() {
       hull() {
-	translate([-0.01,powerconnectory,powerconnectorheight]) roundedbox(powerconnectorl+0.01,powerconnectorw,powerconnectorlowh,connectorcornerd,0);
-	translate([-0.01,powerconnectorlowy,powerconnectorheight]) roundedbox(powerconnectorl+0.01,powerconnectorloww,powerconnectorh,connectorcornerd,0);
+	translate([powerconnectorx,powerconnectory,powerconnectorheight]) roundedbox(powerconnectorl+0.01,powerconnectorw,powerconnectorlowh,connectorcornerd,0);
+	translate([powerconnectorx,powerconnectorlowy,powerconnectorheight]) roundedbox(powerconnectorl+0.01,powerconnectorloww,powerconnectorh,connectorcornerd,0);
       }
       if (pcbversion==2) {
-	translate([powerconnectorl-0.01,powerconnectory-(powerconnectorwidew-powerconnectorw)/2,powerconnectorheight]) roundedbox(powerconnectorwidel+0.01,powerconnectorwidew,powerconnectorh,connectorcornerd,0);
-	translate([powerconnectorl+powerconnectorwidel-connectorcornerd/2.01,powerconnectory-(powerconnectorbackw-powerconnectorw)/2,powerconnectorheight]) roundedbox(powerconnectorbackl+connectorcornerd/2.01,powerconnectorbackw,powerconnectorh,connectorcornerd,0);
+	translate([powerconnectorx+powerconnectorl-0.01,powerconnectory-(powerconnectorwidew-powerconnectorw)/2,powerconnectorheight]) roundedbox(powerconnectorwidel+0.01,powerconnectorwidew,powerconnectorh,connectorcornerd,0);
+	translate([powerconnectorx+powerconnectorl+powerconnectorwidel-connectorcornerd/2.01,powerconnectory-(powerconnectorbackw-powerconnectorw)/2,powerconnectorheight]) roundedbox(powerconnectorbackl+connectorcornerd/2.01,powerconnectorbackw,powerconnectorh,connectorcornerd,0);
       }
-      translate([0,ideconnectory,ideconnectorheight]) roundedbox(ideconnectorl,ideconnectorw,ideconnectorh,connectorcornerd,0);
-      translate([pcbx-(pcbversion==1?xtolerance:0),0,0]) roundedbox(pcbl+(pcbversion==1?xtolerance:0),pcbw,pcbh,connectorcornerd,0);
-      if (pcbversion==1) {
-	translate([pcbx+pcbl-smallideconnectorl,smallideconnectory,0]) roundedbox(smallideconnectorl+0.01,wall,smallideconnectorh,0);
-	translate([pcbx+pcbl-smallideconnectorl,smallideconnectory+smallideconnectorw-wall,0]) roundedbox(smallideconnectorl+0.01,wall,smallideconnectorh,0);
+      translate([ideconnectorx,ideconnectory,ideconnectorheight]) roundedbox(ideconnectorl,ideconnectorw,ideconnectorh,connectorcornerd,0);
+      translate([-(pcbversion==1?xtolerance:pcbversion==2?0:0),0,0]) roundedbox(pcbl+(pcbversion==1?xtolerance:pcbversion==2?0:0),pcbw,pcbh,connectorcornerd,0);
+      if (pcbversion==1 || pcbversion==3) {
+	translate([pcbl-smallideconnectorl,smallideconnectory,0]) roundedbox(smallideconnectorl+0.01,wall,smallideconnectorh,0);
+	translate([pcbl-smallideconnectorl,smallideconnectory+smallideconnectorw-wall,0]) roundedbox(smallideconnectorl+0.01,wall,smallideconnectorh,0);
       }
-      if (debug) translate([pcbx+pcbl,smallideconnectory,0]) roundedbox(smallideconnectorl+0.01,smallideconnectorw,smallideconnectorh,0);
+      if (debug) translate([pcbl,smallideconnectory,0]) roundedbox(smallideconnectorl+0.01,smallideconnectorw,smallideconnectorh,0);
     }
 
     if (pcbversion==1) {
-      translate([pcbx+pcbscrewholex,pcbw/2-pcbscrewholew/2,-0.01]) cylinder(d=pcbscrewd+dtolerance,h=pcbh+0.02,$fn=60);
-      translate([pcbx+pcbscrewholex,pcbw/2+pcbscrewholew/2,-0.01]) cylinder(d=pcbscrewd+dtolerance,h=pcbh+0.02,$fn=60);
-
-      translate([pcbx+(pcbl-powerconnectorl)/2,pcbw/2,pcbh-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
+      translate([pcbscrewholex,pcbw/2-pcbscrewholew/2,-0.01]) cylinder(d=pcbscrewd+dtolerance,h=pcbh+0.02,$fn=60);
+      translate([pcbscrewholex,pcbw/2+pcbscrewholew/2,-0.01]) cylinder(d=pcbscrewd+dtolerance,h=pcbh+0.02,$fn=60);
+    }
+    
+    if (pcbversion==1 || pcbversion==3) {
+      translate([(pcbl-(pcbversion==1?powerconnectorl:0))/2,pcbw/2,pcbh-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
     }
   }
 }
 
 module connectorcuts(base) {
-  translate([-0.01,ideconnectory-ytolerance,ideconnectorheight-ztolerance]) roundedbox(ideconnectorcutl+0.01,ideconnectorw+ytolerance*2,ideconnectorh+ztolerance*2,connectorcornerd,0);
-  translate([-0.01,ideconnectory+ideconnectorw/2-ideconnectornotchw/2,ideconnectorheight-ztolerance]) roundedbox(ideconnectorcutl+0.01,ideconnectornotchw+ytolerance*2,ideconnectorh+ideconnectornotchh+ztolerance*2,connectorcornerd,0);
+  translate([ideconnectorx-connectorcornerd/2.01,ideconnectory-ytolerance,ideconnectorheight-ztolerance]) roundedbox(ideconnectorcutl+connectorcornerd,ideconnectorw+ytolerance*2,ideconnectorh+ztolerance*2,connectorcornerd,0);
+  translate([ideconnectorx-connectorcornerd/2,ideconnectory+ideconnectorw/2-ideconnectornotchw/2,ideconnectorheight-ztolerance]) roundedbox(ideconnectorcutl+connectorcornerd,ideconnectornotchw+ytolerance*2,ideconnectorh+ideconnectornotchh+ztolerance*2,connectorcornerd,0);
   hull() {
-    translate([-0.01,powerconnectory-ytolerance,powerconnectorheight-ztolerance]) cube([powerconnectorl+(pcbversion==2?powerconnectorwidel:0)+0.01,powerconnectorw+ytolerance*2,powerconnectorlowh+ztolerance*2+(base?cornerd/2:0)]);
-    translate([-0.01,powerconnectorlowy-ytolerance,powerconnectorheight-ztolerance]) cube([powerconnectorl+(pcbversion==2?powerconnectorwidel:0)+0.01,powerconnectorloww+ytolerance*2,powerconnectorh+ztolerance*2+(base?cornerd/2:0)]);
+    translate([powerconnectorx-0.01,powerconnectory-ytolerance,powerconnectorheight-ztolerance]) cube([powerconnectorl+(pcbversion==2?powerconnectorwidel:0)+0.01,powerconnectorw+ytolerance*2,powerconnectorlowh+ztolerance*2+(base?cornerd/2:0)]);
+    translate([powerconnectorx-0.01,powerconnectorlowy-ytolerance,powerconnectorheight-ztolerance]) cube([powerconnectorl+(pcbversion==2?powerconnectorwidel:0)+0.01,powerconnectorloww+ytolerance*2,powerconnectorh+ztolerance*2+(base?cornerd/2:0)]);
   }
+
+  if (pcbversion==3) {
+    for (i=[0:1:len(belownotchxytable)-1]) {
+	translate([belownotchxytable[i][0],belownotchxytable[i][1],-belownotchh]) roundedcylinder(belownotchd,belownotchh,connectorcornerd,0,90);
+    }
+  }
+  
   if (pcbversion==2) {
-    translate([powerconnectorl-xtolerance,powerconnectory-(powerconnectorwidew-powerconnectorw)/2-ytolerance,powerconnectorheight-ztolerance]) roundedbox(powerconnectorwidel+xtolerance*2,powerconnectorwidew+ytolerance*2,powerconnectorh+ztolerance*2+(base?cornerd/2:0),connectorcornerd,0);
-    translate([powerconnectorl-xtolerance+powerconnectorwidel-connectorcornerd/2.01,powerconnectory-(powerconnectorbackw-powerconnectorw)/2-ytolerance,powerconnectorheight-ztolerance]) roundedbox(powerconnectorbackl+connectorcornerd/2+xtolerance*2,powerconnectorbackw+ytolerance*2,powerconnectorh+ztolerance*2+(base?cornerd/2:0),connectorcornerd,0);
+    translate([powerconnectorx+powerconnectorl-xtolerance,powerconnectory-(powerconnectorwidew-powerconnectorw)/2-ytolerance,powerconnectorheight-ztolerance]) roundedbox(powerconnectorwidel+xtolerance*2,powerconnectorwidew+ytolerance*2,powerconnectorh+ztolerance*2+(base?cornerd/2:0),connectorcornerd,0);
+    translate([powerconnectorx+powerconnectorl-xtolerance+powerconnectorwidel-connectorcornerd/2.01,powerconnectory-(powerconnectorbackw-powerconnectorw)/2-ytolerance,powerconnectorheight-ztolerance]) roundedbox(powerconnectorbackl+connectorcornerd/2+xtolerance*2,powerconnectorbackw+ytolerance*2,powerconnectorh+ztolerance*2+(base?cornerd/2:0),connectorcornerd,0);
 
     // Space for cable
     translate([powerconnectorx+powerconnectorl+powerconnectorwidel-wall,-pcby+smalldisky-ytolerance-wall-cablewayw,-pcbheight+wall]) roundedbox(powerconnectorbackl,cablewayw,-wall+powerconnectorheight+powerconnectorh,connectorcornerd,0);
@@ -509,13 +548,36 @@ module disk35() {
 	  translate([-0.01,-diskw/2-0.01,baseh-belowcoverh]) roundedboxxyz(diskl+0.02,diskw+0.02,belowcoverh+coverh,incornerd,0,0,90);
 	  translate([diskl/2-belowcoverl/2,-belowcoverw/2,baseh-belowcoverh]) roundedboxxyz(belowcoverl,belowcoverw,belowcoverh,incornerd,0,0,90);
 	}
-	
+
+	// Space for pcb
 	if (pcbversion==1) {
-	  translate([-0.01,connectorpcby,wall]) cube([pcbl+0.02,ytolerance+pcbw+ytolerance,diskh-wall-ztolerance]);
-	}
-	if (pcbversion==2) {
+	  translate([pcbx-0.01,connectorpcby,pcbheight-ztolerance]) cube([pcbl+0.02,ytolerance+pcbw+ytolerance,diskh-wall-ztolerance]);
+
+	  // Power connector
 	  translate([-0.01,pcby+powerconnectory-ytolerance,pcbheight+powerconnectorheight-ztolerance]) cube([powerconnectorl,powerconnectorw+ytolerance*2,diskh+powerconnectorh-powerconnectorheight]);
+	  // Ide Connector
 	  translate([-0.01,pcby+ideconnectory-ytolerance,pcbheight+ideconnectorheight-ztolerance]) cube([ideconnectorl,ideconnectorw+ytolerance*2,diskh+ideconnectorh-powerconnectorheight]);
+	}
+	
+	if (pcbversion==2) {
+	  // Power connector
+	  translate([-0.01,pcby+powerconnectory-ytolerance,pcbheight+powerconnectorheight-ztolerance]) cube([powerconnectorl,powerconnectorw+ytolerance*2,diskh+powerconnectorh-powerconnectorheight]);
+	  // Ide Connector
+	  translate([-0.01,pcby+ideconnectory-ytolerance,pcbheight+ideconnectorheight-ztolerance]) cube([ideconnectorl,ideconnectorw+ytolerance*2,diskh+ideconnectorh-powerconnectorheight]);
+	}
+
+	if (pcbversion==3) {
+	  hull() {
+	    translate([pcbx-0.01,connectorpcby,pcbheight-ztolerance]) cube([pcbl+0.02,ytolerance+pcbw+ytolerance,pcbh+powerconnectorh]);
+	    translate([pcbx+wall-0.01,connectorpcby+wall,pcbheight-ztolerance]) cube([pcbl-wall+0.02,ytolerance+pcbw+ytolerance-wall*2,pcbh+powerconnectorh+wall*2]);
+	  }
+
+	  // Power connector
+	  translate([-0.01,pcby+powerconnectory-ytolerance,pcbheight+powerconnectorheight-ztolerance]) cube([powerconnectorl,powerconnectorw+ytolerance*2,diskh+powerconnectorh-powerconnectorheight]);
+	  // Ide Connector
+	  translate([-0.01,pcby+ideconnectory-ytolerance,pcbheight+ideconnectorheight-ztolerance]) cube([ideconnectorl,ideconnectorw+ytolerance*2,diskh+ideconnectorh-powerconnectorheight]);
+	  // Cut of small spike between power and ide connectors
+	  translate([-0.01,pcby+powerconnectory-ytolerance,pcbheight+powerconnectorheight-ztolerance+2]) cube([powerconnectorl,pcbw,diskh]);
 	}
 	
 	coverclips(dtolerance);
@@ -535,7 +597,17 @@ module disk35() {
 	translate([pcbx-xtolerance-wall,pcby-ytolerance-wall,0]) roundedbox(wall,wall+ytolerance+pcbw+ytolerance+wall,wall+pcbsupporth,cornerd,0);
 	for (y=[pcby-ytolerance-wall,pcby+pcbw+ytolerance]) translate([pcbx-xtolerance-wall,y,0]) roundedbox(wall+xtolerance+pcbl,wall,wall+pcbsupporth,cornerd,0);
       }
-  
+
+      if (pcbversion==3) {
+	translate([pcbx,pcby+pcbw-belowsupportsize,0]) roundedbox(pcbl,belowsupportsize,wall+belowsupporth,cornerd,0);
+	translate([pcbx,pcby+pcbw-belowbacksupportw,0]) roundedbox(belowsupportsize,belowbacksupportw,wall+belowsupporth,cornerd,0);
+	translate([pcbx,pcby+belowcornersupporty,0]) roundedbox(belowcornersupportl,belowcornersupportw,wall+belowsupporth,cornerd,0);
+	translate([belowmidsupportx,pcby+pcbw-belowmidsupportw,0]) roundedbox(belowmidsupportl,belowmidsupportw,wall+belowsupporth,cornerd,0);
+	for (y=[pcby-ytolerance-belowsupportsize,pcby+pcbw+ytolerance]) {
+	  translate([pcbx+belowsidesupportx,y,0]) roundedbox(belowsidesupportl,belowsupportsize,pcbheight+belowsidesupporth,cornerd,0);
+	}
+      }
+      
       // Structures around the disk to keep it in place
       translate([smalldiskx+smalldiskl+xtolerance,smalldisky-ytolerance-wall,0]) roundedbox(wall,wall+ytolerance+smalldiskw+ytolerance+wall,wall+diskbaseh+smalldiskbasewallh,cornerd,0);
       for (y=[smalldisky-ytolerance-wall,smalldisky+smalldiskw+ytolerance]) {
@@ -599,7 +671,6 @@ module disk35() {
 	  translate([outcornerd/2,-diskw/2+outcornerd/2,0]) roundedbox(wall,powerconnectorw,wall,cornerd,0);
 	  translate([wall,-diskw/2+wall+ytolerance,h]) roundedboxxyz(powerconnectorl+powerconnectorwidel+wall,y+powerconnectorw+ytolerance,diskh-wall-belowcoverh-h-ztolerance,outcornerd,cornerd,0,90);
 	}
-	//	translate([0,-diskw/2,h]) roundedboxxyz(powerconnectorl+powerconnectorwidel+xtolerance+wall,y+powerconnectorw+ytolerance+wall+ytolerance,diskh-wall-h-belowcoverh-ztolerance,outcornerd,basecornerd,0,90);
 	y=pcby+diskw/2+powerconnectory;
 	translate([wall+xtolerance,-diskw/2+wall+ytolerance,h]) roundedboxxyz(powerconnectorl+powerconnectorwidel+wall-xtolerance,y+powerconnectorw+ytolerance,diskh-wall-h-ztolerance,outcornerd,cornerd,0,90);
       }
@@ -626,13 +697,13 @@ module disk35() {
     if (pcbversion==2) {
       for (i=[0:1:holefrontlowholes-1]) {
 	y=holefrontlowystart+i*holefrontlowystep;
-	l=(i==0)?powerconnectortotall:(i==1)?powerconnectorl+powerconnectorwidel:wall;
+	l=(i==0)?smalldiskx+wall*2:(i==1)?powerconnectorl+powerconnectorwidel:wall;
 	translate([-0.01,y,holefrontlowheight]) hole(holefrontloww,holefrontlowh,l);
       }
     }
 
     // Open connectorhole
-    translate([0,pcby,pcbheight]) connectorcuts(1);
+    translate([pcbx,pcby,pcbheight]) connectorcuts(1);
 	
     screwholes();
 
@@ -669,10 +740,24 @@ module cover() {
       }
       
       // Connector hole
-      ch=wall+ztolerance+powerconnectorh+ztolerance;
       if (pcbversion==1) {
-	translate([0,connectorpcby+ytolerance,ch]) roundedbox(wall,pcbw,diskh-ch,cornerd,2);
-	for (y=[connectorpcby+ytolerance,connectorpcby+ytolerance+pcbw-wall]) {
+	ch=wall+ztolerance+powerconnectorh+ztolerance;
+	//translate([0,connectorpcby+ytolerance,ch]) roundedbox(wall,pcbw,diskh-ch,cornerd,2);
+	translate([0,pcby+powerconnectory,ch]) roundedbox(wall,powerconnectorw+2,diskh-ch,cornerd,2);
+	translate([0,pcby+ideconnectory-2,ch]) roundedbox(wall,ideconnectorw+2,diskh-ch,cornerd,2);
+	for (y=[pcby+powerconnectory,-wall/2,pcby+ideconnectory+ideconnectorw-wall]) {
+	  hull() {
+	    translate([0,y,ch]) roundedbox(wall,wall,diskh-ch,cornerd,2);
+	    translate([10,y,diskh-wall]) roundedbox(wall,wall,wall,cornerd,2);
+	  }
+	}
+      }
+      
+      if (pcbversion==3) {
+	ch=pcbheight+ztolerance+powerconnectorheight+powerconnectorh+ztolerance;
+	translate([0,pcby+powerconnectory,ch]) roundedbox(wall,powerconnectorw+2,diskh-ch,cornerd,2);
+	translate([0,pcby+ideconnectory-2,ch]) roundedbox(wall,ideconnectorw+2,diskh-ch,cornerd,2);
+	for (y=[pcby+powerconnectory,-wall/2,pcby+ideconnectory+ideconnectorw-wall]) {
 	  hull() {
 	    translate([0,y,ch]) roundedbox(wall,wall,diskh-ch,cornerd,2);
 	    translate([10,y,diskh-wall]) roundedbox(wall,wall,wall,cornerd,2);
@@ -723,7 +808,7 @@ module cover() {
     
     difference() {
       for (i=[0:1:yholes-1]) {
-	for (j=(pcbversion==1?[i>0?1:0:1:3]:[(i<2?1:0):1:3])) {
+	for (j=((pcbversion==1||pcbversion==3)?[(i>0?0:0):1:3]:[(i<2?1:0):1:3])) {
 	  x=diskl/2-holesl/2+flatholel/2+j*holesl/4;
 	  y=-yholesw/2-flatholeystep/2+i*flatholeystep;
 	  translate([x,y,diskh-wall]) flathole(flatholel,flatholew);
@@ -737,6 +822,15 @@ module cover() {
 	  translate([platex+x,platey+y,diskh-wall-0.01]) roundedcylinder(springl+holegap,wall+0.02,cornerd,2,90);
 	}
       }
+
+      if (pcbversion==1) {
+	for (m=[0,0]) mirror([0,m,0]) {
+	    hull() {
+	      translate([pcbx+pcbscrewholex,pcbscrewholew/2,diskh-wall]) roundedcylinder(pcbscrewd+wall*2+dtolerance+cornerd,wall,cornerd,0,60);
+	      translate([pcbx+pcbscrewholex,diskw/4,diskh-wall]) roundedcylinder(pcbscrewd+wall*2+dtolerance+cornerd,wall,cornerd,0,60);
+	    }
+	  }
+      }
     }
 
     if (pcbversion==1) {
@@ -746,7 +840,15 @@ module cover() {
 	  }
 	}
     }
-    
+
+    if (pcbversion==3) {
+      for (m=[0,1]) mirror([0,m,0]) for (y=[holefrontystart:holefrontystep:holefrontyend]) {
+	  translate([-0.01,y+holefrontw/2,holefrontheight]) {
+	    hole(holefrontw,holefronth);
+	  }
+	}
+    }
+
     backyholes=floor((smalldiskw/2-flatholeystep)/flatholeystep)-1;
     w=backyholes*flatholew+(backyholes-1)*holegap/2;
     translate([0,smalldisky+smalldiskw/2,0]) for (y=[holegap/2:flatholeystep:smalldiskw/2-holegap/2]) {
@@ -763,23 +865,23 @@ module cover() {
     screwholes();
 
     // Open connectorhole
-    translate([0,pcby,pcbheight]) connectorcuts();
+    translate([pcbx,pcby,pcbheight]) connectorcuts();
 	
     translate([textsize+2,-diskw/2+versiontextl+cornerd/2-2,diskh-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
-    translate([pcbversion==1?textsize+2:diskl-textsize-2,diskw/2-versiontextl-cornerd/2-2,diskh-wall+textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
+    translate([(pcbversion==1||pcbversion==3)?textsize+2:diskl-textsize-2,diskw/2-versiontextl-cornerd/2-2,diskh-wall+textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
   }
 }
 
 if (print==0) {
   intersection() {
     //if (debug) translate([-100,-100+30,-100]) cube([300,25,300]);
-    if (debug) translate([-100,-100,-100]) cube([115,300,300]);
-    //if (debug) translate([-100,-diskw/2,-100]) cube([300,diskw-10,300]);
+    //if (debug) translate([-100,-100,-100]) cube([130,300,300]);
+    if (debug) translate([-100,-diskw/2,-100]) cube([300,diskw-10,300]);
     difference() {
       union() {
-	disk35();
+	//disk35();
 	translate([platex,platey,plateheight]) plate();
-	//cover();
+	cover();
       
 	for (x=springxtable) {
 	  for (y=springytable) {
@@ -787,7 +889,7 @@ if (print==0) {
 	  }
 	}
       }
-      //%      translate([0,pcby,pcbheight]) contactpcb();
+      %      translate([pcbx,pcby,pcbheight]) contactpcb();
       //translate([smalldiskx,smalldisky,wall+ztolerance]) #smalldisk();
     }
   }
@@ -829,10 +931,14 @@ if (print==6) {
   }
  }
 
-if (pcbversion==1 && (print==7 || print==5)) 
+if ((pcbversion==1 || pcbversion==3) && (print==5)) 
   {
-    translate([diskl+(springtoph+0.5+springh+1)*2+1,platel+0.5,0]) contactpcb();
+    translate([diskl+(springtoph+0.5+springh+1)*2+2,platel+0.5,0]) contactpcb();
   }
+
+if (print==7) {
+  contactpcb();
+ }
 
 if (print==9) {
   intersection() {
