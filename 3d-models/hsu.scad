@@ -1012,15 +1012,15 @@ module grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) {
   w=wall/2;//0.8;
   
   firstarea=dstart*dstart*PI;
-  translate([-fancoverdepth-fangrilldepth-0.1,0,0]) rotate([0,90,0]) for (d=[dstart:ddistance:diameter-w*2]) {
-    translate([0,0,0]) ring(d,w,thickness+0.2);
+  for (d=[dstart:ddistance:diameter-w*2]) {
+    translate([0,0,0]) ring(d,w,thickness);
 
     previousarea=d*d*PI;
     thisarea=((d+ddistance)*(d+ddistance)*PI)-previousarea;
     i=floor(thisarea/firstarea);
     astep=360/i;
     for (a=[0:astep:359]) {
-      rotate([0,0,a]) translate([d/2-w,-w/2,0]) cube([min(ddistance/2+w-0.1,diameter/2-d/2+w/2),w,thickness+0.2]);
+      rotate([0,0,a]) translate([d/2-w,-w/2,0]) cube([min(ddistance/2+w-0.1,diameter/2-d/2+w/2),w,thickness]);
     }
   }
 }
