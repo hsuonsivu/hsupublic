@@ -4,14 +4,14 @@
 
 include <hsu.scad>
 
-print=0;
+print=4;
 debug=print==0?0:0;
-xtolerance=0.30;
-ytolerance=0.30;
+xtolerance=0.20;
+ytolerance=0.20;
 ztolerance=0.20;
-dtolerance=0.60;
+dtolerance=0.40;
 
-versiontext="V1.1";
+versiontext="V1.2";
 textdepth=0.7;
 textsize=7;
 textfont="Liberation Sans:style=Bold";
@@ -24,7 +24,8 @@ cornerd=2;
 cpu=print==0?0:print-1;
 cputable=[["amd-athlon64-hp-dx2250",41,41,7.5,"athlon64AM2","hp","dx2250"],
 	  ["celeron-acerpower-s290",38,38,6,"celeron370","acer","pwr s290"],
-	  ["amd-sempron-acer-aspire-t136",41,41,7,"sempron754","acer aspire", "t163"]
+	  ["amd-sempron-acer-aspire-t136",41,41,7,"sempron754","acer aspire", "t163"],
+	  ["celeron-200Mhz-32bit",50,50,6,"celeron","PGA370","200Mhz"]
 	  ];
   
 l=cputable[cpu][1];
@@ -82,7 +83,6 @@ module base() {
       //      translate([fingeropeningx+fingeropeningl,-wout/2,-hout/2]) roundedbox(boxx+lout-fingeropeningx-fingeropeningl,wout,hout/2-ztolerance,cornerd,1);
       for (m=[0,1]) mirror([0,m,0]) {
 	  w=(wout-clipw)/2-xtolerance;
-	  // translate([boxx,-wout/2,-hout/2]) roundedbox(lout,(wout-clipw)/2-xtolerance,hout/2-ztolerance,cornerd,1);
 	  translate([boxx+(hout-axled)/2,-wout/2,-hout/2]) roundedbox(fingeropeningx-boxx-(hout-axled)/2,w,hout/2-ztolerance,cornerd,1);
 	  translate([fingeropeningx+fingeropeningl,-wout/2,-hout/2]) roundedbox(boxx+lout-fingeropeningx-fingeropeningl,w,hout/2-ztolerance,cornerd,1);
 	}
@@ -99,6 +99,10 @@ module base() {
 	rotate([90,0,0]) cylinder(r=boxx+wall-inwall+lout-(wall-inwall)*2+xtolerance,h=wout,center=true,$fn=360);
       }
       translate([-axled/2,-axlel/2+ytolerance,-hout/2]) roundedbox(axled+xtolerance+lout-xtolerance-inwall,axlel-ytolerance*2,hout/2-ztolerance,cornerd,1);
+      hull() {
+	translate([-axled/2,-axlel/2+ytolerance,-hout/2]) roundedbox(axled,axlel-ytolerance*2,hout/2-ztolerance,cornerd,1);
+	translate([0,-axlel/2+ytolerance,0]) rotate([-90,0,0]) roundedcylinder(axled,axlel-ytolerance*2,cornerd,0,90);
+      }
       onehinge(axled,axlel,axledepth,0,ytolerance,dtolerance);
     }
 
@@ -123,7 +127,7 @@ module top() {
 	  translate([fingeropeningx+xtolerance,-wout/2,-hout/2+cornerd+ztolerance]) roundedbox(fingeropeningl-xtolerance*2,(wout-axlel)/2,hout-cornerd-ztolerance*2,cornerd,0);
 	}
       for (m=[0,1]) mirror([0,m,0]) hull() {
-	translate([0,-wout/2,0]) roundedbox(hout/2,(wout-axlel)/2,hout/2,cornerd,2);
+	translate([-hout/2,-wout/2,0]) roundedbox(hout/2+hout/2,(wout-axlel)/2,hout/2,cornerd,2);
 	translate([0,-wout/2,0]) rotate([-90,0,0]) roundedcylinder(hout,(wout-axlel)/2,cornerd,0,90);
       }
     }
@@ -156,7 +160,7 @@ if (print==0) {
   }
  }
 
-if (print==1 || print==2 || print==3) {
+if (print>0) {
   intersection() {
     if (debug) translate([-100,0,-100]) cube([200,200,200]);
     //if (debug) translate([0,-100,-100]) cube([200,200,200]);
