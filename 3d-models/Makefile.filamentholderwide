@@ -1,7 +1,7 @@
 SOURCE=filamentholderwide.scad
 DEPENDS=hsu.scad Makefile.filamentholderwide
 IMAGES=filamentholderwide35mm.png filamentholderwide46mm.png filamentholderwide110.png filamentholderwide46mm.png 
-ALL=filamentholderwideleft.stl filamentholderwideright.stl filamentholderwidebody.stl filamentholderwidelockpin.stl filamentholdersmalltronxyholder.stl
+ALL=filamentholderwideleft.stl filamentholderwideright.stl filamentholderwidebody.stl filamentholderwidelockpin.stl filamentholdersmalltronxyholder.stl filamentholderankerholder.stl
 
 all: $(ALL)
 
@@ -46,5 +46,9 @@ filamentholderwidelockpin.stl: $(SOURCE) $(DEPENDS)
 
 filamentholdersmalltronxyholder.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+
+filamentholderankerholder.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=6 -o $@ $(SOURCE)
 	echo $@ built.
 

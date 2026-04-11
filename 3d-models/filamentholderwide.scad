@@ -11,9 +11,12 @@ use <threadlib/threadlib.scad>
 // depth=y
 // width=z
 
-print=0; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter
-debug=0;
+print=0; // 1=left, 2=right, 3=both, 4=lockpin, 5=cutter, 6=ankerattach
+debug=1;
 dodebug=print>0?0:debug;
+
+tronxyattach=0;
+ankerattach=1;
 
 m20div=1.3;
 m20drext=1.5830/m20div;
@@ -148,12 +151,27 @@ frontbolty=holdersupportwidth+5+boltbased/2;
 frontboltx=0;
 frontbolth=holdersupportwidth;
 
+ankerattachh=56;
+ankerattachtoph=14;
+ankerattachdepth=6;
+ankerattachl=100;
+ankerattachw=120;
+ankerplatew=backplatewidth;
+ankerplateh=holdersupportwidth;
+ankersideh=70;
+ankerwall=1.6;
+ankerprintable=8;
+ankercprintable=2;
+ankermidwall=5;
+ankerthickwall=holdersupportwidth;
+ankercornerd=5;
+
 module attachbolt() {
   rotate([180,0,0]) {
     difference() {
       union() {
 	translate([0,0,0]) roundedcylinder(boltbased,boltbasel,cornerd,1,6);
-	translate([0,0,boltbasel-cornerd]) roundedcylinder(boltholed,supportringl-supportringdepth+cornerd,1,90);
+	translate([0,0,boltbasel-cornerd]) roundedcylinder(boltholed-dtolerance,supportringl-supportringdepth+cornerd,1,90);
 	translate([0,0,supportringl-supportringdepth+boltbasel-0.01]) cylinder(d=boltd,h=ztolerance+0.02);
 	translate([0,0,boltthreadh]) bolt("M20",turns=boltturns,table=MY_THREAD_TABLE);
 	hull() {
@@ -310,7 +328,12 @@ module holder() {
     }
 
     translate([sideboltx,sidebolty,-0.01]) cylinder(d=boltholed,h=sidebolth+0.02,$fn=90);
-    translate([frontboltx-0.01,frontbolty,frontboltheight]) rotate([0,90,0]) roundedcylinder(boltholed,frontbolth+0.02,cornerd,1,90);
+      translate([frontboltx-0.01,frontbolty,frontboltheight]) {
+	hull() {
+	  rotate([0,90,0]) cylinder(d=boltholed,h=frontbolth+0.02,$fn=90);
+	  translate([0,-boltholed/4,0]) cube([frontbolth+0.02,boltholed/2,boltholed/2]);
+	}
+      }
 
     translate([2,holdersupportwidth-textdepth+0.01,holdersupportwidth+rollwidth-1]) rotate([-90,270,0]) linear_extrude(height = textdepth+0.02) text(text = str(versiontext), font = font, size = textsize, halign="right",valign="baseline");
     
@@ -427,6 +450,18 @@ module right() {
     // Space for lock pin
     translate([lockpinheight-xtolerance,backplatedepth/2-lockpinh/2-ytolerance,holdersupportwidth+rollwidth-lockpinfromedge-lockpinw-ztolerance]) cube([lockpinl+xtolerance*2,lockpinh+ytolerance*2,lockpinw+ztolerance*2]);
 
+    xl=fingerheight+backplatedepth-lockpinh;
+    for (x=[fingerupper+fingerheight/2,fingerlower+fingerheight/2]) {
+      translate([x,0,0]) {
+	for (m=[0,1]) mirror([m,0,0]) {
+	    hull() {
+	      translate([xl/2+xtolerance-0.01,backplatedepth/2-lockpinh/2-ytolerance,holdersupportwidth+rollwidth-lockpinfromedge-lockpinw-ztolerance-cornerd+0.01]) cube([cornerd/2+xtolerance+0.01,lockpinh+ytolerance*2,0.01]);
+	      translate([xl/2+xtolerance-0.01-cornerd,backplatedepth/2-lockpinh/2-ytolerance,holdersupportwidth+rollwidth-lockpinfromedge-lockpinw-ztolerance+0.01]) cube([cornerd/2+xtolerance+0.01,lockpinh+ytolerance*2,0.01]);
+	    }
+	  }
+      }
+    }
+
     // Right roll insides cut
     union() {
       translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight+rollnarrowingh]) {
@@ -481,6 +516,71 @@ module smalltronxyholder() {
   }
 }
 
+// Attachment for Ankermake 5
+// Note this is in more logical rotation.
+module ankerholder() {
+  difference() {
+    union() {
+      translate([ankerattachl-ankermidwall,-ankerplatew/2,0]) roundedbox(ankermidwall,ankerplatew,ankerplateh,ankercornerd,ankerprintable);
+      difference() {
+	hull() {
+	  translate([ankerattachdepth,-ankerattachw/2,0]) roundedbox(ankermidwall,ankerattachw,ankerattachh,ankercornerd,ankerprintable);
+	  translate([ankerattachl-boltholel-ankermidwall,0,frontbolty]) rotate([0,90,0]) roundedcylinder(boltholed+ankermidwall*2,ankercornerd,ankercornerd,ankercprintable,90);
+	}
+	hull() {
+	  translate([ankerattachdepth-ankercornerd/2,-ankerattachw/2+ankermidwall,ankermidwall]) roundedbox(ankerwall,ankerattachw-ankermidwall*2,ankerattachh-ankermidwall*2,ankercornerd,ankerprintable);
+	  translate([ankerattachl-boltholel-ankermidwall-ankercornerd,0,frontbolty]) rotate([0,90,0]) roundedcylinder(boltholed,ankercornerd,ankercornerd,ankercprintable,90);
+	}
+      }
+      hull() {
+	translate([ankerattachl-ankermidwall,-ankerplatew/2,0]) roundedbox(ankermidwall,ankerplatew,ankermidwall,ankercornerd,ankerprintable);
+	translate([0,-ankerattachw/2,0]) roundedbox(ankerattachdepth+ankercornerd,ankerattachw,ankermidwall,ankercornerd,ankerprintable);
+      }
+      for (m=[0,1]) mirror([0,m,0]) {
+	  translate([0,-ankerattachw/2,0]) roundedbox(ankerattachdepth+ankercornerd,holdersupportwidth,ankerattachh-ankerattachtoph,ankercornerd,ankerprintable);
+	  difference() {
+	    union() {
+	      hull() {
+		translate([ankerattachl-ankermidwall,-ankerplatew/2,0]) roundedbox(ankermidwall,holdersupportwidth,ankersideh,ankercornerd,ankerprintable);
+		translate([ankerattachdepth,-ankerattachw/2,0]) roundedbox(ankercornerd,holdersupportwidth,ankerattachh-ankerattachtoph,ankercornerd,ankerprintable);
+	      }
+	    }
+	    
+	    // Lightening holes sides
+	    hull() {
+	      translate([ankerthickwall,-ankerattachw/2-ankercornerd/2,ankerthickwall]) cube([ankercornerd,ankerattachw+0.02+ankercornerd,maxbridge]);
+	      translate([ankerattachl-ankerthickwall-ankercornerd,-ankerattachw/2-ankercornerd/2,ankerthickwall]) roundedbox(ankercornerd,ankerattachw+0.02+ankercornerd,ankerattachh-ankerthickwall*2,ankercornerd,0);
+	    }
+	  }
+	  hull() {
+	    translate([ankerattachl-ankermidwall,0,frontbolty]) rotate([0,90,0]) roundedcylinder(holdersupportwidth,ankermidwall,ankercornerd,ankercprintable,90);
+	    translate([ankerattachl-ankermidwall,-ankerplatew/2,ankersideh-holdersupportwidth]) roundedbox(ankermidwall,holdersupportwidth,holdersupportwidth,ankercornerd,ankerprintable);
+	  }
+	  hull() {
+	    translate([ankerattachl-ankermidwall,0,frontbolty]) rotate([0,90,0]) roundedcylinder(holdersupportwidth,ankermidwall,ankercornerd,ankercprintable,90);
+	    translate([ankerattachl-ankermidwall,-ankerplatew/2,0]) roundedbox(ankermidwall,holdersupportwidth,holdersupportwidth,ankercornerd,ankerprintable);
+	  }
+	}
+      translate([ankerattachl-boltholel-ankermidwall,0,frontbolty]) rotate([0,90,0]) roundedcylinder(boltholed+ankermidwall*2,boltholel+ankermidwall,ankercornerd,ankercprintable,90);
+      translate([ankerattachl-ankermidwall,-ankerplatew/2,ankersideh-ankerthickwall]) roundedbox(ankermidwall,ankerplatew,ankerthickwall,ankercornerd,ankerprintable);
+    }
+
+    hull() {
+      translate([ankerthickwall,-maxbridge/2,-ankercornerd/2]) cube([ankercornerd,maxbridge,ankerattachh+ankercornerd]);
+      w=(ankerattachw-boltholed-ankermidwall*2);
+      translate([(ankerattachl-boltholel)/2,-w/4,-ankercornerd/2]) roundedbox(ankercornerd,w/2,ankerattachh+ankercornerd,ankercornerd,0);
+      translate([ankerthickwall,-maxbridge/2,-ankercornerd/2]) cube([ankercornerd,maxbridge,ankerattachh+ankercornerd]);
+      translate([ankerattachl-boltholel-ankerthickwall-ankermidwall*2,-maxbridge/4,-ankercornerd/2]) cube([ankercornerd,maxbridge/2,ankerattachh+ankercornerd]);
+    }
+
+    translate([ankerattachl-boltl+xtolerance,0,frontbolty]) rotate([0,90,0]) boltcutout();
+    
+    translate([ankerattachl-boltl-ankerthickwall+xtolerance,0,frontbolty]) rotate([0,90,0]) cylinder(d=boltholed,h=ankerthickwall,$fn=90);
+
+    translate([ankerattachl-ankermidwall-2,ankerplatew/2-holdersupportwidth-1,ankermidwall-textdepth+0.01]) linear_extrude(textdepth) rotate([0,0,90]) text(versiontext,size=textsize,font=font,valign="bottom",halign="right");
+  }
+}
+
 if (print==0) {
   intersection() {
     difference() {
@@ -488,15 +588,19 @@ if (print==0) {
 	left();
 	right();
 	translate([lockpinheight,backplatedepth/2-lockpinh/2,holdersupportwidth+rollwidth-lockpinfromedge-lockpinw]) lockpin();
-	translate([0,0,-0.01]) smalltronxyholder();
+	if (tronxyattach) translate([0,0,-0.01]) smalltronxyholder();
+	if (ankerattach) translate([-ankerattachl-xtolerance,0,backplatewidth/2]) rotate([-90,0,0]) ankerholder();
       }
 
       #     roll();
-       translate([sideboltx,sidebolty,sidebolth+boltbaseh]) attachbolt();
+      if (tronxyattach) translate([sideboltx,sidebolty,sidebolth+boltbaseh]) attachbolt();
+      #if (ankerattach) translate([holdersupportwidth+boltbaseh,frontbolty,backplatewidth/2]) rotate([0,90,0]) attachbolt();
     }
     
     //if (dodebug) translate([0,backplatedepth/2,0]) cube([rollaxisheight,1000,1000]);
-    if (dodebug) translate([sideboltx,-1000,-1000]) cube([2000,2000,2000]);
+    //if (dodebug) translate([sideboltx,-1000,-1000]) cube([2000,2000,2000]);
+    //if (dodebug) translate([-ankerattachl-1,-1000,-1000]) cube([2000,2000,1000+ankerplatew/2]);
+    if (dodebug) translate([-ankerattachl-1,-1000,-1000]) cube([2000,2000,1000+71]);
   }
  }
 
@@ -539,3 +643,7 @@ if (print==5) {
   translate([2,boltd,0]) rotate([180,0,360/12]) attachbolt();
  }
 
+if (print==6) {
+  translate([0,0,ankerattachl]) rotate([0,90,0]) ankerholder();
+  translate([-boltbased/2+1,0,0]) rotate([180,0,360/12]) attachbolt();
+ }
