@@ -17,7 +17,6 @@ handlel=25; // Bar protruding out
 handlew=bottomoutw;
 mbthickness=1.65;
 h=8.5-mbthickness;
-//h=6.15;//10;
 wall=2;
 cornerd=2;
 screwtolppad=3;
@@ -29,42 +28,40 @@ mbtowerh=6.15;
 mbtowerattachd=mbtowerd+wall*2+dtolerance;
 mbtowerattachh=mbtowerh+ztolerance;
 
-barl=23-mbtowerattachd/2;
+barl=21.5-mbtowerattachd/2;
 towerx=barl;
 
 module mbtowerextend() {
   difference() {
     union() {
-      //roundedcylinder(topoutd,h,cornerd,1,6);
       translate([-topoutd/2,-mbsupportw/2,0]) roundedbox(topoutd,mbsupportw,h,cornerd,1);
       hull() {
-	translate([-wall,-mbsupportw/2,h+mbthickness+wall]) roundedbox(topoutd/2+wall,mbsupportw,cornerd,cornerd,1);
-	translate([0,-mbsupportw/2,h+mbthickness]) roundedbox(topoutd/2,mbsupportw,wall,cornerd,1);
+	translate([-wall,-mbsupportw/2,h+mbthickness+ztolerance+wall]) roundedbox(topoutd/2+wall,mbsupportw,cornerd,cornerd,1);
+	translate([0,-mbsupportw/2,h+mbthickness+ztolerance]) roundedbox(topoutd/2,mbsupportw,wall,cornerd,1);
       }
-      translate([0,-mbsupportw/2,0]) roundedbox(topoutd/2,mbsupportw,h+mbthickness+wall,cornerd,1);
-      translate([towerx,0,0]) roundedcylinder(mbtowerattachd,mbtowerh+ztolerance+wall*2,cornerd,1,90);
+      translate([0,-mbsupportw/2,0]) roundedbox(topoutd/2,mbsupportw,h+mbthickness+ztolerance+wall,cornerd,1);
+      hull() {
+	translate([towerx,0,0]) roundedcylinder(mbtowerattachd,mbtowerh+ztolerance+wall*2,cornerd,1,90);
+	translate([towerx-1.5,0,0]) roundedcylinder(mbtowerattachd,cornerd,cornerd,1,90);
+      }
       
       hull() {
 	roundedcylinder(topoutd,max(wall,h/3),cornerd,1,6);
 	roundedcylinder(bottomoutd,wall,cornerd,1,6);
       }
       hull() {
-	//roundedcylinder(bottomoutd,wall,cornerd,1,6);
 	translate([-topoutd/2,-mbsupportw/2,0]) roundedbox(topoutd,mbsupportw,wall,cornerd,1);
 	translate([towerx,0,0]) roundedcylinder(mbtowerattachd,wall,cornerd,1,90);
 	translate([0,-handlew/2,0]) roundedbox(barl,handlew,wall,cornerd,1);
       }
-      //      translate([0,0,0]) roundedcylinder(screwtolppad,h+screwtolppah,screwtolppad,0,90);
     }
 
-    //    translate([0,0,-0.01]) cylinder(d=screwholed,h=h+0.02,$fn=90);
     hull() {
+      translate([towerx-1.5,0,-0.01]) cylinder(d=mbtowerd+dtolerance,h=0.1+0.01,$fn=90);
       translate([towerx,0,-0.01]) cylinder(d=mbtowerd+dtolerance,h=mbtowerattachh+0.01,$fn=90);
       translate([towerx,0,-0.01]) cylinder(d=screwholed,h=mbtowerattachh+wall+0.02,$fn=90);
     }
     translate([towerx,0,-0.01]) cylinder(d=screwholed,h=mbtowerattachh+wall*2+0.02,$fn=90);
-
-    //translate([-topoutd/2-0.01,-mbsupportw/2-0.01,h]) roundedbox(topoutd,mbsupportw,h+mbthickness+wall,cornerd,1);
   }
 }
 

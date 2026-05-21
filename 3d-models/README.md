@@ -1586,3 +1586,8 @@ Cover is held with clips.
 Makefile.disk35 makes all parts, which do not need supports for printing.
 
 No supports are needed to print.
+
+### mbtowerextend.scad
+
+Motherboard support for an old HP case for new motherboards.
+
