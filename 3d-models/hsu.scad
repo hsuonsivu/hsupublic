@@ -611,18 +611,24 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
   hull() {
     if (printable==1 || printable==3) cylinder(d=diameter-cornerd/1.7,h=height/2);
     if (printable==2 || printable==3) translate([0,0,height/2]) cylinder(d=diameter-cornerd/1.7,h=height/2);
-    
-    translate([0,0,cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
-      intersection() {
-	circle(d=cornerd,$fn=90);
-	translate([0,-diameter/2]) square([diameter,diameter]);
+
+    intersection() {
+      translate([0,0,0]) cylinder(d=diameter,h=cornerd/2);
+      translate([0,0,cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
+	intersection() {
+	  circle(d=cornerd,$fn=90);
+	  translate([0,-diameter/2]) square([diameter,diameter]);
+	}
       }
     }
-    
-    translate([0,0,height-cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
-      intersection() {
-	circle(d=cornerd,$fn=90);
-	translate([0,-diameter/2]) square([diameter,diameter]);
+
+    intersection() {
+      translate([0,0,height-cornerd/2]) cylinder(d=diameter,h=cornerd/2);
+      translate([0,0,height-cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
+	intersection() {
+	  circle(d=cornerd,$fn=90);
+	  translate([0,-diameter/2]) square([diameter,diameter]);
+	}
       }
     }
   }
@@ -1022,6 +1028,12 @@ module grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) {
     for (a=[0:astep:359]) {
       rotate([0,0,a]) translate([d/2-w,-w/2,0]) cube([min(ddistance/2+w-0.1,diameter/2-d/2+w/2),w,thickness]);
     }
+  }
+}
+
+module roundedring(d,w) {
+  rotate_extrude(convexity=10,$fn=90) {
+    translate([d/2-w,0,0]) circle(d=w,$fn=90);
   }
 }
 
