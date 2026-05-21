@@ -1410,7 +1410,9 @@ to count to make multiple terminals in one print.
 ### spicegrinder.scad
 
 "Santa Maria" brand spice grinders are tedious to use, so I added a
-handle. I would need a bit more torque but works better than without this.
+handle. I would need a bit more torque but works better than without
+this.  Added version which uses large handwheel as handles tend to be
+weak and there is not enough torque to break black pepper.
 
 ![spidegrinder installed.](spicegrinder.jpg)
 
