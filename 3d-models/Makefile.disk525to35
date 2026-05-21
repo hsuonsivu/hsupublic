@@ -2,7 +2,7 @@ SOURCE=disk525to35.scad
 DEPENDS=hsu.scad Makefile.disk525to35
 IMAGES=
 
-ALL=disk525to35body.stl disk525to35locks.stl disk525to35.stl disk525to35guidebody.stl disk525to35guidelocks.stl disk525to35guide.stl disk525to35guideclips.stl disk525to35aopenbody.stl disk525to35aopenlocks.stl disk525to35aopen.stl disk525to35aopenclips.stl disk525to35sideslidebody.stl disk525to35sideslidelockshole.stl disk525to35sideslidelockshead.stl disk525to35sideslidehole.stl disk525to35sideslidehead.stl disk525to35fancover.stl disk525to35fangrill.stl disk525to35fancoverandgrill.stl
+ALL=disk525to35body.stl disk525to35locks.stl disk525to35.stl disk525to35guidebody.stl disk525to35guidelocks.stl disk525to35guide.stl disk525to35guideclips.stl disk525to35aopenbody.stl disk525to35aopenlocks.stl disk525to35aopen.stl disk525to35aopenclips.stl disk525to35sideslidebody.stl disk525to35sideslidelockshole.stl disk525to35sideslidelockshead.stl disk525to35sideslidehole.stl disk525to35sideslidehead.stl disk525to35fancover.stl disk525to35fangrill.stl disk525to35fancoverandgrill.stl disk525to35sideslidesheadonly.stl disk525to35sideslidesholeonly.stl
 
 OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
@@ -107,3 +107,12 @@ disk525to35fangrill.stl: $(SOURCE) $(DEPENDS)
 disk525to35fancoverandgrill.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=7 -o $@ $(SOURCE)
 	echo $@ built.
+
+disk525to35sideslidesheadonly.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D guideversion=0 -D sideslideversion=1 -D aopenversion=0 -D sideslidescrewholes=0 -D sideslidescrewheads=1 -D print=8 -o $@ $(SOURCE)
+	echo $@ built.
+
+disk525to35sideslidesholeonly.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D guideversion=0 -D sideslideversion=1 -D aopenversion=0 -D sideslidescrewholes=1 -D sideslidescrewheads=0 -D print=8 -o $@ $(SOURCE)
+	echo $@ built.
+
