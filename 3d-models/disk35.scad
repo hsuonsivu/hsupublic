@@ -9,10 +9,10 @@ include <hsu.scad>
 print=0;
 debug=0;
 
-xtolerance=0.30;
-ytolerance=0.30;
-ztolerance=0.20;
-dtolerance=0.60;
+xtolerance=0.25;
+ytolerance=0.25;
+ztolerance=0.25;
+dtolerance=0.50;
 
 maxbridge=10;
 cornerd=1;
@@ -37,7 +37,7 @@ diskscrewpenetration=6.32;
 // 2.5 inch disks may be up to 12.5 thick, though 9.5 is current standard.
 smalldiskh=ztolerance+9.5+ztolerance;
 smalldiskmaxh=ztolerance+12.5+ztolerance;
-smalldiskl=100.45;
+smalldiskl=100.5; // 100.45;
 smalldiskw=ytolerance+69.82+max(0.25,ytolerance);
 smalldiskscrewxtable=[smalldiskl-90.6,smalldiskl-14];
 smalldisksmalldiskconnectory=15;
@@ -77,7 +77,7 @@ covercutheight=diskh-wall-covercuth;
 covercutx=diskl/2-covercutl/2;
 covercuty=diskw/2-covercutw/2;
 
-versiontext="V1.2";
+versiontext="V1.4";
 textdepth=0.6;
 textsize=7;
 textfont="Liberation Sans:style=Bold";
@@ -91,9 +91,9 @@ coverclipheight=baseh-belowcoverh+coverclipd/2+dtolerance/2;
 // This one I just ordered from aliexpress
 
 pcbw=pcbversion==1?84:pcbversion==2?58:84.4;
-pcbl=pcbversion==1?33-10:pcbversion==2?2.3:27.55;
+pcbl=pcbversion==1?33-10:pcbversion==2?2.3:26.35+xtolerance;
 pcbh=pcbversion==1?1:pcbversion==2?20:1.6;
-pcbx=pcbversion==1?10:pcbversion==2?10:1.27;
+pcbx=pcbversion==1?10:pcbversion==2?10:1.2;
 pcbbelowspace=pcbversion<3?0:1.7;
 pcbheight=wall+(pcbversion==1?ztolerance:pcbversion==2?ztolerance:ztolerance+pcbbelowspace);
 pcbsupporth=2;
@@ -175,7 +175,7 @@ connectorpcby=pcbversion==1?-pcbw/2:pcbversion==2?pcby:-pcbw/2;
 tappih=ztolerance+pcbh+1;
 
 smalldisky=pcbversion==1?-smalldiskw/2:pcbversion==2?pcby-9:-smalldiskw/2;
-smalldiskx=pcbversion==1?pcbx+pcbl+1:pcbversion==2?13.4:pcbx+pcbl+0.5;
+smalldiskx=pcbversion==1?pcbx+pcbl+1:pcbversion==2?13.4:pcbx+pcbl;//+0.5
 
 // Sides, should be higher than tallest potential disk (12.5mm + ztolerance*2)
 smalldisksidewallh=wall+ztolerance+smalldiskmaxh+ztolerance+wall+1;
@@ -211,7 +211,7 @@ springclipl=springspacel+cornerd*2;//springl+cornerd-1;
 springspaceh=wall-diskbaseh+ztolerance+springclipd/2+cornerd+0.5;//diskh-plateheight-wall-ztolerance-ztolerance-wall;
 //springtowerh=wall+ztolerance+springclipd/2+cornerd+0.5;//diskh-plateheight-wall-ztolerance-ztolerance-wall;
 //echo(springtowerh);
-springtensionh=ztolerance+springspaceh+(smalldiskmaxh-smalldiskh)+2+ztolerance;
+springtensionh=ztolerance+springspaceh+(smalldiskmaxh-smalldiskh)+2.5+ztolerance;
 springclipy=springtowerw/2+ytolerance+wall-springclipd/2;
 
 springl=4+xtolerance+springtowerl+xtolerance+4;
@@ -601,7 +601,7 @@ module disk35() {
       if (pcbversion==3) {
 	translate([pcbx,pcby+pcbw-belowsupportsize,0]) roundedbox(pcbl,belowsupportsize,wall+belowsupporth,cornerd,0);
 	translate([pcbx,pcby+pcbw-belowbacksupportw,0]) roundedbox(belowsupportsize,belowbacksupportw,wall+belowsupporth,cornerd,0);
-	translate([pcbx,pcby+belowcornersupporty,0]) roundedbox(belowcornersupportl,belowcornersupportw,wall+belowsupporth,cornerd,0);
+	for (x=[pcbx,pcbx+pcbl-belowmidsupportl]) translate([x,pcby+belowcornersupporty,0]) roundedbox(belowcornersupportl,belowcornersupportw,wall+belowsupporth,cornerd,0);
 	translate([belowmidsupportx,pcby+pcbw-belowmidsupportw,0]) roundedbox(belowmidsupportl,belowmidsupportw,wall+belowsupporth,cornerd,0);
 	for (y=[pcby-ytolerance-belowsupportsize,pcby+pcbw+ytolerance]) {
 	  translate([pcbx+belowsidesupportx,y,0]) roundedbox(belowsidesupportl,belowsupportsize,pcbheight+belowsidesupporth,cornerd,0);
@@ -617,20 +617,25 @@ module disk35() {
 
       for (x=[smalldiskx,smalldiskx+smalldiskl-smalldiskl/3]) {
 	difference() {
-	  hull() {
-	    translate([x,-diskw/2+wall+ytolerance,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd/2,cornerd,0);
-	    translate([x,-diskw/2+0.01,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd,cornerd,0);
-	    translate([x,-diskw/2+outcornerd/2,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
-	    translate([x,smalldisky-ytolerance-wall,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
-	  }
-	  if (x>smalldiskx) translate([x-holecornerd/2,smalldisky-ytolerance-wall-2-holew,wall+1]) roundedbox(wall+holecornerd,holew,sidewallh-wall-1-4,holecornerd,0);
-	}
+	  union() {
+	    hull() {
+	      translate([x,-diskw/2+wall+ytolerance,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd/2,cornerd,0);
+	      translate([x,-diskw/2+0.01,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd,cornerd,0);
+	      translate([x,-diskw/2+outcornerd/2,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
+	      translate([x,smalldisky-ytolerance-wall,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
+	    }
 	
-	hull() {
-	  translate([x,smalldisky+smalldiskw+ytolerance,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
-	  translate([x,diskw/2-outcornerd/2-wall,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
-	  translate([x,diskw/2-wall-0.01,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd,cornerd,0);
-	  translate([x,diskw/2-wall*2-xtolerance,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd/2,cornerd,0);
+	    hull() {
+	      translate([x,smalldisky+smalldiskw+ytolerance,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
+	      translate([x,diskw/2-outcornerd/2-wall,0]) roundedbox(wall,wall,smalldisksidewallh,cornerd,0);
+	      translate([x,diskw/2-wall-0.01,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd,cornerd,0);
+	      translate([x,diskw/2-wall*2-xtolerance,outcornerd/2]) roundedbox(wall,wall,sidewallh-outcornerd/2,cornerd,0);
+	    }
+	  }
+	  
+	  if (pcbversion==1 || pcbversion==3 || x>smalldiskx) {
+	    for (m=[0,1]) mirror([0,m,0]) translate([x-holecornerd/2,smalldisky-ytolerance-wall-2-holew,wall+1]) roundedbox(wall+holecornerd,holew,sidewallh-wall-1-4,holecornerd,0);
+	  }
 	}
       }
 
@@ -879,9 +884,9 @@ if (print==0) {
     if (debug) translate([-100,-diskw/2,-100]) cube([300,diskw-10,300]);
     difference() {
       union() {
-	//disk35();
+	disk35();
 	translate([platex,platey,plateheight]) plate();
-	cover();
+	//cover();
       
 	for (x=springxtable) {
 	  for (y=springytable) {
@@ -889,7 +894,7 @@ if (print==0) {
 	  }
 	}
       }
-      %      translate([pcbx,pcby,pcbheight]) contactpcb();
+      //%      translate([pcbx,pcby,pcbheight]) contactpcb();
       //translate([smalldiskx,smalldisky,wall+ztolerance]) #smalldisk();
     }
   }
@@ -931,7 +936,7 @@ if (print==6) {
   }
  }
 
-if ((pcbversion==1 || pcbversion==3) && (print==5)) 
+if (0 && (pcbversion==1 || pcbversion==3) && (print==5)) 
   {
     translate([diskl+(springtoph+0.5+springh+1)*2+2,platel+0.5,0]) contactpcb();
   }
