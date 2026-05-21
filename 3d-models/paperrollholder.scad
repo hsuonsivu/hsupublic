@@ -8,12 +8,14 @@ use <threadlib/threadlib.scad>
 print=0;
 debug=1;
 
-versiontext="1.1";
+versiontext="1.2";
 
 xtolerance=0.25;
 ytolerance=0.25;
 ztolerance=0.25;
 dtolerance=0.5;
+
+wall=2.4;
 
 bottomd=140;
 bottomh=7;
@@ -22,7 +24,7 @@ bottomtopd=120;
 bottomtoph=15;
 
 holderd=29;
-holderh=bottomtoph+225; 
+holderh=bottomtoph+224; 
 
 handled=50;
 handleh=20;
@@ -79,6 +81,11 @@ module base() {
     translate([0,0,holderh-topboltholel-topboltholepitch*2-cornerd/2]) roundedcylinder(topboltholed,topboltholepitch/2+cornerd/2+0.01,cornerd,0,180);
     translate([0,0,holderh-topboltholel-topboltholepitch]) tap("M20", turns=topboltholeturns,table=MY_THREAD_TABLE);
 
+    // Some strengthen voids
+    for (d=[wall:wall*2:holderd-wall]) {
+      translate([0,0,wall]) ring(d,0.11,holderh-topboltholel-topboltholepitch*2-cornerd/2-wall-wall,0,180);
+    }
+    
     translate([0,0,textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text(str(brandtext," ",versiontext),size=textsize,font=textfont,valign="center",halign="center");
   }
 }
@@ -105,6 +112,11 @@ module top() {
       }
     }
 
+    // Some strengthen voids
+    for (d=[wall:wall*2:topboltd-wall*2]) {
+      translate([0,0,topboltheight-topboltpitch-topboltpitch*1.5+ztolerance+wall]) ring(d,0.11,toph+axish+handlecornerd+handleh+topboltpitch+topboltpitch*1.5-wall*3,0,180);
+    }
+    
     translate([0,-holderd/2,holderh+ztolerance+textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="bottom",halign="center");
   }
 }
