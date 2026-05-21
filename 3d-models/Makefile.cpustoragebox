@@ -2,7 +2,7 @@ SOURCE=cpustoragebox.scad
 DEPENDS=hsu.scad Makefile.cpustoragebox
 IMAGES=
 
-ALL=cpustoragebox-amd-athlon64-hp-dx2250.stl cpustoragebox-celeron-acerpower-s290.stl cpustoragebox-amd-sempron-acer-aspire-t136.stl cpustoragebox-celeron-200-pga370.stl
+ALL=cpustoragebox-amd-athlon64-hp-dx2250.stl cpustoragebox-celeron-acerpower-s290.stl cpustoragebox-amd-sempron-acer-aspire-t136.stl cpustoragebox-celeron-200-pga370.stl cpustoragebox-core2duo-dell-optiplex745.stl cpustoragebox-celeron-700-pga370.stl 
 
 OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
@@ -44,3 +44,12 @@ cpustoragebox-amd-sempron-acer-aspire-t136.stl: $(SOURCE) $(DEPENDS)
 cpustoragebox-celeron-200-pga370.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=4 -o $@ $(SOURCE)
 	echo $@ built.
+
+cpustoragebox-core2duo-dell-optiplex745.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+
+cpustoragebox-celeron-700-pga370.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D debug=0 -D print=6 -o $@ $(SOURCE)
+	echo $@ built.
+

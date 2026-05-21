@@ -25,7 +25,9 @@ cpu=print==0?0:print-1;
 cputable=[["amd-athlon64-hp-dx2250",41,41,7.5,"athlon64AM2","hp","dx2250"],
 	  ["celeron-acerpower-s290",38,38,6,"celeron370","acer","pwr s290"],
 	  ["amd-sempron-acer-aspire-t136",41,41,7,"sempron754","acer aspire", "t163"],
-	  ["celeron-200Mhz-32bit",50,50,6,"celeron","PGA370","200Mhz"]
+	  ["celeron-200Mhz-32bit",50,50,6,"celeron","PGA370","200Mhz"],
+	  ["core2duo",38,38,6,"pga","dell","optiplex745"],
+	  ["celeron-700Mhz-32bit",50,50,6,"celeron","PGA370","700Mhz"],
 	  ];
   
 l=cputable[cpu][1];
