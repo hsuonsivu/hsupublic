@@ -1,0 +1,38 @@
+SOURCE=pelilaatikko.scad
+DEPENDS=hsu.scad Makefile.pelilaatikko
+IMAGES=
+ALL=pelilaatikkopohja.stl pelilaatikkokansi.stl 
+
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics
+
+all: $(ALL)
+
+dist: pelilaatikko.zip
+
+pelilaatikko-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf pelilaatikko-distribution
+	rm -f pelilaatikko-distribution.zip
+	mkdir -p pelilaatikko-distribution
+	cp $(SOURCE) $(DEPENDS) pelilaatikko-distribution
+	zip -r $@ pelilaatikko-distribution
+	echo $@ built.      
+
+pelilaatikko-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf pelilaatikko-distribution
+	rm -f pelilaatikko-distribution.zip
+	mkdir -p pelilaatikko-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) pelilaatikko-distribution
+	zip -r $@ pelilaatikko-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+pelilaatikkopohja.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+pelilaatikkokansi.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
