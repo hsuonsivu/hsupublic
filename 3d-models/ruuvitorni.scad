@@ -10,16 +10,16 @@ bottomoutw=7;
 bottomoutd=7/cos(180/6);
 handlel=25; // Bar protruding out
 handlew=bottomoutw;
-h=10;
+ruuvitornih=10;
 wall=2;
 cornerd=2;
 
 module ruuvitorni() {
   difference() {
     union() {
-      roundedcylinder(topoutd,h,cornerd,1,6);
+      roundedcylinder(topoutd,ruuvitornih,cornerd,1,6);
       hull() {
-	roundedcylinder(topoutd,max(wall,h/3),cornerd,1,6);
+	roundedcylinder(topoutd,max(wall,ruuvitornih/3),cornerd,1,6);
 	roundedcylinder(bottomoutd,wall,cornerd,1,6);
       }
       hull() {
@@ -28,7 +28,7 @@ module ruuvitorni() {
       }
     }
 
-    translate([0,0,-0.01]) cylinder(d=screwholed,h=h+0.02,$fn=90);
+    translate([0,0,-0.01]) cylinder(d=screwholed,h=ruuvitornih+0.02,$fn=90);
   }
 }
 

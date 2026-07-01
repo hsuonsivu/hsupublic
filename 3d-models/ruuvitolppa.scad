@@ -10,7 +10,7 @@ bottomoutw=7;
 bottomoutd=7/cos(180/6);
 handlel=25; // Bar protruding out
 handlew=bottomoutw;
-h=10;
+ruuvitolppah=10;
 wall=2;
 cornerd=2;
 screwtolppad=3;
@@ -23,19 +23,17 @@ barl=23;
 module ruuvitolppa() {
   difference() {
     union() {
-      roundedcylinder(topoutd,h,cornerd,1,6);
+      roundedcylinder(topoutd,ruuvitolppah,cornerd,1,6);
       hull() {
-	roundedcylinder(topoutd,max(wall,h/3),cornerd,1,6);
+	roundedcylinder(topoutd,max(wall,ruuvitolppah/3),cornerd,1,6);
 	roundedcylinder(bottomoutd,wall,cornerd,1,6);
       }
       hull() {
 	roundedcylinder(bottomoutd,wall,cornerd,1,6);
 	translate([0,-handlew/2,0]) roundedbox(handlel,handlew,wall,cornerd,1);
       }
-      translate([0,0,0]) roundedcylinder(screwtolppad,h+screwtolppah,screwtolppad,0,90);
+      translate([0,0,0]) roundedcylinder(screwtolppad,ruuvitolppah+screwtolppah,screwtolppad,0,90);
     }
-
-    //translate([0,0,-0.01]) cylinder(d=screwholed,h=h+0.02,$fn=90);
   }
 }
 
