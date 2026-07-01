@@ -19,7 +19,7 @@ piped=14;
 pipeseparation=126+piped;
 pipedepth=22-piped/2;
 
-versiontext="Showertray V1.3";
+versiontext="Showertray V1.4";
 textdepth=0.5;
 textsize=7;
 
@@ -63,12 +63,12 @@ module trayform(w) {
 	scale([xcornerd/cornerd,ycornerd/cornerd,zcornerd/cornerd]) sphere(d=cornerd);
 	difference() {
 	  union() {
-	    translate([xcornerd/2+backcornerd/2+w,w,zcornerd/2+w]) cube([depth-backcornerd/2-xcornerd-w*2,width/2-ycornerd/2-w*2,height-zcornerd/2-w+topextension]);
+	    translate([xcornerd/2+backcornerd/2+(w>0?w-0.5:0),w,zcornerd/2+w]) cube([depth-backcornerd/2-xcornerd-w*2,width/2-ycornerd/2-w*2,height-zcornerd/2-w+topextension]);
 	    intersection() {
 	      hull() {
-		translate([backcornerd/2,0,height]) rotate([-90,0,0]) cylinder(d=backcornerd-xcornerd-w*2,h=width/2-xcornerd/2-w,$fn=fnlarge);
+		translate([backcornerd/2,0,height]) rotate([-90,0,0]) cylinder(d=backcornerd-xcornerd-(w>0?w+0.5:0)*2,h=width/2-xcornerd/2-w,$fn=fnlarge);
 		if (backcornerd/2+topextension > height) {
-		  translate([backcornerd/2,0,backcornerd/2+topextension]) rotate([-90,0,0]) cylinder(d=backcornerd-xcornerd-w*2,h=width/2-xcornerd/2-w);
+		  translate([backcornerd/2,0,backcornerd/2+topextension]) rotate([-90,0,0]) cylinder(d=backcornerd-xcornerd-(w>0?w+0.5:0)*2,h=width/2-xcornerd/2-w,$fn=fnlarge);
 		}
 	      }
 	      translate([xcornerd/2,0,zcornerd/2+w]) cube([backcornerd/2+xcornerd,width/2+ycornerd/2-w,height+zcornerd/2+topextension]);
@@ -84,7 +84,7 @@ module trayform(w) {
 	      // Cuts for pipes on the wall
 	      translate([pipedepth,pipeseparation/2,height-0.01]) cylinder(h=zcornerd+topextension+0.02+w,d=piped+xcornerd+w*2,$fn=fnlarge);
 	      intersection() {
-		translate([pipedepth+distancefromwall,pipeseparation/2,height]) rotate([-90,0,180]) curvedcylinder(height+ycornerd/2+topextension+0.02,piped+xcornerd+w*2,distancefromwall,90,piped);
+		translate([pipedepth+distancefromwall,pipeseparation/2,height]) rotate([-90,0,180]) curvedcylinder(height+ycornerd/2+topextension+0.02,piped+xcornerd+w*2,distancefromwall,90,piped,$fn=fnlarge);
 		translate([pipedepth-piped/2-w,pipeseparation/2-piped/2-ycornerd/2-w,0]) cube([distancefromwall,piped+ycornerd+w*2,height+cornerd/2-w]);
 	      }
 	      translate([w-0.01,pipeseparation/2-piped/2-ycornerd/2-w,w-0.01]) cube([pipedepth,piped+ycornerd+w*2,height+topextension+zcornerd+1+0.02]);
@@ -145,7 +145,7 @@ if (print==0) {
 
 if (print==1) {
   rotate([0,0,90]) {
-    antiwarpwall(0,-width/2,0,depth,width,height+topextension); // ,3,0.8);
+    if (0) antiwarpwall(0,-width/2,0,depth,width,height+topextension); // ,3,0.8);
     showertray();
   }
  }
