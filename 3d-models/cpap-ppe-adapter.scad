@@ -1,10 +1,11 @@
 include <threads.scad>
+include <hsu.scad>
 
 debug=0;
 adhesion=1;
-tube=0;
+tube=2;
 
-dtolerance=0.6;
+dtolerance=0.65;
 
 $fn=90;
 
@@ -39,6 +40,9 @@ axlenarrowing=1.5;
 axled=adapterd+2*axlenarrowing; // 1.5 mm depth or hinge
 axleh=threadh-axlebottomh-axletoph-2*axlenarrowing;
 
+wall=2.5;
+cornerd=1;
+  
 nuth=4.5;
 
 coverh=2.5;
@@ -60,9 +64,9 @@ edgew=4;
 supportw=2; // Cross supports in the mask
 
 tubed=9;
-tubex=-externald1/2;
-tubey=cover2d/2-tubed/2;
-tubeangle=-20;
+tubex=tube==1?-externald1/2:tube==2?coverxstart+coverl-edgew-3.5:0;
+tubey=tube==1?cover2d/2-tubed/2:tube==2?tubed/2+0.5:0;;
+tubeangle=tube==1?-20:tube==2?10:0;
 tuberangle=-12;
 tubesideangle=-45;
 tubesider=-cover2d/2-tubed/2;
@@ -72,6 +76,33 @@ tubecatchheight=10;
 outholex=13;
 outholed=1.2;
 outholeangle=-35;
+
+insideadapterd=28.23;
+insideadapterh=7;
+insidetubed=24.87;
+insidetubetotalh=10;
+insidetubeh=2.94;//=2.4;
+insidetubemidh=2.4;
+ringcutheight=2.94;
+ringcuth=2.2;
+ringcutd=22.78;
+topcutw=20.88;
+topcutx=18.55-insidetubed/2;
+insidetubetoph=10-insidetubeh-ringcuth-insidetubemidh;
+notchh=1.77;
+notchw=1.85;
+clipd=1.88-1.34;
+cliph=1.7;
+
+insidecutd=23;
+insidecutheight=insideadapterh+insidetubeh+ringcuth+1;
+insidecuth=10;
+sidecutl=2.7;
+
+insidetubex=ringcutd/2-tubed/2-wall/2;
+insidetuberotate=50;
+insideholed=ringcutd-wall;
+insideholeh=5;
 
 module insidecut() {
   hull() {
@@ -119,9 +150,15 @@ module cpaptube() {
 	hull() {
 	  // Bottom shape
 	  translate([coverxstart+coverd/2,0,0]) cylinder(d=coverd,h=coverbaseh);
-	  translate([coverxstart+coverl/2,0,0]) scale([coverl/coverw,1,1]) cylinder(d=coverw,h=coverbaseh);
-	  translate([coverxstart+coverl-coverd/2,0,0]) cylinder(d=coverd,h=coverbaseh);
-
+	  translate([coverxstart+coverl/2,0,0]) scale([coverl/coverw,1,1]) cylinder(d=coverw+wall,h=coverbaseh);
+	  translate([coverxstart+coverl-coverd/2,0,0]) cylinder(d=coverd+wall,h=coverbaseh);
+	  if (tube==2) {
+	    intersection() {
+	      translate([coverxstart+coverl-coverd/2,0,0]) cylinder(d=coverd*2,h=threadh+coverh1+coverh2+coverspread);
+	      translate([tubex,tubey,0]) rotate([0,tubeangle,0]) cylinder(d=tubed+wall*2,h=adapterheight);
+	    }
+	  }
+	  
 	  // top
 	  //	  translate([0,0,coverheight]) cylinder(d1=cover2d+dtolerance,d2=cover2d+coverspread+dtolerance,h=coverh);
 	  translate([0,0,threadh+coverh1+coverh2]) cylinder(d1=cover2d+dtolerance,d2=cover2d+coverspread*2+dtolerance,h=coverspread);
@@ -148,13 +185,6 @@ module cpaptube() {
       union() {
 	difference() {
 	  insidecut();
-	
-	  if (0) if (tube) rotate([0,0,tubesideangle]) translate([tubesider,0,0]) {
-	      intersection() {
-		translate([-tubecatchd/2+tubed/2,0,tubecatchheight]) cylinder(d=tubecatchd,h=axletoph--tubecatchheight);
-		translate([-tubecatchd/2+tubed/2,-tubecatchd/2,tubecatchheight]) rotate([0,-45,0]) cube([tubecatchd,tubecatchd,axletoph--tubecatchheight]);
-	      }
-	    }
 	}
 	
 	for (i=[1:1.5:4]) {
@@ -164,14 +194,14 @@ module cpaptube() {
 	  }
 	}
 
-	if (0) if (tube) translate([tubex,tubey,0]) rotate([0,tubeangle,0]) {
-	    cylinder(d=tubed,h=adapterheight);
-	  }
-
-	if (tube) {
+	if (tube==1) {
 	  rotate([0,0,tubesideangle]) translate([tubesider,0,0]) {
 	    rotate([0,tuberangle,0]) cylinder(d=tubed,h=adapterheight);
 	  }
+	}
+
+	if (tube==2) {
+	  translate([tubex,tubey,0]) rotate([0,tubeangle,0]) cylinder(d=tubed,h=adapterheight);
 	}
       }
       translate([0,0,-0.01]) cylinder(d=externald2+dtolerance,h=coverheight+0.02);
@@ -216,14 +246,41 @@ intersection() {
   union() {
     filteradapter();
     cpaptube();
-    #if (0) {
-      hull() {
-	cylinder(d1=50.75,d2=43.3,h=threadh-dtolerance*2);
-	scale([28.4*2/43.3,1,1]) cylinder(d1=50.75,d2=43.3,h=0.1);
-      }
-      cylinder(d=43.3,h=threadh-dtolerance*2+4);
-    }
   }
   if (debug) translate([-100,0,0]) cube([200,100,200]);
 }
 
+if (0) translate([coverxstart+coverl+wall+2+insideadapterd/2,0,0]) {
+  difference() {
+    h=(insidetubed-ringcutd)/2;
+    union() {
+      roundedcylinder(insideadapterd,insideadapterh,cornerd,1,90);
+      roundedcylinder(insidetubed,insideadapterh+insidetubeh,cornerd,1,90);
+      roundedcylinder(ringcutd,insideadapterh+insidetubeh+ringcuth+insidetubemidh,cornerd,1,90);
+      translate([0,0,insideadapterh+insidetubeh+ringcuth+h/2]) roundedcylinder(insidetubed,insidetubemidh-h/2,cornerd,0,90);
+      intersection() {
+	hull() {
+	  translate([0,0,insideadapterh+insidetubeh+ringcuth+h/2]) roundedcylinder(insidetubed,insidetubemidh+insidetubetoph-h/2,cornerd,1,90);
+	  translate([0,0,insideadapterh+insidetubeh+ringcuth-h/2]) roundedcylinder(ringcutd,insidetubemidh+insidetubetoph,cornerd,1,90);
+	}
+	union() {
+	  translate([topcutx,-topcutw/2,insideadapterh+insidetubeh+ringcuth-h]) roundedbox(insideadapterd,topcutw,insidetubemidh+insidetubetoph+h,cornerd,0);
+	  translate([0,0,insideadapterh+insidetubeh+ringcuth-h]) roundedcylinder(insidetubed,insidetubemidh+h,cornerd,0,90);
+	}
+      }
+      intersection() {
+	translate([0,0,insideadapterh+insidetubeh+ringcuth+insidetubemidh+insidetubetoph-cliph]) roundedcylinder(insidetubed+clipd*2,cliph,cornerd,1,90);
+	translate([topcutx,-topcutw/2,insideadapterh+insidetubeh+ringcuth]) roundedbox(insidetubed/2-topcutx,topcutw,insidetubemidh+insidetubetoph,cornerd,0);
+      }
+      intersection() {
+	roundedcylinder(insideadapterd,insideadapterh+notchh,cornerd,1,90);
+	translate([-insideadapterd/2,-notchw/2,0]) roundedbox(insideadapterd/2,notchw,insideadapterh+notchh,cornerd,1);
+      }
+    }
+
+    translate([0,0,insidecutheight]) roundedcylinder(insidecutd,insidecuth,cornerd,0,90);
+    translate([0,0,insideholeh]) roundedcylinder(insideholed,insideadapterh+insidetubetotalh,cornerd,0,90); 
+    translate([topcutx-sidecutl,-insideadapterd/2,insidecutheight]) roundedbox(sidecutl,insideadapterd,insidecuth,cornerd,0);
+    rotate([0,0,insidetuberotate]) translate([insidetubex,0,-0.01]) cylinder(d=tubed,h=insideadapterh+insidetubetotalh);
+  }
+}
