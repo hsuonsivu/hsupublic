@@ -1,0 +1,60 @@
+SOURCE=pcsupports.scad
+DEPENDS=hsu.scad Makefile.pcsupports
+IMAGES=
+ALL=pcsupportmotherboardsupport.stl pcsupportmotherboardsupportscrewhole.stl pcsupporttower.stl pcsupportscrewtower.stl pcsupportscrewtowerhigh.stl pcsupportmotherboardsupporthigh.stl  pcsupports.stl 
+
+# pcsupportsthreadtest.stl
+
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics
+
+all: $(ALL)
+
+dist: pcsupports.zip
+
+pcsupports-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf pcsupports-distribution
+	rm -f pcsupports-distribution.zip
+	mkdir -p pcsupports-distribution
+	cp $(SOURCE) $(DEPENDS) pcsupports-distribution
+	zip -r $@ pcsupports-distribution
+	echo $@ built.      
+
+pcsupports-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf pcsupports-distribution
+	rm -f pcsupports-distribution.zip
+	mkdir -p pcsupports-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) pcsupports-distribution
+	zip -r $@ pcsupports-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+pcsupportmotherboardsupport.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+pcsupportmotherboardsupportscrewhole.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+pcsupportscrewtower.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+pcsupporttower.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+pcsupportscrewtowerhigh.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+
+pcsupportmotherboardsupporthigh.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=8 -o $@ $(SOURCE)
+	echo $@ built.
+
+pcsupports.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=6 -o $@ $(SOURCE)
+	echo $@ built.
+
