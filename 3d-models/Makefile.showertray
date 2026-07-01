@@ -1,9 +1,11 @@
 SOURCE=showertray.scad
 DEPENDS=hsu.scad Makefile.showertray
 
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
+
 all: showertray.stl
 
 showertray.stl: $(SOURCE) $(DEPENDS)
-	openscad -D print=1 -o $@ $(SOURCE)
+	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
 	echo $@ built.
 
