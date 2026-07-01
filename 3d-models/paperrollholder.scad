@@ -8,7 +8,7 @@ use <threadlib/threadlib.scad>
 print=0;
 debug=1;
 
-versiontext="1.2";
+versiontext="1.3";
 
 xtolerance=0.25;
 ytolerance=0.25;
@@ -16,6 +16,8 @@ ztolerance=0.25;
 dtolerance=0.5;
 
 wall=2.4;
+zwall=1;
+dgap=0.1; // Create voids to selective strengthening
 
 bottomd=140;
 bottomh=7;
@@ -83,7 +85,7 @@ module base() {
 
     // Some strengthen voids
     for (d=[wall:wall*2:holderd-wall]) {
-      translate([0,0,wall]) ring(d,0.11,holderh-topboltholel-topboltholepitch*2-cornerd/2-wall-wall,0,180);
+      translate([0,0,textdepth+zwall]) ring(d,dgap,holderh-topboltholel-topboltholepitch*2-cornerd/2-zwall-zwall,0,180);
     }
     
     translate([0,0,textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text(str(brandtext," ",versiontext),size=textsize,font=textfont,valign="center",halign="center");
@@ -113,8 +115,8 @@ module top() {
     }
 
     // Some strengthen voids
-    for (d=[wall:wall*2:topboltd-wall*2]) {
-      translate([0,0,topboltheight-topboltpitch-topboltpitch*1.5+ztolerance+wall]) ring(d,0.11,toph+axish+handlecornerd+handleh+topboltpitch+topboltpitch*1.5-wall*3,0,180);
+    for (d=[wall:wall*2:topboltd-wall]) {
+      translate([0,0,topboltheight-topboltpitch-topboltpitch*1.5+ztolerance+zwall]) ring(d,dgap,toph+axish+handlecornerd+handleh+topboltpitch+topboltpitch*1.5-wall-zwall*2,0,180);
     }
     
     translate([0,-holderd/2,holderh+ztolerance+textdepth-0.01]) rotate([180,0,0]) linear_extrude(textdepth) text(versiontext,size=textsize,font=textfont,valign="bottom",halign="center");
