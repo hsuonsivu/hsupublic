@@ -1587,7 +1587,19 @@ Makefile.disk35 makes all parts, which do not need supports for printing.
 
 No supports are needed to print.
 
-### mbtowerextend.scad
+### pcsupports.scad
 
-Motherboard support for an old HP case for new motherboards.
+### Makefile.pcsupports
+
+Various motherboard supports for PC cases.  Obsoletes mbtowerextend.scad
+
+### akkuboksi.scad
+
+A Box for a 6V lead acid battery, with sloped roof.
+
+### pelilaatikko.scad
+
+### Makefile.pelilaatikko
+
+A box for card games. 3 slots for cards and fits sub-A5 manual.
 
