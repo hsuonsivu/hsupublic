@@ -274,7 +274,7 @@ module lighten_recurse(w,h,thickness,edge,barw,maxbridge) {
 }
 
 // Cutouts to lighten a vertical plate. fill is percent of open space
-module lightenhelper(width,height,thickness,margin,barw,maxbridge) {
+module lightenhelper(width,height,thickness,margin,barw,maxbridge,compress) {
   zadjust=maxbridge/2;
   w=width-margin*2;
   h=height-margin*2;
@@ -293,22 +293,23 @@ module lightenhelper(width,height,thickness,margin,barw,maxbridge) {
   }
 }
 
-module lighten(w,h,thickness,margin,barw,maxbridge,direction) {
+module lighten(w,h,thickness,margin,barw,maxbridge,direction,compress=1) {
   bw=barw*2;
+  echo("DEBUG ",w,h,thickness,margin,barw,maxbridge,direction);
   if (direction=="up")
-    lightenhelper(w,h,thickness,margin,bw,maxbridge);
+    lightenhelper(w,h,thickness,margin,bw,maxbridge,compress);
   else if (direction=="down-yplane")
-    translate([thickness,w,h]) rotate([0,180,90]) lightenhelper(w,h,thickness,margin,bw,maxbridge);
+    translate([thickness,w,h]) rotate([0,180,90]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress);
   else if (direction=="down-xplane")
-    translate([w,0,h]) rotate([0,180,0]) lightenhelper(w,h,thickness,margin,bw,maxbridge);
+    translate([w,0,h]) rotate([0,180,0]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress);
   else if (direction=="back-yplane")
-    translate([thickness,0,h]) rotate([0,90,90]) lightenhelper(h,w,thickness,margin,bw,maxbridge);
+    translate([thickness,0,h]) rotate([0,90,90]) lightenhelper(h,w,thickness,margin,bw,maxbridge,compress);
   else if (direction=="back-zplane")
     translate([h,0,0]) rotate([90,0,180]) lightenhelper(h,w,thickness,margin,bw,maxbridge);
   else if (direction=="left-xplane") // Up is left on x plane
-    translate([h,thickness,w]) rotate([0,90,180]) lightenhelper(w,h,thickness,margin,bw,maxbridge);
+    translate([h,thickness,w]) rotate([0,90,180]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress);
   else if (direction=="right-xplane") // Up is right on x plane
-   translate([0,thickness,0]) rotate([0,-90,180]) lightenhelper(w,h,thickness,margin,bw,maxbridge);
+   translate([0,thickness,0]) rotate([0,-90,180]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress);
   else if (direction=="flat-xplane")
     translate([-0.01,margin,margin]) cube([thickness+0.02,w-margin*2,h-margin*2]);
   else echo("ERROR missing or incorrect argument for lighten: ",direction);
@@ -1031,9 +1032,31 @@ module grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) {
   }
 }
 
-module roundedring(d,w) {
-  rotate_extrude(convexity=10,$fn=90) {
-    translate([d/2-w,0,0]) circle(d=w,$fn=90);
+module toroid(d,w,angle=360) {
+  rotate_extrude(convexity=10,angle,$fn=90) {
+    translate([d-w/2,0,0]) circle(d=w,$fn=90);
+    //translate([d/2-w,0,0]) circle(d=w,$fn=90);
   }
+}
+
+module brimcut(w=6,h=0.6,gap=0.1,layerthickness=0.2,$fn=90) {
+  union() {
+    for (z=[0.0:layerthickness:h+layerthickness]) {//h+layerthickness])
+      hull() {
+	// Upper thin cut
+	translate([0,0,z+layerthickness-0.01]) linear_extrude(0.01) offset(gap) fill() projection(cut=true,$fn=90) intersection() {
+	  translate([0,0,-z-layerthickness]) children(); translate([-1000000,-1000000,0]) cube([2000000,2000000,0.01]);
+	}
+	// Lower thin cut
+	translate([0,0,z-0.01]) linear_extrude(0.01) offset(gap) fill() projection(cut=true,$fn=90) intersection() {
+	  translate([0,0,-z]) children(); translate([-1000000,-1000000,0]) cube([2000000,2000000,0.01]);
+	}
+      }
+    }
+  }
+}
+
+module brim(w=6,h=0.6,$fn=90) {
+  linear_extrude(h) offset(w,$fn) hull() projection(cut=true,$fn=90) children();
 }
 
