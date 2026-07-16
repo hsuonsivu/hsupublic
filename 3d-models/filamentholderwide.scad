@@ -29,7 +29,7 @@ MY_THREAD_TABLE=[
 		 ];
 
 $fn=90;
-versiontext="V1.6";
+versiontext="V1.7";
 font="Liberation Sans:style=Bold";
 textdepth = 0.5;
 textsize=7;
@@ -128,7 +128,7 @@ boltpitch=boltspecs[0];
 boltd=boltspecs[2];
 boltholel=(boltturns+1)*boltpitch;
 boltl=(boltturns+1)*boltpitch;
-boltbasel=10;
+boltbasel=14;
 boltbaseh=7;
 boltbased=boltd+10;
 
@@ -167,13 +167,18 @@ ankermidwall=5;
 ankerthickwall=holdersupportwidth;
 ankercornerd=5;
 
+attachfitd=5;
+attachfitdepth=2;
+attachfitsink=0.5;
+attachfity=10;
+attachfitz=holdersupportwidth/2;
+
 module attachbolt() {
   rotate([180,0,0]) {
     difference() {
       union() {
 	translate([0,0,0]) roundedcylinder(boltbased,boltbasel,cornerd,1,6);
 	translate([0,0,boltbasel-cornerd]) roundedcylinder(boltholed-dtolerance,supportringl+cornerd,1,90);
-	//translate([0,0,supportringl-supportringdepth+boltbasel-0.01]) cylinder(d=boltd,h=ztolerance+0.02);
 	translate([0,0,boltthreadh]) bolt("M20",turns=boltturns,table=MY_THREAD_TABLE);
 	hull() {
 	  translate([0,0,boltthreadh+supportringl+boltpitch/2+boltpitch-cornerd/2]) roundedcylinder(boltd,cornerd,cornerd,0,90);
@@ -181,6 +186,14 @@ module attachbolt() {
 	}
       }
 
+      for (a=[0:360/6:359]) {
+	d=2*sin(360/6)*boltbased;
+	cutd=3.14159*d/6*0.9;
+	sink=(boltbased/2-cos(360/6)*(boltbased/2))/2;
+	echo(d,boltbased,sink);
+	rotate([0,0,360/6/2+a]) translate([boltbased/2+cutd/2-sink,0,-0.01]) cylinder(d=cutd,h=boltbasel+0.02);
+      }
+      
       translate([0,0,-0.01]) linear_extrude(textdepth) rotate([180,0,0]) text(versiontext,size=textsize,font=font,valign="center",halign="center");
     }
   }
@@ -217,6 +230,7 @@ module holder() {
     
 	  }
 
+	  // Side plates
 	  for (z=[0,backplatewidth-holdersupportwidth]) {
 	    translate([0,0,z]) hull() {
 	      translate([backplatedepth/2,backplatedepth/2,0]) roundedcylinder(backplatedepth,holdersupportwidth,supportcornerd,z==0?1:2,$fn);
@@ -238,6 +252,7 @@ module holder() {
 	  }
 	}
 
+	// Cut space for right roll holder (male)
 	translate([rollaxisheight,rollaxisdepth,-0.1]) {
 	  hull() {
 	    cylinder(h=holdersupportwidth+rolloverlapheight+0.2,d=rollborediameter);
@@ -246,6 +261,7 @@ module holder() {
 	}
 
 
+	// Locking pins for roll holder
 	translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight-rolloverlaph+rolloverlapnarrowingh+rolllockd/2]) rotate([0,0,90]) tubeclip(rolloverlapd+rolllockdepth,rolllockd,xtolerance);
 
 	hull() {
@@ -306,19 +322,22 @@ module holder() {
 	      translate([rollaxisheight,rollaxisdepth,z-0.1]) cylinder(d=rolldiameterinside,h=holdersupportwidth+cornerd+0.2);	
 	    }
 	  }
-	  
+
+	  // Holes for filament when not in use
 	  for (i=[0:2:6]) {
 	    y=frontheight-backplatedepth-filamentholed*i;
 	    translate([backplatedepth-filamentholed/2,y,z-0.1]) cylinder(h=holdersupportwidth+0.2,d=filamentholed);
 	  }
 	}
       }
-      
+
+      // Side attachment
       hull() {
 	translate([0,0,0]) roundedbox(sideboltx+boltbodyd/2,boltbodyd/2,sidebolth,supportcornerd,1);
 	translate([sideboltx,sidebolty,0]) roundedcylinder(boltbodyd,sidebolth,supportcornerd,1,90);
       }
-      
+
+      // End attachment
       hull() {
 	translate([frontboltx,0,0]) roundedbox(frontbolth,frontbolth,frontboltheight+boltbodyd/2,supportcornerd,1);
 	translate([frontboltx,frontbolty,frontboltheight]) rotate([0,90,0]) roundedcylinder(boltbodyd,frontbolth,supportcornerd,1,90);
@@ -330,6 +349,7 @@ module holder() {
       }
     }
 
+    // Side attachment bolt hole
     translate([sideboltx,sidebolty,-0.01]) cylinder(d=boltholed,h=sidebolth+0.02,$fn=90);
       translate([frontboltx-0.01,frontbolty,frontboltheight]) {
 	hull() {
@@ -407,6 +427,9 @@ module left() {
       }
     }
   }
+
+  // Attachment fit
+  translate([0.01,attachfity,attachfitz]) rotate([90,0,-90]) cylinder(d1=attachfitd,d2=attachfitd*0.5,h=attachfitdepth);
 }
 
 module right() {
@@ -500,6 +523,8 @@ module right() {
 
     //    translate([cutteraxleheight,cutteraxledepth,holdersupportwidth+rollwidth-cutteraxlesupportl+cutteraxleind/3-10+ztolerance]) cylindervoids(cutteraxleind,cutteraxleind,holdersupportwidth+cutteraxlesupportl-cutteraxleind/3+10-ztolerance,0,0,1);
   }
+
+  translate([0.01,attachfity,backplatewidth-attachfitz]) rotate([90,0,-90]) cylinder(d1=attachfitd,d2=attachfitd*0.5,h=attachfitdepth);
 }
 
 module smalltronxyholder() {
@@ -577,6 +602,11 @@ module ankerholder() {
       translate([ankerattachl-boltholel-ankerthickwall-ankermidwall*2,-maxbridge/4,-ankercornerd/2]) cube([ankercornerd,maxbridge/2,ankerattachh+ankercornerd]);
     }
 
+    	  // Attachment fit
+    for (m=[0,1]) mirror([0,m,0]) {
+	translate([ankerattachl+0.01,-ankerplatew/2+attachfitz,attachfity]) rotate([0,-90,0]) cylinder(d1=attachfitd+dtolerance,d2=attachfitd*0.5+dtolerance,h=attachfitdepth,$fn=90);
+      }
+
     translate([ankerattachl-boltl+xtolerance,0,frontbolty]) rotate([0,90,0]) boltcutout();
     
     translate([ankerattachl-boltl-ankerthickwall+xtolerance,0,frontbolty]) rotate([0,90,0]) cylinder(d=boltholed,h=ankerthickwall,$fn=90);
@@ -597,11 +627,12 @@ if (print==0) {
       }
 
       #     roll();
-      #translate([sideboltx,sidebolty,holdersupportwidth+supportringl]) attachbolt();
-      #translate([holdersupportwidth+sidebolth,frontbolty,backplatewidth/2]) rotate([0,90,0]) attachbolt();
+      #translate([sideboltx,sidebolty,holdersupportwidth+boltbasel]) attachbolt();
+      #translate([holdersupportwidth+boltbasel,frontbolty,backplatewidth/2]) rotate([0,90,0]) attachbolt();
     }
     
     //if (dodebug) translate([0,backplatedepth/2,0]) cube([rollaxisheight,1000,1000]);
+    //if (dodebug) translate([-200,backplatedepth/2,attachfitz]) cube([1000,1000,1000]);
     //if (dodebug) translate([sideboltx,-1000,-1000]) cube([2000,2000,2000]);
     if (dodebug) translate([-ankerattachl,-1000,-1000]) cube([2000,2000,1000+ankerplatew/2]);
     //if (dodebug) translate([-ankerattachl-1,-1000,-1000]) cube([2000,2000,1000+71]);
@@ -652,4 +683,8 @@ if (print==6) {
   translate([0,0,ankerattachl]) rotate([0,90,0]) ankerholder();
   translate([ankerattachh+ankerattachtoph+boltbased/2-1,0,0]) rotate([180,0,360/12]) attachbolt();
   translate([-lockpinw-0.5,-lockpinl+ankerplatew/2+lockpinhandleh/2,0]) rotate([90,0,90]) lockpin();
+ }
+
+if (print==7) {
+  ankerholder();
  }
