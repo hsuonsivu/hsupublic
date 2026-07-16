@@ -815,20 +815,7 @@ polycarbonate windows, but glass might also work. There are some
 adherence problems with this. If a slicer supports feature that edges
 are printed from inside out it might help.
 
-recyclingsymbol(type="ABS",size=20,h=0.7,$fn=50) makes a recycling
-symbol used in Europe. Types known are PET, PE_HD, PVC, PE_LD, PP, PS,
-PC, ABAK, ABS, ASA, PETG. There is some variation in standards related
-to this, so this is best effort I could find.
-
-grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) makes a round
-grill which can be used fro various purposes, including fan covers,
-fly swatters, etc. This will not generate round circle around it, you
-need to do that yourself.
-
-### windowframe
-### windowcut
-### windowtemplate
-### function windowheight
+windowframe, windowcut, windowtemplate, function windowheight
 
 modules to add windows to objects. I use 2mm polycarbonate for window
 material. windowframe and windowcut take position, height and size of
@@ -851,6 +838,34 @@ The usage is
    then layers are printed on top, which may make edges ugly.
 5. Start print, and when printer stops at stop point, drop window insert and
    continue the print.
+
+recyclingsymbol(type="ABS",size=20,h=0.7,$fn=50) makes a recycling
+symbol used in Europe. Types known are PET, PE_HD, PVC, PE_LD, PP, PS,
+PC, ABAK, ABS, ASA, PETG. There is some variation in standards related
+to this, so this is best effort I could find.
+
+grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) makes a round
+grill which can be used fro various purposes, including fan covers,
+fly swatters, etc. This will not generate round circle around it, you
+need to do that yourself.
+
+toroid(diameter1,diameter2,angle=360)
+
+Makes a toroid with diameter1 of and diameter2 thick. Make angle
+smaller than 360 if you want partial toroid.
+
+brim() and brimcut() 
+
+These are used to generate thicker brim for printing. Eufymake slicer
+can only do 1 layer thick brims, and these tend to be difficult to
+remove from the bed after printing.
+
+The usage is to call brim first for all parts on the bed, and then
+difference() from this the brimcut. This allows placing several parts
+in the print.
+
+module brimcut(w=6,h=0.6,gap=0.1,layerthickness=0.2,$fn=90) 
+module brim(w=6,h=0.6,$fn=90) 
 
 ### lattialista.scad
 
@@ -1550,6 +1565,10 @@ seem to hold enough for assembly if done carefully.
 Small box to protect loose cpus. Could have more generic uses.  Sizes
 for couple of loose cpus I had around included.
 
+### pentiumbox.scad
+
+As previous but accommodates a fixed fan.
+
 ### acercasespare.scad
 
 Spare part for Acer computer case, drive locking mechanism. Original
@@ -1602,4 +1621,28 @@ A Box for a 6V lead acid battery, with sloped roof.
 ### Makefile.pelilaatikko
 
 A box for card games. 3 slots for cards and fits sub-A5 manual.
+
+### diskrewriterstand.scad
+
+### Makefile.diskrewriterstand
+
+Support stand for 3.5inch disks with fan for reading and writing 3.5
+inch disks.
+
+### plateholder.scad
+
+### Makefile.plateholder
+
+Attach various plates to poles.
+
+### bootdryer.scad
+
+### Makefile.bootdryer
+
+Boot&shoe drying device. It needs a 12V power supply and 12V 7mm fan,
+and two washing machine drain hoses (one which extends from 0.5 to 2mm
+is perfect as it works for shoes as well as tall boots.
+
+![Boot dryer in openscad](bootdryer.png)
+![Boot dryer in use](bootdryer.jpg)
 
