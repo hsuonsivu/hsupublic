@@ -19,13 +19,13 @@ module diameterring(d) {
   difference() {
     union() {
       hull() {
-	translate([wall+axled/2,0,0]) cylinder(d=axled+wall,h=ringh);
-	translate([wall+axled/2+1+textsize+1+axled/2+d/2,0,0]) cylinder(d=d+wall,h=ringh);
+	translate([wall+axled/2,0,0]) cylinder(d=axled+wall,h=ringh,$fn=90);
+	translate([wall+axled/2+1+textsize+1+axled/2+d/2,0,0]) cylinder(d=d+wall,h=ringh,$fn=360);
       }
     }
 
-    translate([wall+axled/2,0,-0.01]) cylinder(d=axled,h=ringh+0.2);
-    translate([wall+axled/2+1+textsize+1+axled/2+d/2,0,-0.01]) cylinder(d=d,h=ringh+0.2);
+    translate([wall+axled/2,0,-0.01]) cylinder(d=axled,h=ringh+0.2,$fn=90);
+    translate([wall+axled/2+1+textsize+1+axled/2+d/2,0,-0.01]) cylinder(d=d,h=ringh+0.2,$fn=360);
     translate([wall+axled/2+1+textsize/2+axled/2,0,ringh-textdepth+0.01]) rotate([0,0,-90]) linear_extrude(textdepth) text(str(d),font="Liberation Sans:style=Bold",size=textsize,valign="center",halign="center");
   }
 }
