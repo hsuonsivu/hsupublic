@@ -3,7 +3,7 @@ DEPENDS=hsu.scad Makefile.pelilaatikko
 IMAGES=
 ALL=pelilaatikkopohja.stl pelilaatikkokansi.stl 
 
-OPENSCADOPTIONS=--backend=manifold --enable textmetrics
+OPENSCADOPTIONS=-D debug=0 --backend=manifold --enable textmetrics
 
 all: $(ALL)
 
