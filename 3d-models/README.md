@@ -1011,7 +1011,9 @@ herbs sold in Finnish grocery stores. We made new top, cups and covers
 which are large enough to fit the ready-grown herbs. Some of the herbs
 grow fine in this thing, such as basil and some others. To avoid water
 loss due to evaporation you need to use covers for unused cups, so
-there is a holder for unused covers. The top needs to be printed in multiple parts as it is larger than most printers.
+there is a holder for unused covers. Includes a funnel with
+automatically closing hatch for adding water. The top needs to be
+printed in multiple parts as it is larger than most printers.
 
 Credits for Sampo Kellomaki, who
 did the first version.
@@ -1295,12 +1297,14 @@ Model for powerstrip to be used for holders. This is from Tero Kivinen.
 Mousetrap with creeping featurism.  Multiple parts. Needs accurate
 printer. No supports needed.
 
-This has caugth one mouse this far. There seems to be problem with
+This has caugth 5 mice this far. There seems to be problem with
 swinging plates not moving under the mice, in particular small
-ones. Removing caugth mouse from the trap is a bit of challenge, the
-storage box where the mice should end into does not have doors in the
-input side so mice tend to hide under the swing plate. I need to some
-sort of one-way door.
+ones. Storage box has door which prevents mice from going back, but I
+have seen mice getting back through it by chewing the door top hinge
+and hiding in the swinging plate part. This makes removing caugth
+mouse from the trap a bit of challenge.
+
+Now includes windows so you can see if there is any catch.
 
 ![Mouse trap in Openscad.](mousetrap.png)
 ![Mouse trap](mousetrap.jpg)
@@ -1359,12 +1363,16 @@ Strain relief part. No supports needed.
 
 Holder for wide filament rolls. Adapted from paperiteline.scad. No supports needed.
 
+Current version makes narrower version for normal filament rolls, and
+provides attachments for tronxy and ankermake printers.
+
 ![Wide filament holder in Openscad.](filamentholderwide.png)
 
 ### polarbeltclip.scad
 
 spare for polar belt for pulse measurement. There are multiple
-versions of this belt clips, this only supports one of them. No supports needed.
+versions of this belt, this only supports one of them. No supports
+needed.
 
 ![Polar belt clip in Openscad.](polarbeltclip.png)
 
@@ -1375,7 +1383,7 @@ from Internet. No supports needed.
 
 ### spiceblock.scad
 
-Boxes to store spices. No supports needed.
+Boxes to store spices sold in small bags. No supports needed.
 
 ![Spice boxes in Openscad.](spiceblock.png)
 
@@ -1465,7 +1473,7 @@ roll cables up easier. Top plate has slot you can initially put the
 end of the ethernet cable.
 
 As filament rolls do not seem to have a standardized center hole, this
-includes adapeters for 3 most common roll types we had. Likely there
+includes adapeters for 5 most common roll types we had. Likely there
 are many more, and with various brands.
 
 To make all parts, use the makefile. Make -n -j -f Makefile.cableroller
@@ -1534,11 +1542,15 @@ Holder for kitchen paper rolls. Top screws in to prevent roll exiting in case of
 
 ### Makefile.diameter
 
-Diameter measuring tool. 
+Diameter measuring tool. Essentially rings with holes at specific diameters.
+
+![diameter.scad in Openscad.](diameter.png)
 
 ### kattokiskoclip.scad
 
 Clip for aluminium roof rail to keep cable in place.
+
+![kattokiskoclip.scad in Openscad.](kattokiskoclip.png)
 
 ### bikebagspare.scad
 
@@ -1606,6 +1618,8 @@ Makefile.disk35 makes all parts, which do not need supports for printing.
 
 No supports are needed to print.
 
+![disk35 adapter in openscad](disk35.png)
+
 ### pcsupports.scad
 
 ### Makefile.pcsupports
@@ -1615,6 +1629,8 @@ Various motherboard supports for PC cases.  Obsoletes mbtowerextend.scad
 ### akkuboksi.scad
 
 A Box for a 6V lead acid battery, with sloped roof.
+
+![Akkuboksi in openscad](akkuboksi.png)
 
 ### pelilaatikko.scad
 
@@ -1634,6 +1650,9 @@ inch disks.
 ### Makefile.plateholder
 
 Attach various plates to poles.
+
+![Plate holder in openscad](plateholder.png)
+![Plate holder installed](plateholder.jpg)
 
 ### bootdryer.scad
 
