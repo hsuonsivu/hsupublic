@@ -1589,6 +1589,8 @@ As previous but accommodates a fixed fan.
 Spare part for Acer computer case, drive locking mechanism. Original
 plastics self-destruct with time.
 
+![Acer case spare in openscad](acercasespare.png)
+
 ### 92to80mm-fan-adapter.scad
 
 Adapter for installing 92mm fan to a computer case with holes designed
