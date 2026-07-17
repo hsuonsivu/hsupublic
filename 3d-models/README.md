@@ -8,8 +8,8 @@ hull() a lot, these might be difficult to import to other cad
 programs. Some of the models are really slow in OpenSCAD, so use F6
 (or whatever in your computer) to render before changing viewing
 angle. Make sure you have manifold as backend (Advanced options). Many
-models also need textmetrics (Features/textmetrics) and other libraries. Later models are
-usually rotated for printing.
+models also need textmetrics (Features/textmetrics) and other
+libraries. Later models are usually rotated for printing.
 
 Please return improvements to me to be included in the
 main distribution.
@@ -17,6 +17,9 @@ main distribution.
 I usually try to avoid needing supports by making angles less than 50
 degrees or overhangs small enough, so unless otherwise stated, you can
 print without supports,if the object is rotated correctly in the slicer.
+
+In case a Makefile is provided, I use Openscad on a mac. The Makefiles
+should be generic, so those should work on other unixy operating systems.
 
 ### canon-tripod-1-top.scad
 
@@ -1600,9 +1603,9 @@ Spare missing power&reset button for a computer case.
 
 ### Makefile.disk35
 
-This uses either LGH-IDE-K or 120-3803 IDE 40-pin to 44-pin conversion
-part, both of which is available through sellers such as aliexpress
-and various suppliers.
+This uses either LGH-IDE-K, gc100-30822 or 120-3803 IDE 40-pin to
+44-pin conversion part, both of which is available through sellers
+such as aliexpress and various suppliers.
 
 Note: this is work-in-progress, as I do not yet have the LGH-IDE-K pcb for
 testing and have not yet verified the fit.
@@ -1643,7 +1646,9 @@ A box for card games. 3 slots for cards and fits sub-A5 manual.
 ### Makefile.diskrewriterstand
 
 Support stand for 3.5inch disks with fan for reading and writing 3.5
-inch disks.
+inch disks. This is two parts, which clip on to each other.
+
+![Disk rewriter stand openscad](diskrewriterstand.png)
 
 ### plateholder.scad
 
