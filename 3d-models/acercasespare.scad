@@ -192,7 +192,7 @@ module diskclip() {
   }
 
   supportw=beloww-sidew*2;
-#  translate([belowl,-supportw/2,0]) supportbox(l-belowl,supportw,endh,1);
+  translate([belowl,-supportw/2,0]) supportbox(l-belowl,supportw,endh,1);
 }
 
 if (print==0) {
