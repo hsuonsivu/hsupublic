@@ -252,13 +252,6 @@ module pcb() {
   translate([socketx,sockety,pcbh]) rotate([0,0,90]) socket(0);
 }
 
-module roundedring(d,w,angle=360) {
-  rotate_extrude(convexity=10,angle,$fn=90) {
-    translate([d-w/2,0,0]) circle(d=w,$fn=90);
-  }
-}
-
-
 module pcbsupportform(t) {
   hull() {
     n=pcbheight-wall;

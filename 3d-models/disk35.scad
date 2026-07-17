@@ -886,7 +886,7 @@ if (print==0) {
       union() {
 	disk35();
 	translate([platex,platey,plateheight]) plate();
-	//cover();
+	#cover();
       
 	for (x=springxtable) {
 	  for (y=springytable) {
