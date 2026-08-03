@@ -1672,3 +1672,21 @@ is perfect as it works for shoes as well as tall boots.
 ![Boot dryer in openscad](bootdryer.png)
 ![Boot dryer in use](bootdryer.jpg)
 
+### halkovaja.scad
+
+I needed a firewood storage cabinet.  The bottom is designed to take
+US pallet as bottom. Alternative you can use suitable wood for floor.
+Roof is separate piece.  This is intended to be used in pairs ore more
+units, so you can put fresh wood in one and have dry wood in the
+other.
+
+This is work in progress. Missing roof, model print, screwholes and
+saw/screw templates.
+
+![halkovaja in openscad](halkovaja.png)
+
+### wheelbarrowhandle.scad
+
+My wheelbarrow plastic handles broke, made spares. Print in TPU.
+
+![wheelbarrowhandle in openscad](wheelbarrowhandle.png)
