@@ -1675,10 +1675,11 @@ is perfect as it works for shoes as well as tall boots.
 ### halkovaja.scad
 
 I needed a firewood storage cabinet.  The bottom is designed to take
-US pallet as bottom. Alternative you can use suitable wood for floor.
-Roof is separate piece.  This is intended to be used in pairs ore more
-units, so you can put fresh wood in one and have dry wood in the
-other.
+US pallet as bottom as we had those lying around. Alternatively you
+can use suitable wood for floor.  Roof is separate piece.  This is
+intended to be used in pairs ore more units, so you can put fresh wood
+in one and have dry wood in the other. Adjust vajaw and vajal if you
+want different size.
 
 This is work in progress. Missing roof, model print, screwholes and
 saw/screw templates.

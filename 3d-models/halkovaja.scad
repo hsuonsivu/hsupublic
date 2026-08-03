@@ -2,6 +2,11 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
+// TODO: katto
+// TODO: make model parts for testing
+// TODO: screwhole and end cut templates
+// TODO: side covering strips
+
 include <hsu.scad>
 
 tolpat44=0;
