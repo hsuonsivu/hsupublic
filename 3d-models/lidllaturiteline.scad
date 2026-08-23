@@ -7,8 +7,8 @@ include <hsu.scad>
 $fn=60;
 
 print=1;
-teslamodels=1;
-abs=0;
+teslamodels=0;
+abs=1;
 phones=2;
 lighten=0;
 lmargin=8;
@@ -24,7 +24,7 @@ debug=(print>0)?forcedebug:forcedebug;
 
 strong=(print>0)?1:0; // 1:0
 
-versiontext=str("V1.10",teslamodels?"S":"");;
+versiontext=str("V1.11",teslamodels?"S":"");;
 textdepth=0.8;
 textsize=8;
 
@@ -341,7 +341,14 @@ module body() {
 	  //cutl=heightbaseheight+(heightbasenarrowingl+heightbasenarrowingextral+ratchetmaxmovement)*2+1;
 	  cutl=heightbasel*2+1;
 	  difference() {
-	    translate([-chargingcoildistance/2-heightbasewidth/2,bottomheight-heightbaseheight,backthickness+chargerthickness-ratchetthickness-ztolerance]) cube([heightbasewidth,cutl,phonethickness+thicknessmargin+1+ratchetthickness]);
+	    union() {
+	      translate([-chargingcoildistance/2-heightbasewidth/2,bottomheight-heightbaseheight,backthickness+chargerthickness-ratchetthickness-ztolerance]) cube([heightbasewidth,cutl,phonethickness+thicknessmargin+1+ratchetthickness]);
+	      hull() {
+		w=(chargingcoildistance-phonewidth)/3;
+		translate([-chargingcoildistance/2-heightbasewidth/2,bottomheight+phonebottomlevel-w*1.5,backthickness+chargerthickness-ratchetthickness-ztolerance]) cube([heightbasewidth,cutl,phonethickness+thicknessmargin+1+ratchetthickness]);
+		translate([-chargingcoildistance/2-heightbasewidth/2,bottomheight+phonebottomlevel,backthickness+chargerthickness-ratchetthickness-ztolerance]) cube([heightbasewidth+w,cutl,phonethickness+thicknessmargin+1+ratchetthickness]);
+	      }
+	    }
 	    translate([-chargingcoildistance/2,0,0]) {
 	      for (m=[0,1]) mirror([m,0,0]) {
 		  translate([heightbasesiderampwidth/2,bottomheight-heightbaseheight-cornerd,-ztolerance]) roundedbox(heightbasesiderampw,cutl+cornerd+cornerd/2,backthickness+chargerthickness,cornerd);
@@ -384,7 +391,7 @@ module body() {
 	    translate([-w/2,bottomheight+phonebottomlevel-usbconnectorl,-0.01]) cube([w,usbconnectorl+cornerd/2,backthickness+usbholethickness]);
 	    translate([-w/2,bottomheight+phonebottomlevel+cornerd/2,-0.01]) triangle(w,w/2+usbholed/2,backthickness+usbholethickness,17);
 	    for (x=[-usbholewidth/2+usbholed/4,usbholewidth/2-usbholed/4]) {
-	      for (z=[0,backthickness+usbholed/2]) {
+	      for (z=[-5,backthickness+usbholed/2]) {
 		if (z > 0) {
 		  translate([x,bottomheight+phonebottomlevel-usbconnectorl,z]) rotate([-90,0,0]) cylinder(d=usbholed,h=usbconnectorl+cornerd/2,$fn=60);
 		} else {
@@ -568,8 +575,11 @@ if (print==1) {
       }
 
       if (abs) {
-	//antiwarpwall(x,y,z,l,w,h,distanceoption,walloption);
-	antiwarpwall(-width/2-screwd*3/2-1,-thickness/2*cos(angle)-(teslamodels?0:8),0,width+screwd*3+2,thickness/2*cos(angle)+height*cos(angle)+screwd*3/2+2,(height+baselift)*sin(angle)+(thickness+baselift)*cos(angle)+5,adhesion=3);
+	difference() {
+	  brim(w=8) body();
+	  brimcut() body();
+	}
+	antiwarpwall(-width/2-screwd*3/2-1,-thickness/2*cos(angle)-1-(teslamodels?0:8),0,width+screwd*3+2,thickness/2*sin(angle)+height*cos(angle)+1+screwd*3/2+2,(height+baselift)*cos(angle)+(thickness+baselift)*cos(angle)+5,adhesion=3);
       }
     }
       
