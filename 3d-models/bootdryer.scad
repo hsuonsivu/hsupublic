@@ -6,8 +6,8 @@ include <hsu.scad>
 
 // TODO: tuulettimen tuet ja ritila, tuben ylapaan muotoilu.
 
-print=0;
-debug=1;
+print=2;
+debug=0;
 adhesion=1;
 
 xtolerance=0.25;
@@ -19,7 +19,7 @@ maxbridge=10;
 cornerd=1;
 largecornerd=10;
 
-versiontext="V1.1";
+versiontext="V1.2";
 brandtext="Boot dryer";
 textsize=7;
 textdepth=0.7;
@@ -179,6 +179,30 @@ coveroverlapiny=coveroverlapouty+wall;
 coveroverlapincornerd=largecornerd-wall*2-xtolerance*2-wall*2;
 
 coverclipheight=baseh-coveroverlap+cornerd+coverclipd/2;
+
+switchw=20;
+switchh=6.8;
+switchl=16; // 14.5; 15, but need some tolerance
+switchsw=21.4; // Locking width
+switchsh=5.5; // Locking h
+switchsl=10; // locking clip l
+switchswl=4; // Widest point of switch clip
+switchlwall=2; // 2 + some 
+switchfw=21.3;
+switchfh=9.33;
+switchfl=2;
+
+switchcablew=6; // Width for cable opening
+
+switchy=basew/2-wall-xtolerance-wall-wall-switchw;
+switchx=-basel/2+wall+xtolerance+wall+wall;
+switchheight=topheight;
+
+switchcontactl=9;
+switchcontacth=0.8;
+switchcontactw=4.9;
+switchcontacty=4.8; // center from width
+switchcontactheight=0.7; // From h
 
 module fantappi(d,h) {
   hull() {
@@ -476,7 +500,11 @@ module bootdryertop() {
       translate([fanx,fany,topheight]) grill(fand+1,thickness=wall);
     }
 
+    // Opening for power connector
     translate([pcbx+socketx,pcby+sockety,pcbsupportheight+pcbheight+pcbh]) rotate([0,0,90]) socket(xtolerance);
+
+    // Opening for power switch
+    translate([switchx-xtolerance,switchy-ytolerance,switchheight-0.1]) roundedboxxyz(xtolerance+switchh+xtolerance,ytolerance+switchw+ytolerance,wall+0.2,cornerd,0,90);
     
     for (m=[0,1]) mirror([0,m,0]) {
 	y=hoseytable[0];
@@ -501,18 +529,38 @@ module pcbsupportclipprint() {
   translate([0,-basew/2-2-pcbclipl,pcbcliph]) rotate([180,0,0]) translate([0,0,-wall-ztolerance]) pcbsupportclip();
 }
 
+// Power switch
+module switch() {
+  difference() {
+    union() {
+      translate([-switchl,-switchw/2,-switchh/2]) roundedbox(switchl+switchfl+textdepth-0.01,switchw,switchh,cornerd);
+      hull() {
+	translate([-switchsl,-switchw/2,-switchsh/2]) roundedbox(switchsl,switchw,switchsh,cornerd);
+	translate([-switchswl-cornerd/2,-switchsw/2,-switchsh/2]) roundedbox(cornerd,switchsw,switchsh,cornerd);
+      }
+      translate([0,-switchfw/2,-switchfh/2]) roundedbox(switchfl,switchfw,switchfh,cornerd);
+      translate([-switchcontactl-switchl+0.01,switchw/2-switchcontacty-switchcontactw/2,-switchh/2+switchcontactheight]) roundedbox(switchcontactl+cornerd/2,switchcontactw,switchcontacth,cornerd);
+      translate([-switchcontactl-switchl+0.01,-switchw/2+switchcontacty-switchcontactw/2,switchh/2-switchcontactheight-switchcontacth]) roundedbox(switchcontactl+cornerd/2,switchcontactw,switchcontacth,cornerd);
+    }
+    translate([switchfl,-switchfw/4,0]) rotate([90,90,90]) linear_extrude(height=textdepth) text("O",font="Liberation Sans:style=Bold",size=textsize-2,halign="center", valign="center");
+    translate([switchfl,switchfw/4,0]) rotate([90,90,90]) linear_extrude(height=textdepth) text("1",font="Liberation Sans:style=Bold",size=textsize-2,halign="center", valign="center");
+  }
+ }
+
 if (print==0) {
   intersection() {
     if (debug) translate([-200,-200,-200]) cube([400,200+20,400]);
     difference() {
       union() {
-	bootdryer();
+	//bootdryer();
 	bootdryertop();
 	translate([0,0,pcbsupportheight]) pcbsupportclip();
       }
       
       #      translate([fanx,fany,fanheight]) fan();
       #      translate([0,0,pcbsupportheight]) translate([pcbx,pcby,pcbheight]) pcb();
+      //# translate([switchx+switchh/2+wall,switchy-switchl/2-wall*2,switchheight+wall]) rotate([0,-90,0]) switch();
+            # translate([switchx+switchh/2,switchy+switchw/2,switchheight+wall]) rotate([0,-90,0]) switch();
     }
   }
  }
