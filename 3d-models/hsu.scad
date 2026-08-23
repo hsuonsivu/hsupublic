@@ -333,7 +333,10 @@ module roundedbox(xsize,ysize,h,c,printableoption) {
     translate([xsize-scd/2,ysize-scd/2,h-scd/2]) sphere(d=scd,$fn=f);
 
     // Sphere may generate slight rounding errors with smaller $fn values, so form actual cube in the center
-    translate([scd/2,scd/2,scd/2]) cube([xsize-scd,ysize-scd,h-scd]);
+    translate([scd/2,0,scd/2]) cube([xsize-scd,ysize,h-scd]);
+    translate([0,scd/2,scd/2]) cube([xsize,ysize-scd,h-scd]);
+    translate([scd/2,scd/2,0]) cube([xsize-scd,ysize-scd,h]);
+    //translate([scd/2,scd/2,scd/2]) cube([xsize-scd,ysize-scd,h-scd]);
 
     if (printableoption==1 || printableoption==3) {
       for (x=[0+scd/2,xsize-scd/2]) {
@@ -637,27 +640,34 @@ module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
 
 module roundedboxxyz(x,y,z,dxy,dzin,printable,fn) {
   //echo("roundedboxxyz ",x,y,z,dxy,dzin,printable,fn);
-  if (dzin==0) {
-    hull() {
-      translate([dxy/2,dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
-      translate([x-dxy/2,dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
-      translate([dxy/2,y-dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
-      translate([x-dxy/2,y-dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
+  hull() {
+    if (dzin==0) {
+      hull() {
+	translate([dxy/2,dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
+	translate([x-dxy/2,dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
+	translate([dxy/2,y-dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
+	translate([x-dxy/2,y-dxy/2,0]) cylinder(d=dxy,h=z,$fn=fn);
+      }
+    } else {
+      dz=dzin>0?dzin:0.01;
+      minz=(dz==z?0.01:0);
+      $fn=(fn!="" || fn>0)?fn:30;
+      hull() {
+	translate([dxy/2,dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
+	translate([x-dxy/2,dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
+	translate([dxy/2,y-dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
+	translate([x-dxy/2,y-dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
+      }
+      if (0) translate([dxy/2,dxy/2,0]) minkowski(convexity=10) {
+	  cube([x-dxy,y-dxy,z-dz+minz]);
+	  roundedcylinder(dxy,dz,dz-minz,printable,$fn);
+	}
     }
-  } else {
-    dz=dzin>0?dzin:0.01;
-    minz=(dz==z?0.01:0);
-    $fn=(fn!="" || fn>0)?fn:30;
-    hull() {
-      translate([dxy/2,dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
-      translate([x-dxy/2,dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
-      translate([dxy/2,y-dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
-      translate([x-dxy/2,y-dxy/2,0]) roundedcylinder(dxy,z,dz,printable,$fn);
-    }
-    if (0) translate([dxy/2,dxy/2,0]) minkowski(convexity=10) {
-      cube([x-dxy,y-dxy,z-dz+minz]);
-      roundedcylinder(dxy,dz,dz-minz,printable,$fn);
-    }
+    
+    // Sphere may generate slight rounding errors with smaller $fn values, so form actual cube in the center
+    translate([dxy/2,0,dzin/2]) cube([x-dxy,y,z-dzin]);
+    translate([0,dxy/2,dzin/2]) cube([x,y-dxy,z-dzin]);
+    translate([dxy/2,dxy/2,0]) cube([x-dxy,y-dxy,z]);
   }
 }
 
@@ -1035,7 +1045,6 @@ module grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) {
 module toroid(d,w,angle=360) {
   rotate_extrude(convexity=10,angle,$fn=90) {
     translate([d-w/2,0,0]) circle(d=w,$fn=90);
-    //translate([d/2-w,0,0]) circle(d=w,$fn=90);
   }
 }
 
@@ -1057,6 +1066,6 @@ module brimcut(w=6,h=0.6,gap=0.1,layerthickness=0.2,$fn=90) {
 }
 
 module brim(w=6,h=0.6,$fn=90) {
-  linear_extrude(h) offset(w,$fn) hull() projection(cut=true,$fn=90) children();
+  linear_extrude(h) offset(w) hull() projection(cut=true,$fn=90) children();
 }
 
