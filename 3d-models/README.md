@@ -1691,3 +1691,11 @@ saw/screw templates.
 My wheelbarrow plastic handles broke, made spares. Print in TPU.
 
 ![wheelbarrowhandle in openscad](wheelbarrowhandle.png)
+
+### bicyclestandspare.scad
+
+My bicycle kickstand rubber cover self-destructed, this is a spare.
+Print in TPU. No supports needed.
+
+![bicyclestandspare in openscad](bicyclestandspare.png)
+![bicyclestandspare installed](bicyclestandspare.jpg)
