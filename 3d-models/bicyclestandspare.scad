@@ -7,7 +7,7 @@ include <hsu.scad>
 print=1;
 debug=0;
 
-versiontext="V1.0";
+versiontext="V1.1";
 textdepth=0.7;
 textsize=6;
 text1=str("Bicyclestandspare ",versiontext);
@@ -91,7 +91,7 @@ module bicyclestandspare() {
     translate([0,0,standbottomh]) roundedtubeshape(w=0,h=standh+cornerd*2,printable=0);
 
     a=atan((wallbase-walltop)/(standh+cornerd*2))/2;
-    #    translate([l+(wallbase-walltop)/2*cos(a)+textdepth-0.01,0,standh/2+cornerd]) rotate([0,90-a,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold"); 
+    translate([l+(wallbase-walltop)/2*cos(a)+textdepth-0.01,0,(standh+cornerd+(standbottomouth-standbottomh))/2+cornerd]) rotate([0,90-a,0]) linear_extrude(height=textdepth) text(versiontext, size=textsize, valign="center",halign="center",font="Liberation Sans:style=Bold"); 
   }
 }
 
