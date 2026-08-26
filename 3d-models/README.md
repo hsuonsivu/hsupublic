@@ -21,7 +21,7 @@ print without supports,if the object is rotated correctly in the slicer.
 In case a Makefile is provided, I use Openscad on a mac. The Makefiles
 should be generic, so those should work on other unixy operating systems.
 
-### canon-tripod-1-top.scad
+## canon-tripod-1-top.scad
 
 I had old Canon tripod-1, and its rubbery top part disintegrated with
 age. This is a replacement. Print with TPU.
@@ -29,7 +29,7 @@ age. This is a replacement. Print with TPU.
 ![Image of the tripod 1 with new top](canon-tripod-1-top.jpg)
 ![Model in openscad showing underside](canon-tripod-1-top.png)
 
-### coasterholder3.scad
+## coasterholder3.scad
 
 If you have a dead 5.25inch hard drive, you can recycle the disk
 platters inside to make nice coasters for you bar. This is a holder
@@ -39,9 +39,7 @@ need some adapting. See also "suklaarasiankansi.scad".
 ![Image of the costerholder](coasterholder.jpg)
 ![Second image of the costerholder](coasterholder2.jpg)
 
-### disk525to35.scad
-
-### Makefile.disk525to35
+## disk525to35.scad, Makefile.disk525to35
 
 This is an adapter to put 3.5 inch disk drive to a 5.25 drive slot. It
 is designed to not to need screws, however, with certain cases that
@@ -109,7 +107,7 @@ See options in the file.
 ![Image of the 3.5 inch drive adapter for 5.25 inch slot with a disk installed](disk525to35-2.jpg)
 ![Model in openscad](disk525to35-3slot-aopen.png)
 
-### hammasharjateline.scad
+## hammasharjateline.scad
 
 Organizer for various things in the bathroom. Very specific, so not
 very usable unless you use exactly same electric toothbrush and shaver
@@ -117,13 +115,13 @@ as me. This can be screwed into a wall.
 
 ![Model in openscad](hammasharjateline.png)
 
-### license.scad
+## license.scad
 
 The default license file.
 
-### lidllaturiteline.scad
+## lidllaturiteline.scad
 
-### Makefile.lidllaturiteline
+## Makefile.lidllaturiteline
 
 Lidl sells wireless phone charger for two phones. It is not very
 practical as the mobile phones need to be placed accurately to the
@@ -154,7 +152,7 @@ you need 4 3.5mm 19mm(wood) screws to attach the lower parts of the legs.
 ![Image of charger base for Lidl dual wireless phone charger, Tesla version](lidllaturiteline-tesla.jpg)
 ![Second image of charger base for Lidl dual wireless phone charger](lidllaturiteline2.jpg)
 
-### kasvikyltit.scad
+## kasvikyltit.scad
 
 Bunch of veggie labels for your garden. You can modify the names at
 the start of the file. End the list of labels with "". You can have
@@ -179,9 +177,7 @@ any definitive conclusions.
 ![Veggie Labels in openscad](kasvikyltit-openscad.png)
 ![Veggie Labels](kasvikyltit.jpg)
 
-### nimikyltit.scad
-
-### Makefile.nimikyltit
+## nimikyltit.scad, Makefile.nimikyltit
 
 Bunch of name labels. These we designed to be put on top of
 rack for towels. You can modify the names at the start of the
@@ -208,7 +204,7 @@ which change variables.
 ![Image of the label holder](nimikylttiteline.jpg)
 ![Label holder in openscad.](nimikylttiteline.png)
 
-### lundiacarrier.scad
+## lundiacarrier.scad
 
 Carrying multiple lundia shelf plates is difficult as they tend to
 slide over each other. So I made a handle. You need to add two locking
@@ -218,7 +214,7 @@ is likely useful to carry other stuff as well.
 
 ![Image of the lundia shelf carrier handle with straps](lundiacarrier.jpg)
 
-### mittatesti.scad
+## mittatesti.scad
 
 Calibration tool to measure x,y and z axis. Some printers such as my
 Tronxy need x/y axis movements to be calibrated. You can tune Number
@@ -229,9 +225,7 @@ well. Use PLA.
 ![Image of the the clibration tool for 3d printers](mittatesti.jpg)
 ![20cm model in openscad](mittatesti-20cm.png)
 
-### paperiteline.scad
-
-### Makefile.paperiteline
+## paperiteline.scad, Makefile.paperiteline
 
 Holder for paper towel rolls. Left and right parts can be printed at
 the same time if your printer is large enough. Left and right parts
@@ -244,14 +238,14 @@ off.
 
 ![Image of the paper roll holder installed](paperiteline.jpg)
 
-### plantsupport.scad
+## plantsupport.scad
 
 One of our office plants was about to collapse and needed
 support. This is very specific to size of planter and plant.
 
 ![Image of the support for a plant](plantsupport.jpg)
 
-### presshandle.scad
+## presshandle.scad
 
 I built a press for large engineering drawings to iron them
 out. Basically it is a table with another table plate on top with
@@ -260,7 +254,7 @@ application as well.
 
 ![Image of the handle as installed](presshandle.jpg)
 
-### sinisentuolinjalka.scad
+## sinisentuolinjalka.scad
 
 One of the chairs in our office was missing a plug in one of its
 feet. This is a replacement. Print with TPU with 100% fill. The chair
@@ -270,7 +264,7 @@ is.
 ![Chair foot plug in openscad](sinisentuolinjalka.png)
 ![Photo of the chair fitted with printed foot](sinisentuolinjalka.jpg)
 
-### suklaarasiankansi.scad
+## suklaarasiankansi.scad
 
 You can turn your dead 5.25 inch hard disk into a stylish chocolate
 box. This is for Maxtor 8 platter drive. Unfortunately, this model
@@ -283,13 +277,13 @@ adjust.
 
 ![Image of the chocolate box](suklaarasiankansi.jpg)
 
-### termostaatin-piuhapidike.scad
+## termostaatin-piuhapidike.scad
 
 I needed a holder for smart zigbee thermostat cables for programming
 in batch, so a small holder was needed. Not really useful for anything
 else.
 
-### vasara.scad
+## vasara.scad
 
 (Project stalled) Thought I needed electric hammer, so started
 designing one but found a commercially available product so this project
@@ -297,7 +291,7 @@ stalled very early. Maybe some day...
 
 ![Model in openscad, normal](vasara.png)
 
-### sipulinistutin.scad
+## sipulinistutin.scad
 
 I needed to plant some seeds and onions, and wanted a tool for the job
 to avoid stressing my back. This attaches to 25mm diameter metal
@@ -313,7 +307,7 @@ with other seeds fine. No supports are needed to print.
 ![Model in openscad, normal](sipulinistutin.png)
 ![Plant seeder installed to a 25mm tube](sipulinistutin.jpg)
 
-### kynnyskulma.scad
+## kynnyskulma.scad
 
 If you need to roll heavy wheeled items over a doorstep, this
 threshold ramp will help a bit. The model will split the part to
@@ -327,14 +321,14 @@ defaults. You can do a small test print to test attachments. No supports are nee
 ![Model in openscad, vertical](kynnyskulma-vertical-openscad.png)
 ![Threshold ramp in use to help getting a heavy barbeque over the door threshold](kynnyskulma.jpg)
 
-### masklock.scad
+## masklock.scad
 
 A CPAP mask lock replacement. Needs supports, works best with tree
 supports.
 
 ![Model in openscad](masklock.png)
 
-### batterybarcover.scad
+## batterybarcover.scad
 
 Covers li-ion between battery connector bars. Small openings can be
 snapped off to provide holes for BMS cables. Supports two types of
@@ -343,7 +337,7 @@ battery bars. No supports are needed to print.
 ![3 battery bar covers in openscad](batterybarcover.png)
 ![Photo of battery bar covers installed in a battery pack](batterybarcoverphoto.jpg)
 
-### batteryterminalcover.scad
+## batteryterminalcover.scad
 
 Covers li-ion battery pack terminals. Small openings can be snapped
 off to provide holes for BMS cables. Use a small cable binder to
@@ -353,7 +347,7 @@ lock. No supports are needed to print.
 ![Photo of battery terminal cover installed in a battery pack](batteryterminalcover.jpg)
 ![Another picture of the terminal cover installed in a battery pack](batteryterminalcover-2.jpg)
 
-### bedcontrollerpart.scad
+## bedcontrollerpart.scad
 
 A plastic part of my bed controller broke, here is a new one. The bed
 brand is Tempur and the motor bed seems to be from Germany. No supports are
@@ -362,7 +356,7 @@ needed to print.
 ![Bed controller spare part openscad](bedcontrollerpart.png)
 ![Bed controller spare part in use](bedcontrollerpart.jpg)
 
-### doublebedholder.scad
+## doublebedholder.scad
 
 Keeps two normal beds together for double occupancy. Limited
 tunability for different beds, distance between feet and feet
@@ -371,7 +365,7 @@ diameter/square edge. No supports needed to print.
 ![Double bed holder in openscad](doublebedholder.png)
 ![Double bed holder in use](doublebedholder.jpg)
 
-### rakki-kiinnike.scad
+## rakki-kiinnike.scad
 
 Spare part for rack-mount power strip. Modded original from Tero Kivinen. Can be printed with no supports when vertical, but likely needs a brim. 
 
@@ -379,7 +373,7 @@ Spare part for rack-mount power strip. Modded original from Tero Kivinen. Can be
 ![This is the part this will replace. Original in picture.](rakki-kiinnike.jpg)
 
 
-### tunturi460wheel.scad
+## tunturi460wheel.scad
 
 Spare part for Tunturi E460 exercise bike. The original back wheels
 intended for easier moving the bike around disintegrate with
@@ -392,7 +386,7 @@ with support side towards the center.
 
 ![Part installed and the disintegrated original.](tunturi460wheel.jpg)
 
-### isonappi.scad
+## isonappi.scad
 
 Lost a button of my Ernst Brendler overcoat. This is a copy. Crude,
 but close enough. For easier printing, is has support option,
@@ -400,7 +394,7 @@ otherwise it will need supports enabled in the slicer.
 
 ![Button installed to the overcoat.](isonappi.jpg)
 
-### mask.scad
+## mask.scad
 
 Party mask. Fragile and not very flexible.  Copied idea from someone
 else, but implemented this myself.  Todo: attachments to glasses,
@@ -408,8 +402,7 @@ improved flexibility.
 
 ![Party mask in scad.](mask.png)
 
-### roboteeth.scad
-### Makefile.roboteeth
+## roboteeth.scad, Makefile.roboteeth
 
 During halloween you must beware of aggressive robots! This is a set
 of teeth and face for UR UR5e cobot with Robotiq Adaptive
@@ -421,7 +414,7 @@ supports needed.
 
 ![Robot with bite](roboteeth.png)
 
-### powerknob.scad
+## powerknob.scad
 
 Our office was missing a knob in electrical cabinet. This is a
 spare. More modern style though, but works. No supports needed.
@@ -429,7 +422,7 @@ spare. More modern style though, but works. No supports needed.
 ![Power knob in scad.](powerknob.png)
 ![Power knob installed.](powerknob.jpg)
 
-### blanketcontrollerholder.scad
+## blanketcontrollerholder.scad
 
 I have an electric heated blanket for cold winter nights. This is a
 holder for the controller. Heated blanket is [Nedis from
@@ -445,9 +438,7 @@ Ankermake worked, but Anycubic print needed filing. No supports needed.
 ![blanketcontrollerholder in scad (print=3).](blanketcontrollerholder3.png)
 ![blanketcontrollerholder in use.](blanketcontrollerholder.jpg)
 
-### tunturie460holder.scad
-
-### Makefile.tunturie460holder
+## tunturie460holder.scad, Makefile.tunturie460holder
 
 Tablet stand for Tunturi E460 exercise bike to allow browsing the
 Internet while exercising. Tablet dimensions taken from an old
@@ -474,7 +465,7 @@ No supports are needed.
 ![tunturie460holder installed for use from back.](tunturie460holder2.jpg)
 ![tunturie460holder screw sample.](tunturie460holder-screw.jpg)
 
-### measurementcardcover.scad
+## measurementcardcover.scad
 
 A case for Clausal Computing Oy's data acquisition board designed to be
 installed in Famatel electrical box. Has openings for most
@@ -485,7 +476,7 @@ Use print=1 for print model. No supports are needed.
 ![The case in scad.](measurementcardcover.png)
 ![The case installed in electrical box.](measurementcardcover.jpg)
 
-### kaapelipidikkeet.scad
+## kaapelipidikkeet.scad
 
 Holder and base for electrical bus bars for Famatel electrical
 box. Supports two bus bars, each for 12 cables. The bus bars clip to
@@ -501,7 +492,7 @@ Use print=1 for print model. No supports are needed.
 ![Cable holder in scad.](kaapelipidikkeet.png)
 ![Cable holder installed.](kaapelipidikkeet.jpg)
 
-### lampcork.scad
+## lampcork.scad
 
 I have a old design table lamp which had its top loose from the
 base. The base is made of glass and upper part made of copper got
@@ -535,8 +526,7 @@ screw parts. No supports are needed for printing.
 ![Top screw replacement in scad.](lamptopscrew.png)
 ![Top screw in place.](lamptopscrew.jpg).
 
-### filmscanframe.scad
-### Makefile.filmscanframe
+## filmscanframe.scad, Makefile.filmscanframe
 
 A frame to scan film strips in a flat bed scanner, for both negatives
 and positives. This is designed for Epson Perfection V850 Pro, so it
@@ -589,7 +579,7 @@ these. Lighter colours may cause reflections.
 ![filmscanframe with film and cover not installed](filmscanframe.jpg)
 ![filmscanframe with film and cover installed](filmscanframe2.jpg)
 
-### circletemplate.scad
+## circletemplate.scad
 
 Templates to estimate radius/diameter of a curve. Handy when making a
 3d model of an existing part. This can measure both outside and inside
@@ -606,7 +596,7 @@ switching filament during printing.
 
 ![circletemplates in openscad.](circletemplate.png)
 
-### ruokasuppilo.scad
+## ruokasuppilo.scad
 
 We had complaints that onion peels are not dropping to the compost bin
 when pushed over the edge of the kitchen table above the compost bin,
@@ -618,20 +608,21 @@ Still needs some improvements.
 
 ![ruokasuppilo installed.](ruokasuppilo.jpg)
 
-### leafbatteryfan.scad
-### Makefile.leafbatteryfan
+## leafbatteryfan.scad, Makefile.leafbatteryfan
 
 Nissan Leaf has a serious problem with battery temperature management,
 which means during winter it is too cold and during summer it is too
 warm, limiting capacity and quick charging. The problem is worst
 during wintertime when the range is already reduced due to other
 effects. The problem becomes much worse if the battery is old and/or
-has bad cells. This fan case can be installed to the service hatch
-between rear seats, replacing the metal plate normally protecting the
-hatch. In the summer this could also help keep battery cooler, though
-the effect is likely very limited. While moving, there is not much to
-do about the heat as airflow will pass around the battery pack. When
-parked, pushing warm air from inside the car to above the battery will
+has bad cells. 
+
+This fan case can be installed to the service hatch between rear
+seats, replacing the metal plate normally protecting the hatch. In the
+summer this could also help keep battery cooler, though the effect is
+likely very limited. While moving, there is not much to do about the
+heat as airflow will pass around the battery pack. When parked,
+pushing warm air from inside the car to above the battery will
 somewhat reduce cooling of the battery and will warm up the battery if
 done for long enough. The set also includes a filter which will avoid
 hurting fingers in the spinning fan and reduce dust collecting over
@@ -706,7 +697,7 @@ all parts.
 ![leafbatteryfan infrared image from underside of the car while fan is on.](leafbatteryfan-underside-infrared-image.jpg)
 ![leafbatteryfan infrared video after the fan has been running for around 12 hours.](leafbatteryfan-infrared-video.mp4)
 
-### circletemplateiso.scad
+## circletemplateiso.scad
 
 I larger version of circletemplate, which is for measuring diameters of larger objects such as trees.
 This one also has holes to tie the parts together with a bolt and nut, and hole for a strap.
@@ -717,51 +708,73 @@ switching filament during printing.
 
 ![circletemplatesiso in openscad.](circletemplateiso.png)
 
-### hsu.scad
-
-### hsutest.scad
+## hsu.scad, hsutest.scad
 
 Collected some modules or functions into a library to use in my
 models. hsutest is a test file for some functions in the library.
 
 Modules
 
+# function countersinkd
+
 function countersinkd returns countersink diameter when using
 ruuvireika module to create screw holes. 
+
+# cylindervoids
 
 cylindervoids cuts tiny voids in cylinder shape, to make objects
 potentially stronger by replacing fill with 100% fill in specified
 area. Note that you need to check your slicer settings, as defaults
 may cause voids to be expanded or deleted.
 
+# ruuvireika
+
 ruuvireika makes a hole for screw, including countersink shape. This
 is intended to be used to cut out the hole for screw. I normally use wood screws for 3D prints.
 
+# ruuvitorni
+
 ruuvitorni makes a tower for a screw to be used with ruuvireika above.
+
+# triangle
 
 triangle makes a triagle with given x,y,z size. Fourth parameter tells
 which orientation the triangle should be (0-11 for off-center
 triangles and 12-23 for centered triangles). To see the shapes
 generated, call triangletest() in openscad.
 
+# lighten
+
 lighten makes a printable shape to make structures consume less
 filament. This does not save much unless the structure is large, as
 making fill at low fill percentage is very efficient, and additional
 walls required to make this negate the savings.
 
+# roundedbox
+
 roundedbox makes a cube with rounded edges. Third parameter is corner diameter.
+
+# tassu
 
 tassu makes a shape to place in corners of a model to improve bed
 adhesion, useful in particular for materials which are prone to
 warping and using wide brim is not practical.
 
+# ring
+
 ring makes a cylinder with inside cut out, given diameter, wall thickness and height.
+
+# cone
 
 cone makes a hollow cone or cylinder, such as one made with cylinder
 with d1 and d2 parameters. The cone is open at bottom.
 
+# tubeclip
+
 tubeclip makes a round barrel shape for making clips for various boxes
 other other attachments. Essentially two spheres hulled together.
+
+# spring
 
 spring makes a spring, with flat ends and mid plate. Mid plate splits
 the spring direction to avoid spring creating torsion when
@@ -772,42 +785,70 @@ height, diameter, end plate thickness, spring thickness. In particular
 spring thickness is very material specific. See flatspring for mode
 durable design.
 
+# onehinge
+
 onehinge creates a hinge to make hinged structures such as opening
 boxes with hinged covers. This is intended for hinges which become
 permanent part of the model and are printed in-place.
+
+# printareacube 
 
 printareacube creates a box for the printer's print area to test if
 you print is going to fit. You need manually to adjust the model
 inside the cube. Use difference and # in openscad so you can leave it
 in the model.
 
+# antiwarpwall
+
 antiwarpwall makes a heat cage to be used with ABS and other materials
 which tend to warp if you do not have a heat enclosure for your
 printer. It is intended to be used with brim, so there is a tiny hole
 to allow outside brim only option in the slicer.
 
+This is partially obsoleted by brim & brimcut modules, see below.
+
+# roundedcylinder
+
 roundedcylinder makes a cylinder with rounded corners
 
+# roundedboxxyz
+
 roundedboxxyz makes a box with rounded corners with different roundings for xy and z directions.
+
+# supportbox
 
 supportbox makes a box support structure for parts if you do
 not want to use slicer's supports.
 
+# supportcylinder
+
 supportcylinder makes a round support structure for parts if you do
+
+# flatspring
 
 flatspring makes a flat, more durable spring, which can be printed
 sideways to make layers in strong direction.
 
+# textlen
+
 function textlen calculates x size of given string.
 
+# stairs
+
 portaat makes stairs, to be used for 3d modeling of buildings.
+
+# function length_and_depth_to_diameter
 
 function length_and_depth_to_diameter calculates diameter of circle
 when width and depth are given. This is useful in some situations when designing 3D models.
 
+# knobaxle
+
 knobaxle and knob make knobs which rotate freely, so that various
 cranks can be made. The axle can be printed in design orientation,
 knob prints better upside down. Use same parameters when using these.
+
+# windowframe, windowcut, windowtemplate, function windowheight
 
 windowframe, windowcut, windowtemplate, windowheight, functions to add
 windows (typically polycarbonate or glass) to 3D prints. These
@@ -817,8 +858,6 @@ layer on top of the window is printed.  I have only tested with
 polycarbonate windows, but glass might also work. There are some
 adherence problems with this. If a slicer supports feature that edges
 are printed from inside out it might help.
-
-windowframe, windowcut, windowtemplate, function windowheight
 
 modules to add windows to objects. I use 2mm polycarbonate for window
 material. windowframe and windowcut take position, height and size of
@@ -842,37 +881,47 @@ The usage is
 5. Start print, and when printer stops at stop point, drop window insert and
    continue the print.
 
+# recyclingsymbol 
+
 recyclingsymbol(type="ABS",size=20,h=0.7,$fn=50) makes a recycling
 symbol used in Europe. Types known are PET, PE_HD, PVC, PE_LD, PP, PS,
 PC, ABAK, ABS, ASA, PETG. There is some variation in standards related
 to this, so this is best effort I could find.
+
+# grill
 
 grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) makes a round
 grill which can be used fro various purposes, including fan covers,
 fly swatters, etc. This will not generate round circle around it, you
 need to do that yourself.
 
+# toroid
+
 toroid(diameter1,diameter2,angle=360)
 
-Makes a toroid with diameter1 of and diameter2 thick. Make angle
+Makes a toroid with diameter1 diameter and diameter2 thick. Make angle
 smaller than 360 if you want partial toroid.
 
-brim() and brimcut() 
+# brim() and brimcut() 
 
 These are used to generate thicker brim for printing. Eufymake slicer
 can only do 1 layer thick brims, and these tend to be difficult to
-remove from the bed after printing.
+remove from the bed after printing.  This can make brim of arbitary
+height and generate heat cover for warpy materials, useful for people
+with printer without heatcage.
 
 The usage is to call brim first for all parts on the bed, and then
 difference() from this the brimcut. This allows placing several parts
 in the print.
 
 module brimcut(w=6,h=0.6,gap=0.1,layerthickness=0.2,$fn=90) 
-module brim(w=6,h=0.6,$fn=90) 
+module brim(w=6,h=0.6,$fn=90,heatcoverh=0,heatcoverwall=0.8,layerh=0.2) 
 
-### lattialista.scad
+w is width of brim, h is height, heatcoverh is height of heatcover (0
+for no heatcage), layerh is printer layerheight.  All values are
+defaulted if not provided.
 
-### Makefile.lattialista
+## lattialista.scad, Makefile.lattialista
 
 I needed some skirting board parts for my home, this makes ones
 compatible with the back boards.
@@ -885,9 +934,7 @@ concrete apartment buildings in Finland.
 
 ![lattialista.scad in openscad.](lattialista.png)
 
-### tunturie460holder.scad
-
-### Makefile.tunturie460cupholder
+## tunturie460holder.scad, Makefile.tunturie460cupholder
 
 Cup holder for Tunturi E460 exercise bike.
 
@@ -911,14 +958,14 @@ No supports are needed.
 ![tunturi e460 cupholder in scad.](tunturie460cupholder.png)
 ![tunturi e460 headphone hanger in scad.](tunturie460cupholderheadphonehanger.png)
 
-#### towerkansi.scad
+## towerkansi.scad
 
 Our tower game box was missing top cover, made a new one.
 
 ![Tower game cover in scad.](towerkansi.png)
 ![Tower game cover installed.](towerkansi.jpg)
 
-#### kaihdinpidike.scad
+## kaihdinpidike.scad
 
 My apartment window shutter knob holder disintegrated, made a replacement.
 Also makes round hole protectors for the outer window.
@@ -928,24 +975,20 @@ Also makes round hole protectors for the outer window.
 
 
 
-### akkunapa.scad
-
-### Makefile.akkunapa
+## akkunapa.scad, Makefile.akkunapa
 
 Protective covers for car battery terminals. Note that these do not seem to be very standardized, so might not work for all batteries.
 
 ![Battery terminal covers in scad.](akkunapa.png)
 
-### eggcase.scad
-
-### Makefile.eggcase
+## eggcase.scad, Makefile.eggcase
 
 Case for ceramic egg by Anja Suonsivu.
 
 ![Egg case in scad.](eggcase.png)
 ![Egg case in use.](eggcase.jpg)
 
-### tippadosetti.scad
+## tippadosetti.scad
 
 Eye doctor said I need eye drops for my dry eyes, so I made a
 dispenser for pipettes.  set print=1 for printing. For some printers
@@ -955,13 +998,13 @@ axleendl to make the hinge work.
 ![tippadosetti in scad.](tippadosetti.png)
 ![tippadosetti in use.](tippadosetti.jpg)
 
-### raisepad.scad
+## raisepad.scad
 
 Simple pads to raise furniture items a bit. Prints four. No supports needed.
 
 ![raisepad in scad.](raisepad.png)
 
-### flyswatter.scad
+## flyswatter.scad
 
 Keeping windows open during summer brings in bugs. This is a basic
 weapon against them. If printing with tpu, you get more flexible
@@ -970,9 +1013,7 @@ beginning of the file.  You need a large printer..
 
 ![flyswatter in scad.](flyswatter.png)
 
-### berrypicker.scad
-
-### Makefile.berrypicker
+## berrypicker.scad, Makefile.berrypicker
 
 Picker tool for bilberries (In Finnish mustikka). Latest version has
 opening bottom mechanism so you can empty the berries to a bucket
@@ -985,9 +1026,7 @@ Don't forget close the bottom after emptying berries!
 
 ![berrypicker in scad.](berrypicker.png)
 
-### berrycleaner.scad
-
-### Makefile.berrycleaner
+## berrycleaner.scad, Makefile.berrycleaner
 
 Tool to help with cleaning berries. Berries roll out, while leaves and
 other non-round objects stay or drop through slits. The model includes
@@ -997,9 +1036,7 @@ dropping through slits.
 ![berrycleaner in scad.](berrycleaner.png)
 ![berrycleaner base and top in scad.](berrycleanerall.png)
 
-### utensilbox.scad
-
-### Makefile.utensilbox
+## utensilbox.scad, Makefile.utensilbox
 
 Simple utensil boxes which can be stacked. Size and number of slots can be tuned to fit a specific furniture. No supports needed, you need to press out the lifting holes after printing.
 
@@ -1007,7 +1044,7 @@ Simple utensil boxes which can be stacked. Size and number of slots can be tuned
 ![Lower box with 2 slots in scad.](utensilbox2slot.png)
 ![Lower box in scad.](utensilboxbottom.png)
 
-### yrttiviljelma.scad
+## yrttiviljelma.scad, Makefile.yrttiviljelma
 
 A growing box for herbs from Lidl needed adaption for ready-grown
 herbs sold in Finnish grocery stores. We made new top, cups and covers
@@ -1026,16 +1063,14 @@ did the first version.
 ![Suppilo in scad.](yrttiviljelmasuppilo.png)
 ![Suppilo in use.](yrttiviljelmasuppilo.jpg)
 
-### treemeter.scad
+## treemeter.scad
 
 Handy measurement tool to figure out sizes of trees, to find out if the trees should be spaced (12 cm) or if the tree is fully grown (27cm).  Also includes 6cm for pre-thinning.
 
 ![treemeter in Openscad.](treemeter.png)
 ![treemeter in use.](treemeter.jpg)
 
-### stevensonshield.scad
-
-### Makefile.stevensonshield
+## stevensonshield.scad, Makefile.stevensonshield
 
 A stevenson shield to protect outside air sensors such as temperature
 and moisture sensors.  Makefile generates all parts. The strange shape
@@ -1081,7 +1116,7 @@ circumference of the shield, make it larger if you have larger thing
 to put inside. Other variables are based on this.
 
 bugprotection: enable bug protection mesh. Bottom of mesh has a small
-part which suitable opening can be snapped off to allow cables
+part which a suitable opening can be snapped off to allow cables
 through. The base includes small clips to hold bug mesh in place.
 
 cabletunnel: makes a short tunnel for easier routing of
@@ -1101,39 +1136,39 @@ each other for stability.
 ![stevensonshield with screen in Openscad.](stevensonshield2.png)
 ![stevensonshield installed.](stevensonshield.jpg)
 
-### hyllynpidike.scad
+## hyllynpidike.scad
 
 Spare part, shelf support was missing in furniture.
 
-### expandable-businesscard-holder.scad
+## expandable-businesscard-holder.scad
 
 Business card holders which attach to each other. This was my first
 ever 3d model, so looking at code may cause headache.
 
 ![expandable-businesscard-holder in Openscad.](expandable-businesscard-holder.png)
 
-### kaiuttimen-jalka.scad
+## kaiuttimen-jalka.scad
 
 Foot for high-end speaker which apparantly is intended to insulate the
 speaker from floor. This is copy of the original. Likely best to print
 upside down with plenty of skirt.
 
-### batterysorter.scad
+## batterysorter.scad
 
 This is intended for storing various batteries, in particular for
 rechargeable ones.
 
-### kivisen-jalka.scad
+## kivisen-jalka.scad
 
 Tero Kivinen made a gaming table and this is a foot for its square steel legs.
 
-### viemaritulppa.scad
+## viemaritulppa.scad
 
 We have part missing in the floor drain, this is a replacement.
 
-### rattistopperi.scad
+## rattistopperi.scad
 
-### momowheelfiller.scad
+## momowheelfiller.scad
 
 My momo racing wheel broke, and I tried to fix is with these two
 parts. Rattistopperi is a part which limits the wheel movement range,
@@ -1142,9 +1177,7 @@ for the inside of the wheel which had broken down, with the idea that
 it could be fixed with epoxy and glass fiber. This failed as epoxy
 escaped the form and the wheel was ruined beyond repair. Maybe someone has use for these.
 
-### rainmeter.scad
-
-### Makefile.rainmeter
+## rainmeter.scad, Makefile.rainmeter
 
 A simple rain meter, which uses balanced cups to meter amount of
 rain. Use the Makefile to build the parts.
@@ -1211,7 +1244,7 @@ to 180mm, so it is now 0.4mm of rain per swing.
 ![rainmeter in Openscad.](rainmeter.png)
 ![rainmeter installed.](rainmeter.jpg)
 
-### bicyclebottleholder.scad
+## bicyclebottleholder.scad
 
 My bicycle bottle holder disintegrated, this is a
 replacement. Attachment is designed for my bicycle, brand Sarda (not
@@ -1224,14 +1257,14 @@ originally, but 3D printed plastic might not be strong enough.
 
 ![Bicycle bottleholder in Openscad.](bicyclebottleholder.png)
 
-### suihkupaa.scad
+## suihkupaa.scad
 
 Our office shower mixers were replaced, and the new shower heads do not
 properly fit in the old fittings. This is an adapter to work around the problem.
 
 No supports are needed to print.
 
-### showertray.scad
+## showertray.scad
 
 Tray for shower for shampoos etc.
 
@@ -1241,7 +1274,7 @@ openings for those so they can be disabled in showertray.scad with
 
 No supports are needed to print.
 
-### postilaatikkokyltti.scad
+## postilaatikkokyltti.scad
 
 Mailbox sign designed for Orthex mailbox
 (https://www.tokmanni.fi/postilaatikko-valikansi-harmaa-6411760556135).
@@ -1252,81 +1285,73 @@ Change "texts" and "textsizes", and possibly adjust width if necessary. No suppo
 ![postilaatikkokyltti in Openscad.](postilaatikkokyltti1.png)
 ![postilaatikkokyltti, backside in Openscad.](postilaatikkokyltti2.png)
 
-### tolpanhattu.scad
+## tolpanhattu.scad
 
 Mailbox top to protect it from rainwater. No supports needed.
 
-### sivellinteline.scad
+## sivellinteline.scad
 
 Holder for paint brushes. No supports needed.
 
-### pikkupoyta.scad
+## pikkupoyta.scad, Makefile.pikkupoyta
 
-### Makefile.pikkupoyta
+Tiny table with folding legs. I do not know what this was for other
+than use for something related to fingernails. No supports needed.
 
-Tiny table with folding legs. I do not know what this was for other than use for something related to fingernails. No supports needed.
-
-### cpap-ppe-adapter.scad
+## cpap-ppe-adapter.scad
 
 I tested PPE mask with CPAP device. This is very specific to the mask
 as CPAP devices use one port, PPE masks have separate in and out
 ports, so this combines the ports. It kind of works, but not very well. No supports needed.
 
-### saunasuoja.scad
+## saunasuoja.scad
 
 We had problems with people tuning sauna temperature without
 authorization, so we needed to protect the sauna thermostat.
 
 ![Saunasuoja installed.](saunasuoja.jpg)
 
-### ankermakeenclosure
-
-### Makefile.ankermakeenclosure
+## ankermakeenclosure, Makefile.ankermakeenclosure
 
 Unfinished heat cover for ankermake 3D printer. No supports needed.
 
-### lival-varaosa.scad
+## lival-varaosa.scad
 
 Spare part for lival desk lamp.
 
-### powerstrip.scad
+## powerstrip.scad
 
 Model for powerstrip to be used for holders. This is from Tero Kivinen.
 
-### mousetrap.scad
-
-### Makefile.mousetrap
+## mousetrap.scad, Makefile.mousetrap
 
 Mousetrap with creeping featurism.  Multiple parts. Needs accurate
 printer. No supports needed.
 
 This has caugth 5 mice this far. There seems to be problem with
 swinging plates not moving under the mice, in particular small
-ones. Storage box has door which prevents mice from going back, but I
-have seen mice getting back through it by chewing the door top hinge
-and hiding in the swinging plate part. This makes removing caugth
-mouse from the trap a bit of challenge.
+ones. Storage box has door which prevents mice from going back.
 
 Now includes windows so you can see if there is any catch.
 
 ![Mouse trap in Openscad.](mousetrap.png)
 ![Mouse trap](mousetrap.jpg)
 
-### ankermaketopbox.scad
+## ankermaketopbox.scad
 
 A box for ankermake 3D printer, mostly for having a label for material
 type, and holder for tweezers. No supports needed. Labels can be
 printed with two materias for bettery text visibility.
 
-### powerstrip2.scad
+## powerstrip2.scad
 
 Adapted from Tero Kivinen's model, a different type of power strip.
 
-### kyltti.scad
+## kyltti.scad
 
 Angled label for table. Text plate can be printed with two materials to improve text visibility. No supports needed.
 
-### lidldiffusor.scad
+## lidldiffusor.scad
 
 Lidl led desk lamp has very brigth leds, so I needed a diffusor to
 ease strain on my eyes and reduce shade effects. No supports needed.
@@ -1334,15 +1359,15 @@ ease strain on my eyes and reduce shade effects. No supports needed.
 ![Lamp before installing diffusor](lidldiffusorbefore.jpg)
 ![Lamp after installing the diffusor](lidldiffusorafter.jpg)
 
-### filamentroll centering.scad
+## filamentroll centering.scad
 
 Center support for a broken filament roll. No supports needed.
 
-### kangaspuuosat.scad
+## kangaspuuosat.scad
 
 Spare parts for a loom. No supports needed.
 
-### polecover.scad
+## polecover.scad
 
 cover for end of metal square tube. No supports
 needed. badweldworkaround enables a cut at two corners for bed welding
@@ -1350,19 +1375,17 @@ work.
 
 ![Pole cover in scad.](polecover.png)
 
-### power-strip-attachment.scad
+## power-strip-attachment.scad
 
 Attach power strips to your wall etc. No supports needed.
 
 ![Power strip attachment in scad.](power-strip-attachment.png)
 
-### vedonpoistaja.scad
+## vedonpoistaja.scad
 
 Strain relief part. No supports needed.
 
-### filamentholderwide.scad
-
-### Makefile.filamentholderwide
+## filamentholderwide.scad, Makefile.filamentholderwide
 
 Holder for wide filament rolls. Adapted from paperiteline.scad. No supports needed.
 
@@ -1371,7 +1394,7 @@ provides attachments for tronxy and ankermake printers.
 
 ![Wide filament holder in Openscad.](filamentholderwide.png)
 
-### polarbeltclip.scad
+## polarbeltclip.scad
 
 spare for polar belt for pulse measurement. There are multiple
 versions of this belt, this only supports one of them. No supports
@@ -1379,26 +1402,24 @@ needed.
 
 ![Polar belt clip in Openscad.](polarbeltclip.png)
 
-### kivinen-57.scad
+## kivinen-57.scad
 
 Birthday cake decoration. Uses Porygon.scad library found
 from Internet. No supports needed.
 
-### spiceblock.scad
+## spiceblock.scad
 
 Boxes to store spices sold in small bags. No supports needed.
 
 ![Spice boxes in Openscad.](spiceblock.png)
 
-### ryobiadapter.scad
-
-### Makefile.ryobiadapter.scad
+## ryobiadapter.scad, Makefile.ryobiadapter.scad
 
 Adapter to use cheap Lidl parkside batteries with ryobi and homelite
 18V devices. Lidl batteries are less than half the price, but have no
 undervoltage protection. This uses xh-m609 voltage protection circuit
 to prevent battery damage due to undervoltage. This must not be used
-for charging, so use original Lidl charger to charge
+for charging, so use the original Lidl charger to charge
 batteries. xh-m609 buttons are accessible through buttons in the case
 and display is visible through opening. This needs M4x20 and M4x30
 screws, latter with countersink, as those I happened to have.
@@ -1411,7 +1432,7 @@ connectors are used for other cabling, 6mm. Use 2.5mm cables.
 ![ryobiadapter from top in Openscad.](ryobiadapter-top.png)
 ![ryobiadapter installed.](ryobiadapter.jpg)
 
-### type2.scad
+## type2.scad
 
 Type 2 EV charger cable holder. The cable can be looped around
 it. Also includes model for plug, but that is only used for testing
@@ -1422,9 +1443,7 @@ the model.
 ![type2 holder in Openscad.](type2-holder.png)
 ![type2 holder installed and in use.](type2.jpg)
 
-### screwterminalcover.scad
-
-### Makefile.screwterminalcover.scad
+## screwterminalcover.scad, Makefile.screwterminalcover.scad
 
 Screw terminal covers for the LFP battery packs we have at the
 office. They clip to the terminal covers, but you can attach M8 bolt
@@ -1433,7 +1452,7 @@ to count to make multiple terminals in one print.
 
 ![screwterminalcover in Openscad.](screwterminalcover.png)
 
-### spicegrinder.scad
+## spicegrinder.scad
 
 "Santa Maria" brand spice grinders are tedious to use, so I added a
 handle. I would need a bit more torque but works better than without
@@ -1442,13 +1461,11 @@ weak and there is not enough torque to break black pepper.
 
 ![spidegrinder installed.](spicegrinder.jpg)
 
-### knob.scad
+## knob.scad
 
 Our cheese grater knob broke, this is a replacement.
 
-### shellydinadapter.scad
-
-### Makefile.shellydinadapter
+## shellydinadapter.scad, Makefile.shellydinadapter
 
 DIN rail box for shelly 1PM Gen 4.  Needs some wiring, spring
 terminals (or with a bit of mod, screw terminals), and optional on/off
@@ -1458,7 +1475,7 @@ switch.
 It has reset button from front panel, but it lacks feel and may need
 more testing.
 
-### pussinsulkija.scad
+## pussinsulkija.scad
 
 To make yet another version of one the most common objects in the
 3D design space, this is my take on bag clip.  As 3D printed materials
@@ -1466,8 +1483,7 @@ tend to flex a bit, male grabbing part is slightly curved to
 compensate the flexing.  Adjust l for making longer versions for
 larger bags.
 
-### cableroller.scad
-### Makefile.cableroller
+## cableroller.scad, Makefile.cableroller
 
 We 3D print a lot, so we had accumulated large number of empty
 filament rolls. We needed a use for those. Turns out that 25m ethernet
@@ -1516,17 +1532,17 @@ Bolts may require accurate printer.
 ![cableroller from top in Openscad.](cableroller.png)
 ![cableroller being used.](cableroller.jpg)
 
-### headphonehanger.scad
+## headphonehanger.scad
 
 Headphone hangers for wall install.
 
 ![Headphone hanger in use.](headphonehanger.jpg)
 
-### dinboxsuko.scad
+## dinboxsuko.scad
 
 Schuko socket extension box for DIN electrical box we have for specific schuko socket. 
 
-### belttool.scad
+## belttool.scad
 
 Too to narrow leather belt to narrower size. Used to narrow leather
 strap. This was designed to use Lidl Parkside "Precision Hobby Knife"
@@ -1537,32 +1553,30 @@ and should be used carefully, it can eat into the material due to 3D
 printed part flexing too much. This needs better design to prevent
 this (separate bottom is likely culprit).
 
-### paperrollholder.scad
+## paperrollholder.scad
 
 Holder for kitchen paper rolls. Top screws in to prevent roll exiting in case of mishap.
 
-### diameter.scad
-
-### Makefile.diameter
+## diameter.scad, Makefile.diameter
 
 Diameter measuring tool. Essentially rings with holes at specific diameters.
 
 ![diameter.scad in Openscad.](diameter.png)
 
-### kattokiskoclip.scad
+## kattokiskoclip.scad
 
 Clip for aluminium roof rail to keep cable in place.
 
 ![kattokiskoclip.scad in Openscad.](kattokiskoclip.png)
 
-### bikebagspare.scad
+## bikebagspare.scad
 
 Spare part for a bicycle bag.
 
 ![bikebagspare.scad in Openscad.](bikebagspare.png)
 ![bikebagspare.scad as printed.](bikebagspare.jpg)
 
-### plugconverter12v.scad
+## plugconverter12v.scad
 
 Highly specific 12 volt cylinderical connector, a monitor we had had
 5.5mm jack but its center is too thick for a power supply we had to
@@ -1575,44 +1589,42 @@ seem to hold enough for assembly if done carefully.
 ![plugconverter12v in Openscad.](plugconverter12v.png)
 ![plugconverter12v in use.](plugconverter12v.jpg)
 
-### cpustoragebox.scad
+## cpustoragebox.scad
 
 Small box to protect loose cpus. Could have more generic uses.  Sizes
 for couple of loose cpus I had around included.
 
-### pentiumbox.scad
+## pentiumbox.scad
 
 As previous but accommodates a fixed fan.
 
-### acercasespare.scad
+## acercasespare.scad
 
 Spare part for Acer computer case, drive locking mechanism. Original
 plastics self-destruct with time.
 
 ![Acer case spare in openscad](acercasespare.png)
 
-### 92to80mm-fan-adapter.scad
+## 92to80mm-fan-adapter.scad
 
 Adapter for installing 92mm fan to a computer case with holes designed
 for 80mm fans. You need short screw/nut pair for this one. I used M4
 8mm screws.
 
-### nappi.scad
+## nappi.scad
 
 Spare missing power&reset button for a computer case.
 
-### disk35.scad
-
-### Makefile.disk35
+## disk35.scad, Makefile.disk35
 
 This uses either LGH-IDE-K, gc100-30822 or 120-3803 IDE 40-pin to
 44-pin conversion part, both of which is available through sellers
-such as aliexpress and various suppliers.
+such as aliexpress and various other suppliers.
 
 Note: this is work-in-progress, as I do not yet have the LGH-IDE-K pcb for
 testing and have not yet verified the fit.
 
-Converts 2.5 inch pata disk to 3.5 form. The disk is held in place
+Converts 2.5 inch PATA disk to 3.5 form. The disk is held in place
 with springs so it, in theory should accommodate any disks from 7 to
 12.5mm. 9mm is currently common, but many ssd:s are 7mm and
 high-capacity or older disks are up to 12.5mm thick. 
@@ -1625,45 +1637,36 @@ No supports are needed to print.
 
 ![disk35 adapter in openscad](disk35.png)
 
-### pcsupports.scad
-
-### Makefile.pcsupports
+## pcsupports.scad, Makefile.pcsupports
 
 Various motherboard supports for PC cases.  Obsoletes mbtowerextend.scad
 
-### akkuboksi.scad
+## akkuboksi.scad
 
-A Box for a 6V lead acid battery, with sloped roof.
+A Box for a 6V lead acid battery, with sloped roof to allow water to
+drain off.
 
 ![Akkuboksi in openscad](akkuboksi.png)
 
-### pelilaatikko.scad
-
-### Makefile.pelilaatikko
+## pelilaatikko.scad, Makefile.pelilaatikko
 
 A box for card games. 3 slots for cards and fits sub-A5 manual.
 
-### diskrewriterstand.scad
-
-### Makefile.diskrewriterstand
+## diskrewriterstand.scad, Makefile.diskrewriterstand
 
 Support stand for 3.5inch disks with fan for reading and writing 3.5
 inch disks. This is two parts, which clip on to each other.
 
 ![Disk rewriter stand openscad](diskrewriterstand.png)
 
-### plateholder.scad
-
-### Makefile.plateholder
+## plateholder.scad, Makefile.plateholder
 
 Attach various plates to poles.
 
 ![Plate holder in openscad](plateholder.png)
 ![Plate holder installed](plateholder.jpg)
 
-### bootdryer.scad
-
-### Makefile.bootdryer
+## bootdryer.scad, Makefile.bootdryer
 
 Boot&shoe drying device. It needs a 12V power supply and 12V 7mm fan,
 and two washing machine drain hoses (one which extends from 0.5 to 2mm
@@ -1672,11 +1675,11 @@ is perfect as it works for shoes as well as tall boots.
 ![Boot dryer in openscad](bootdryer.png)
 ![Boot dryer in use](bootdryer.jpg)
 
-### halkovaja.scad
+## halkovaja.scad
 
 I needed a firewood storage cabinet.  The bottom is designed to take
 US pallet as bottom as we had those lying around. Alternatively you
-can use suitable wood for floor.  Roof is separate piece.  This is
+can use suitable wood for floor.  Roof is a separate piece.  This is
 intended to be used in pairs ore more units, so you can put fresh wood
 in one and have dry wood in the other. Adjust vajaw and vajal if you
 want different size.
@@ -1686,13 +1689,13 @@ saw/screw templates.
 
 ![halkovaja in openscad](halkovaja.png)
 
-### wheelbarrowhandle.scad
+## wheelbarrowhandle.scad
 
 My wheelbarrow plastic handles broke, made spares. Print in TPU.
 
 ![wheelbarrowhandle in openscad](wheelbarrowhandle.png)
 
-### bicyclestandspare.scad
+## bicyclestandspare.scad
 
 My bicycle kickstand rubber cover self-destructed, this is a spare.
 Print in TPU. No supports needed.
