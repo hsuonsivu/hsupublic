@@ -9,12 +9,13 @@
 
 include <hsu.scad>
 
-print=0;
-adhesion=(print>0 && print<6)?1:0;
-debug=1;//print>0?0:1;
-abs=1;;
+print=3;
+adhesion=1;//(print>0 && print<6)?1:0;
+debug=0;//print>0?0:1;
+abs=1;
 windows=1; // Make windows with 2mm polycarbonate inserts
-antiwarp=(print>0)?abs:0;
+antiwarp=abs;
+echo(print,antiwarp);
 antiwarpdistance=4; //3 mm
 antiwarpw=0.8;
 mechanicstest=0;
@@ -246,11 +247,13 @@ outholetotalh=outholeh+(outopeningw-maxbridge*2)/2;
 
 saranad=6;
 saranacoverd=saranad+dtolerance+thinwall*2;
-flapwall=5;
-flapwalld=saranacoverd+5;
-flapwallcornerd=5;
 flapw=outopeningw+thinwall*2;
 flapy=outopeningy-thinwall;
+flapwall=storageboxy+storageboxw-(flapy+flapw); //10;//5;
+flapwalld=saranacoverd+flapwall;//5;
+flapnarrowwall=5;
+flapnarrowwalld=flapnarrowwall;
+flapwallcornerd=10;
 flapthickness=3;
 flapangle=30;
 flapaxleextend=2;
@@ -863,7 +866,7 @@ module mousestorage() {
 		translate([boxlockpinholex,y,0]) cylinder(d=boxlockpind,h=boxlockpinh);
 	      }
 
-	      if (antiwarp) {
+	      if (0 && antiwarp) {
 		antiwarph=storageboxh+5;
 		difference() {
 		  minkowski(convexity=10) {
@@ -900,9 +903,10 @@ module mousestorage() {
 	    }
 	    
 	    // Mouse storage
-	    translate([storageboxx+wall,storageboxy+wall,wall]) roundedbox(storagel/2-boxincornerd-wall*3,storagew,storageh,boxincornerd);
-	    translate([storageboxx+wall,storageboxy+wall+wall,wall]) roundedbox(storagel,storagew-wall,storageh,boxincornerd);
-	    translate([storageboxx+storageboxl-wall-(storagel/2-boxincornerd-wall*3),storageboxy+wall,wall]) roundedbox(storagel/2-boxincornerd-wall*3,storagew,storageh,boxincornerd);
+	    sidel=storagel/2-boxincornerd-wall*3;
+	    translate([storageboxx+wall,storageboxy+wall,wall]) roundedbox(sidel,storagew,storageh,boxincornerd);
+	    translate([storageboxx+wall+storagel/2-boxincornerd-wall*3-boxincornerd,storageboxy+wall+wall,wall]) roundedbox(-sidel+storagel-sidel+boxincornerd*2,storagew-wall,storageh,boxincornerd);
+	    translate([storageboxx+storageboxl-wall-sidel,storageboxy+wall,wall]) roundedbox(sidel,storagew,storageh,boxincornerd);
 	  }
 	}
       }
@@ -944,20 +948,42 @@ module mousestorage() {
       }
 
       intersection() {
-	translate([storageboxx,storageboxy,0]) cube([storageboxl,storageboxw,storageboxh]);
+	translate([storageboxx,storageboxy,0]) roundedboxxyz(storageboxl,storageboxw,storageboxh,storageboxoutcornerd,0,0,90);
 	union() {
 	  hull() {
 	    translate([flapaxlex-sin(flapangle)*flaph,flapy-flapwall-ytolerance,saranacoverd/2]) rotate([-90,0,0]) roundedcylinder(saranacoverd,flapw+flapwall*2+xtolerance*2,flapwallcornerd,0,90);
 	    translate([flapaxlex-sin(flapangle)*flaph-flapwall/2,flapy-flapwall-ytolerance,0]) rotate([-90,0,0]) roundedcylinder(saranacoverd,flapw+flapwall*2+xtolerance*2,flapwallcornerd,0,90);
 	  }
-	  
-	  for (y=[flapy-flapwall-ytolerance,flapy+flapw+ytolerance]) {
-	    hull() {
-	      translate([flapaxlex,y,flapaxleheight]) rotate([-90,0,0]) roundedcylinder(flapwalld,flapwall,flapwallcornerd,0,90);
-	      translate([storageboxx+storageboxl-flapwall/2,y+flapwall/2,flapaxleheight+saranacoverd-flapwall/2]) sphere(d=flapwall);
-	      translate([flapaxlex,y,flapwalld/2]) rotate([-90,0,0]) roundedcylinder(flapwalld,flapwall,flapwallcornerd,0,90);
-	      translate([x,y,flapwalld/2]) rotate([-90,0,0]) roundedcylinder(flapwalld,flapwall,flapwallcornerd,0,90);
-	      translate([x-flapwall/2,y,0]) rotate([-90,0,0]) roundedcylinder(flapwalld,flapwall,flapwallcornerd,0,90);
+
+	  intersection() {
+	    union() {
+	      translate([storageboxx,storageboxy,0]) roundedboxxyz(storageboxl,storageboxw,storageboxh-wall-boxincornerd/2-ztolerance,storageboxoutcornerd,0,0,90);
+	      translate([storageboxx+wall+xtolerance,storageboxy+wall+ytolerance,wall+ztolerance]) roundedbox(storagel-xtolerance*2,storagew-ytolerance*2,storageh-boxincornerd-ztolerance*2,boxincornerd);
+	    }
+	    union() {
+	      for (y=[flapy-flapwall-ytolerance,flapy+flapw+ytolerance]) {
+		hull() {
+		  translate([storageboxx+storageboxl,y+flapwall/2,boxh-flapwall/2]) sphere(d=flapwall);
+		  translate([storageboxx+storageboxl-flapwall/2,y+flapwall/2,flapaxleheight+saranacoverd-flapwall/2]) sphere(d=flapwall);
+		}
+		hull() {
+		  //#		  translate([x,y+flapwall/2,flapwalld/2]) sphere(d=flapwall);
+		  translate([storageboxx+storageboxl-flapwall/2,y+flapwall/2,flapaxleheight+saranacoverd-flapwall/2]) sphere(d=flapwall);
+		  translate([x-flapwall/2-flapnarrowwall,y+flapwall/2,0]) sphere(d=flapwall);
+		}
+	      }
+	      for (y=[flapy-flapnarrowwall-ytolerance,flapy+flapw+ytolerance]) {
+		hull() {
+		  translate([storageboxx+storageboxl-flapwall/2,y,flapaxleheight+saranacoverd-flapwall/2]) rotate([-90,0,0]) roundedcylinder(flapnarrowwalld,flapnarrowwall,cornerd,0,90);
+		  translate([x-flapwall/2-flapnarrowwall,y,0]) rotate([-90,0,0]) roundedcylinder(flapnarrowwalld,flapnarrowwall,cornerd,0,90);
+		  
+		  translate([storageboxx+storageboxl,y+flapnarrowwall/2,boxh-flapwall/2]) sphere(d=flapnarrowwall);
+		  translate([storageboxx+storageboxl-flapnarrowwall/2,y+flapnarrowwall/2,flapaxleheight+saranacoverd-flapnarrowwall/2]) sphere(d=flapnarrowwall);
+		  translate([x,y+flapnarrowwall/2,flapnarrowwalld/2]) sphere(d=flapnarrowwall);
+		  translate([x-flapwall/2,y+flapnarrowwall/2,0]) sphere(d=flapnarrowwall);
+		  translate([storageboxx+storageboxl,y+flapnarrowwall/2,flapnarrowwall/2]) sphere(d=flapnarrowwall);
+		}
+	      }
 	    }
 	  }
 	}
@@ -1699,15 +1725,15 @@ module box() {
 if (print==0) {
   intersection() {
     union() {
-      mechanics(angle,lockangle);
+      //mechanics(angle,lockangle);
 
-      //mousestorage();
-      //#door();
-      //#storagecover();
+      mousestorage();
+      #door();
+      storagecover();
       //#translate([baitboxx,baitboxy,boxh-baitboxh]) rotate([0,0,baitboxangle]) baitbox();
       //#cover();
 
-      lockinsert(lockangle);
+      //lockinsert(lockangle);
     }
     //if (debug) translate([boxx,-swingtunnelw/2-midwallw/2,0]) cube([590,swingtunnelw*2+midwallw,100]);//axleheight+1
     //if (debug) translate([boxx,-swingtunnelw/2-swingtunnelw-50,boxh-wall*15]) cube([590,swingtunnelw*2+midwallw+50,100]);//axleheight+1
@@ -1799,10 +1825,19 @@ if (print==3) {
   translate([-boxx,0,0]) {
     intersection() {
       if (debug) translate([storageboxx+storageboxl-60,storageboxy+storagew/2-10,0]) cube([60,flapaxlew+thinwall*2+flapwall,storageboxh]);
-      mousestorage();
+      union() {
+	mousestorage();
+
+	if (adhesion) {
+	  difference() {
+	    brim(heatcoverh=antiwarp?boxh:0) mousestorage();
+	    brimcut() mousestorage();
+	  }
+	}
+      }
     }
     
-    #if (debug) {
+#    if (debug) {
       translate([flapaxlex,flapy+flapw/2,flapaxleheight]) flap(0,1);
       translate([flapaxlex,flapy+flapw/2,flapaxleheight]) rotate([0,-180+flapangle,0]) flap(0,1);
     }
@@ -1911,4 +1946,15 @@ if (print==13) {
   translate([-20,-20-41,0]) cube([20,15,0.6]);
  }
 
-
+// Test if any two objects overlap
+if (print==14) {
+  intersection() {
+    //mechanics(angle,lockangle);
+    mousestorage();
+    //door();
+    storagecover();
+    //translate([baitboxx,baitboxy,boxh-baitboxh]) rotate([0,0,baitboxangle]) baitbox();
+    //cover();
+    //lockinsert(lockangle);
+  }
+ }
