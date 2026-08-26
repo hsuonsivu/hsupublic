@@ -4,9 +4,7 @@
 
 include <hsu.scad>
 
-// TODO: tuulettimen tuet ja ritila, tuben ylapaan muotoilu.
-
-print=2;
+print=0;
 debug=0;
 adhesion=1;
 
@@ -575,7 +573,10 @@ if (print==1 || print==4 || print==8) {
  }
 
 if (print==2 || print==4) {
-  bootdryertopprint();
+  intersection() {
+    if (debug) cube([200,200,200]);
+    bootdryertopprint();
+  }
  }
 
 if (print==3 || print==4) {
@@ -583,15 +584,18 @@ if (print==3 || print==4) {
  }
 
 if (adhesion) {
-  difference() {
-    union() {
-      if (print==1 || print==4) brim() bootdryerprint();
-      if (print==2 || print==4) brim() bootdryertopprint();
-      if (print==3 || print==4) brim() pcbsupportclipprint();
-    }
+  intersection() {
+    if (debug) cube([200,200,200]);
+    difference() {
+      union() {
+	if (print==1 || print==4) brim() bootdryerprint();
+	if (print==2 || print==4) brim() bootdryertopprint();
+	if (print==3 || print==4) brim() pcbsupportclipprint();
+      }
 
-    if (print==1 || print==4) brimcut() bootdryerprint();
-    if (print==2 || print==4) brimcut() bootdryertopprint();
-    if (print==3 || print==4) brimcut() pcbsupportclipprint();
+      if (print==1 || print==4) brimcut() bootdryerprint();
+      if (print==2 || print==4) brimcut() bootdryertopprint();
+      if (print==3 || print==4) brimcut() pcbsupportclipprint();
+    }
   }
  }
