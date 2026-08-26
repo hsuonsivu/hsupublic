@@ -1048,24 +1048,53 @@ module toroid(d,w,angle=360) {
   }
 }
 
-module brimcut(w=6,h=0.6,gap=0.1,layerthickness=0.2,$fn=90) {
+// This generates half layers to try to make slicer to keep layers
+// detached. This may be slicer dependent.
+module brimcut(w=6,h=0.6,gap=0.1,layerthickness=0.2,$fn=90,usehull=0) {
+  lh=layerthickness/2;
   union() {
-    for (z=[0.0:layerthickness:h+layerthickness]) {//h+layerthickness])
-      hull() {
-	// Upper thin cut
-	translate([0,0,z+layerthickness-0.01]) linear_extrude(0.01) offset(gap) fill() projection(cut=true,$fn=90) intersection() {
-	  translate([0,0,-z-layerthickness]) children(); translate([-1000000,-1000000,0]) cube([2000000,2000000,0.01]);
-	}
-	// Lower thin cut
-	translate([0,0,z-0.01]) linear_extrude(0.01) offset(gap) fill() projection(cut=true,$fn=90) intersection() {
-	  translate([0,0,-z]) children(); translate([-1000000,-1000000,0]) cube([2000000,2000000,0.01]);
+    for (z=[0.0:lh:h+layerthickness]) {//h+layerthickness])
+      union() {
+	// This is problematic as hull makes it not brim on concave objects
+	if (usehull) {
+	  hull() {
+	    // Upper thin cut
+	    translate([0,0,z+layerthickness-0.01]) linear_extrude(0.01) offset(gap) fill() projection(cut=true,$fn=90) intersection() {
+	      translate([0,0,-z-layerthickness]) children(); translate([-1000000,-1000000,0]) cube([2000000,2000000,0.01]);
+	    }
+	    // Lower thin cut
+	    translate([0,0,z-0.01]) linear_extrude(0.01) offset(gap) fill() projection(cut=true,$fn=90) intersection() {
+	      translate([0,0,-z]) children(); translate([-1000000,-1000000,0]) cube([2000000,2000000,0.01]);
+	    }
+	  }
+	} else {
+	  // Next layer with half gap
+	  translate([0,0,z-0.01]) linear_extrude(lh+0.01) offset(gap) fill() projection(cut=true,$fn=90) intersection() {
+	    translate([0,0,-lh-z]) children(); translate([-1000000,-1000000,0]) cube([2000000,2000000,lh]);
+	  }
+	  // Current layer with full gap
+	  translate([0,0,z-0.01]) linear_extrude(lh+0.01) offset(gap) fill() projection(cut=true,$fn=90) intersection() {
+	    translate([0,0,-z]) children(); translate([-1000000,-1000000,0]) cube([2000000,2000000,lh]);
+	  }
 	}
       }
     }
   }
 }
 
-module brim(w=6,h=0.6,$fn=90) {
-  linear_extrude(h) offset(w) hull() projection(cut=true,$fn=90) children();
+module brim(w=6,h=0.6,$fn=90,heatcoverh=0,heatcoverwall=0.8,layerh=0.2) {
+  linear_extrude(h) offset(w) fill() projection(cut=false,$fn=90) intersection() {
+    translate([-1000000,-1000000,0]) cube([2000000,2000000,h+layerh*2]);
+    children();
+  }
+  if (heatcoverh) {
+    difference() {
+      union() {
+	linear_extrude(h) offset(w) fill() projection(cut=false,$fn=90) children();
+	linear_extrude(heatcoverh) offset(w) fill() projection(cut=false,$fn=90) children();
+      }
+      translate([0,0,h]) linear_extrude(heatcoverh-h+0.1) offset(w-heatcoverwall) fill() projection(cut=false,$fn=90) children();
+    }
+  }
 }
 
