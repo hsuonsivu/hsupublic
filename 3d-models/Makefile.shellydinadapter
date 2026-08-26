@@ -1,0 +1,52 @@
+SOURCE=shellydinadapter.scad
+DEPENDS=hsu.scad Makefile.shellydinadapter
+IMAGES=
+ALL=shellydinadapterbase.stl shellydinadaptercover.stl shellydinadapterspring.stl shellydinadapterall.stl shellydinadapterdinclip.stl shelly.stl
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D resetpressed=0
+
+all: $(ALL)
+
+dist: shellydinadapter-source-distribution.zip shellydinadapter-full-distribution.zip
+
+shellydinadapter-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf shellydinadapter-distribution
+	rm -f shellydinadapter-distribution.zip
+	mkdir -p shellydinadapter-distribution
+	cp $(SOURCE) $(DEPENDS) shellydinadapter-distribution
+	zip -r $@ shellydinadapter-distribution
+	echo $@ built.      
+
+shellydinadapter-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf shellydinadapter-distribution
+	rm -f shellydinadapter-distribution.zip
+	mkdir -p shellydinadapter-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) shellydinadapter-distribution
+	zip -r $@ shellydinadapter-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+shellydinadapterbase.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+shellydinadaptercover.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+shellydinadapterspring.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+shellydinadapterdinclip.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+shellydinadapterall.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+
+shelly.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=6 -o $@ $(SOURCE)
+	echo $@ built.
