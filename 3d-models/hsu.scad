@@ -2,7 +2,7 @@
 // Licensed under Creative Commons CC-BY-NC-SA, see https://creativecommons.org/licenses/by-nc-sa/4.0/
 // For commercial licensing, please contact directly, hsu-3d@suonsivu.net, +358 40 551 9679
 
-print=1;
+print=0;
 strong=0;
 
 countersinkheightmultiplier=0.63;
@@ -264,52 +264,74 @@ module triangletest() {
   }
 }
 
-module lighten_recurse(w,h,thickness,edge,barw,maxbridge) {
+module reverseroundedplate(l,w,h,cornerd) {
+  translate([l/2,w/2,0]) {
+    difference() {
+      translate([-l/2-cornerd/2,-w/2-cornerd/2,0]) cube([l+cornerd,w+cornerd,h]);
+
+      if (cornerd) {
+	for (m=[0,1]) mirror([m,0,0]) hull() {
+	    for (h=[cornerd/2,h-cornerd/2]) {
+	      translate([-l/2-cornerd/2,-w/2-cornerd/2,h]) sphere(d=cornerd,$fn=90);
+	      translate([-l/2-cornerd/2,w/2+cornerd/2,h]) sphere(d=cornerd,$fn=90);
+	    }
+	  }
+
+	for (m=[0,1]) mirror([0,m,0]) hull() {
+	    for (h=[cornerd/2,h-cornerd/2]) {
+	      translate([-l/2-cornerd/2,-w/2-cornerd/2,h]) sphere(d=cornerd,$fn=90);
+	      translate([l/2+cornerd/2,-w/2-cornerd/2,h]) sphere(d=cornerd,$fn=90);
+	    }
+	  }
+      }
+    }
+  }
+}
+
+module lighten_recurse(w,h,thickness,edge,barw,maxbridge,cornerd) {
   for (x=[barw+edge:barw*2+edge*2:w+edge]) {
-    translate([w/2+x,0,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,-0.01,-edge/sqrt(2)/2]) cube([edge/sqrt(2),thickness+0.02,edge/sqrt(2)]);
-    translate([w/2-x,0,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,-0.01,-edge/sqrt(2)/2]) cube([edge/sqrt(2),thickness+0.02,edge/sqrt(2)]);
+    translate([w/2+x,thickness+0.01,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,-0.01,-edge/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(edge/sqrt(2),edge/sqrt(2),thickness+0.02,cornerd);
+    translate([w/2-x,thickness+0.01,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,-0.01,-edge/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(edge/sqrt(2),edge/sqrt(2),thickness+0.02,cornerd);
   }
 
-   if (edge<w/2) lighten_recurse(w,h,thickness,edge+barw+edge,barw,maxbridge);
+  if (edge<w/2) lighten_recurse(w,h,thickness,edge+barw+edge,barw,maxbridge,cornerd);
 }
 
 // Cutouts to lighten a vertical plate. fill is percent of open space
-module lightenhelper(width,height,thickness,margin,barw,maxbridge,compress) {
+module lightenhelper(width,height,thickness,margin,barw,maxbridge,compress,cornerd) {
   zadjust=maxbridge/2;
   w=width-margin*2;
   h=height-margin*2;
-  //  barw=w*fill/2;
   sh=sqrt(maxbridge);
   intersection() {
     union() {
-      translate([w/2+margin,0,h+margin-w/2+zadjust]) rotate([0,45,0]) translate([-w/sqrt(2)/2,-0.01,-w/sqrt(2)/2]) cube([w/sqrt(2),thickness+0.02,w/sqrt(2)]);
+      translate([w/2+margin,thickness+0.01,h+margin-w/2+zadjust]) rotate([0,45,0]) translate([-w/sqrt(2)/2,-0.01,-w/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(w/sqrt(2),w/sqrt(2),thickness+0.02,cornerd);
       if (h>w/2) {
-	translate([margin,-0.01,margin]) cube([w,thickness+0.02,h-w/2+zadjust]);
+	translate([margin,thickness+0.01,margin]) rotate([90,0,0]) reverseroundedplate(w,h-w/2+zadjust,thickness+0.02,cornerd);
       }
 
-      translate([margin,0,margin]) lighten_recurse(w,h,thickness,maxbridge,barw,maxbridge);
+      translate([margin,0,margin]) lighten_recurse(w,h,thickness,maxbridge,barw,maxbridge,cornerd);
     }
-    translate([margin,-0.01,margin]) cube([w,thickness+0.02,h]);
+    translate([margin,thickness+0.01,margin]) rotate([90,0,0]) reverseroundedplate(w,h,thickness+0.02,cornerd);
   }
 }
 
-module lighten(w,h,thickness,margin,barw,maxbridge,direction,compress=1) {
+module lighten(w,h,thickness,margin,barw,maxbridge,direction,compress=1,cornerd=0) {
   bw=barw*2;
-  echo("DEBUG ",w,h,thickness,margin,barw,maxbridge,direction);
   if (direction=="up")
-    lightenhelper(w,h,thickness,margin,bw,maxbridge,compress);
+    lightenhelper(w,h,thickness,margin,bw,maxbridge,compress,cornerd);
   else if (direction=="down-yplane")
-    translate([thickness,w,h]) rotate([0,180,90]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress);
+    translate([thickness,w,h]) rotate([0,180,90]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress,cornerd);
   else if (direction=="down-xplane")
-    translate([w,0,h]) rotate([0,180,0]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress);
+    translate([w,0,h]) rotate([0,180,0]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress,cornerd);
   else if (direction=="back-yplane")
-    translate([thickness,0,h]) rotate([0,90,90]) lightenhelper(h,w,thickness,margin,bw,maxbridge,compress);
+    translate([thickness,0,h]) rotate([0,90,90]) lightenhelper(h,w,thickness,margin,bw,maxbridge,compress,cornerd);
   else if (direction=="back-zplane")
-    translate([h,0,0]) rotate([90,0,180]) lightenhelper(h,w,thickness,margin,bw,maxbridge);
+    translate([h,0,0]) rotate([90,0,180]) lightenhelper(h,w,thickness,margin,bw,maxbridge,cornerd);
   else if (direction=="left-xplane") // Up is left on x plane
-    translate([h,thickness,w]) rotate([0,90,180]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress);
+    translate([h,thickness,w]) rotate([0,90,180]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress,cornerd);
   else if (direction=="right-xplane") // Up is right on x plane
-   translate([0,thickness,0]) rotate([0,-90,180]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress);
+   translate([0,thickness,0]) rotate([0,-90,180]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress,cornerd);
   else if (direction=="flat-xplane")
     translate([-0.01,margin,margin]) cube([thickness+0.02,w-margin*2,h-margin*2]);
   else echo("ERROR missing or incorrect argument for lighten: ",direction);
@@ -1030,7 +1052,7 @@ module grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) {
   
   firstarea=dstart*dstart*PI;
   for (d=[dstart:ddistance:diameter-w*2]) {
-    translate([0,0,0]) ring(d,w,thickness);
+    translate([0,0,0]) ring(d,w,thickness,0,90);
 
     previousarea=d*d*PI;
     thisarea=((d+ddistance)*(d+ddistance)*PI)-previousarea;

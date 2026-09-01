@@ -743,6 +743,12 @@ which orientation the triangle should be (0-11 for off-center
 triangles and 12-23 for centered triangles). To see the shapes
 generated, call triangletest() in openscad.
 
+# reverseroundedplate
+
+This makes a cube which has negative corners, and can be used to make
+cutouts from plates with rounded edges. This is intended to be
+differenced out from plates.
+
 # lighten
 
 lighten makes a printable shape to make structures consume less
@@ -1531,6 +1537,13 @@ Bolts may require accurate printer.
 
 ![cableroller from top in Openscad.](cableroller.png)
 ![cableroller being used.](cableroller.jpg)
+
+## microscopespare.scad
+
+My Vision engineering Lynx 3D microscope power supply box back cover
+had screw tower to self-destruct, made a spare to be glued in place.
+
+![Microscope spare in Openscad.](microscopespare.png)
 
 ## headphonehanger.scad
 
