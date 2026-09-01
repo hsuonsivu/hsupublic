@@ -747,7 +747,8 @@ generated, call triangletest() in openscad.
 
 This makes a cube which has negative corners, and can be used to make
 cutouts from plates with rounded edges. This is intended to be
-differenced out from plates.
+differenced out from plates. Notice that this is work in progress and
+there may be changes.
 
 # lighten
 
