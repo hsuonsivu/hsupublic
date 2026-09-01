@@ -1,7 +1,7 @@
 SOURCE=diskrewriterstand.scad
 DEPENDS=hsu.scad Makefile.diskrewriterstand
 IMAGES=
-ALL=diskrewriterdiskholder35.stl diskrewriterbase.stl lockcliptest.stl
+ALL=diskrewriterdiskholder35.stl diskrewriterbase.stl lockcliptest.stl diskrewriterfangrills.stl diskrewriterlockclips.stl
 
 OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
@@ -38,5 +38,13 @@ diskrewriterbase.stl: $(SOURCE) $(DEPENDS)
 
 lockcliptest.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+diskrewriterfangrills.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+diskrewriterlockclips.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=5 -o $@ $(SOURCE)
 	echo $@ built.
 
