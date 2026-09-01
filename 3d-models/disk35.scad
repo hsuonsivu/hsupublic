@@ -77,7 +77,7 @@ covercutheight=diskh-wall-covercuth;
 covercutx=diskl/2-covercutl/2;
 covercuty=diskw/2-covercutw/2;
 
-versiontext="V1.4";
+versiontext="V1.5";
 textdepth=0.6;
 textsize=7;
 textfont="Liberation Sans:style=Bold";
@@ -427,7 +427,7 @@ module plate() {
     // translate([-platex,-platey+pcby,-plateheight+wall+pcbheight]) connectorcuts();
     translate([-platex+powerconnectorbackx,-platey+pcby+powerconnectorbacky-ytolerance,-plateheight+powerconnectorheight-10]) roundedbox(powerconnectorbackl+xtolerance,powerconnectorbackw+ytolerance*2,10+powerconnectorh,0);
     
-    translate([platel/2-cornerd/2-versiontextl/2,wall/2+0.5+textsize/2,plateh-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
+    translate([platel/2-cornerd/2-versiontextl/2,wall/2+0.5+textsize/2,plateh-textdepth+0.01]) rotate([0,0,0]) linear_extrude(height=textdepth) text(versiontext,size=textsize-1,valign="center",halign="center");
   }
 }
 
@@ -872,8 +872,8 @@ module cover() {
     // Open connectorhole
     translate([pcbx,pcby,pcbheight]) connectorcuts();
 	
-    translate([textsize+2,-diskw/2+versiontextl+cornerd/2-2,diskh-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
-    translate([(pcbversion==1||pcbversion==3)?textsize+2:diskl-textsize-2,diskw/2-versiontextl-cornerd/2-2,diskh-wall+textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
+    translate([textsize+1,-diskw/2+versiontextl+cornerd/2-2,diskh-textdepth+0.01]) rotate([0,0,90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
+    translate([(pcbversion==1||pcbversion==3)?textsize+1:diskl-textsize-2,diskw/2-versiontextl-cornerd/2-2,diskh-wall+textdepth-0.01]) rotate([180,0,90]) linear_extrude(height=textdepth) text(versiontext,size=textsize,valign="center",halign="center");
   }
 }
 
