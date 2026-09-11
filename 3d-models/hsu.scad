@@ -1120,3 +1120,208 @@ module brim(w=6,h=0.6,$fn=90,heatcoverh=0,heatcoverwall=0.8,layerh=0.2) {
   }
 }
 
+// Disktype,
+// Screw 6-32 UNC-28 levyruuvi, 3.51mm halkaisija
+
+// Centered
+// [(A1),A2,A3,(A4),A5,A6,(A7),A8,A9,A10,A11,(A12+-),A13,A14,(A15),A16,A17,(A18),A19,A20];
+satainterface=[101.60, //  0, A1
+	       42.73,  //  1, A2 keepoutarea w
+	       33.39,  //  2, A3 male w (both data and power)
+	       0.4,    //  3, A4
+	       4.9,      //  4, A5 Opening height Measured, was 4
+	       0.76,   //  5, A6 center A6 Y  ?
+	       3.5,    //  6, A7 Top of male 
+	       36.38,  //  7, A8
+	       0.25,   //  8, A9
+	       1,      //  9, A10
+	       20.68,  // 10, A11
+	       0.38,   // 11, A12
+	       13.43,  // 12, A13
+	       37.20,  // 13, A14 connector opening
+	       1.5,    // 14, A15 male to top keepout
+	       1,      // 15, A16
+	       1,      // 16, A17 keepoutarea top from sidetab opening
+	       23.60,  // 17, A18 Bottom of connector to first side screw
+	       1,      // 18, A19 Side tab opening height
+	       2.85,   // 19, A10
+	       4.9,    // 20, Depth of connector hole
+	       ];      
+
+sataconnectordepth=satainterface[20];
+sataconnectoropeningh=satainterface[4];
+satakeepouth=satainterface[6]+satainterface[11]+satainterface[14];
+sataconnectortabh=sataconnectoropeningh-satainterface[16]-satainterface[18];
+sataconnectormalew=satainterface[2];
+sataconnectormaleh=1.37;
+sataconnectormaleheight=satainterface[6]-sataconnectormaleh;
+sataconnectorpowerw=20.45;
+sataconnectordataw=10.36;
+sataconnectormaletabw=1.3;
+sataconnectormaletabh=2.3;
+
+module satasocket() {
+  satakeepoutw=satainterface[1];
+  translate([0,-satakeepoutw/2,0]) roundedbox(sataconnectordepth+1,satakeepoutw,satakeepouth,1);
+}
+
+module satasocketcut() {
+  sataconnectoropeningw=satainterface[13];
+  sataconnectortabw=satainterface[1]-satainterface[15]*2;
+  difference() {
+    union() {
+      translate([-0.1,-sataconnectoropeningw/2,-0.1]) cube([sataconnectordepth+0.1,sataconnectoropeningw,sataconnectoropeningh+0.1]);
+      translate([-0.1,-sataconnectortabw/2,satainterface[18]]) cube([sataconnectordepth+0.1,sataconnectortabw,sataconnectortabh]);
+    }
+    
+    translate([0,-sataconnectormalew/2,sataconnectormaleheight]) cube([sataconnectordepth+0.1,sataconnectordataw,sataconnectormaleh]);
+    translate([0,-sataconnectormalew/2+sataconnectordataw-sataconnectormaletabw,sataconnectormaleheight+sataconnectormaleh-sataconnectormaletabh]) cube([sataconnectordepth+0.1,sataconnectormaletabw,sataconnectormaletabh]);
+    translate([0,sataconnectormalew/2-sataconnectorpowerw,sataconnectormaleheight]) cube([sataconnectordepth+0.1,sataconnectorpowerw,sataconnectormaleh]);
+    translate([0,sataconnectormalew/2-sataconnectorpowerw,sataconnectormaleheight+sataconnectormaleh-sataconnectormaletabh]) cube([sataconnectordepth+0.1,sataconnectormaletabw,sataconnectormaletabh]);
+  }
+}
+
+pataconnectorkeepoutw=60;
+pataconnectorholew=56.4;
+pataconnectortopnotchw=6;
+pataconnectortopnotchh=1.5;
+pataconnectorkeepouth=8.4;
+pataconnectorholeh=6.36;
+pataconnectorholel=7;
+pataconnectorkeepoutl=8;
+pataconnectory=4+pataconnectorkeepoutw/2;
+pataconnectorheight=pataconnectorkeepouth/2;
+patapind=0.67;
+patapinl=7;
+patapinsw=49;
+patapinsy=20;
+patapindistancew=patapinsw/(patapinsy-1);
+patapinsz=2;
+patapinsh=2.79-patapind;
+
+module patasocket() {
+  translate([0,-pataconnectorkeepoutw/2,0]) roundedbox(pataconnectorkeepoutl,pataconnectorkeepoutw,pataconnectorkeepouth,1,0);
+}
+
+module patasocketcut() {
+  difference() {
+    union() {
+      translate([-0.1,-pataconnectorholew/2,pataconnectorheight-pataconnectorholeh/2]) cube([pataconnectorholel,pataconnectorholew,pataconnectorholeh]);
+      translate([-0.1,-pataconnectortopnotchw/2,pataconnectorheight-pataconnectorholeh/2]) cube([pataconnectorholel,pataconnectortopnotchw,pataconnectorholeh+pataconnectortopnotchh]);
+    }
+
+    for (y=[-patapinsw/2:patapindistancew:patapinsw/2]) {
+      for (z=[-patapinsh/2,patapinsh/2]) {
+	if ((y<-patapindistancew || y>0) || z<0) {
+	  translate([0,y,pataconnectorheight-z]) rotate([0,90,0]) cylinder(d=patapind,h=patapinl+0.1,$fn=30);
+	}
+      }
+    }
+  }
+}
+
+powerconnectorkeepoutw=24;
+powerconnectory=4+powerconnectorkeepoutw/2;
+powerconnectorkeepouth=8.45;
+powerconnectorholeh=6.5;
+powerconnectorholetopcuth=2;
+powerconnectorholel=5.7;
+powerconnectorholew=19;
+powerconnectorkeepoutl=powerconnectorholel+1;
+powerconnectorheight=0;
+
+powerpind=2;
+powerpinsw=16.3-powerpind*1.5;
+powerpinsyn=4;
+powerpindistancew=powerpinsw/(powerpinsyn-1);
+powerpinl=powerconnectorholel+powerpind/2;
+  
+module powersocket() {
+  translate([0,-powerconnectorkeepoutw/2,0]) roundedbox(powerconnectorkeepoutl,powerconnectorkeepoutw,powerconnectorkeepouth,1,0);
+}
+
+module powersocketcut() {
+  difference() {
+    hull() {
+      translate([-0.1,-powerconnectorholew/2,powerconnectorkeepouth/2-powerconnectorholeh/2]) roundedbox(powerconnectorholel+0.1,powerconnectorholew,powerconnectorholeh-powerconnectorholetopcuth,1,0);
+      translate([-0.1,-powerconnectorholew/2+powerconnectorholetopcuth,powerconnectorkeepouth/2-powerconnectorholeh/2]) roundedbox(powerconnectorholel+0.1,powerconnectorholew-powerconnectorholetopcuth*2,powerconnectorholeh,1,0);
+    }
+
+#    for (y=[-powerpinsw/2:powerpindistancew:powerpinsw/2]) {
+  translate([0,y,powerconnectorheight+powerconnectorkeepouth/2]) rotate([0,90,0]) roundedcylinder(powerpind,powerpinl,powerpind,0,30);
+    }
+  }
+}
+
+// 5.25 dimensions: length (A4), width (A5), height (A1), screwxtable
+// (A10,A10+A11), screwhtable (A13,A14)), bottomscrewxtable
+// (A9,A9+A8), bottomscreww (A6), screwd (M),
+// screwlength,tolerance+-,Sata Interface center,
+
+// 3.5 not same naming
+// Values from connector end
+// Note: middle screw is non-standard
+diskdimensiontable=[["5.25HH",   206.00,146.00,41.5,     [52.40,52.40+ 79.20],[10,21.80],            [52.40,52.40+79.20],139.70,3.51,3.8,0.25,            0,0,0],
+		    ["5.25FH",   206.00,146.00,84.0,     [52.40,52.40+ 79.20],[10,21.80],            [52.40,52.40+79.20],139.70,3.52,3.8,0.25,            0,0,0],
+		    ["3.5LOW",   147.00,101.60,17.8,  [28.50,70,28.50+101.60],    [6.35],[41.28,41.38+44.45,41.28+76.20], 95.25,3.51,3.8,0.25,13.43+33.39/2,0,0],
+		    ["3.5",      147.00,101.60,26.1,  [28.50,70,28.50+101.60],    [6.35],[41.28,41.38+44.45,41.28+76.20], 95.25,3.51,3.8,0.25,13.43+33.39/2,0,0],
+		    ["3.5ATA",   147.00,101.60,26.1,  [28.50,70,28.50+101.60],    [6.35],[41.28,41.38+44.45,41.28+76.20], 95.25,3.51,3.8,0.25,0,pataconnectory,powerconnectory],
+		    ["3.5HIGH",  147.00,101.60,42.0,  [28.50,70,28.50+101.60],    [6.35],[41.28,41.38+44.45,41.28+76.20], 95.25,3.51,3.8,0.25,13.43+33.39/2,0],
+		    ["3.5FLOPPY",150.00,101.60,26.1,[150-25.3,150-85,150-115],    [5.30],                       [35,105], 94.00,3.51,3.8,0.25,            0,0,0],
+		    ["2.5",      100.45, 69.86, 9.5,                [14,90.6],    [3.00],                     [14,90.60], 61.72,3.51,3.8,0.25,13.43+33.39/2,0],
+		    ["2.5H",      100.45, 69.86, 12.7,                [14,90.6],    [3.00],                     [14,90.60], 61.72,3.51,3.8,0.25,13.43+33.39/2,0],
+		    ];
+
+function diskdimensions(name) = diskdimensiontable[search([name],diskdimensiontable)[0]];
+
+module diskform(name,printable=0) {
+  dimensiontable=diskdimensions(name);
+  satainterfacey=dimensiontable[11];
+  patainterfacey=dimensiontable[12];
+  powersockety=dimensiontable[13];
+  
+  l=dimensiontable[1];
+  w=dimensiontable[2];
+  h=dimensiontable[3];
+  
+  difference() {
+    union() {
+      translate([0,-w/2,0]) roundedbox(l,w,h,2,printable);
+
+      if (satainterfacey) 
+	translate([0,w/2-satainterfacey,0]) satasocket();
+
+      if (patainterfacey) 
+	translate([0,w/2-patainterfacey,0]) patasocket();
+
+      if (powersockety)
+	translate([0,-w/2+powersockety,0]) powersocket();
+    }
+
+    if (satainterfacey) 
+      translate([0,w/2-satainterfacey,0]) satasocketcut();
+
+    if (patainterfacey) 
+      translate([0,w/2-patainterfacey,0]) patasocketcut();
+    
+    if (powersockety)
+	translate([0,-w/2+powersockety,0]) powersocketcut();
+    
+    for (m=[0,1]) mirror([0,m,0]) {
+	for (x=dimensiontable[4]) {
+	  for (z=dimensiontable[5]) {
+	    translate([x,-w/2-0.01,z]) rotate([-90,0,0]) cylinder(d=dimensiontable[8],h=dimensiontable[9]+0.01,$fn=90);
+	  }
+	}
+      }
+
+    for(x=dimensiontable[6]) {
+      screww=dimensiontable[7];
+
+      for (y=[-screww/2,screww/2]) {
+	translate([x,y,-0.01]) cylinder(d=dimensiontable[8],h=dimensiontable[9]+0.01,$fn=90);
+      }
+    }
+  }
+}
+
