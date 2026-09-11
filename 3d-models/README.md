@@ -1716,3 +1716,12 @@ Print in TPU. No supports needed.
 
 ![bicyclestandspare in openscad](bicyclestandspare.png)
 ![bicyclestandspare installed](bicyclestandspare.jpg)
+
+## icpcasediskholder.scad, Makefile.icpcasediskholder
+
+Modern disk drive holder for one rack computer case I have. I think
+the case brand is ICP. Uses clips to hold drives in place. Unlikely to
+be useful for anything else. No supports are need to print.
+
+![icpcasediskholder in openscad](icpcasediskholder.png)
+

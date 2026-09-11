@@ -1,0 +1,42 @@
+SOURCE=icpcasediskholder.scad
+DEPENDS=hsu.scad Makefile.icpcasediskholder
+IMAGES=
+ALL=icpcasediskholder.stl icpcasediskholderbase.stl icpcasediskholderclip.stl
+
+OPENSCADOPTIONS=-D debug=0 --backend=manifold --enable textmetrics
+
+all: $(ALL)
+
+dist: icpcasediskholder.zip
+
+icpcasediskholder-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf icpcasediskholder-distribution
+	rm -f icpcasediskholder-distribution.zip
+	mkdir -p icpcasediskholder-distribution
+	cp $(SOURCE) $(DEPENDS) icpcasediskholder-distribution
+	zip -r $@ icpcasediskholder-distribution
+	echo $@ built.      
+
+icpcasediskholder-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf icpcasediskholder-distribution
+	rm -f icpcasediskholder-distribution.zip
+	mkdir -p icpcasediskholder-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) icpcasediskholder-distribution
+	zip -r $@ icpcasediskholder-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+icpcasediskholderbase.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+icpcasediskholderclip.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+icpcasediskholder.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
