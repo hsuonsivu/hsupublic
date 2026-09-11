@@ -16,7 +16,7 @@ maxbridge=10;
 cornerd=1.5;
 largecornerd=10;
 
-versiontext="V1.1";
+versiontext="V1.2";
 brandtext="Diskstand";
 fulltext=str(brandtext," ",versiontext);
 textsize=7;
@@ -63,7 +63,7 @@ basetowerd=10;
 basetoweroutd=10+wall*2;
 
 //lockclipd=10;
-lockclipoverhang=1.5;
+lockclipoverhang=1.4;
 lockclipw=7;
 lockclipl=9;
 lockclipbodyh=4;
@@ -126,7 +126,7 @@ module fangrill() {
 
 module lockclip(l,w,h,overhang,cornerd,cut=0) {
   t=cut?max(xtolerance,ytolerance):0;
-  lcut=lockclipcut+xtolerance*4;
+  lcut=lockclipcut+xtolerance*6;
   
   difference() {
     union() {
@@ -201,7 +201,6 @@ module base() {
       translate([-basel/2+basefrontgapl,-basew/2,baseheight]) roundedboxxyz(basefrontl,basew,wall,largecornerd,cornerd,1,90);
       fangrillprintspacel=fanw>61?xtolerance+fanw+xtolerance:xtolerance+fanw+xtolerance+fanw+xtolerance;
       x=basefrontgapl+basefrontl;
-      echo(basel,x,fangrillprintspacel);
       translate([-basel/2+x+fangrillprintspacel,-basew/2,baseheight]) roundedboxxyz(basel-x-fangrillprintspacel,basew,wall,largecornerd,cornerd,1,90);
     }
     for (x=[-basel/2+lockx,basel/2-lockx]) {
