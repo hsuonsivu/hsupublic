@@ -928,6 +928,31 @@ w is width of brim, h is height, heatcoverh is height of heatcover (0
 for no heatcage), layerh is printer layerheight.  All values are
 defaulted if not provided.
 
+# function diskdimensions, diskform
+
+Function diskdimensions returns array of standard disk and floppy
+drive dimensions and screw holes.  Some values are from standards
+documents, floppy was measured for screw positions.
+
+diskform module generates a model of a given disk drive, takes same
+parameter as diskdimensions. As of writing this, these support the
+following drive types:
+
+	* 5.25HH 5.25 inch half height drive, such as CD/DVD drives
+	* 5.25FH 5.25 inch full height drive
+	* 3.5LOW 3.5 inch low profile drive, 17.8mm
+	* 3.5 3.5 inch drive
+	* 3.5SATA 3.5 inch (with SATA interface instead of IDE/ATA
+	* 3.5HIGH 3.5 inch 42mm high drive
+	* 3.5FLOPPY 3.5 inch floppy drive
+	* 2.5 2.5 inch 9.5mm drive (most current drives)
+	* 2.5H 2.5 inch 12.7mm drive (older drives were this tall)
+
+# satasocket, satasocketcut, patasocket, patasocketcut
+
+Funtions generate SATA and IDE/ATA drive interface. These are used by
+diskform. These are work-in-progress.
+
 ## lattialista.scad, Makefile.lattialista
 
 I needed some skirting board parts for my home, this makes ones
