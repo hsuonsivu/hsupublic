@@ -4,7 +4,8 @@
 
 include <hsu.scad>
 
-// Box fitting to 3.5inch disk form. This is intended for use with various 3.5 inch
+// Box fitting to 3.5inch disk form. This is intended to adapt various
+// laptop disks to 3.5 bay
 
 print=0;
 debug=0;
