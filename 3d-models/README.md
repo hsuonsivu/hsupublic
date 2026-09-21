@@ -1744,9 +1744,14 @@ Print in TPU. No supports needed.
 
 ## icpcasediskholder.scad, Makefile.icpcasediskholder
 
-Modern disk drive holder for one rack computer case I have. I think
-the case brand is ICP. Uses clips to hold drives in place. Unlikely to
-be useful for anything else. No supports are need to print.
+Modern disk drive holder for one rack computer case I have. Supports 6
+2.5 inch and 3+2 3.5 drives, two of them duplicate as 3.5 inch floppy
+drive. I think the case brand is ICP. All drives are quick release but
+accessible only from inside, uses clips to hold drives in place, but
+due to cramped case, the power supply or disk drive holder need to be
+detached to swap 3.5 inch drives. Unlikely to be useful for any other
+case. Includes both disk drive holder and fancover for the
+drive opening. No supports are need to print.
 
 ![icpcasediskholder in openscad](icpcasediskholder.png)
-
+![icpcasediskholder fan cover in openscad](icpcasediskholderfancover.png)

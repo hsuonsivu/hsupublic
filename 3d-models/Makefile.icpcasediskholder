@@ -1,7 +1,7 @@
 SOURCE=icpcasediskholder.scad
 DEPENDS=hsu.scad Makefile.icpcasediskholder
 IMAGES=
-ALL=icpcasediskholder.stl icpcasediskholderbase.stl icpcasediskholderclip.stl
+ALL=icpcasediskholder.stl icpcasediskholderbase.stl icpcasediskholderclip.stl icpcasefancover.stl icpcasefancoverbase.stl icpcasefancoverclips.stl
 
 OPENSCADOPTIONS=-D debug=0 --backend=manifold --enable textmetrics
 
@@ -38,5 +38,17 @@ icpcasediskholderclip.stl: $(SOURCE) $(DEPENDS)
 
 icpcasediskholder.stl: $(SOURCE) $(DEPENDS)
 	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+icpcasefancover.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=10 -o $@ $(SOURCE)
+	echo $@ built.
+
+icpcasefancoverbase.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=8 -o $@ $(SOURCE)
+	echo $@ built.
+
+icpcasefancoverclips.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=9 -o $@ $(SOURCE)
 	echo $@ built.
 
