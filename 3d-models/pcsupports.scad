@@ -4,12 +4,18 @@
 
 include <hsu.scad>
 
-print=8;
+print=1;//8;
+debug=1;
 
 xtolerance=0.25;
 ytolerance=0.25;
 ztolerance=0.25;
 dtolerance=0.5;
+
+// These need to be checked for motherboard in question.
+mbtop=14;//8.5; // Measured from motherboard pcb top to bottom plate
+mbthickness=1.65;
+mbh=mbtop-mbthickness;
 
 screwholed=3.2; // Slightly below 3.4 measured from outside
 topoutd=7/cos(180/6);
@@ -18,8 +24,6 @@ bottomoutd=7/cos(180/6);
 bottomouthighd=25/cos(180/4);
 handlel=25; // Bar protruding out
 handlew=bottomoutw;
-mbthickness=1.65;
-mbh=8.5-mbthickness;
 wall=2;
 cornerd=2;
 screwtolppad=3;
@@ -31,7 +35,7 @@ ruuvitornih=mbh;//10;
 ruuvitolppakorkeah=22;
 
 mbtowerd=5.4;
-mbtowerh=6.15;
+mbtowerh=mbh;//6.15;
 mbtowerattachd=mbtowerd+wall*2+dtolerance;
 mbtowerattachh=mbtowerh+ztolerance;
 
@@ -40,40 +44,60 @@ towerx=barl;
 
 module mbtowerextend(h=mbh) {
   w=h>mbh?mbsupporthighw:mbsupportw;
-  
-  difference() {
-    union() {
-      hull() {
-	translate([-topoutd/2,-mbsupportw/2,0]) roundedbox(topoutd,mbsupportw,h,cornerd,1);
-	translate([-topoutd/2,-w/2,0]) roundedbox(topoutd,w,wall,cornerd,1);
-      }
-      hull() {
-	translate([-wall,-mbsupportw/2,h+mbthickness+ztolerance+wall]) roundedbox(topoutd/2+wall,mbsupportw,cornerd,cornerd,1);
-	translate([0,-mbsupportw/2,h+mbthickness+ztolerance]) roundedbox(topoutd/2,mbsupportw,wall,cornerd,1);
-      }
-      translate([0,-mbsupportw/2,0]) roundedbox(topoutd/2,mbsupportw,h+mbthickness+ztolerance+wall,cornerd,1);
-      hull() {
-	translate([towerx,0,0]) roundedcylinder(mbtowerattachd,mbtowerh+ztolerance+wall*2,cornerd,1,90);
-	translate([towerx-1.5,0,0]) roundedcylinder(mbtowerattachd,cornerd,cornerd,1,90);
-      }
-      
-      hull() {
-	roundedcylinder(topoutd,max(wall,h/3),cornerd,1,6);
-	roundedcylinder(bottomoutd,wall,cornerd,1,6);
-      }
-      hull() {
-	translate([-topoutd/2,-w/2,0]) roundedbox(topoutd,w,wall,cornerd,1);
-	translate([towerx,0,0]) roundedcylinder(mbtowerattachd,wall,cornerd,1,90);
-	translate([0,-handlew/2,0]) roundedbox(barl,handlew,wall,cornerd,1);
-      }
-    }
+  extracuth=(mbtowerd+dtolerance-screwholed)/3;
 
-    hull() {
-      translate([towerx-1.5,0,-0.01]) cylinder(d=mbtowerd+dtolerance,h=0.1+0.01,$fn=90);
-      translate([towerx,0,-0.01]) cylinder(d=mbtowerd+dtolerance,h=mbtowerattachh+0.01,$fn=90);
-      translate([towerx,0,-0.01]) cylinder(d=screwholed,h=mbtowerattachh+wall+0.02,$fn=90);
+  intersection() {
+    //if (debug) translate([-100,-100,0]) cube([200,100,200]);
+    if (debug) translate([towerx,0,0]) rotate([0,0,45]) translate([-100,-100,0]) cube([200,100,200]);
+    union() {
+      difference() {
+	union() {
+	  hull() {
+	    translate([-topoutd/2,-mbsupportw/2,0]) roundedbox(topoutd,mbsupportw,h,cornerd,1);
+	    translate([-topoutd/2,-w/2,0]) roundedbox(topoutd,w,wall,cornerd,1);
+	  }
+	  hull() {
+	    translate([-wall,-mbsupportw/2,h+mbthickness+ztolerance+wall]) roundedbox(topoutd/2+wall,mbsupportw,cornerd,cornerd,1);
+	    translate([0,-mbsupportw/2,h+mbthickness+ztolerance]) roundedbox(topoutd/2,mbsupportw,wall,cornerd,1);
+	  }
+	  translate([0,-mbsupportw/2,0]) roundedbox(topoutd/2,mbsupportw,h+mbthickness+ztolerance+wall,cornerd,1);
+	  hull() {
+	    translate([towerx,0,0]) roundedcylinder(mbtowerattachd,mbtowerh+ztolerance+wall+0.2+extracuth,cornerd,1,90);
+	    translate([towerx-1.5,0,0]) roundedcylinder(mbtowerattachd,cornerd,cornerd,1,90);
+	  }
+      
+	  hull() {
+	    roundedcylinder(topoutd,max(wall,h/3),cornerd,1,6);
+	    roundedcylinder(bottomoutd,wall,cornerd,1,6);
+	  }
+	  hull() {
+	    translate([-topoutd/2,-w/2,0]) roundedbox(topoutd,w,wall,cornerd,1);
+	    translate([towerx,0,0]) roundedcylinder(mbtowerattachd,wall,cornerd,1,90);
+	    translate([0,-handlew/2,0]) roundedbox(barl,handlew,wall,cornerd,1);
+	  }
+	}
+
+	hull() {
+	  translate([towerx-1.5,0,-0.01]) cylinder(d=mbtowerd+dtolerance,h=0.1+0.01,$fn=90);
+	  translate([towerx,0,-0.01]) cylinder(d=mbtowerd+dtolerance,h=mbtowerattachh+0.01,$fn=90);
+	}
+	translate([towerx,0,-0.01]) cylinder(d=screwholed,h=mbtowerattachh+wall*2+0.02,$fn=90);
+
+	translate([towerx,0,0]) for (a=[0,90]) rotate([0,0,a]) {
+	    intersection() {
+	      translate([0,0,-0.01]) cylinder(d=mbtowerd+dtolerance,h=mbtowerattachh+(mbtowerd+dtolerance-screwholed)/2+0.01,$fn=90);
+	      translate([-screwholed/2,-(mbtowerd+dtolerance)/2,-0.01]) cube([screwholed,mbtowerd+dtolerance,mbtowerattachh+0.01+(a==0?0:0.2)]);
+	    }
+	  }
+
+	translate([towerx,0,0]) {
+	  hull() {
+	    translate([-screwholed/2,-screwholed/2,-0.01]) cube([screwholed,screwholed,mbtowerattachh+0.01+0.2]);
+	    translate([0,0,-0.01]) cylinder(d=screwholed,h=mbtowerattachh+extracuth+0.01,$fn=90);
+	  }
+	}
+      }
     }
-    translate([towerx,0,-0.01]) cylinder(d=screwholed,h=mbtowerattachh+wall*2+0.02,$fn=90);
   }
 }
 
