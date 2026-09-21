@@ -4,10 +4,10 @@ include <hsu.scad>
 
 // 0 = draft 1 = final 2 = bottom 3 = cover 4=text background parts if textbackground is enabled, 5 base backgrounds,
 // 6 top background only 7 test backgrounds, 8 window template for old version,
-// 9 flip case, 10 window template for flipcase, 11 logo background for flip case
+// 9 flip case, 10 window template for flipcase, 11 logo background for flip case, 14 scanbase
 
-print=12;
-debug=1;
+print=14;
+debug=0;
 window=1;
 debugangle=-180;
 
@@ -199,7 +199,7 @@ module egg(expand) {
     }
   }
 
-  if (0)  hull() {
+  if (1)  hull() {
     translate([0,0,eggd/2]) sphere(d=eggd-dtolerance+expand);
     translate([0,0,eggmaxdh]) sphere(d=eggmaxd-dtolerance+expand);
     translate([0,0,eggheight-eggtopd/2]) sphere(d=eggtopd-dtolerance+expand);
@@ -779,6 +779,34 @@ module axlecase() {
   base();
 }
 
+thinwall=1.6;
+scanbased=70;
+scanbaseh=84.5;
+scanbasepoled=3.5;
+scanbodyd=18.1;
+scanmidd=16;
+scantopd=12;
+scanbasemidh=58;
+
+module scanbase() {
+  difference() {
+    union() {
+      cylinder(d=scanbased,h=wall);
+      hull() {
+	translate([-scanbodyd/2-thinwall,-scanbodyd/2-thinwall,0]) roundedbox(scanbodyd+thinwall*2,scanbodyd+thinwall*2,scanbasemidh+thinwall,cornerd);
+	translate([-scanmidd/2-thinwall,-scanmidd/2-thinwall,0]) roundedbox(scanmidd+thinwall*2,scanmidd+thinwall*2,scanbaseh+thinwall,cornerd);
+      }
+    }
+
+    translate([-scanbasepoled/2,-scanbasepoled/2,-cornerd/2]) cube([scanbasepoled,scanbasepoled,scanbaseh+thinwall*2]);
+    hull() {
+      translate([-scanbodyd/2,-scanbodyd/2,-cornerd/2]) roundedbox(scanbodyd,scanbodyd,scanbasemidh+cornerd/2,cornerd);
+      translate([-scanmidd/2,-scanmidd/2,-cornerd/2]) roundedbox(scanmidd,scanmidd,scanbaseh-(scanmidd-scantopd)/2+cornerd/2,cornerd);
+      translate([-scantopd/2,-scantopd/2,-cornerd/2]) cube([scantopd,scantopd,scanbaseh+cornerd/2-0.2]);
+      translate([-scantopd/2,-scanbasepoled/2,-cornerd/2]) cube([scantopd,scanbasepoled,scanbaseh+cornerd/2]);
+    }
+  }
+}
 
 if (print==0) {
   intersection() {
@@ -867,5 +895,12 @@ if (print==13) {
   intersection() {
     base();
     cylinder(d=eggmaxd+wall*2,52+eggbase);
+  }
+ }
+
+if (print==14) {
+  intersection() {
+    //translate([-100,0,0]) cube([200,200,200]);
+    scanbase();
   }
  }
