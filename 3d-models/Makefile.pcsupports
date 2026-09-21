@@ -5,7 +5,7 @@ ALL=pcsupportmotherboardsupport.stl pcsupportmotherboardsupportscrewhole.stl pcs
 
 # pcsupportsthreadtest.stl
 
-OPENSCADOPTIONS=--backend=manifold --enable textmetrics
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
 
 all: $(ALL)
 
