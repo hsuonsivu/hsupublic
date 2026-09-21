@@ -290,8 +290,8 @@ module reverseroundedplate(l,w,h,cornerd) {
 
 module lighten_recurse(w,h,thickness,edge,barw,maxbridge,cornerd) {
   for (x=[barw+edge:barw*2+edge*2:w+edge]) {
-    translate([w/2+x,thickness+0.01,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,-0.01,-edge/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(edge/sqrt(2),edge/sqrt(2),thickness+0.02,cornerd);
-    translate([w/2-x,thickness+0.01,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,-0.01,-edge/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(edge/sqrt(2),edge/sqrt(2),thickness+0.02,cornerd);
+    translate([w/2+x,thickness+0.01,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,0,-edge/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(edge/sqrt(2),edge/sqrt(2),thickness+0.02,cornerd);
+    translate([w/2-x,thickness+0.01,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,0,-edge/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(edge/sqrt(2),edge/sqrt(2),thickness+0.02,cornerd);
   }
 
   if (edge<w/2) lighten_recurse(w,h,thickness,edge+barw+edge,barw,maxbridge,cornerd);
@@ -305,8 +305,8 @@ module lightenhelper(width,height,thickness,margin,barw,maxbridge,compress,corne
   sh=sqrt(maxbridge);
   intersection() {
     union() {
-      translate([w/2+margin,thickness+0.01,h+margin-w/2+zadjust]) rotate([0,45,0]) translate([-w/sqrt(2)/2,-0.01,-w/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(w/sqrt(2),w/sqrt(2),thickness+0.02,cornerd);
-      if (h>w/2) {
+      translate([w/2+margin,thickness+0.01,h+margin-w/2+zadjust]) rotate([0,45,0]) translate([-w/sqrt(2)/2,0,-w/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(w/sqrt(2),w/sqrt(2),thickness+0.02,cornerd);
+      if (h>w/2-maxbridge) {
 	translate([margin,thickness+0.01,margin]) rotate([90,0,0]) reverseroundedplate(w,h-w/2+zadjust,thickness+0.02,cornerd);
       }
 
@@ -319,7 +319,7 @@ module lightenhelper(width,height,thickness,margin,barw,maxbridge,compress,corne
 module lighten(w,h,thickness,margin,barw,maxbridge,direction,compress=1,cornerd=0) {
   bw=barw*2;
   if (direction=="up")
-    lightenhelper(w,h,thickness,margin,bw,maxbridge,compress,cornerd);
+    render() lightenhelper(w,h,thickness,margin,bw,maxbridge,compress,cornerd);
   else if (direction=="down-yplane")
     translate([thickness,w,h]) rotate([0,180,90]) lightenhelper(w,h,thickness,margin,bw,maxbridge,compress,cornerd);
   else if (direction=="down-xplane")
