@@ -32,7 +32,7 @@ age. This is a replacement. Print with TPU.
 ## coasterholder3.scad
 
 If you have a dead 5.25inch hard drive, you can recycle the disk
-platters inside to make nice coasters for you bar. This is a holder
+platters inside to make nice coasters for your bar. This is a holder
 for coasters from a 8 platter Maxtor hard disk. Other hard disks might
 need some adapting. See also "suklaarasiankansi.scad".
 
@@ -715,73 +715,73 @@ models. hsutest is a test file for some functions in the library.
 
 Modules
 
-# function countersinkd
+### function countersinkd
 
 function countersinkd returns countersink diameter when using
 ruuvireika module to create screw holes. 
 
-# cylindervoids
+### cylindervoids
 
 cylindervoids cuts tiny voids in cylinder shape, to make objects
 potentially stronger by replacing fill with 100% fill in specified
 area. Note that you need to check your slicer settings, as defaults
 may cause voids to be expanded or deleted.
 
-# ruuvireika
+### ruuvireika
 
 ruuvireika makes a hole for screw, including countersink shape. This
 is intended to be used to cut out the hole for screw. I normally use wood screws for 3D prints.
 
-# ruuvitorni
+### ruuvitorni
 
 ruuvitorni makes a tower for a screw to be used with ruuvireika above.
 
-# triangle
+### triangle
 
 triangle makes a triagle with given x,y,z size. Fourth parameter tells
 which orientation the triangle should be (0-11 for off-center
 triangles and 12-23 for centered triangles). To see the shapes
 generated, call triangletest() in openscad.
 
-# reverseroundedplate
+### reverseroundedplate
 
 This makes a cube which has negative corners, and can be used to make
 cutouts from plates with rounded edges. This is intended to be
 differenced out from plates. Notice that this is work in progress and
 there may be changes.
 
-# lighten
+### lighten
 
 lighten makes a printable shape to make structures consume less
 filament. This does not save much unless the structure is large, as
 making fill at low fill percentage is very efficient, and additional
 walls required to make this negate the savings.
 
-# roundedbox
+### roundedbox
 
 roundedbox makes a cube with rounded edges. Third parameter is corner diameter.
 
-# tassu
+### tassu
 
 tassu makes a shape to place in corners of a model to improve bed
 adhesion, useful in particular for materials which are prone to
 warping and using wide brim is not practical.
 
-# ring
+### ring
 
 ring makes a cylinder with inside cut out, given diameter, wall thickness and height.
 
-# cone
+### cone
 
 cone makes a hollow cone or cylinder, such as one made with cylinder
 with d1 and d2 parameters. The cone is open at bottom.
 
-# tubeclip
+### tubeclip
 
 tubeclip makes a round barrel shape for making clips for various boxes
 other other attachments. Essentially two spheres hulled together.
 
-# spring
+### spring
 
 spring makes a spring, with flat ends and mid plate. Mid plate splits
 the spring direction to avoid spring creating torsion when
@@ -792,20 +792,20 @@ height, diameter, end plate thickness, spring thickness. In particular
 spring thickness is very material specific. See flatspring for mode
 durable design.
 
-# onehinge
+### onehinge
 
 onehinge creates a hinge to make hinged structures such as opening
 boxes with hinged covers. This is intended for hinges which become
 permanent part of the model and are printed in-place.
 
-# printareacube 
+### printareacube 
 
 printareacube creates a box for the printer's print area to test if
 you print is going to fit. You need manually to adjust the model
 inside the cube. Use difference and # in openscad so you can leave it
 in the model.
 
-# antiwarpwall
+### antiwarpwall
 
 antiwarpwall makes a heat cage to be used with ABS and other materials
 which tend to warp if you do not have a heat enclosure for your
@@ -814,48 +814,48 @@ to allow outside brim only option in the slicer.
 
 This is partially obsoleted by brim & brimcut modules, see below.
 
-# roundedcylinder
+### roundedcylinder
 
 roundedcylinder makes a cylinder with rounded corners
 
-# roundedboxxyz
+### roundedboxxyz
 
 roundedboxxyz makes a box with rounded corners with different roundings for xy and z directions.
 
-# supportbox
+### supportbox
 
 supportbox makes a box support structure for parts if you do
 not want to use slicer's supports.
 
-# supportcylinder
+### supportcylinder
 
 supportcylinder makes a round support structure for parts if you do
 
-# flatspring
+### flatspring
 
 flatspring makes a flat, more durable spring, which can be printed
 sideways to make layers in strong direction.
 
-# textlen
+### textlen
 
 function textlen calculates x size of given string.
 
-# stairs
+### stairs
 
 portaat makes stairs, to be used for 3d modeling of buildings.
 
-# function length_and_depth_to_diameter
+### function length_and_depth_to_diameter
 
 function length_and_depth_to_diameter calculates diameter of circle
 when width and depth are given. This is useful in some situations when designing 3D models.
 
-# knobaxle
+### knobaxle
 
 knobaxle and knob make knobs which rotate freely, so that various
 cranks can be made. The axle can be printed in design orientation,
 knob prints better upside down. Use same parameters when using these.
 
-# windowframe, windowcut, windowtemplate, function windowheight
+### windowframe, windowcut, windowtemplate, function windowheight
 
 windowframe, windowcut, windowtemplate, windowheight, functions to add
 windows (typically polycarbonate or glass) to 3D prints. These
@@ -888,28 +888,28 @@ The usage is
 5. Start print, and when printer stops at stop point, drop window insert and
    continue the print.
 
-# recyclingsymbol 
+### recyclingsymbol 
 
 recyclingsymbol(type="ABS",size=20,h=0.7,$fn=50) makes a recycling
 symbol used in Europe. Types known are PET, PE_HD, PVC, PE_LD, PP, PS,
 PC, ABAK, ABS, ASA, PETG. There is some variation in standards related
 to this, so this is best effort I could find.
 
-# grill
+### grill
 
 grill(diameter,centerdiameter=8,wall=1.6,thickness=1.6) makes a round
 grill which can be used fro various purposes, including fan covers,
 fly swatters, etc. This will not generate round circle around it, you
 need to do that yourself.
 
-# toroid
+### toroid
 
 toroid(diameter1,diameter2,angle=360)
 
 Makes a toroid with diameter1 diameter and diameter2 thick. Make angle
 smaller than 360 if you want partial toroid.
 
-# brim() and brimcut() 
+### brim() and brimcut() 
 
 These are used to generate thicker brim for printing. Eufymake slicer
 can only do 1 layer thick brims, and these tend to be difficult to
@@ -928,7 +928,7 @@ w is width of brim, h is height, heatcoverh is height of heatcover (0
 for no heatcage), layerh is printer layerheight.  All values are
 defaulted if not provided.
 
-# function diskdimensions, diskform
+### function diskdimensions, diskform
 
 Function diskdimensions returns array of standard disk and floppy
 drive dimensions and screw holes.  Some values are from standards
@@ -948,7 +948,7 @@ following drive types:
 	* 2.5 2.5 inch 9.5mm drive (most current drives)
 	* 2.5H 2.5 inch 12.7mm drive (older drives were this tall)
 
-# satasocket, satasocketcut, patasocket, patasocketcut
+### satasocket, satasocketcut, patasocket, patasocketcut
 
 Funtions generate SATA and IDE/ATA drive interface. These are used by
 diskform. These are work-in-progress.
