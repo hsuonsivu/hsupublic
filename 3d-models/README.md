@@ -1768,4 +1768,7 @@ inserts in plastic injection.
 ![New part](casespare.jpg)
 ![Original part](casespareoriginal.jpg)
 
+### archiveviperspare.scad
 
+Replacement roller rubber for Archive Viper tape drive. Print with
+TPU. Does not seem to work very well, but needs more testing.
