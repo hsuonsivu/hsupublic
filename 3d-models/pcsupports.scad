@@ -4,8 +4,8 @@
 
 include <hsu.scad>
 
-print=1;//8;
-debug=1;
+print=8;//8;
+debug=0;
 
 xtolerance=0.25;
 ytolerance=0.25;
@@ -35,7 +35,7 @@ ruuvitornih=mbh;//10;
 ruuvitolppakorkeah=22;
 
 mbtowerd=5.4;
-mbtowerh=mbh;//6.15;
+mbtowerh=10;//mbh;//6.15;
 mbtowerattachd=mbtowerd+wall*2+dtolerance;
 mbtowerattachh=mbtowerh+ztolerance;
 
@@ -48,7 +48,7 @@ module mbtowerextend(h=mbh) {
 
   intersection() {
     //if (debug) translate([-100,-100,0]) cube([200,100,200]);
-    if (debug) translate([towerx,0,0]) rotate([0,0,45]) translate([-100,-100,0]) cube([200,100,200]);
+    if (debug) translate([towerx,0,0]) rotate([0,0,0]) translate([-100,-100,0]) cube([200,100,200]);
     union() {
       difference() {
 	union() {
@@ -207,6 +207,6 @@ if (print==5 || print==6 || print==7) {
 
 if (print==6 || print==8) {
   translate([-handlel-1,-mbsupportw/2-mbsupporthighw/2-0.5,0]) {
-    mbtowerextend(22);
+    mbtowerextend(21-mbthickness);
   }
  }
