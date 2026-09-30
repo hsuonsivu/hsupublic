@@ -1755,3 +1755,17 @@ drive opening. No supports are need to print.
 
 ![icpcasediskholder in openscad](icpcasediskholder.png)
 ![icpcasediskholder fan cover in openscad](icpcasediskholderfancover.png)
+
+## casespare.scad, Makefile.casespare
+
+Plastic disk locking mechanism become brittle and broke, this is
+replacement. Also made locking part for QIC tape drive which has no
+side screws. Uses M2 8mm screws for gripping devices, which does not
+work very well.  The original used sligtly thicker metal bars as
+inserts in plastic injection.
+
+![casespare in openscad](casespare.png)
+![New part](casespare.jpg)
+![Original part](casespareoriginal.jpg)
+
+
