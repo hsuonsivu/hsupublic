@@ -1325,3 +1325,11 @@ module diskform(name,printable=0) {
   }
 }
 
+// TODO this should use maxbridge
+module printablehole(d,h) {
+  hull() {
+    cylinder(d=d,h=h,$fn=90);
+    translate([0,-d/4,0]) cube([d/2,d/2,h]);
+  }
+}
+
