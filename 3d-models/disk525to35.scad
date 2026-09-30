@@ -11,14 +11,14 @@ include <hsubolt.scad>
 
 print=0;
 
+debug=0;
+
 // This is needed for abs. Generates brim which is 0.4 mm high except right next to object.
 adhesion=0;
 adhesionw=6;
 adhesiongap=0.1;
 adhesionh=0.4;
 adhesionnearh=0.2;
-
-debug=0;
 
 // 0: Make a complex version with locking mechanism
 // 1: Make a simple version, with no locking mechanism
@@ -35,7 +35,7 @@ simple=0;
 // extrusions. Outside screws will not work for these cases so they
 // are only implemented for the first slot.
 // 0.5 is 30mm low profile 5.25, 2.5 is +10mm higher version of 2 slot, both for HP cases.
-slots=2;
+slots=1;
 
 // Maximum (3.5) disks, rest of space is allocated to 2.5 drives.  If
 // 0, dynamically allocated, 3.5 first and rest of space for 2.5.
@@ -366,6 +366,8 @@ smalldisklockcuth=keyh+smalldisklockextrah;
 smalldisklockhandleh=smalldiskslotstep*(smalldiskslots-1)+smalldiskscrewheight*2;
 
 outlockcoverbottom=outscrewztable[0]-outlockcuth/2-lockwall;
+
+outlockmidwallh=(outscrewztable[1]-outlockcuth/2)-(outscrewztable[0]+outlockcuth/2);
 
 // this probably should be calculated from lockgap; This adjusts steepness of raise behing screwhole insert.
 keysupportadjust=0.5;
@@ -999,8 +1001,7 @@ module lockcut(h,cuth) {
 
   hull() {
     h=cuth/2-0.01;
-    //translate([-0.01,sidewall+sidecutwidth/2,h]) cube([0.01+lockhandlel-2,sidecutwidth/2,lockwall+0.02]);
-    translate([-0.01,0,h]) cube([0.01+lockhandlel-2,lockwall+lockthickness+lockgap,lockwall+0.02]);
+    translate([-0.01,-0.01,h]) cube([0.01+lockhandlel-2,lockwall+lockthickness+lockgap+0.01,lockwall+0.02]);
     translate([sidecutwidth/2+lockhandlel-1,0,h]) cube([0.01,0.01,lockwall+0.02]);
   }
 }
@@ -1292,7 +1293,7 @@ module halfholder() {
 	    }
 	  }
 	  
-	  // Lightenin holes, top&bottom
+	  // Lightening holes, top&bottom
 	  if (full) {
 	    zstart=throughholes?-0.01:bottomthin;
 	    zend=smalldiskslots>0?bottomthickness+disksh-diskh:throughholes?height+0.02:height-bottomthickness-roofthickness;
@@ -1388,7 +1389,7 @@ module halfholder() {
 	    // Side lock space
 	    translate([-0.01,sidewall,z-outlockcuth/2]) cube([outlockl+locktopspace+0.02,lockthickness+lockgap,outlockcuth]);
 	    hull() {
-	      translate([lockhandlel+lockthickness+lockwall,sidewall+lockthickness+lockgap-0.01,z-outlockcuth/2]) triangle(outlockcuth+xtolerance,lockwall+0.02,outlockcuth,1);
+	      translate([lockhandlel,sidewall+lockthickness+lockgap-0.01,z-outlockcuth/2]) triangle(outlockcuth+xtolerance,lockwall+0.03,outlockcuth,1);
 	      translate([-0.01,sidewall+outlockcutw-0.01,z-outlockcuth/2]) cube([1,lockwall+0.02,outlockcuth]);
 	    }
 	  }
@@ -1411,11 +1412,13 @@ module halfholder() {
 	    }
 	  }
 	} else {
-	  hull() {
-	    cutheight=min(outscrewztable[0],bottomthickness+diskscrewheight-roofthickness);
-	    h=min(height,halfheight)-sidebottomthickness-cutheight-roofthickness-outsideincornerd/2;
-	    translate([-0.01,sidewall,sidebottomthickness+cutheight]) cube([0.01+lockhandlel-2,sidecutwidth/2,h]);
-	    translate([sidecutwidth/2+lockhandlel-1,sidewall+sidecutwidth/2,sidebottomthickness+cutheight]) cube([1,0.01,h]);
+	  for (z=outscrewztable) {
+	    hull() {
+	      cutheight=min(outscrewztable[0],bottomthickness+diskscrewheight-roofthickness);
+	      h=min(height,halfheight)-sidebottomthickness-cutheight-roofthickness-outsideincornerd/2;
+	      translate([-0.01,sidewall,z+outlockcuth/2-0.01]) cube([0.01+lockhandlel-(lockthickness+lockgap+lockwall)+0.01,lockthickness+lockgap+lockwall+0.02,outlockmidwallh+0.02]);
+	      translate([lockhandlel-(lockthickness+lockgap+lockwall)+lockthickness+lockgap+lockwall-0.01,sidewall+lockthickness+lockgap+lockwall+0.01,z+outlockcuth/2-0.01]) cube([0.01,0.01,outlockmidwallh+0.02]);
+	    }
 	  }
 	}
       }
