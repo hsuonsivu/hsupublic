@@ -877,15 +877,15 @@ and windowcut. Windowframe and windowcut parameters should be same.
 The usage is
 1. Use windowframe to create the upper and lower frame for the window.
 2. Use windowcut to cut out the space for the window and the opening.
-3. Slice the model so that window opens down
-3. Set stop point to first layer above the top of the window (in slicer,
-   the layer where print would continue over the polycarbonate/glass). 
-4. Use windowtemplate to print out templates for windows, these help cutting 
+3. Use windowtemplate to print out templates for windows, these help cutting 
    polycarbonate or whatever material you use to proper shape. Make sure that
    material is cut to at most the template size. There is tolerance so the window
    can safely be smaller, however, if it is too small, it might not stay in place
    then layers are printed on top, which may make edges ugly.
-5. Start print, and when printer stops at stop point, drop window insert and
+4. Slice the model so that window opens down
+5. Set stop point to first layer above the top of the window (in slicer,
+   the layer where print would continue over the polycarbonate/glass). 
+6. Start print, and when printer stops at stop point, drop window insert and
    continue the print.
 
 ### recyclingsymbol 
@@ -1583,7 +1583,7 @@ Schuko socket extension box for DIN electrical box we have for specific schuko s
 
 ## belttool.scad
 
-Too to narrow leather belt to narrower size. Used to narrow leather
+Tool to narrow leather belt to narrower size. Used to narrow leather
 strap. This was designed to use Lidl Parkside "Precision Hobby Knife"
 blades. Note that Lidl has several products with same name with
 differing blades. The one I had HG02869 Version 06/2022. From pictures
@@ -1595,6 +1595,9 @@ this (separate bottom is likely culprit).
 ## paperrollholder.scad
 
 Holder for kitchen paper rolls. Top screws in to prevent roll exiting in case of mishap.
+
+![diameter.scad in Openscad.](paperrollholder.png)
+![diameter.scad in use.](paperrollholder.jpg)
 
 ## diameter.scad, Makefile.diameter
 
