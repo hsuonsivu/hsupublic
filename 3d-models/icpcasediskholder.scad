@@ -7,7 +7,7 @@
 include <hsu.scad>
 include <hsubolt.scad>
 
-print=10;
+print=0;
 debug=0;
 
 lighteningholes=1;
@@ -292,16 +292,6 @@ module diskclipcovercut() {
       translate([diskcliplockcutx+diskcliplockcutl,diskclipw+ytolerance-0.01,-diskcliplockbarh/2-diskclipcut]) cube([diskclipcut*2,clipwall+0.02,diskcliplockbarh+diskclipcut*2]);
       translate([diskcliplockcutx,diskclipw+ytolerance-0.01,diskcliplockbarh/2]) cube([diskcliplockcutl+diskclipcut,clipwall+0.02,diskclipcut]);
     }
-
-    if (0) for (z=[-diskcliplockbarh/2-diskclipcut,diskcliplockbarh/2]) {
-      for (x=[diskcliplockcutx+diskcliplockcutl-0.4,diskcliplockcutx+diskcliplockcutl/2-0.2]) {
-	if ((z < 0) || (x < diskcliplockcutx+diskcliplockcutl/2)) {
-	  translate([x,diskclipw+ytolerance,z-0.01]) cube([0.4,0.4,diskclipcut+0.02]);
-	  translate([x,diskclipw+ytolerance,z+diskclipcut-0.2]) cube([0.4,clipwall,0.2+0.01]);
-	  translate([x,diskclipw+ytolerance+clipwall-0.4,z-0.01]) cube([0.4,0.4,diskclipcut+0.02]);
-	}
-      }
-    }
   }
 }
 
@@ -313,18 +303,12 @@ module coverclip() {
 	translate([wall/2,0,-covercliph/2]) roundedbox(coverclipl+xtolerance+wall-wall/2,wall,covercliph,cornerd,1);
       }
       translate([coverclipl+xtolerance,-covercliplockw+wall,-covercliph/2]) roundedbox(wall,covercliplockw+covercliphandlel,covercliph,cornerd,1);
-      if (0)       hull() {
-	translate([coverclipl,0,-covercliph/2]) roundedbox(xtolerance+wall,wall,covercliph,cornerd,1);
-	//	translate([coverclipl+covercliphandlel,0,-covercliph/2]) roundedbox(xtolerance+wall,wall,covercliph,cornerd,1);
-      }
 
       hull() {
 	translate([covercliplockx,0,-covercliplockh/2]) cube([covercliplockl,clipwall,covercliplockh]);
 	translate([covercliplockx+covercliplockl-1,0,-covercliplockh/2+coverclipw+ytolerance]) cube([1,coverclipw+ytolerance+clipwall,covercliplockh-(coverclipw+ytolerance)*2]);
       }
     }
-
-    if (0) translate([covercliplockx-xtolerance,-cornerd/2,-covercliplockh/2-ztolerance]) roundedbox(covercliplockl+xtolerance*2,coverclipw+cornerd,covercliplockh+ztolerance*2,0);
 
     translate([coverclipl/2,textdepth-0.01,0]) rotate([90,180,0]) linear_extrude(height=textdepth) text(versiontext, size=6, valign="center",halign="center",font="Liberation Sans:style=Bold"); 
   }
@@ -336,10 +320,6 @@ module coverclipcover(bottom=0) {
     if (x>bottom) translate([x,coverclipw+ytolerance+clipwall-coverclipcoverfullw,-coverclipcoverh/2+wall]) roundedbox(wall,wall,coverclipcoverh-wall*2,cornerd);
     if (x<bottom) translate([bottom,coverclipw+ytolerance+clipwall-coverclipcoverfullw,-coverclipcoverh/2]) roundedbox(wall,coverclipcoverfullw,coverclipcoverh,cornerd);
     translate([coverclipcoverx-xtolerance,coverclipw+ytolerance+clipwall-coverclipcoverfullw,-coverclipcoverh/2]) roundedbox(wall,coverclipcoverfullw,coverclipcoverh,cornerd);
-  }
-  if (0) hull() {
-    translate([coverclipcoverx+coverclipl-wall/2,coverclipw+ytolerance,-covercliplockbarh/2]) roundedbox(wall,clipwall,covercliplockbarh,0);
-    translate([coverclipcoverx+coverclipl-wall/2+covercliphandlel,coverclipw+ytolerance+covercliphandlel,-covercliplockbarh/2]) roundedbox(wall,clipwall/2,covercliplockbarh,clipwall/2,0);
   }
   hull() {
     translate([coverclipcoverx+coverclipl-covercliphandlew+wall+xtolerance,coverclipw+ytolerance,coverclipcoverh/2-clipwall-clipwall-wall]) roundedbox(covercliphandlew,clipwall,covercliphandlew+wall,cornerd);
@@ -357,34 +337,13 @@ module coverclipcover(bottom=0) {
     }
   translate([coverclipcoverx-xtolerance,coverclipw+ytolerance,-coverclipcoverh/2]) roundedbox(coverclipcoverl+xtolerance,clipwall,coverclipcoverh,cornerd);
   translate([covercliplockx,coverclipw+ytolerance,-coverclipcoverh/2-coverclipbridge-wall]) roundedbox(covercliplockl+wall*2,clipwall,coverclipcoverh+coverclipbridge+wall,cornerd);
-  if (0) #  translate([coverclipcoverx,-wall-ytolerance,+coverclipcoverh/2-wall]) roundedbox(coverclipcoverl,coverclipcoverfullw,wall,cornerd);
-  if (0) hull() {
-    translate([covercliplockx,coverclipw+ytolerance,-covercliplockh/2]) cube([covercliplockl,clipwall,covercliplockh]);
-    translate([covercliplockx,0,-covercliplockh/2+coverclipw+ytolerance]) cube([1,coverclipw+ytolerance+clipwall,covercliplockh-(coverclipw+ytolerance)*2]);
-  }
 }
 
 module coverclipcovercut() {
   difference() {
     union() {
-      if (0) for (m=[0,1]) mirror([0,0,m]) {
-	  translate([covercliplockcutx,coverclipw+ytolerance-coverclipcut,-covercliph/2-ztolerance]) cube([covercliplockcutl+coverclipcut,clipwall+coverclipcut+0.01,coverclipcut]);
-	}
-
       translate([covercliplockcutx,coverclipw+ytolerance-coverclipcut,-coverclipcoverh/2-0.01]) cube([coverclipcoverl,coverclipcut,coverclipcoverh+0.02]);
-      if (0) translate([covercliplockcutx+covercliplockcutl,coverclipw+ytolerance-0.01,-covercliph/2-ztolerance]) cube([coverclipcut*2,clipwall+0.02,covercliph+ztolerance*2]);
-      //      translate([covercliplockcutx,coverclipw+ytolerance-0.01,covercliplockbarh/2]) cube([covercliplockcutl+coverclipcut,clipwall+0.02,coverclipcut]);
       translate([covercliplockx-xtolerance,coverclipw-cornerd/2,-covercliplockh/2-ztolerance]) roundedbox(covercliplockl+xtolerance*2,coverclipw+cornerd,covercliplockh+ztolerance*2,0);
-    }
-
-    if (0) for (z=[-covercliplockbarh/2-coverclipcut,covercliplockbarh/2]) {
-      for (x=[covercliplockcutx+covercliplockcutl-0.4,covercliplockcutx+covercliplockcutl/2-0.2]) {
-	if ((z < 0) || (x < covercliplockcutx+covercliplockcutl/2)) {
-	  translate([x,coverclipw+ytolerance,z-0.01]) cube([0.4,0.4,coverclipcut+0.02]);
-	  translate([x,coverclipw+ytolerance,z+coverclipcut-0.2]) cube([0.4,clipwall,0.2+0.01]);
-	  translate([x,coverclipw+ytolerance+clipwall-0.4,z-0.01]) cube([0.4,0.4,coverclipcut+0.02]);
-	}
-      }
     }
   }
 }
@@ -423,7 +382,7 @@ module icopdiskholder() {
       if (disklockclips) {
 	for (i=[0:1:disks-1]) {
 	  z=disksheight+i*diskhstep+diskspaceh/2;
-	  translate([diskclipx,baserighty-ytolerance,z]) mirror([0,1,0]) diskclipcover(i==0);//rotate([180,0,0])
+	  translate([diskclipx,baserighty-ytolerance,z]) mirror([0,1,0]) diskclipcover(i==0);
 	}
       } else {
 	for (i=[0:1:disks-1]) {
@@ -575,7 +534,7 @@ module icopdiskholder() {
       translate([upx-margin,-bottomscreww/2,0]) rotate([90,0,90]) lighten(upw,uph+margin,wall,margin,barw,maxbridge,"up",cornerd=cornerd);
 
       // Top lightening holes
-      toplefty=floppyy+wall; //+floppyw+xtolerance+wall;
+      toplefty=floppyy+wall;
       topleftw=lefty-wall-toplefty;
       translate([wall+xtolerance,toplefty,lefth-wall]) rotate([90,0,90]) lighten(topleftw,disk25l,wall,margin,barw,maxbridge,"up",cornerd=cornerd);
       topmidy=floppyy-floppyw;
