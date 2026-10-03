@@ -288,6 +288,18 @@ module reverseroundedplate(l,w,h,cornerd) {
   }
 }
 
+module reversecylinder(d,h,cornerd,$fn=90) {
+  difference() {
+    translate([0,0,-h/2]) cylinder(d=d+cornerd,h=h,$fn=90);
+    rotate_extrude(convexity=10,$fn=90) {
+      hull() {
+	translate([d/2+cornerd/2,-h/2+cornerd/2,0]) circle(d=cornerd,$fn=90);
+	translate([d/2+cornerd/2,h/2-cornerd/2,0]) circle(d=cornerd,$fn=90);
+      }
+    }
+  }
+}
+
 module lighten_recurse(w,h,thickness,edge,barw,maxbridge,cornerd) {
   for (x=[barw+edge:barw*2+edge*2:w+edge]) {
     translate([w/2+x,thickness+0.01,h-edge/2+maxbridge/2]) rotate([0,45,0]) translate([-edge/sqrt(2)/2,0,-edge/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(edge/sqrt(2),edge/sqrt(2),thickness+0.02,cornerd);
@@ -305,9 +317,16 @@ module lightenhelper(width,height,thickness,margin,barw,maxbridge,compress,corne
   sh=sqrt(maxbridge);
   intersection() {
     union() {
-      translate([w/2+margin,thickness+0.01,h+margin-w/2+zadjust]) rotate([0,45,0]) translate([-w/sqrt(2)/2,0,-w/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(w/sqrt(2),w/sqrt(2),thickness+0.02,cornerd);
       if (h>w/2-maxbridge) {
-	translate([margin,thickness+0.01,margin]) rotate([90,0,0]) reverseroundedplate(w,h-w/2+zadjust,thickness+0.02,cornerd);
+	intersection() {
+	  translate([w/2+margin,thickness+0.01,h+margin-w/2+zadjust]) rotate([0,45,0]) translate([-w/sqrt(2)/2,0,-w/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(w/sqrt(2),w/sqrt(2),thickness+0.02,cornerd);
+	  translate([margin-cornerd/2,-0.01,h+margin-w/2+zadjust]) cube([w+cornerd,thickness+0.02,w/sqrt(2)]);
+	}
+	intersection() {
+	  translate([margin,thickness+0.01,margin]) rotate([90,0,0]) reverseroundedplate(w,h-w/2+zadjust+0.1,thickness+0.02,cornerd);
+	  translate([margin-cornerd/2,thickness+0.01,margin-cornerd/2]) rotate([90,0,0]) cube([w+cornerd,h-w/2+zadjust+0.01+cornerd/2,thickness+0.02]);
+	}
+	translate([margin,thickness+0.01,margin]) rotate([90,0,0]) cube([w,h-w/2+zadjust+0.01,thickness+0.02]);
       }
 
       translate([margin,0,margin]) lighten_recurse(w,h,thickness,maxbridge,barw,maxbridge,cornerd);
@@ -1074,7 +1093,7 @@ module toroid(d,w,angle=360) {
 // detached. This may be slicer dependent.
 module brimcut(w=6,h=0.6,gap=0.1,layerthickness=0.2,$fn=90,usehull=0) {
   lh=layerthickness/2;
-  union() {
+  render() {
     for (z=[0.0:lh:h+layerthickness]) {//h+layerthickness])
       union() {
 	// This is problematic as hull makes it not brim on concave objects
@@ -1104,7 +1123,7 @@ module brimcut(w=6,h=0.6,gap=0.1,layerthickness=0.2,$fn=90,usehull=0) {
   }
 }
 
-module brim(w=6,h=0.6,$fn=90,heatcoverh=0,heatcoverwall=0.8,layerh=0.2) {
+module brim(w=6,h=0.6,$fn=90,heatcoverh=0,heatcoverwall=0.4,layerh=0.2) {
   linear_extrude(h) offset(w) fill() projection(cut=false,$fn=90) intersection() {
     translate([-1000000,-1000000,0]) cube([2000000,2000000,h+layerh*2]);
     children();
@@ -1330,6 +1349,41 @@ module printablehole(d,h) {
   hull() {
     cylinder(d=d,h=h,$fn=90);
     translate([0,-d/4,0]) cube([d/2,d/2,h]);
+  }
+}
+
+// Example make a clip: 	          translate([x,y,baseheight+wall-lockcliph/2+ztolerance]) lockclip(lockclipl,lockclipw,lockcliph,lockclipoverhang,cornerd,0);
+// Example cut the female into something: translate([x,y,baseheight+wall-lockcliph/2+ztolerance]) lockclip(lockclipl,lockclipw,lockcliph,lockclipoverhang,cornerd,1);
+module lockclip(l,w,h,overhang,cornerd,cut=0,text="",lockclipbodyh=4,textdepth=0.7,textfont="Liberation Sans:style=Bold") {
+  t=cut?max(xtolerance,ytolerance):0;
+  lcut=lockclipcut+xtolerance*6;
+
+  //echo("lockclip(",l,w,h,overhang,cornerd,cut,")");
+  union() { //render(convexity=6
+    difference() {
+      union() {
+	translate([-l/2-t,-w/2-t,-h/2-cornerd-t]) roundedbox(l+t*2,w+t*2,h+cornerd*2+t*2,cornerd,6);
+	for (m=[0,1]) mirror([0,0,m]) {
+	    hull() {
+	      translate([-l/2-lockclipoverhang-t,-w/2-t,h/2-t]) roundedbox(l+lockclipoverhang*2+t*2,w+t*2,wall/2+t*2,0.1,6); //cornerd/2
+	      ll=min(wall+lockclipcut+wall,l-xtolerance*2);
+	      translate([-ll/2-t,-w/2-t,h/2+lockclipoverhangh-wall-t]) roundedbox(ll+t*2,w+t*2,wall+t*2,cornerd,6);
+	    }
+	  }
+      }
+
+      if (!cut) {
+	for (m=[0,1]) mirror([0,0,m]) {
+	    translate([-lcut/2,-w/2-cornerd/2,lockclipbodyh/2]) roundedbox(lcut,w+cornerd,lockclipcuth+cornerd,cornerd,0);
+	    hull() {
+	      translate([-lcut/2,-w/2-cornerd/2,lockcliph/2]) roundedbox(lcut,w+cornerd,lockclipoverhangh,cornerd,0);
+	      translate([-lcut/2-xtolerance*2,-w/2-cornerd/2,lockcliph/2+lockclipoverhangh]) roundedbox(lcut+xtolerance*4,w+cornerd,wall,cornerd,0);
+	    }
+	  }
+      }
+
+      translate([0,w/2-textdepth+0.01,0]) rotate([-90,0,0]) resize([l-1,lockclipbodyh-1,textdepth]) linear_extrude(textdepth) text(versiontext,size=lockclipbodyh-1,font=textfont,valign="center",halign="center");
+    }
   }
 }
 
