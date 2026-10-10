@@ -185,7 +185,7 @@ coverclipl=22;
 covercliplockw=9;
 coverclipw=wall;
 covercliplockl=5;
-covercliplockh=covercliph-4;
+covercliplockh=covercliph-2;
 covercliplockbarh=covercliplockh+2;
 covercliplockx=10+3;
 coverclipcoverl=wall+xtolerance+13+covercliplockl+4;
@@ -663,9 +663,21 @@ if (print==0) {
     if (debug) translate([-1000,-1000,-1000]) cube([2000,2000,1000+disks25height+disk25spaceh/2+disk25spaceh+wall]);
 
     union() {
-      
       icopdiskholder();
 
+      translate([-fanframel-10,0,disksheight+fanframeh/2]) union() {
+	fanframe();
+	for (m=[0,1]) mirror([0,m,0]) {
+	    clipcoverbottomx=fanframel-coverclipl-coverclipcoverx-xtolerance;
+	    clipcoverbottomslopex=clipcoverbottomx-coverclipcoverfullw+wall;
+	    b=fanframebasex-clipcoverbottomslopex-wall;
+	    #	  translate([fanframel-coverclipl,-fanframew/2+wall+ytolerance,0]) coverclip();
+	    for (n=[0,1]) mirror([0,0,n]) {
+		#	      translate([fanframel-coverclipl,fanframeclipy,-fanframeh/2+wall+ztolerance]) rotate([90,0,0]) coverclip();
+	      }
+	  }
+      }
+      
       for (i=[0:1:disks-1]) {
 	z=disksheight+i*diskhstep;
 	%translate([diskx+diskl,disky+diskw/2,z]) rotate([0,0,180]) diskform("3.5");
