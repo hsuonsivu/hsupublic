@@ -103,11 +103,8 @@ module coverclipcover(bottom=0) {
 }
 
 module coverclipcovercut() {
-  difference() {
-    union() {
-      translate([covercliplockcutx,coverclipw+ytolerance-coverclipcut,-coverclipcoverh/2-0.01]) cube([coverclipcoverl,coverclipcut,coverclipcoverh+0.02]);
-      translate([covercliplockx-xtolerance,coverclipw-cornerd/2,-covercliplockh/2-ztolerance]) roundedbox(covercliplockl+xtolerance*2,coverclipw+cornerd,covercliplockh+ztolerance*2,0);
-    }
-  }
+  translate([covercliplockcutx,coverclipw+ytolerance-coverclipcut,-coverclipcoverh/2-0.01]) cube([coverclipcoverl,coverclipcut,coverclipcoverh+0.02]);
+  translate([covercliplockx-xtolerance,coverclipw-cornerd/2,-covercliplockh/2-ztolerance]) roundedbox(covercliplockl+xtolerance*2,coverclipw+cornerd,covercliplockh+ztolerance*2,0);
+  translate([coverclipl,-ytolerance-wall-cornerd/2,-covercliph/2-ztolerance]) roundedbox(wall+cornerd+xtolerance,wall+cornerd,covercliph+ztolerance*2,0);
 }
 
