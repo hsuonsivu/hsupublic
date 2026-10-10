@@ -649,20 +649,23 @@ module antiwarpwall(x,y,z,l,w,h,distanceoption,walloption,adhesion=0) {
 // If printable is 2, top is made printable (to allow printing upside down
 // If printable is 3, both ends of cylinder are made printable.
 
-module roundedcylinder(diameter,heightin,cornerd,printable,fn) {
+module roundedcylinder(diameter,heightin,cornerdin,printable,fn) {
   $fn=(fn!="" || fn==0 || fn>6)?fn:30;
   height=heightin>0?heightin:0.01;
+  cornerd=cornerdin>height?height:cornerdin;
 
   hull() {
-    if (printable==1 || printable==3) cylinder(d=diameter-cornerd/1.7,h=height/2);
-    if (printable==2 || printable==3) translate([0,0,height/2]) cylinder(d=diameter-cornerd/1.7,h=height/2);
+    cylinder(d=diameter-cornerd,h=height);
+    translate([0,0,cornerd/2]) cylinder(d=diameter,h=height-cornerd);
+    if (printable==1 || printable==3) cylinder(d=diameter-cornerd/2,h=height/2);
+    if (printable==2 || printable==3) translate([0,0,height/2]) cylinder(d=diameter-cornerd/2,h=height/2);
 
     intersection() {
       translate([0,0,0]) cylinder(d=diameter,h=cornerd/2);
       translate([0,0,cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
 	intersection() {
 	  circle(d=cornerd,$fn=90);
-	  translate([0,-diameter/2]) square([diameter,diameter]);
+	  //translate([0,-diameter/2]) square([diameter,diameter],1);
 	}
       }
     }
@@ -1091,7 +1094,7 @@ module toroid(d,w,angle=360) {
 
 // This generates half layers to try to make slicer to keep layers
 // detached. This may be slicer dependent.
-module brimcut(w=6,h=0.6,gap=0.1,layerthickness=0.2,$fn=90,usehull=0) {
+module brimcut(w=6,h=0.6,gap=0.12,layerthickness=0.2,$fn=90,usehull=0) {
   lh=layerthickness/2;
   render() {
     for (z=[0.0:lh:h+layerthickness]) {//h+layerthickness])
@@ -1354,10 +1357,13 @@ module printablehole(d,h) {
 
 // Example make a clip: 	          translate([x,y,baseheight+wall-lockcliph/2+ztolerance]) lockclip(lockclipl,lockclipw,lockcliph,lockclipoverhang,cornerd,0);
 // Example cut the female into something: translate([x,y,baseheight+wall-lockcliph/2+ztolerance]) lockclip(lockclipl,lockclipw,lockcliph,lockclipoverhang,cornerd,1);
-module lockclip(l,w,h,overhang,cornerd,cut=0,text="",lockclipbodyh=4,textdepth=0.7,textfont="Liberation Sans:style=Bold") {
+module lockclip(l,w,h,overhang,cornerd,cut=0,text="",lockclipbodyh=4,overhangh=6.5,textdepth=0.7,lockclipcutin=0,ytolerance=0.25,xtolerance=0.25,ztolerance=0.25,textfont="Liberation Sans:style=Bold") {
   t=cut?max(xtolerance,ytolerance):0;
+  
+  lockclipcut=lockclipcutin?lockclipcutin:overhang*2+xtolerance*2;
+  lockclipcuth=h-lockclipbodyh/2+overhangh;
   lcut=lockclipcut+xtolerance*6;
-
+ 
   //echo("lockclip(",l,w,h,overhang,cornerd,cut,")");
   union() { //render(convexity=6
     difference() {
@@ -1365,9 +1371,9 @@ module lockclip(l,w,h,overhang,cornerd,cut=0,text="",lockclipbodyh=4,textdepth=0
 	translate([-l/2-t,-w/2-t,-h/2-cornerd-t]) roundedbox(l+t*2,w+t*2,h+cornerd*2+t*2,cornerd,6);
 	for (m=[0,1]) mirror([0,0,m]) {
 	    hull() {
-	      translate([-l/2-lockclipoverhang-t,-w/2-t,h/2-t]) roundedbox(l+lockclipoverhang*2+t*2,w+t*2,wall/2+t*2,0.1,6); //cornerd/2
+	      translate([-l/2-overhang-t,-w/2-t,h/2-t]) roundedbox(l+overhang*2+t*2,w+t*2,wall/2+t*2,0.1,6); //cornerd/2
 	      ll=min(wall+lockclipcut+wall,l-xtolerance*2);
-	      translate([-ll/2-t,-w/2-t,h/2+lockclipoverhangh-wall-t]) roundedbox(ll+t*2,w+t*2,wall+t*2,cornerd,6);
+	      translate([-ll/2-t,-w/2-t,h/2+overhangh-wall-t]) roundedbox(ll+t*2,w+t*2,wall+t*2,cornerd,6);
 	    }
 	  }
       }
@@ -1376,13 +1382,12 @@ module lockclip(l,w,h,overhang,cornerd,cut=0,text="",lockclipbodyh=4,textdepth=0
 	for (m=[0,1]) mirror([0,0,m]) {
 	    translate([-lcut/2,-w/2-cornerd/2,lockclipbodyh/2]) roundedbox(lcut,w+cornerd,lockclipcuth+cornerd,cornerd,0);
 	    hull() {
-	      translate([-lcut/2,-w/2-cornerd/2,lockcliph/2]) roundedbox(lcut,w+cornerd,lockclipoverhangh,cornerd,0);
-	      translate([-lcut/2-xtolerance*2,-w/2-cornerd/2,lockcliph/2+lockclipoverhangh]) roundedbox(lcut+xtolerance*4,w+cornerd,wall,cornerd,0);
+	      translate([-lcut/2,-w/2-cornerd/2,h/2]) roundedbox(lcut,w+cornerd,overhangh,cornerd,0);
+	      translate([-lcut/2-xtolerance*2,-w/2-cornerd/2,h/2+overhangh]) roundedbox(lcut+xtolerance*4,w+cornerd,wall,cornerd,0);
 	    }
 	  }
+	translate([0,w/2-textdepth+0.01,0]) rotate([-90,0,0]) resize([l-1,lockclipbodyh-1,textdepth]) linear_extrude(textdepth) text(versiontext,size=lockclipbodyh-1,font=textfont,valign="center",halign="center");
       }
-
-      translate([0,w/2-textdepth+0.01,0]) rotate([-90,0,0]) resize([l-1,lockclipbodyh-1,textdepth]) linear_extrude(textdepth) text(versiontext,size=lockclipbodyh-1,font=textfont,valign="center",halign="center");
     }
   }
 }
