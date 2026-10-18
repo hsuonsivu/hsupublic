@@ -55,7 +55,8 @@ screwhead type such as one used in some HP cases.
 3. Side includes locking clips and guides for certain cases (aopen and
    some unknown case currently supported).
 
-4. Simple version which leaves out all fancy mechanisms.
+4. Simple version which leaves out all fancy mechanisms (not tested
+   for long time)
 
 For case attachment, you can put the stick in upper or lower position,
 as computer cases might have two different screw positions.
@@ -70,36 +71,53 @@ sizes edit fansizetable to add new ones.
 Cover uses clips to stay in place. You likely need fan extension cable
 as most fans come with very short cables.
 
-Single slot version printing time on Tronxy X5SA/Pro 400 or Anycubic
-Chiron takes about 18 hours, and uses about 200g of filament. No
-supports are needed, rotate so that locking sticks are on the bed, and
-on moving bed printers bed moves in direction of locking sticks to
-avoid falling over. The more slots you have, longer the printing time,
-going up to 40+ hours for 4 slots.
+No supports are needed, and makefile generates parts in right
+orientation for printing. The more slots you have, longer the printing
+time, going up to 48+ hours for 5 slots and ABS or similar slowly
+printing material.
 
 To save filament and printing time and provide better cooling for the
 disks, default is to make the thing with various cutouts.
 
 If you enable simple version, there is no locking mechanism, and the
 adapter and disks only locks with springs. This does not keep things
-in place very well.
+in place very well. This has not been tested with later additions.
 
 Full height 3.5 inch drives will not fit as they are same height as
 5.25 slot. Those are very rare anyway. Maybe this could be adapted by
-removing top and bottom from disk position.
+removing top and bottom from disk position for one slot height.
 
-This has been tested with slimline, 1, 2, 3 and 4 slot
+This has been tested with slimline, 1, 2, 3, 4 and 5 slot
 versions. Slimline is not a standard, I assume, I just had one HP case
-with such a slot.
+with such a slot. 2.5 slot version is slightly higher version of 2
+slot, seen on one HP case.
 
-You can force number of 3.5 vs. 2.5 drives. By default, it will do
-maximum number of 3.5 inch drives and use rest of the space for 2.5
-inch.
+You can force number of 3.5 vs. 2.5 drives. By default it does the
+following disk slot configuration (slot is halfheight 5.25 inch slot):
 
-This makes openscad very slow, so render (F6) first before rotating or
-zooming.
+half slot: 1 3.5 inch, 0 2.5 inch
+1 slot: 1 3.5 inch,  0 2.5 inch
+2 slot: 2 3.5 inch, 2 2.5 inch.
+3 slot: 4 3.5 inch, 1  2.5 inch
+4 slot: 5 3.5 inch, 2 2.5 inch.
+5 slot: 6 3.5 inch, 3 2.5 inch
 
-Makefile 
+Change maxdisks definition if you need different set of drive slots.
+
+It could make larger holder, but my currently available ankermake
+printer maxes out for 5 slots. Also, it already is likely too weak
+with just one side attachment to the computer case. For aopen and
+guide attached cases it will add more attachments. Height of
+half-height drive bays differs from case to case, so making it
+compatible with any computer case needs a bit further thinking.
+
+This makes openscad very slow even with M1 Max Macbook, so render (F6)
+first before rotating or zooming. I added render()s in several places
+and it works faster but triggers openscad bugs on display.
+
+Makefile makes all various versions, you might not need all of them,
+remove targets you do not want. Larger versions need large printer or
+printing parts separately.
 
 See options in the file.
 
@@ -1749,12 +1767,12 @@ Print in TPU. No supports needed.
 
 Modern disk drive holder for one rack computer case I have. Supports 6
 2.5 inch and 3+2 3.5 drives, two of them duplicate as 3.5 inch floppy
-drive. I think the case brand is ICP. All drives are quick release but
-accessible only from inside, uses clips to hold drives in place, but
-due to cramped case, the power supply or disk drive holder need to be
-detached to swap 3.5 inch drives. Unlikely to be useful for any other
-case. Includes both disk drive holder and fancover for the
-drive opening. No supports are need to print.
+holders. I think the case brand is ICP. All drives are quick release
+but accessible only from inside, uses clips to hold drives in
+place. Due to cramped case, the power supply or disk drive holder need
+to be detached to swap 3.5 inch drives. Unlikely to be useful for any
+other case. Includes both disk drive holder and fancover for the drive
+opening. No supports are need to print.
 
 ![icpcasediskholder in openscad](icpcasediskholder.png)
 ![icpcasediskholder fan cover in openscad](icpcasediskholderfancover.png)
@@ -1771,7 +1789,20 @@ inserts in plastic injection.
 ![New part](casespare.jpg)
 ![Original part](casespareoriginal.jpg)
 
-### archiveviperspare.scad
+## case2diskholder.scad
+
+Modern disk drive holder for one rack computer case I have. I do not
+know the brand of the case, as it does not have any identifying
+information. Supports 4 2.5 inch and 7 3.5 drives. All drives are
+quick release but accessible only from inside, uses clips to hold
+drives in place. Due to cramped case, the 3.5 inch disks require
+lifting holder out to replace disks. Possibly this could be rearranged
+with possible reduction of drives to 2-3 and 7. Unlikely to be useful
+for any other case. Includes both disk drive holder and fancover for
+the drive opening. No supports are need to print. Model also included
+a cover with fan option for the front opening.
+
+## archiveviperspare.scad
 
 Replacement roller rubber for Archive Viper tape drive. Print with
 TPU. Does not seem to work very well, but needs more testing.
