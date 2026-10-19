@@ -11,7 +11,9 @@ include <hsubolt.scad>
 print=3;
 abs=1;
 brimw=abs?8:0; // Used when setting abs (turns on brim)
-useheatwall=40;
+useheatwall=abs?1:0;
+
+// Brim is selectively enabled for taller parts.
 
 fn=$preview?16:90;
 smallfn=$preview?16:60;
@@ -54,11 +56,11 @@ throughholes=1;
 guideversion=0;
 
 // Aopen case
-aopenversion=1;
+aopenversion=0;
 
 // Some cases expect fixed screws in either lower or upper settings. IN PROGRESS
 // Could also be basis for screw-in version
-sideslideversion=0;
+sideslideversion=1;
 
 // Sideslides have fixed screwheads
 sideslidescrewheads=0;
@@ -94,17 +96,6 @@ screwversion=(!guideversion && !aopenversion && !sideslideversion);
 coverwithfan=slots>1;
 
 //forcefantype=0; // 
-
-if (!is_undef(forcefantype)) {
-  if (coverwithfan && forcefantype) {
-    if (slots<3 && forcefantype>5) {
-      echo("ERROR Fan is too large for ",slots," slots\n");
-    }
-    if (slots<5 && forcefantype>6) {
-      echo("ERROR Fan is too large for ",slots," slots\n");
-    }
-  }
- }
 
 fantype1=(!is_undef(forcefantype)?forcefantype:slots==5?6:slots==4?6:slots==3?4:slots==2.5?4:slots==2?3:-1);
 fantype=fantype1>6?6:fantype1;
@@ -389,9 +380,10 @@ disklockh=olddisklocksystem?keyh+disklockextrah:disklockwall*2;//diskscrewd;//di
 smalldisklockh=keyh+smalldisklockextrah;
 disklockcutw=lockthickness+lockgap;
 disklockcuth=keyh+disklockextrah+ztolerance*2;
-disklocktension=0.7;
+disklocktension=0.9;
 disklocktotalw=diskscrewbase+(diskscrewdiameter-diskscrewdiameter/2)/2+diskscrewdiameter/2+disklockwall*2+disklocksink+disklockwall/2;
 disklocknotchsink=1;
+disklocknotchtrackextrasink=0.2;
 disklocknotchd=disklockwall+disklocknotchsink;
 //disklocknotchx=diskx+(diskscrewxtable[len(diskscrewxtable)-1]-diskscrewxtable[0])/2+disklockslidel*2+wall;
 disklocknotchx=length-disklocknotchd/2;
@@ -401,7 +393,7 @@ disklocknotchcutl=10;
   //disklockcovery=olddisklocksystem?sidewall+sidecutwidth-lockthickness-lockgap-lockwall:disky-sidewall-disklockmovement[1]-disklockwall-ytolerance-disklockwall;
   
 // Visual stuff
-diskpinin=print>0?0:1;
+diskpinin=print>0?0:0;
 
 //echo(disklockcoverh);
 
@@ -578,6 +570,14 @@ fanscrewd=4.4;
 fancoverwall=1.6;
 coverwall=fancoverwall;
 
+if (!is_undef(forcefantype)) {
+  if (coverwithfan && forcefantype) {
+    if (fanw>height-coverwall*2*2) {
+      echo("ERROR Fan is too large for ",slots," slots");
+    }
+  }
+ }
+
 frontcornerd=10;
 frontincornerd=10-coverwall*2;
 
@@ -623,7 +623,8 @@ fancoverfrontfanh=fancoverwall+ztolerance+fanw+ztolerance+fancoverwall;
 fanholderl=xtolerance+fancoverwall+fancoverfanbaseh+fanh+xtolerance+fanholderclipd;
 
 coverfrontshrink=slots>1?coverdepth/3:0;
-coverpullshrink=slots>1?coverfrontshrink-3:0;
+coverpullshrink1=slots>1?coverfrontshrink-3:0;
+coverpullshrink=coverpullshrink1>coverfrontshrink?coverfrontshrink:coverpullshrink1;
 
 // Cover only uses bottom and top clips for easy removal
 //fanattachztable=[bottomthickness+fanclipholeheight,bottomthickness+(diskslots-1)*diskslotstep+fanclipholeheight];
@@ -752,6 +753,10 @@ bothinl=sideslidelockl+1;
 bothinx=sideslidelockx-0.5;//+sideslidelockl/2-bothinl/2;
 bothincutl=cut+bothinl+cut;
 bothincutx=bothinx-cut;
+
+// Cover heat wall is about height, but for larger objects heatwall
+// seems less critical after the base has been generated.
+heatwallh=print==5?coverdepth:40;
 
 module fan() {
   difference() {
@@ -939,7 +944,7 @@ module guideclipnobrim() {
 }
 
 module guideclip() {
-  if (abs) {
+  if (abs && print>0) {
     translate([0,0,-guidecliph/2]) {
       difference() {
 	brim(w=guidebrimw) translate([0,0,guidecliph/2]) guideclipnobrim();
@@ -1043,7 +1048,7 @@ module aopenclipnobrim() {
 }
 
 module aopenclip() {
-  if (abs) {
+  if (abs && print>0) {
     translate([0,0,-aopencliph/2]) {
       difference() {
 	brim(w=aopenbrimw) translate([0,0,aopencliph/2]) aopenclipnobrim();
@@ -1300,7 +1305,7 @@ module diskpin() {
 
     hull() {
       for (x=[disklocknotchx-disklockslidel-wall*2,disklocknotchx]) {
-	translate([x,-disklocky+disklockcovery+disklockwall+disklocknotchsink-disklocknotchd/2,diskpinheight-disklockwall/2-ztolerance]) cylinder(d=disklocknotchd+dtolerance,h=disklockh+disklockwall+ztolerance*2+0.02,$fn=60);
+	translate([x,-disklocky+disklockcovery+disklockwall+disklocknotchsink+disklocknotchtrackextrasink-disklocknotchd/2,diskpinheight-disklockwall/2-ztolerance]) cylinder(d=disklocknotchd+dtolerance,h=disklockh+disklockwall+ztolerance*2+0.02,$fn=60);
       }
     }
 
@@ -1431,10 +1436,12 @@ module coverform(w) {
       translate([-coverdepth,-oldcoverclipw/2,height-roofthickness-oldcovercliph-ztolerance]) roundedbox(coverdepth+oldcoverclipl,oldcoverclipw,oldcovercliph,cornerd);
 
       for (m=[0,1]) mirror([0,m,0]) {
-	  for (z=coverclipheighttable) {
+	  for (z=coverclipztable) {
 	    hull() {
-	      translate([-coverdepth-0.1,-width/2,z-coverclipoutl/2-fancoverwall]) roundedbox(0.1+coverdepth,coverclipoutw,coverclipoutl+fancoverwall*2,cornerd,8);
-	      translate([-coverdepth-0.1,-width/2+fancoverwall,z-coverclipoutl/2-fancoverwall-coverclipfingerspace]) roundedbox(0.1+coverdepth-10,0.1+fancoverwall,coverclipoutl+fancoverwall*2+coverclipfingerspace*2,cornerd,8);
+	      //#translate([-coverdepth-0.1+coverclipoutl/2,-width/2,z-coverclipoutl/2-fancoverwall]) roundedbox(0.1+coverdepth,coverclipoutw,coverclipoutl+fancoverwall*2,cornerd,8);
+	      //      #translate([-coverdepth-0.1,-width/2+fancoverwall,z-coverclipoutl/2-fancoverwall-coverclipfingerspace]) roundedbox(0.1+coverdepth-10,0.1+fancoverwall,coverclipoutl+fancoverwall*2+coverclipfingerspace*2,cornerd,8);
+	      translate([-coverdepth,-width/2+coverclipy-coverclipoutl/2-fancoverwall,z-coverclipoutw/2]) roundedbox(0.1+coverdepth,coverclipoutl+fancoverwall*2,coverclipoutw,cornerd,7);
+	      translate([-coverdepth-0.1,-width/2+coverclipy-coverclipoutl/2-fancoverwall-coverclipfingerspace,z-coverclipoutw/2+fancoverwall]) roundedbox(0.1+coverdepth-10,coverclipoutl+fancoverwall*2+coverclipfingerspace*2,0.1+fancoverwall,cornerd,8);
 	    }
 	  }
 	}
@@ -1474,6 +1481,7 @@ module coverclip() {
 }
 
 module cover() {
+  coverfrontl=coverpullshrink+fancoverwall;
   difference() {
     union() {
       difference() {
@@ -1497,16 +1505,17 @@ module cover() {
       translate([0,0,height]) rotate([180,0,0]) coverclip();
     }
 
-    for (m=[0,1]) mirror([0,m,0]) {
-	for (z=coverclipheighttable) {
-	  hull() {
-	    translate([-coverdepth-cornerd/2,-width/2-0.1,z-coverclipoutl/2]) cube([cornerd/2+coverdepth-xtolerance-fancoverwall-xtolerance,0.1+coverclipy+coverclipw/2+ytolerance,coverclipoutl]);
-	    translate([-coverdepth-cornerd/2,-width/2-0.1,z-coverclipoutl/2-coverclipfingerspace]) cube([cornerd/2+coverdepth-xtolerance-fancoverwall-xtolerance-coverclipfingerspace,0.1,coverclipoutl+coverclipfingerspace*2]);
+    translate([0,0,height/2]) for (m=[0,1]) mirror([0,m,0]) {
+	for (n=[0,1]) mirror([0,0,n]) translate([0,0,-height/2]) {
+	    hull() {
+	      translate([-coverdepth+coverfrontl-cornerd/2,-width/2+coverclipy-coverclipoutl/2,coverclipoutw/2-coverclipoutw/2-0.1]) cube([cornerd/2+coverdepth-coverfrontl-xtolerance-fancoverwall-xtolerance,coverclipoutl,0.1+coverclipoutw/2+coverclipw/2+ytolerance]);
+	      translate([-coverdepth+coverfrontl-cornerd/2,-width/2+coverclipy-coverclipoutw/2-coverclipfingerspace,coverclipoutw/2-0.1]) cube([cornerd/2+coverdepth-coverfrontl-xtolerance-fancoverwall-xtolerance-coverclipfingerspace,coverclipoutw+coverclipfingerspace*2,0.1]);
+	      translate([-coverdepth+coverfrontl-cornerd/2,-width/2+coverclipy-coverclipoutl/2,coverclipoutw/2-coverclipw/2-0.1]) cube([cornerd/2+coverdepth-coverfrontl-xtolerance-fancoverwall-xtolerance,coverclipoutl,0.1+coverclipw+ytolerance]);
+	      translate([-coverdepth+coverfrontl-cornerd/2,-width/2+coverclipy-coverclipoutw/2-coverclipfingerspace,coverclipoutw/2-coverclipoutw/2-0.1]) cube([cornerd/2+coverdepth-coverfrontl-xtolerance-fancoverwall-xtolerance-coverclipfingerspace,coverclipoutw+coverclipfingerspace*2,0.1]);
+	    }
+	    translate([-coverdepth+coverfrontl-cornerd/2,-width/2+coverclipy-coverclipoutl/2,coverclipoutw/2-coverclipw/2-ytolerance]) cube([cornerd/2+coverdepth-coverfrontl-xtolerance-fancoverwall-xtolerance+0.2,coverclipoutl,coverclipw+ytolerance*2]);
+	    translate([-coverdepth+coverfrontl-cornerd/2,-width/2+coverclipy-coverclipl/2-ztolerance,coverclipoutw/2-coverclipw/2-ytolerance]) cube([coverdepth-coverfrontl+cornerd,coverclipl+ztolerance*2,coverclipw+ytolerance*2]);
 	  }
-	  translate([-coverdepth-cornerd/2,-width/2+coverclipy-coverclipw/2-ytolerance,z-coverclipoutl/2]) cube([cornerd/2+coverdepth-xtolerance-fancoverwall-xtolerance+0.2,coverclipw+ytolerance*2,coverclipoutl]);
-	  translate([-coverdepth-cornerd/2,-width/2+coverclipy-coverclipw/2-ytolerance,z-coverclipl/2-ztolerance]) cube([coverdepth+cornerd,coverclipw+ytolerance*2,coverclipl+ztolerance*2]);
-	  //translate([coverclipx,-width/2+coverclipy,z]) rotate([0,90,0]) lockclip(coverclipl,coverclipw,covercliph,coverclipoverhang,cornerd,ytolerance=ytolerance,xtolerance=xtolerance,ztolerance=ztolerance,1,text=versiontext,textdepth=0.7);
-	}
       }
 
     translate([-1,-oldcoverclipw/2,-cornerd/2]) roundedbox(cornerd+cornerd,oldcoverclipw,cornerd/2+1,0);
@@ -1516,6 +1525,13 @@ module cover() {
       translate([-coverdepth+textdepth-0.01,0,fanheight]) rotate([90,0,-90]) rotate([0,0,45]) translate([0,fand/2+1,0]) linear_extrude(height=textdepth) text(versiontext,size=airholedistancex-3,valign="bottom",halign="center");
     } else {
       translate([-coverdepth+textdepth-0.01,coolingslity+coolingslitw+2,height/2]) rotate([90,0,-90]) translate([0,fand/2+1,0]) linear_extrude(height=textdepth) text(versiontext,size=airholedistancex-2,valign="center",halign="right");
+    }
+
+    // Clip holes for cover
+    for (z=coverclipztable) {
+      translate([coverclipx,-width/2+coverclipy,z]) {
+	rotate([90,0,90]) lockclip(coverclipl,coverclipw,covercliph,coverclipoverhang,cornerd,1,text=versiontext,textdepth=0.7);
+      }
     }
   }
 }
@@ -1669,8 +1685,11 @@ module halfholder() {
 
 	  for (z=[0:diskslotstep:disksh]) {
 	    for (x=diskscrewxtable) { //[diskscrewxtable[0],diskscrewxtable[len(diskscrewxtable)-1]]) {
-	      translate([diskxposition+x-diskscrewd/2-xtolerance*2,diskwally-0.01,diskheight+z+diskscrewheight-diskscrewd/2-ztolerance*2]) cube([diskscrewd+xtolerance*4,sidewall+0.02,diskscrewd+ztolerance*4]);
-	      translate([wall,diskwally+0.01,diskheight+z+diskscrewheight-diskscrewd/2-ztolerance]) cube([length-wall+0.01,sidewall-disklockwall+0.01,ztolerance+disklockh+ztolerance]);
+	      hull() {
+		translate([diskxposition+x-diskscrewd/2-xtolerance*3,disky,diskheight+z+diskscrewheight-diskscrewd/2-ztolerance*3]) cube([diskscrewd+xtolerance*6,0.1,diskscrewd+ztolerance*6]);
+		translate([diskxposition+x-diskscrewd/2-xtolerance*5,disky-disklockwall-0.02,diskheight+z+diskscrewheight-diskscrewd/2-ztolerance*4]) cube([diskscrewd+xtolerance*10,0.02,diskscrewd+ztolerance*8]);
+	      }
+	      translate([wall,diskwally-0.1,diskheight+z+diskscrewheight-diskscrewd/2-ztolerance]) cube([length-wall+0.01,sidewall-disklockwall+0.1,ztolerance+disklockh+ztolerance]);
 	      translate([length-disklocknotchcutl,disklockcovery-disklocknotchsink,diskheight+z+diskscrewd/2-disklockcoverheight-0.01]) cube([disklocknotchcutl+0.01,disklocknotchsink,disklockcoverh+0.02]);
 	    }
 	  }
@@ -1729,7 +1748,7 @@ module halfholder() {
 	  
 	if (guideversion==1) {
 	  for (slot=cliptable[slotconfig]) {
-#	    translate([0,0.01,slot*sloth+guideheight]) guide();
+	    translate([0,0.01,slot*sloth+guideheight]) guide();
 	  }
 	}
 
@@ -1755,12 +1774,25 @@ module halfholder() {
 	}
       }
 
-      // Clip holes for cover
-      for (z=coverclipztable) {
-	translate([coverclipx,coverclipy,z]) {
-	  rotate([90,0,90]) lockclip(coverclipl,coverclipw,covercliph,coverclipoverhang,cornerd,1,text=versiontext,textdepth=0.7);
+      // Cover clip holes
+      translate([0,0,height/2]) for (m=[0,1]) mirror([0,0,m]) translate([0,0,-height/2]) {
+	  z=coverclipztable[0];
+	  translate([coverclipx,coverclipy,z]) {
+	    rotate([90,0,90]) lockclip(coverclipl,coverclipw,covercliph,coverclipoverhang,cornerd,1,text=versiontext,textdepth=0.7);
+	  }
+
+	  w=coverclipoutl>maxbridge?coverclipoutl-maxbridge:maxbridge;
+	  l=(coverclipoutl-maxbridge)/2;
+	  hull() {
+	    translate([coverclipx+covercliph/2-xtolerance,coverclipy-coverclipoutl/2,-0.1]) cube([coverclipl,coverclipoutl,0.1+z+coverclipw/2]);
+	    translate([coverclipx+covercliph/2-xtolerance,coverclipy-coverclipoutl/2+w/2,-0.1]) cube([coverclipl+l,maxbridge,0.1+z+coverclipw/2]);
+	  }
+	  hull() {
+	    h=z+coverclipw/2-bottomthickness;
+	    translate([coverclipx+covercliph/2-xtolerance,coverclipy-coverclipoutl/2+w/2,bottomthickness]) cube([coverclipl+l,maxbridge,h]);
+	    translate([coverclipx+covercliph/2-xtolerance+h,coverclipy-coverclipoutl/2+w/2,bottomthickness+h-0.1]) cube([coverclipl+l,maxbridge,0.1]);
+	  }
 	}
-      }
       
       if (sideslideversion) {
 	for (z=outscrewztable) translate([0,0,z]) {
@@ -2190,14 +2222,8 @@ module printsnobrim() {
   }
 
   if (print==5) {
-    if (slots==1) {
-      if (0) {
-	if (slots<2.1 && short==1) {
-	  translate([width/2,width+0.5,coverdepth]) rotate([0,-90,-90]) cover();
-	}
-      } else {
-	translate([0,0,coverdepth]) rotate([0,-90,0]) cover();
-      }
+    if (slots<=1) {
+      translate([0,0,coverdepth]) rotate([0,-90,0]) cover();
     }
   }
   
@@ -2218,7 +2244,7 @@ module printsnobrim() {
   if (print==9 || print==5) {
     if (slots>1) {
       translate([0,width/2,0]) for (i=[0:1:3]) {
-	translate([i*(coverclipl+coverclipoverhang*2+0.5),width/2+(abs?brimw:0)+coverfrontshrink+0.5+covercliptotalh/2,coverclipw/2]) rotate([90,0,0]) lockclip(coverclipl,coverclipw,covercliph,coverclipoverhang,cornerd,0,text=versiontext,textdepth=0.7);
+	translate([i*(coverclipl+coverclipoverhang*2+0.5)+coverclipw+coverclipoverhang+wall,width/2-(abs?0:coverpullshrink)+brimw+0.5+covercliptotalh/2+0.5,coverclipw/2]) rotate([90,0,0]) lockclip(coverclipl,coverclipw,covercliph,coverclipoverhang,cornerd,0,text=versiontext,textdepth=0.7);
       }
     }
   }
@@ -2233,22 +2259,16 @@ module printswithbrim() {
 
   if (print==5) {
     if (slots>1) {
-      if (0) {
-	if (slots<2.1 && short==1) {
-	  translate([width/2,width+0.5,coverdepth]) rotate([0,-90,-90]) cover();
-	}
-      } else {
-	translate([width/2,height,coverdepth]) rotate([0,-90,0]) cover();
-      }
+      translate([height,width/2,coverdepth]) rotate([0,-90,0]) cover();
     }
   }
 }
 
 if (print==0) {
   intersection() {
-    //if (debug) translate([-100,-100,-100]) cube([1000,100+coverclipoutw/2,1000]); // coverclips
+    if (debug) translate([-200,-200,-200]) cube([1000,1000,200+coverclipoutw/2+coverclipw/2-0.01]); // coverclips
     //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+guideheight-5]); // Debug guides
-    if (debug) translate([-100,-100,-100]) cube([1000,1000,100+outscrewztable[0]]); // Debug guides
+    //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+outscrewztable[0]]); // Debug guides
     //if (debug) translate([-100,-100,-100]) cube([180,110,200]); // Debug guides
     //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+guideheight-5]); // Debug guides
     //if (debug) translate([-100,-100,-100]) cube([1000,1000,100+guideheight-5.5-1.6]); // Debug guides
@@ -2266,7 +2286,7 @@ if (print==0) {
     //if (debug) translate([-100,50,-100]) cube([1000,1000,1000]);
     difference() {
       union() {
-	//translate([-xtolerance,width/2,0]) render() cover();
+	translate([-xtolerance,width/2,0]) render() cover();
 	
 	render() holder();
 	
@@ -2279,8 +2299,8 @@ if (print==0) {
 	} else {
 	  for (z=[0:diskslotstep:disksh]) {
 	    translate([0,disklocky,diskheight+z+diskscrewheight]) {
-	      disklock();
-	      translate([diskpinin==1?0:diskpinslidel+wall*3,0,0]) diskpin();
+	      //disklock();
+	      //translate([diskpinin==1?0:diskpinslidel+wall*3,0,0]) diskpin();
 	    }
 	  }
 	}
@@ -2307,9 +2327,9 @@ if (print==0) {
 	if (sideslideversion && sideslideclips) translate([0,0,outscrewztable[0]]) sideslideclips();
       }
 
-      if (0) for (z=coverclipheighttable) {
-	translate([coverclipx,coverclipy,z]) rotate([0,90,0]) {
-	  #lockclip(coverclipl,coverclipw,covercliph,coverclipoverhang,cornerd,0,text=versiontext,textdepth=0.7,textdepth=0.7);
+      for (z=coverclipztable) {
+	translate([coverclipx,coverclipy,z]) rotate([90,0,90]) {
+	  #lockclip(coverclipl,coverclipw,covercliph,coverclipoverhang,cornerd,0,text=versiontext,textdepth=0.7);
 	}
       }
 	    
@@ -2330,7 +2350,7 @@ if (print==1 || print==3 || (print==5 && slots>1)) {
   if (abs) {
     difference() {
       union() {
-	brim(w=brimw,heatcoverh=(useheatwall?useheatwall:0),heatcoverwall=0.4) printswithbrim();
+	brim(w=brimw,heatcoverh=(useheatwall?heatwallh:0),heatcoverwall=0.4) printswithbrim();
 	adhesionl=60;
 	if (0) if (print==1 || print==3) {
 	  extraw=brimw+10+aopenclipw*aopenversion;

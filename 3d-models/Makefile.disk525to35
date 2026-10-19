@@ -2,7 +2,7 @@ SOURCE=disk525to35.scad
 DEPENDS=hsu.scad Makefile.disk525to35
 IMAGES=
 
-AOPEN=disk525to35aopenbody.stl disk525to35aopenlocks.stl disk525to35aopen.stl disk525to35aopenclips.stl 
+AOPEN=disk525to35aopenbody.stl disk525to35aopenlocks.stl disk525to35aopen.stl disk525to35aopenclips.stl disk525to35test.stl
 COVER=disk525to35fancover.stl disk525to35fancoverandclips.stl disk525to35coverclips.stl 
 
 ALL=disk525to35body.stl disk525to35locks.stl disk525to35.stl disk525to35guidebody.stl disk525to35guidelocks.stl disk525to35guide.stl disk525to35guideclips.stl $(AOPEN) disk525to35sideslidebody.stl disk525to35sideslidelockshole.stl disk525to35sideslidelockshead.stl disk525to35sideslidehole.stl disk525to35sideslidehead.stl $(COVER) disk525to35sideslidesheadonly.stl disk525to35sideslidesholeonly.stl disk525to35test.stl
