@@ -652,19 +652,20 @@ module antiwarpwall(x,y,z,l,w,h,distanceoption,walloption,adhesion=0) {
 module roundedcylinder(diameter,heightin,cornerdin,printable,fn) {
   $fn=(fn!="" || fn==0 || fn>6)?fn:30;
   height=heightin>0?heightin:0.01;
-  cornerd=cornerdin>height?height:cornerdin;
-
+  cornerd1=cornerdin>=height?height-0.01:cornerdin;
+  cornerd=cornerd1>=diameter/2?diameter/2-0.01:cornerd1;
+  
   hull() {
-    cylinder(d=diameter-cornerd,h=height);
-    translate([0,0,cornerd/2]) cylinder(d=diameter,h=height-cornerd);
-    if (printable==1 || printable==3) cylinder(d=diameter-cornerd/2,h=height/2);
-    if (printable==2 || printable==3) translate([0,0,height/2]) cylinder(d=diameter-cornerd/2,h=height/2);
+    cylinder(d=diameter-cornerd,h=height,$fn=fn);
+    translate([0,0,cornerd/2]) cylinder(d=diameter,h=height-cornerd,$fn=fn);
+    if (printable==1 || printable==3) cylinder(d=diameter-cornerd/2,h=height/2,$fn=fn);
+    if (printable==2 || printable==3) translate([0,0,height/2]) cylinder(d=diameter-cornerd/2,h=height/2,$fn=fn);
 
     intersection() {
-      translate([0,0,0]) cylinder(d=diameter,h=cornerd/2);
+      translate([0,0,0]) cylinder(d=diameter,h=cornerd/2,$fn=fn);
       translate([0,0,cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
 	intersection() {
-	  circle(d=cornerd,$fn=90);
+	  circle(d=cornerd,$fn=fn);
 	  //translate([0,-diameter/2]) square([diameter,diameter],1);
 	}
       }
@@ -674,8 +675,8 @@ module roundedcylinder(diameter,heightin,cornerdin,printable,fn) {
       translate([0,0,height-cornerd/2]) cylinder(d=diameter,h=cornerd/2);
       translate([0,0,height-cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
 	intersection() {
-	  circle(d=cornerd,$fn=90);
-	  translate([0,-diameter/2]) square([diameter,diameter]);
+	  circle(d=cornerd,$fn=fn);
+	  //translate([0,-diameter/2]) square([diameter,diameter],1);
 	}
       }
     }
@@ -1096,7 +1097,7 @@ module toroid(d,w,angle=360) {
 // detached. This may be slicer dependent.
 module brimcut(w=6,h=0.6,gap=0.12,layerthickness=0.2,$fn=90,usehull=0) {
   lh=layerthickness/2;
-  render() {
+  union() {
     for (z=[0.0:lh:h+layerthickness]) {//h+layerthickness])
       union() {
 	// This is problematic as hull makes it not brim on concave objects
@@ -1364,8 +1365,7 @@ module lockclip(l,w,h,overhang,cornerd,cut=0,text="",lockclipbodyh=4,overhangh=6
   lockclipcuth=h-lockclipbodyh/2+overhangh;
   lcut=lockclipcut+xtolerance*6;
  
-  //echo("lockclip(",l,w,h,overhang,cornerd,cut,")");
-  union() { //render(convexity=6
+  union() {
     difference() {
       union() {
 	translate([-l/2-t,-w/2-t,-h/2-cornerd-t]) roundedbox(l+t*2,w+t*2,h+cornerd*2+t*2,cornerd,6);
@@ -1386,7 +1386,7 @@ module lockclip(l,w,h,overhang,cornerd,cut=0,text="",lockclipbodyh=4,overhangh=6
 	      translate([-lcut/2-xtolerance*2,-w/2-cornerd/2,h/2+overhangh]) roundedbox(lcut+xtolerance*4,w+cornerd,wall,cornerd,0);
 	    }
 	  }
-	translate([0,w/2-textdepth+0.01,0]) rotate([-90,0,0]) resize([l-1,lockclipbodyh-1,textdepth]) linear_extrude(textdepth) text(versiontext,size=lockclipbodyh-1,font=textfont,valign="center",halign="center");
+	translate([0,w/2-textdepth+0.01,0]) rotate([-90,0,0]) resize([l-1,lockclipbodyh-1,textdepth]) linear_extrude(textdepth) text(text,size=lockclipbodyh-1,font=textfont,valign="center",halign="center");
       }
     }
   }
