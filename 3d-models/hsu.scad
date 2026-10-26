@@ -327,6 +327,8 @@ module lightenhelper(width,height,thickness,margin,barw,maxbridge,compress,corne
 	  translate([margin-cornerd/2,thickness+0.01,margin-cornerd/2]) rotate([90,0,0]) cube([w+cornerd,h-w/2+zadjust+0.01+cornerd/2,thickness+0.02]);
 	}
 	translate([margin,thickness+0.01,margin]) rotate([90,0,0]) cube([w,h-w/2+zadjust+0.01,thickness+0.02]);
+      } else {
+	translate([w/2+margin,thickness+0.01,h+margin-w/2+zadjust]) rotate([0,45,0]) translate([-w/sqrt(2)/2,0,-w/sqrt(2)/2]) rotate([90,0,0]) reverseroundedplate(w/sqrt(2),w/sqrt(2),thickness+0.02,cornerd);
       }
 
       translate([margin,0,margin]) lighten_recurse(w,h,thickness,maxbridge,barw,maxbridge,cornerd);
@@ -654,7 +656,7 @@ module roundedcylinder(diameter,heightin,cornerdin,printable,fn) {
   height=heightin>0?heightin:0.01;
   cornerd1=cornerdin>=height?height-0.01:cornerdin;
   cornerd=cornerd1>=diameter/2?diameter/2-0.01:cornerd1;
-  
+
   hull() {
     cylinder(d=diameter-cornerd,h=height,$fn=fn);
     translate([0,0,cornerd/2]) cylinder(d=diameter,h=height-cornerd,$fn=fn);
@@ -664,10 +666,10 @@ module roundedcylinder(diameter,heightin,cornerdin,printable,fn) {
     intersection() {
       translate([0,0,0]) cylinder(d=diameter,h=cornerd/2,$fn=fn);
       translate([0,0,cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
-	intersection() {
-	  circle(d=cornerd,$fn=fn);
+	circle(d=cornerd,$fn=fn);
+	//intersection() {
 	  //translate([0,-diameter/2]) square([diameter,diameter],1);
-	}
+	//}
       }
     }
 
