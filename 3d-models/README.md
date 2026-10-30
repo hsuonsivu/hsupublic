@@ -1806,3 +1806,18 @@ a cover with fan option for the front opening.
 
 Replacement roller rubber for Archive Viper tape drive. Print with
 TPU. Does not seem to work very well, but needs more testing.
+
+## eufymaketemplate
+
+Template for printing Eufymake magnetic coaster/fridge magnets on
+Eufymake UV printer. It can produce templates for round and rectangle
+ceramic versions and cheaper thinner plastic magnets, and empty
+template which is intended to be used to build templates for other
+custom objects.  For smaller printers, default is to print it split
+into two parts and clips to connect them. There are supports under
+side clips which you need to remove before installing, and you need to
+free connecting clip springs as they have small support for printing
+as well. Sharp knife works for me.
+
+NOTE: This is work in progress, and needs to be tested for proper fit. 
+
