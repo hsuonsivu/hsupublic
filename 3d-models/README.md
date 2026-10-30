@@ -1821,3 +1821,9 @@ as well. Sharp knife works for me.
 
 NOTE: This is work in progress, and needs to be tested for proper fit. 
 
+## cover35.scad
+
+Cover for computer case to cover a hole of 3.5 inch device slot, such
+as a floppy drive. Work in progress.
+
+![cover35 in openscad](cover35.png)
