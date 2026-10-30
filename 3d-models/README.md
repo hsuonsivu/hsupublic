@@ -1827,3 +1827,12 @@ Cover for computer case to cover a hole of 3.5 inch device slot, such
 as a floppy drive. Work in progress.
 
 ![cover35 in openscad](cover35.png)
+
+## pctassu.scad
+
+Feet for a PC case to avoid connectors to get crushed when standing
+the case on its back.  Can be applied to many cases. Screw size if
+typical PC case screw. Print in TPU.
+
+![cover35 in openscad](cover35.png)
+
