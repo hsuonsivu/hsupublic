@@ -1658,6 +1658,8 @@ for couple of loose cpus I had around included.
 
 As previous but accommodates a fixed fan.
 
+![pentiumbox in Openscad.](pentiumbox.png)
+
 ## acercasespare.scad
 
 Spare part for Acer computer case, drive locking mechanism. Original
@@ -1834,5 +1836,5 @@ Feet for a PC case to avoid connectors to get crushed when standing
 the case on its back.  Can be applied to many cases. Screw size if
 typical PC case screw. Print in TPU.
 
-![cover35 in openscad](cover35.png)
+![pctassu in openscad](pctassu.png)
 
