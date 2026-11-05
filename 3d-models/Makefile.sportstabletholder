@@ -1,0 +1,76 @@
+SOURCE=tunturicrosstrainer.scad
+DEPENDS=hsu.scad Makefile.tunturicrosstrainer
+IMAGES=
+TUNTURICROSSTRAINER=tunturicrosstrainer.stl tunturicrosstrainerbase.stl tunturicrosstrainertop.stl
+WATERROWER=waterrowertop.stl waterrowerattach.stl waterrowerbolts.stl waterrowerbinder.stl waterrowerright.stl waterrowerleft.stl bolttest.stl
+ALL=$(TUNTURICROSSTRAINER) $(WATERROWER)
+
+OPENSCADOPTIONS=-D debug=0 --backend=manifold --enable textmetrics
+
+tunturicrosstrainer: $(TUNTURICROSSTRAINER)
+
+waterrower: $(WATERROWER)
+
+all: $(ALL)
+
+dist: tunturicrosstrainer.zip
+
+tunturicrosstrainer-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf tunturicrosstrainer-distribution
+	rm -f tunturicrosstrainer-distribution.zip
+	mkdir -p tunturicrosstrainer-distribution
+	cp $(SOURCE) $(DEPENDS) tunturicrosstrainer-distribution
+	zip -r $@ tunturicrosstrainer-distribution
+	echo $@ built.      
+
+tunturicrosstrainer-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf tunturicrosstrainer-distribution
+	rm -f tunturicrosstrainer-distribution.zip
+	mkdir -p tunturicrosstrainer-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) tunturicrosstrainer-distribution
+	zip -r $@ tunturicrosstrainer-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+tunturicrosstrainerbase.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D tunturicrosstrainerversion=1 -Dwaterrowerversion=0 -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+tunturicrosstrainertop.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D tunturicrosstrainerversion=1 -Dwaterrowerversion=0  -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+tunturicrosstrainer.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D tunturicrosstrainerversion=1 -Dwaterrowerversion=0  -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
+waterrowertop.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D tunturicrosstrainerversion=0 -Dwaterrowerversion=1  -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+waterrowerattach.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D tunturicrosstrainerversion=0 -Dwaterrowerversion=1  -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+
+waterrowerbolts.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D tunturicrosstrainerversion=0 -Dwaterrowerversion=1  -D print=5 -o $@ $(SOURCE)
+	echo $@ built.
+
+waterrowerbinder.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D tunturicrosstrainerversion=0 -Dwaterrowerversion=1  -D print=6 -o $@ $(SOURCE)
+	echo $@ built.
+
+waterrowerright.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D tunturicrosstrainerversion=0 -Dwaterrowerversion=1  -D print=8 -o $@ $(SOURCE)
+	echo $@ built.
+
+waterrowerleft.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D tunturicrosstrainerversion=0 -Dwaterrowerversion=1  -D print=9 -o $@ $(SOURCE)
+	echo $@ built.
+
+
+bolttest.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D tunturicrosstrainerversion=0 -Dwaterrowerversion=1  -D print=20 -o $@ $(SOURCE)
+	echo $@ built.

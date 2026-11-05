@@ -1838,3 +1838,15 @@ typical PC case screw. Print in TPU.
 
 ![pctassu in openscad](pctassu.png)
 
+## hsubolt.scad
+
+Bolt library for my bolts. This uses 2023-04-02 threadlib by Adrdian
+Schlatter.  Bolt form is M20 modified for better printability, so it
+is not any standard.
+
+## sportstabletholder, Makefile.sportstabletholder
+
+This makes tablet holder for Tunturi crosstrainer and Waterrower
+exercise machines.  Both contain multiple parts. Makefile makes stls
+for both. No supports are needed to print.
+
