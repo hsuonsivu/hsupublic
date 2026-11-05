@@ -666,7 +666,7 @@ module roundedcylinder(diameter,heightin,cornerdin,printable,fn) {
     intersection() {
       translate([0,0,0]) cylinder(d=diameter,h=cornerd/2,$fn=fn);
       translate([0,0,cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
-	circle(d=cornerd,$fn=fn);
+	circle(d=cornerd,$fn=30); //fn
 	//intersection() {
 	  //translate([0,-diameter/2]) square([diameter,diameter],1);
 	//}
@@ -677,7 +677,7 @@ module roundedcylinder(diameter,heightin,cornerdin,printable,fn) {
       translate([0,0,height-cornerd/2]) cylinder(d=diameter,h=cornerd/2);
       translate([0,0,height-cornerd/2]) rotate_extrude(convexity=10) translate([diameter/2-cornerd/2,0,0]) {
 	intersection() {
-	  circle(d=cornerd,$fn=fn);
+	  circle(d=cornerd,$fn=30);//fn
 	  //translate([0,-diameter/2]) square([diameter,diameter],1);
 	}
       }
