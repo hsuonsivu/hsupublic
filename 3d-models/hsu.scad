@@ -863,8 +863,12 @@ module flatspring(l,w,h,width,coils,cornerend) {
   }
 }
 
-function textlen(t,fontsize) = textmetrics(text=t,font="Liberation Sans:style=Bold",size=fontsize,valign="top",halign="center").size[0];
-function textheight(t,fontsize) = textmetrics(text=t,font="Liberation Sans:style=Bold",size=fontsize,valign="top",halign="center").size[1];
+function textlen(t,fontsize,font="Liberation Sans:style=Bold") = textmetrics(text=t,font=font,size=fontsize,valign="top",halign="center").size[0];
+function textheight(t,fontsize,font="Liberation Sans:style=Bold") = textmetrics(text=t,font=font,size=fontsize,valign="top",halign="center").size[1];
+function textpositionx(t,fontsize,font="Liberation Sans:style=Bold") = textmetrics(text=t,font=font,size=fontsize,valign="top",halign="center").position[0];
+function textpositiony(t,fontsize,font="Liberation Sans:style=Bold") = textmetrics(text=t,font=font,size=fontsize,valign="top",halign="center").position[1];
+function textadvancex(t,fontsize,font="Liberation Sans:style=Bold") = textmetrics(text=t,font=font,size=fontsize,valign="top",halign="center").advance[0];
+function textadvancey(t,fontsize,font="Liberation Sans:style=Bold") = textmetrics(text=t,font=font,size=fontsize,valign="top",halign="center").advance[1];
 
 // Centered by width,length
 // Note: upper step is outside l, so l should be only the steps l

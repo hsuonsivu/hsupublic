@@ -971,6 +971,10 @@ following drive types:
 Funtions generate SATA and IDE/ATA drive interface. These are used by
 diskform. These are work-in-progress.
 
+### functions textpositionx, textpositiony, textadvancex, textadvancey
+
+These are just shorthands for textmetrics.
+
 ## lattialista.scad, Makefile.lattialista
 
 I needed some skirting board parts for my home, this makes ones
