@@ -1844,11 +1844,16 @@ Bolt library for my bolts. This uses 2023-04-02 threadlib by Adrdian
 Schlatter.  Bolt form is M20 modified for better printability, so it
 is not any standard.
 
-## sportstabletholder, Makefile.sportstabletholder
+## sportstabletholder.scad, Makefile.sportstabletholder
 
 This makes tablet holder for Tunturi crosstrainer and Waterrower
 exercise machines.  Both contain multiple parts. Makefile makes stls
 for both. No supports are needed to print.
+
+![sportstabletholder waterrower version openscad](sportstabletholderwaterrower.png)
+![sportstabletholder waterrower installed](sportstabletholderwaterrower.jpg)
+![sportstabletholder tunturi crosstrainer version openscad](sportstabletholdertunturicrosstrainer.png)
+![sportstabletholder tunturi crosstrainer version installed](sportstabletholdertunturicrosstrainer.jpg)
 
 ## markerlightbase.scad
 
@@ -1857,4 +1862,14 @@ to leave some space for cable and connectors.
 
 ![marketlightbase in openscad](marketlightbase.png)
 ![this marketlight at shop](marketlightmotonet.png)
+
+## drinkholder.scad
+
+Leaving bottles or cans in the floor while exercising is risky, this
+will make them more stable. Fits cans and smaller bottles.
+
+![drinkholder in openscad](drinkholder.png)
+![drinkholder on the floor with exercise timer](drinkholder.jpg)
+
+
 
