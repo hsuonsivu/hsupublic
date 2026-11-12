@@ -1618,8 +1618,8 @@ this (separate bottom is likely culprit).
 
 Holder for kitchen paper rolls. Top screws in to prevent roll exiting in case of mishap.
 
-![diameter.scad in Openscad.](paperrollholder.png)
-![diameter.scad in use.](paperrollholder.jpg)
+![paperrollholder.scad in Openscad.](paperrollholder.png)
+![paperrollholder.scad in use.](paperrollholder.jpg)
 
 ## diameter.scad, Makefile.diameter
 
@@ -1741,7 +1741,7 @@ is perfect as it works for shoes as well as tall boots.
 ![Boot dryer in openscad](bootdryer.png)
 ![Boot dryer in use](bootdryer.jpg)
 
-## halkovaja.scad
+## halkovaja.scad, Makefile.halkovaja
 
 I needed a firewood storage cabinet.  The bottom is designed to take
 US pallet as bottom as we had those lying around. Alternatively you
@@ -1807,6 +1807,8 @@ with possible reduction of drives to 2-3 and 7. Unlikely to be useful
 for any other case. Includes both disk drive holder and fancover for
 the drive opening. No supports are need to print. Model also included
 a cover with fan option for the front opening.
+
+![case2diskholder in openscad](case2diskholder.png)
 
 ## archiveviperspare.scad
 
@@ -1874,6 +1876,4 @@ will make them more stable. Fits cans and smaller bottles.
 
 ![drinkholder in openscad](drinkholder.png)
 ![drinkholder on the floor with exercise timer](drinkholder.jpg)
-
-
 
