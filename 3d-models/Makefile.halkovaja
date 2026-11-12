@@ -1,0 +1,46 @@
+SOURCE=halkovaja.scad
+DEPENDS=hsu.scad Makefile.halkovaja
+IMAGES=
+ALL=halkovaja.stl halkovajabase.stl halkovajatop.stl halkovajaclip.stl
+
+OPENSCADOPTIONS=-D debug=0 --backend=manifold --enable textmetrics
+
+all: $(ALL)
+
+dist: halkovaja.zip
+
+halkovaja-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf halkovaja-distribution
+	rm -f halkovaja-distribution.zip
+	mkdir -p halkovaja-distribution
+	cp $(SOURCE) $(DEPENDS) halkovaja-distribution
+	zip -r $@ halkovaja-distribution
+	echo $@ built.      
+
+halkovaja-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf halkovaja-distribution
+	rm -f halkovaja-distribution.zip
+	mkdir -p halkovaja-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) halkovaja-distribution
+	zip -r $@ halkovaja-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+halkovajamodel.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+halkovajaroofmodel.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+halkovaja.sh: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=0 -o $@ $(SOURCE) 2>&1 | egrep '^ECHO' | sed -e 's/^ECHO: ["][a-z]*nelonen(\(.*\))["]$/\1/g' | awk '{ print summa+=$1 }'
+	echo $@ built.
+
+halkovaja.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=4 -o $@ $(SOURCE)
+	echo $@ built.
+

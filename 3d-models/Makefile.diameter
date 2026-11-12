@@ -1,0 +1,42 @@
+SOURCE=diameter.scad
+DEPENDS=hsu.scad Makefile.diameter
+IMAGES=
+ALL=diameter1.stl diameter2.stl diameter3.stl
+
+OPENSCADOPTIONS=--backend=manifold --enable textmetrics -D debug=0
+
+all: $(ALL)
+
+dist: diameter.zip
+
+diameter-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf diameter-distribution
+	rm -f diameter-distribution.zip
+	mkdir -p diameter-distribution
+	cp $(SOURCE) $(DEPENDS) diameter-distribution
+	zip -r $@ diameter-distribution
+	echo $@ built.      
+
+diameter-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf diameter-distribution
+	rm -f diameter-distribution.zip
+	mkdir -p diameter-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) diameter-distribution
+	zip -r $@ diameter-distribution
+	echo $@ built.      
+
+clean:
+	rm $(ALL)
+
+diameter1.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=1 -o $@ $(SOURCE)
+	echo $@ built.
+
+diameter2.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=2 -o $@ $(SOURCE)
+	echo $@ built.
+
+diameter3.stl: $(SOURCE) $(DEPENDS)
+	openscad $(OPENSCADOPTIONS) -D print=3 -o $@ $(SOURCE)
+	echo $@ built.
+
