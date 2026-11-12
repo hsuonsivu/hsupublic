@@ -1,5 +1,5 @@
-SOURCE=tunturicrosstrainer.scad
-DEPENDS=hsu.scad Makefile.tunturicrosstrainer
+SOURCE=sportstabletholder.scad
+DEPENDS=hsu.scad Makefile.sportstabletholder
 IMAGES=
 TUNTURICROSSTRAINER=tunturicrosstrainer.stl tunturicrosstrainerbase.stl tunturicrosstrainertop.stl
 WATERROWER=waterrowertop.stl waterrowerattach.stl waterrowerbolts.stl waterrowerbinder.stl waterrowerright.stl waterrowerleft.stl bolttest.stl
@@ -13,22 +13,22 @@ waterrower: $(WATERROWER)
 
 all: $(ALL)
 
-dist: tunturicrosstrainer.zip
+dist: sportstabletholder.zip
 
-tunturicrosstrainer-source-distribution.zip: $(SOURCE) $(DEPENDS)
-	rm -rf tunturicrosstrainer-distribution
-	rm -f tunturicrosstrainer-distribution.zip
-	mkdir -p tunturicrosstrainer-distribution
-	cp $(SOURCE) $(DEPENDS) tunturicrosstrainer-distribution
-	zip -r $@ tunturicrosstrainer-distribution
+sportstabletholder-source-distribution.zip: $(SOURCE) $(DEPENDS)
+	rm -rf sportstabletholder-distribution
+	rm -f sportstabletholder-distribution.zip
+	mkdir -p sportstabletholder-distribution
+	cp $(SOURCE) $(DEPENDS) sportstabletholder-distribution
+	zip -r $@ sportstabletholder-distribution
 	echo $@ built.      
 
-tunturicrosstrainer-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
-	rm -rf tunturicrosstrainer-distribution
-	rm -f tunturicrosstrainer-distribution.zip
-	mkdir -p tunturicrosstrainer-distribution
-	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) tunturicrosstrainer-distribution
-	zip -r $@ tunturicrosstrainer-distribution
+sportstabletholder-full-distribution.zip: $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES)
+	rm -rf sportstabletholder-distribution
+	rm -f sportstabletholder-distribution.zip
+	mkdir -p sportstabletholder-distribution
+	cp $(ALL) $(SOURCE) $(DEPENDS) $(IMAGES) sportstabletholder-distribution
+	zip -r $@ sportstabletholder-distribution
 	echo $@ built.      
 
 clean:
