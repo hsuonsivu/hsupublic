@@ -1850,3 +1850,11 @@ This makes tablet holder for Tunturi crosstrainer and Waterrower
 exercise machines.  Both contain multiple parts. Makefile makes stls
 for both. No supports are needed to print.
 
+## markerlightbase.scad
+
+Base for markerlight for big vehicles, this allows rising marker light
+to leave some space for cable and connectors.
+
+![marketlightbase in openscad](marketlightbase.png)
+![this marketlight at shop](marketlightmotonet.png)
+
