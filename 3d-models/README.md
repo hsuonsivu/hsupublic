@@ -1864,8 +1864,8 @@ for both. No supports are needed to print.
 Base for markerlight for big vehicles, this allows rising marker light
 to leave some space for cable and connectors.
 
-![marketlightbase in openscad](marketlightbase.png)
-![this marketlight at shop](marketlightmotonet.png)
+![marketlightbase in openscad](markerlightbase.png)
+![this marketlight at shop](markerlightmotonet.png)
 
 ## drinkholder.scad
 
