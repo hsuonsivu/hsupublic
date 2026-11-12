@@ -24,7 +24,6 @@ m20drint=1.5330/m20div+0.1;
 
 MY_THREAD_TABLE=[
 		 ["M20-ext", [2.5, 8.3120+(1.1583-m20drext)+0.1, 16.9380+(1.5830-m20drext)*2, [[0, -1.0929], [0, 1.0929], [m20drext+0.1, 0.1790], [m20drext+0.1, -0.1790]]]],
-		 //["M20-ext", [2.5, 8.3120, 16.9380, [[0, -1.0929], [0, 1.0929], [m20drext+0.1, 0.1790], [m20drext+0.1, -0.1790]]]],
 		 ["M20-int", [2.5, -10.2925, 20.2925, [[0, 1.2304], [0, -1.2304], [m20drint, -0.3453], [m20drint, 0.3453]]]]
 		 ];
 
@@ -494,7 +493,6 @@ module right() {
       translate([rollaxisheight,rollaxisdepth,holdersupportwidth+rolloverlapheight+rollnarrowingh]) {
 	hull() {
 	  translate([0,0,wall]) cylinder(h=rollwidth+holdersupportwidth-rolloverlapheight-rollnarrowingh-wall+0.1,d=rollborediameter);
-	  //translate([0,0,wall]) cylinder(h=rolltubew-holdersupportwidth-wall+0.1,d=rollborediameter);
 	  translate([0,0,-holdersupportwidth+rolltubenarrowing/2]) cylinder(h=rolltubenarrowing-wall,d=rolloverlapd-wall*2);
 	}
       }
@@ -520,8 +518,6 @@ module right() {
 	translate([rolllockd/2-rolllockcut/2,0,-rolllockd/2]) cube([rolllockcut,rolloverlapd,rolllockcut]);
       }
     }
-
-    //    translate([cutteraxleheight,cutteraxledepth,holdersupportwidth+rollwidth-cutteraxlesupportl+cutteraxleind/3-10+ztolerance]) cylindervoids(cutteraxleind,cutteraxleind,holdersupportwidth+cutteraxlesupportl-cutteraxleind/3+10-ztolerance,0,0,1);
   }
 
   translate([0.01,attachfity,backplatewidth-attachfitz]) rotate([90,0,-90]) cylinder(d1=attachfitd,d2=attachfitd*0.5,h=attachfitdepth);
@@ -541,7 +537,7 @@ module smalltronxyholder() {
       }
     }
 
-    translate([sideboltx,sidebolty,-boltl+0.1]) boltcutout(); //tap("M20",turns=boltturns,table=MY_THREAD_TABLE);
+    translate([sideboltx,sidebolty,-boltl+0.1]) boltcutout();
   }
 }
 
