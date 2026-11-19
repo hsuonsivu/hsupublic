@@ -1734,7 +1734,7 @@ Attach various plates to poles.
 
 ## bootdryer.scad, Makefile.bootdryer
 
-Boot&shoe drying device. It needs a 12V power supply and 12V 7mm fan,
+Boot&shoe drying device. It needs a 12V power supply and 12V 70mm fan,
 and two washing machine drain hoses (one which extends from 0.5 to 2mm
 is perfect as it works for shoes as well as tall boots.
 
@@ -1805,8 +1805,7 @@ drives in place. Due to cramped case, the 3.5 inch disks require
 lifting holder out to replace disks. Possibly this could be rearranged
 with possible reduction of drives to 2-3 and 7. Unlikely to be useful
 for any other case. Includes both disk drive holder and fancover for
-the drive opening. No supports are need to print. Model also included
-a cover with fan option for the front opening.
+the drive opening. No supports are need to print. 
 
 ![case2diskholder in openscad](case2diskholder.png)
 
@@ -1876,4 +1875,18 @@ will make them more stable. Fits cans and smaller bottles.
 
 ![drinkholder in openscad](drinkholder.png)
 ![drinkholder on the floor with exercise timer](drinkholder.jpg)
+
+## barometerframe.scad
+
+Table frame for a classic analog barometer.
+
+![barometerframe in openscad](barometerframe.png)
+
+## remotecover.scad
+
+Office Sony TV has annoying useless buttons in the remote for starting
+netflix and other sources which are easy to press accicentally. I made
+a cover to prevent accidental pressess.
+
+![remotecover in openscad](remotecover.png)
 
